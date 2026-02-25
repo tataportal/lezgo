@@ -2926,6 +2926,38 @@ body::after {
 .pm-id-notice.visible { display: flex; }
 .pm-id-notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 
+/* Fee breakdown toggle */
+.pm-fee-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 14px; margin-bottom: 4px; color: var(--text-mid);
+}
+.pm-fee-toggle {
+  display: flex; align-items: center; gap: 5px; cursor: pointer;
+  user-select: none;
+}
+.pm-fee-toggle:hover { color: #fff; }
+.pm-fee-chevron {
+  font-size: 10px; transition: transform 0.2s; display: inline-block;
+  color: var(--text-dim);
+}
+.pm-fee-chevron.open { transform: rotate(180deg); }
+.pm-fee-breakdown {
+  display: none; flex-direction: column; gap: 6px;
+  margin: 6px 0 10px; padding: 12px 14px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.pm-fee-breakdown.visible { display: flex; }
+.pm-fee-line {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-mid);
+}
+.pm-fee-line span:last-child { color: var(--text-mid); font-weight: 600; }
+.pm-fee-label { display: flex; align-items: center; gap: 6px; }
+.pm-fee-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+
 /* Step 2: DNI verification */
 .pm-verify-icon { font-size: 64px; text-align: center; margin-bottom: 20px; }
 .pm-verify-title { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 8px; }
@@ -6476,9 +6508,29 @@ body::after {
       html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>S/${lineTotal}</span></div>`;
     }
     const fee = totalQty * 10;
+    const total = subtotal + fee;
     document.getElementById('pm-pay-items').innerHTML = html;
     document.getElementById('pm-pay-fee').textContent = 'S/' + fee;
-    document.getElementById('pm-pay-total').textContent = 'S/' + (subtotal + fee);
+    document.getElementById('pm-pay-total').textContent = 'S/' + total;
+
+    // Calculate real percentages over the pre-fee subtotal
+    if (subtotal > 0) {
+      const pct = (n) => (n / subtotal * 100).toFixed(1) + '%';
+      // Split: Lezgo 4/10, Verificación 3/10, Procesamiento 3/10
+      document.getElementById('pm-fee-plataforma').textContent    = pct(fee * 0.4);
+      document.getElementById('pm-fee-verificacion').textContent  = pct(fee * 0.3);
+      document.getElementById('pm-fee-procesamiento').textContent = pct(fee * 0.3);
+    }
+    // Reset desglose to closed
+    document.getElementById('pm-fee-breakdown').classList.remove('visible');
+    document.getElementById('pm-fee-chevron').classList.remove('open');
+  }
+
+  function pmToggleDesglose() {
+    const bd = document.getElementById('pm-fee-breakdown');
+    const ch = document.getElementById('pm-fee-chevron');
+    bd.classList.toggle('visible');
+    ch.classList.toggle('open');
   }
   let pmVerifiedDni = '';
 
@@ -7501,9 +7553,40 @@ body::after {
       <!-- PANEL 3: Payment -->
       <div class="pm-panel" id="pm-panel-3">
         <div class="pm-pay-summary">
-          <div id="pm-pay-items"><!-- filled by pmUpdatePaySummary() --></div>
-          <div class="pm-pay-row"><span>Cargo por servicio</span><span id="pm-pay-fee">S/10</span></div>
-          <div class="pm-pay-row total"><span>Total</span><span id="pm-pay-total">S/130</span></div>
+          <div id="pm-pay-items"><!-- filled by pmBuildPaySummary() --></div>
+          <!-- Fee row with breakdown toggle -->
+          <div class="pm-fee-row" style="margin-bottom:2px;">
+            <span class="pm-fee-toggle" onclick="pmToggleDesglose()">
+              Cargo por servicio
+              <span class="pm-fee-chevron" id="pm-fee-chevron">▼</span>
+            </span>
+            <span id="pm-pay-fee" style="font-weight:600;color:var(--text-mid);">S/10</span>
+          </div>
+          <!-- Expandable breakdown -->
+          <div class="pm-fee-breakdown" id="pm-fee-breakdown">
+            <div class="pm-fee-line">
+              <span class="pm-fee-label">
+                <span class="pm-fee-dot" style="background:#E5FF00;"></span>
+                Plataforma Lezgo
+              </span>
+              <span id="pm-fee-plataforma">3.3%</span>
+            </div>
+            <div class="pm-fee-line">
+              <span class="pm-fee-label">
+                <span class="pm-fee-dot" style="background:#60a5fa;"></span>
+                Verificación de identidad
+              </span>
+              <span id="pm-fee-verificacion">2.1%</span>
+            </div>
+            <div class="pm-fee-line">
+              <span class="pm-fee-label">
+                <span class="pm-fee-dot" style="background:#a78bfa;"></span>
+                Procesamiento de pago
+              </span>
+              <span id="pm-fee-procesamiento">2.9%</span>
+            </div>
+          </div>
+          <div class="pm-pay-row total" style="margin-top:8px;"><span>Total</span><span id="pm-pay-total">S/130</span></div>
         </div>
         <div class="pm-card-row">
           <div class="pm-card-opt selected" id="pm-pay-card" onclick="pmSelectPay('card')">
