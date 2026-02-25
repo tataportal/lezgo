@@ -706,7 +706,7 @@ body::after {
 
 /* Compromisos section */
 .cf-compromisos {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
   margin-top: 40px;
 }
 .cf-compromiso {
@@ -735,42 +735,45 @@ body::after {
 
 /* Email capture */
 .email-capture {
-  max-width: 560px; margin: 0 auto; padding: 64px 48px;
+  max-width: 800px; margin: 0 auto; padding: 80px 48px;
   text-align: center;
 }
 .email-capture h3 {
-  font-size: 24px; font-weight: 800; letter-spacing: -0.5px;
-  margin-bottom: 10px;
+  font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -1px;
+  margin-bottom: 16px; line-height: 1.1;
 }
 .email-capture p {
-  font-size: 14px; color: var(--text-mid); line-height: 1.6;
-  margin-bottom: 24px;
+  font-size: 18px; color: var(--text-mid); line-height: 1.7;
+  margin-bottom: 36px; max-width: none;
 }
 .email-capture-form {
-  display: flex; gap: 10px;
+  display: flex; gap: 12px; max-width: 520px; margin: 0 auto;
+  justify-content: center;
 }
 .email-capture-input {
-  flex: 1; padding: 14px 18px;
+  flex: 1; padding: 18px 22px;
   background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 12px; color: #fff; font-size: 14px; font-family: inherit;
+  border-radius: 14px; color: #fff; font-size: 16px; font-family: inherit;
   outline: none; transition: border-color 0.2s;
 }
 .email-capture-input:focus { border-color: var(--acid); }
 .email-capture-input::placeholder { color: rgba(255,255,255,0.35); }
 .email-capture-btn {
-  padding: 14px 28px; background: var(--acid); color: #000;
-  font-weight: 700; font-size: 14px; border: none; border-radius: 12px;
+  padding: 18px 36px; background: var(--acid); color: #000;
+  font-weight: 700; font-size: 16px; border: none; border-radius: 14px;
   cursor: pointer; font-family: inherit; white-space: nowrap;
   transition: opacity 0.2s;
 }
 .email-capture-btn:hover { opacity: 0.85; }
 .email-capture-legal {
-  font-size: 11px; color: var(--text-dim); margin-top: 14px; line-height: 1.5;
+  font-size: 13px; color: var(--text-dim); margin-top: 20px; line-height: 1.5;
+  text-align: center;
 }
 .email-capture-ok {
-  display: none; padding: 16px; margin-top: 16px;
+  display: none; padding: 20px; margin-top: 20px;
   background: rgba(229,255,0,0.06); border: 1px solid rgba(229,255,0,0.15);
-  border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--acid);
+  border-radius: 14px; font-size: 16px; font-weight: 600; color: var(--acid);
+  text-align: center; max-width: 520px; margin-left: auto; margin-right: auto;
 }
 
 /* ═══════════════════════════════════════════
@@ -784,52 +787,123 @@ body::after {
   margin-bottom: 24px;
 }
 
-/* Mechanics grid (2x3) */
+/* Fans & Promotores — slide layout like deck */
+#v-fans.active,
+#v-promotores.active {
+  position: fixed;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  z-index: 5;
+  background: var(--bg);
+}
+#v-fans .cf-hero,
+#v-fans .cf-section,
+#v-promotores .cf-hero,
+#v-promotores .cf-section {
+  scroll-snap-align: start;
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column; justify-content: center;
+}
+#v-fans .cf-hero,
+#v-promotores .cf-hero {
+  max-width: none;
+}
+#v-fans .cf-section,
+#v-promotores .cf-section {
+  max-width: none;
+  border-top: 1px solid var(--border);
+  padding: 80px 48px;
+  text-align: center;
+}
+#v-fans .cf-section > *,
+#v-promotores .cf-section > * {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#v-promotores .cf-section > .pp-mechanics-grid,
+#v-promotores .cf-section > .pp-dashboard-mock,
+#v-promotores .cf-section > .pp-revenue-box,
+#v-promotores .cf-section > .cf-features {
+  max-width: 1100px;
+}
+#v-fans .email-capture,
+#v-promotores .email-capture {
+  scroll-snap-align: start;
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column; justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: none;
+  border-top: 1px solid var(--border);
+  padding: 80px 48px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(229,255,0,0.04) 0%, transparent 70%);
+}
+#v-fans .marquee,
+#v-promotores .marquee {
+  scroll-snap-align: none;
+  min-height: auto;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+#v-fans .site-footer,
+#v-promotores .site-footer {
+  scroll-snap-align: none;
+  min-height: auto;
+}
+
+/* Mechanics grid (3x2) */
 .pp-mechanics-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
-  margin-top: 48px; max-width: 900px; margin-left: auto; margin-right: auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 48px; max-width: 1100px; margin-left: auto; margin-right: auto;
   text-align: left;
 }
 .pp-mech-card {
   background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 16px; padding: 28px 24px;
+  border-radius: 16px; padding: 36px 28px;
   transition: border-color 0.2s;
 }
 .pp-mech-card:hover { border-color: rgba(229,255,0,0.3); }
 .pp-mech-tag {
   display: inline-block; border: 1px solid var(--acid); color: var(--acid);
-  padding: 3px 10px; font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+  padding: 4px 12px; font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
   border-radius: 4px;
 }
 .pp-mech-card h3 {
-  font-size: 18px; font-weight: 800; margin-bottom: 8px;
+  font-size: 20px; font-weight: 800; margin-bottom: 10px;
   letter-spacing: -0.3px;
 }
 .pp-mech-card p {
-  font-size: 14px; color: var(--text-mid); line-height: 1.6;
+  font-size: 15px; color: var(--text-mid); line-height: 1.6;
 }
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .pp-mechanics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
   .pp-mechanics-grid { grid-template-columns: 1fr; }
 }
 
 /* Dashboard mock */
 .pp-dashboard-mock {
   background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 16px; padding: 32px;
-  margin: 40px auto; max-width: 900px; text-align: center;
+  border-radius: 16px; padding: 40px;
+  margin: 40px auto; max-width: 1100px; text-align: center;
 }
 .pp-dash-row {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-  margin-bottom: 16px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  margin-bottom: 20px;
 }
 .pp-dash-row:last-child { margin-bottom: 0; }
 .pp-dash-stat {
   background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-  border-radius: 12px; padding: 20px 16px; text-align: center;
+  border-radius: 12px; padding: 28px 20px; text-align: center;
 }
 .pp-dash-num {
-  font-size: 28px; font-weight: 800; color: var(--acid);
+  font-size: 32px; font-weight: 800; color: var(--acid);
   letter-spacing: -1px; margin-bottom: 4px;
 }
 .pp-dash-label {
@@ -1088,13 +1162,16 @@ body::after {
   font-size: 11px; font-weight: 700;
   letter-spacing: 4px; text-transform: uppercase;
   color: var(--acid); margin-bottom: 16px; opacity: 0.8;
+  text-align: center;
 }
 .cf-section-title {
   font-size: clamp(32px, 5vw, 56px); font-weight: 700;
   line-height: 1.05; letter-spacing: -1px; margin-bottom: 20px;
+  text-align: center;
 }
 .cf-section-text {
   font-size: 18px; color: var(--text-mid); line-height: 1.7; max-width: 600px;
+  margin-left: auto; margin-right: auto; text-align: center;
 }
 
 /* Steps */
@@ -2817,7 +2894,8 @@ body::after {
   .cf-step-num { text-align: center; }
   .cf-compare { grid-template-columns: 1fr; }
   .cf-compare-new { border-left: none; border-top: 3px solid var(--acid); }
-  .cf-compromisos { grid-template-columns: 1fr; }
+  .cf-compromisos { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 560px) { .cf-compromisos { grid-template-columns: 1fr; } }
   .std-teaser { flex-direction: column; align-items: flex-start; gap: 8px; }
   .std-teaser-arrow { display: none; }
   .cf-btns { flex-direction: column; align-items: center; }
@@ -3849,7 +3927,7 @@ body::after {
     <div class="nav-logo" onclick="go('eventos')">LEZGO</div>
     <div class="nav-categories">
       <div class="nav-cat active" onclick="go('eventos')" data-es="Eventos" data-en="Events">Eventos</div>
-      <div class="nav-cat" onclick="go('asistentes')" data-es="Para Asistentes" data-en="For Attendees">Para Asistentes</div>
+      <div class="nav-cat" onclick="go('fans')" data-es="Para Fans" data-en="For Fans">Para Fans</div>
       <div class="nav-cat" onclick="go('promotores')" data-es="Para Promotores" data-en="For Promoters">Para Promotores</div>
       <div class="nav-cat" onclick="go('marketplace')" data-es="Marketplace" data-en="Marketplace">Marketplace</div>
       <div class="nav-cat" onclick="go('deck')" data-es="Deck" data-en="Deck">Deck</div>
@@ -4166,14 +4244,14 @@ body::after {
 
   <!-- Email capture -->
   <div class="email-capture" id="email-capture-section">
-    <h3>Estamos construyendo algo distinto</h3>
-    <p>Lezgo es un proyecto independiente. Estamos creando la plataforma para volver a confiar en los eventos. Déjanos tu correo y te contamos cómo avanzamos.</p>
+    <h3>Estamos construyendo<br><span style="color:var(--acid);">algo distinto.</span></h3>
+    <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
     <div class="email-capture-form" id="email-form">
       <input class="email-capture-input" type="email" id="email-input" placeholder="tu@correo.com">
       <button class="email-capture-btn" onclick="submitEmail()">Unirme</button>
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
-    <div class="email-capture-ok" id="email-ok">Gracias por creer en el proyecto. Te mantendremos al tanto.</div>
+    <div class="email-capture-ok" id="email-ok">Gracias por creer en el proyecto.<br>Te mantendremos al tanto.</div>
   </div>
 
   <!-- Footer -->
@@ -4187,7 +4265,38 @@ body::after {
 <!-- ═══════════════════════════════════════════
      VIEW 2A: PARA ASISTENTES
      ═══════════════════════════════════════════ -->
-<div id="v-asistentes" class="view">
+<div id="v-fans" class="view">
+
+  <!-- Marquee -->
+  <div class="marquee" style="margin-top:0;">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
+    </div>
+  </div>
+
 
   <!-- Hero con Fake vs Real -->
   <section class="cf-hero" id="cf-hero">
@@ -4259,35 +4368,7 @@ body::after {
     </div>
   </section>
 
-  <!-- Marquee -->
-  <div class="marquee" style="margin-top:0;">
-    <div class="marquee-track">
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
-      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
-    </div>
-  </div>
+
 
   <!-- Para Fans -->
   <section class="cf-section">
@@ -4358,7 +4439,7 @@ body::after {
   <section class="cf-section" id="cf-compromisos" style="border-top:1px solid var(--border);">
     <div class="cf-section-label">// Para los fans</div>
     <h2 class="cf-section-title">Nuestros compromisos<br>con <span style="color:var(--acid);">los fans.</span></h2>
-    <p class="cf-section-text">El ticketing en Perú lleva años siendo opaco, caro y fácil de estafar. Acá están, en negro sobre blanco, las reglas con las que operamos.</p>
+    <p class="cf-section-text">Sabemos cómo funciona el ticketing en Perú. Por eso construimos Lezgo con reglas claras desde el día uno.</p>
     <div class="cf-compromisos">
 
       <div class="cf-compromiso">
@@ -4408,14 +4489,14 @@ body::after {
 
   <!-- Email Capture -->
   <div class="email-capture">
-    <h3>Estamos construyendo algo distinto</h3>
-    <p>Lezgo es un proyecto independiente. Estamos creando la plataforma para volver a confiar en los eventos. Déjanos tu correo y te contamos cómo avanzamos.</p>
+    <h3>Estamos construyendo<br><span style="color:var(--acid);">algo distinto.</span></h3>
+    <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
     <div class="email-capture-form" id="email-form-asist">
       <input class="email-capture-input" type="email" id="email-input-asist" placeholder="tu@correo.com">
       <button class="email-capture-btn" onclick="asistSubmitEmail()">Unirme</button>
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
-    <div class="email-capture-ok" id="email-ok-asist">Gracias por creer en el proyecto. Te mantendremos al tanto.</div>
+    <div class="email-capture-ok" id="email-ok-asist">Gracias por creer en el proyecto.<br>Te mantendremos al tanto.</div>
   </div>
 
   <div class="site-footer">
@@ -4430,31 +4511,64 @@ body::after {
      ═══════════════════════════════════════════ -->
 <div id="v-promotores" class="view">
 
-  <!-- Hero Promotor -->
-  <section class="cf-hero" style="min-height:auto;padding:100px 48px 60px;">
+  <!-- Marquee promotor -->
+  <div class="marquee" style="margin-top:0;">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CONTROL TOTAL</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENUE EN REVENTA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> DASHBOARD EN VIVO</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> SCANNER ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ANTI-SCALPING</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> MECÁNICAS DE VENTA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CONTROL TOTAL</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENUE EN REVENTA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> DASHBOARD EN VIVO</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> SCANNER ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ANTI-SCALPING</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> MECÁNICAS DE VENTA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CONTROL TOTAL</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENUE EN REVENTA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> DASHBOARD EN VIVO</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> SCANNER ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ANTI-SCALPING</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> MECÁNICAS DE VENTA</span>
+    </div>
+  </div>
+
+
+  <!-- Hero Promotor — mismo layout que Fans -->
+  <section class="cf-hero">
     <div class="cf-glow cf-glow-1"></div>
     <div class="cf-glow cf-glow-2"></div>
-    <div style="max-width:800px;margin:0 auto;text-align:center;">
-      <div class="cf-hero-badge">PARA ORGANIZADORES Y PRODUCTORAS</div>
-      <h1 style="font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:20px;">
-        <span class="outline">TU EVENTO</span><br>
-        <span class="acid-text">TUS REGLAS</span>
-      </h1>
-      <p class="cf-hero-text" style="max-width:560px;margin:0 auto 32px;">Control total sobre la creación, venta y reventa de tus boletos. Desde el contrato inicial hasta el escaneo en puerta.</p>
-      <div class="cf-btns">
-        <button class="btn-acid" onclick="go('organizer')">Crear evento →</button>
-        <button class="btn-border" onclick="go('asistentes')">¿Cómo funciona para fans?</button>
+    <div class="cf-hero-inner">
+      <div>
+        <div class="cf-hero-badge"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> PARA ORGANIZADORES</div>
+        <h1>
+          <span class="outline">CONTROLA</span>
+          <span class="acid-text">
+            <span class="cf-glitch-layer cf-glitch-pink" aria-hidden="true">TODO</span>
+            <span class="cf-glitch-layer cf-glitch-cyan" aria-hidden="true">TODO</span>
+            TODO
+          </span>
+          <span class="white-text">MAS FACIL</span>
+        </h1>
+        <p class="cf-hero-text" style="white-space:nowrap;"><strong>Control total sobre la venta y reventa de tus boletos.</strong></p>
+        <div class="cf-btns">
+          <button class="btn-acid">Crear evento →</button>
+          <button class="btn-border" onclick="go('fans')">¿Cómo funciona para fans?</button>
+        </div>
       </div>
     </div>
   </section>
 
+
   <!-- ═══ FASE 1: PRE-LANZAMIENTO ═══ -->
-  <section class="cf-section" style="text-align:center;">
+  <section class="cf-section">
     <div class="pp-phase-tag">PRE-LANZAMIENTO</div>
-    <div class="cf-section-label">// Antes de vender</div>
+    <div class="cf-section-label">// Setup</div>
     <h2 class="cf-section-title">Configura todo<br><span style="color:var(--acid);">desde el inicio.</span></h2>
-    <p class="cf-section-text" style="margin:0 auto;">El contrato inicial de tus boletos define las reglas del juego: cantidades, precios, límites y más.</p>
-    <div class="dk-how-grid">
+    <p class="cf-section-text">El contrato inicial de tus boletos define las reglas del juego: cantidades, precios, límites y más.</p>
+    <div class="dk-how-grid" style="margin-top:48px;">
       <div class="dk-how-card">
         <div class="dk-how-inner dk-grad-1">
           <div class="dk-how-num">01</div>
@@ -4462,7 +4576,7 @@ body::after {
           <h3>Crea tu<br>evento</h3>
           <div class="dk-how-tooltip">Setup rápido →</div>
         </div>
-        <div class="dk-how-desc">Nombre, fecha, ubicación, lineup, descripción. Sin formularios eternos. En minutos queda listo.</div>
+        <div class="dk-how-desc">Nombre, fecha, ubicación, lineup, descripción. <strong>Sin formularios eternos. Listo en minutos.</strong></div>
       </div>
       <div class="dk-how-card">
         <div class="dk-how-inner dk-grad-2">
@@ -4471,7 +4585,7 @@ body::after {
           <h3>Define tus<br>boletos</h3>
           <div class="dk-how-tooltip">Control total →</div>
         </div>
-        <div class="dk-how-desc">Cantidades por categoría, precio base, máximo por persona, fechas de drops. Tú decides todo en el contrato inicial.</div>
+        <div class="dk-how-desc">Cantidades por categoría, precio base, máximo por persona, fechas de drops. <strong>Tú decides todo en el contrato inicial.</strong></div>
       </div>
       <div class="dk-how-card">
         <div class="dk-how-inner dk-grad-3">
@@ -4480,17 +4594,17 @@ body::after {
           <h3>Página<br>del evento</h3>
           <div class="dk-how-tooltip">Tu marca →</div>
         </div>
-        <div class="dk-how-desc">Landing personalizada con tu branding, imágenes y descripción. Lista para compartir y vender desde el primer momento.</div>
+        <div class="dk-how-desc">Landing personalizada con tu branding. <strong>Lista para compartir y vender desde el primer momento.</strong></div>
       </div>
     </div>
   </section>
 
   <!-- ═══ FASE 2: LANZAMIENTO ═══ -->
-  <section class="cf-section" style="border-top:1px solid var(--border);text-align:center;">
+  <section class="cf-section">
     <div class="pp-phase-tag">LANZAMIENTO</div>
     <div class="cf-section-label">// Mecánicas de venta</div>
     <h2 class="cf-section-title">Elige cómo<br><span style="color:var(--acid);">vender tus entradas.</span></h2>
-    <p class="cf-section-text" style="margin:0 auto;">Cada evento es diferente. Elige la mecánica que mejor funcione para tu audiencia.</p>
+    <p class="cf-section-text">Cada evento es diferente. Elige la mecánica que mejor funcione para tu audiencia.</p>
     <div class="pp-mechanics-grid">
       <div class="pp-mech-card">
         <div class="pp-mech-tag">FCFS</div>
@@ -4525,11 +4639,11 @@ body::after {
     </div>
   </section>
 
-  <!-- Dashboard -->
-  <section class="cf-section" style="border-top:1px solid var(--border);text-align:center;">
-    <div class="cf-section-label">// Dashboard en tiempo real</div>
+  <!-- Dashboard en vivo -->
+  <section class="cf-section">
+    <div class="cf-section-label">// Dashboard</div>
     <h2 class="cf-section-title">Todo tu evento<br><span style="color:var(--acid);">en una pantalla.</span></h2>
-    <p class="cf-section-text" style="margin:0 auto;">Mientras se venden las entradas, tú ves todo en vivo.</p>
+    <p class="cf-section-text">Mientras se venden las entradas, tú ves todo en vivo.</p>
     <div class="pp-dashboard-mock">
       <div class="pp-dash-row">
         <div class="pp-dash-stat">
@@ -4549,10 +4663,10 @@ body::after {
           <div class="pp-dash-label">Revenue bruto</div>
         </div>
       </div>
-      <div class="pp-dash-row" style="margin-top:16px;">
+      <div class="pp-dash-row">
         <div class="pp-dash-stat">
           <div class="pp-dash-num">3m 22s</div>
-          <div class="pp-dash-label">Tiempo promedio de compra</div>
+          <div class="pp-dash-label">Tiempo prom. compra</div>
         </div>
         <div class="pp-dash-stat">
           <div class="pp-dash-num">12</div>
@@ -4560,7 +4674,7 @@ body::after {
         </div>
         <div class="pp-dash-stat">
           <div class="pp-dash-num" style="color:var(--acid);">94%</div>
-          <div class="pp-dash-label">Tasa de conversión</div>
+          <div class="pp-dash-label">Conversión</div>
         </div>
         <div class="pp-dash-stat">
           <div class="pp-dash-num">Lima 68%</div>
@@ -4571,85 +4685,83 @@ body::after {
   </section>
 
   <!-- ═══ FASE 3: POST-LANZAMIENTO ═══ -->
-  <section class="cf-section" style="border-top:1px solid var(--border);text-align:center;">
+  <section class="cf-section">
     <div class="pp-phase-tag">POST-LANZAMIENTO</div>
-    <div class="cf-section-label">// Reventa y evento</div>
+    <div class="cf-section-label">// Reventa y control</div>
     <h2 class="cf-section-title">Después de la venta,<br><span style="color:var(--acid);">tú sigues ganando.</span></h2>
-    <p class="cf-section-text" style="margin:0 auto;">La reventa deja de ser mercado negro. Ahora es revenue directo para ti, con tus reglas.</p>
-
-    <!-- Diagrama de reventa -->
-    <div class="pp-resale-flow">
-      <div class="pp-flow-step">
-        <div class="pp-flow-icon">👤</div>
-        <div class="pp-flow-text">Fan original<br><small>Ya no puede ir</small></div>
-      </div>
-      <div class="pp-flow-arrow">→</div>
-      <div class="pp-flow-step pp-flow-highlight">
-        <div class="pp-flow-icon">🔄</div>
-        <div class="pp-flow-text">Marketplace Lezgo<br><small>Precio controlado</small></div>
-      </div>
-      <div class="pp-flow-arrow">→</div>
-      <div class="pp-flow-step">
-        <div class="pp-flow-icon">👤</div>
-        <div class="pp-flow-text">Nuevo fan<br><small>ID re-verificado</small></div>
-      </div>
-    </div>
+    <p class="cf-section-text">La reventa deja de ser mercado negro. Revenue directo para ti, con tus reglas.</p>
 
     <!-- Revenue share -->
     <div class="pp-revenue-box">
-      <h3 style="font-size:18px;font-weight:800;margin-bottom:16px;">Revenue share en cada reventa</h3>
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:20px;text-align:center;">Revenue share en cada reventa</h3>
       <div class="pp-rev-bars">
         <div class="pp-rev-item">
-          <div class="pp-rev-label">Vendedor (fan original)</div>
+          <div class="pp-rev-label">Fan original</div>
           <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:75%;background:rgba(255,255,255,0.15);"></div><span>75%</span></div>
         </div>
         <div class="pp-rev-item">
-          <div class="pp-rev-label">Promotor / Productora</div>
+          <div class="pp-rev-label">Promotor</div>
           <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:15%;background:var(--acid);"></div><span style="color:var(--acid);font-weight:700;">15%</span></div>
         </div>
         <div class="pp-rev-item">
-          <div class="pp-rev-label">Plataforma Lezgo</div>
+          <div class="pp-rev-label">Lezgo</div>
           <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:10%;background:rgba(229,255,0,0.3);"></div><span>10%</span></div>
         </div>
       </div>
-      <p style="font-size:12px;color:var(--text-dim);margin-top:12px;">* Porcentajes configurables por el promotor en el contrato inicial del evento.</p>
+      <p style="font-size:12px;color:var(--text-dim);margin-top:12px;text-align:center;">* Porcentajes configurables por el promotor en el contrato inicial.</p>
     </div>
 
-    <!-- Control features -->
-    <div class="pp-mechanics-grid" style="margin-top:48px;grid-template-columns:repeat(3,1fr);">
-      <div class="pp-mech-card">
-        <div class="pp-mech-tag">PRICE CAP</div>
-        <h3>Topes de precio</h3>
-        <p>Tú defines el precio máximo de reventa por categoría. Evita scalping masivo.</p>
+  </section>
+
+  <!-- ═══ SCANNER EN PUERTA ═══ -->
+  <section class="cf-section">
+    <div class="pp-phase-tag">DÍA DEL EVENTO</div>
+    <div class="cf-section-label">// Verificación en puerta</div>
+    <h2 class="cf-section-title">Scanner de<br><span style="color:var(--acid);">identidad en puerta.</span></h2>
+    <p class="cf-section-text">Tu staff escanea el ID del asistente con la app de Lezgo. En segundos, la identidad se verifica contra el boleto comprado. Sin QR, sin screenshots, sin fraude.</p>
+
+    <div class="dk-how-grid" style="margin-top:48px;">
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-1">
+          <div class="dk-how-num">01</div>
+          <div class="dk-how-logo">📱</div>
+          <h3>Escanea<br>el ID</h3>
+          <div class="dk-how-tooltip">App Lezgo →</div>
+        </div>
+        <div class="dk-how-desc">Tu staff usa la app de Lezgo para escanear el documento de identidad del asistente. <strong>Un toque, sin complicaciones.</strong></div>
       </div>
-      <div class="pp-mech-card">
-        <div class="pp-mech-tag">TRANSFER LIMIT</div>
-        <h3>Límites de transferencia</h3>
-        <p>Define cuántas veces un boleto puede cambiar de dueño. Previene especulación.</p>
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-2">
+          <div class="dk-how-num">02</div>
+          <div class="dk-how-logo">✅</div>
+          <h3>Verificación<br>en tiempo real</h3>
+          <div class="dk-how-tooltip">Match instantáneo →</div>
+        </div>
+        <div class="dk-how-desc">Lezgo cruza el ID con el boleto comprado y la foto de verificación. <strong>Resultado en segundos: ✓ o ✗.</strong></div>
       </div>
-      <div class="pp-mech-card">
-        <div class="pp-mech-tag">ID VERIFICATION</div>
-        <h3>Scanner en puerta</h3>
-        <p>Tu staff escanea el ID del asistente. Lezgo verifica en tiempo real. Cero fraude.</p>
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-3">
+          <div class="dk-how-num">03</div>
+          <div class="dk-how-logo">🚪</div>
+          <h3>Ingreso<br>seguro</h3>
+          <div class="dk-how-tooltip">Cero fraude →</div>
+        </div>
+        <div class="dk-how-desc">Solo entra quien compró o quien recibió la transferencia verificada. <strong>Cero colados, cero entradas falsas.</strong></div>
       </div>
     </div>
   </section>
 
-  <!-- CTA promotor -->
-  <section class="cf-cta">
-    <h2>Esto recién <span>empieza</span></h2>
-    <p>Estamos construyendo las herramientas para que organizar eventos sea más seguro y rentable.<br>Dejá tu correo y te contamos cuando esté listo.</p>
-    <div class="cf-email-wrap">
-      <div class="cf-email-bar" id="pp-email-bar">
-        <input type="email" class="cf-email-input" id="pp-email-input" placeholder="tu@productora.com" autocomplete="email" />
-        <button class="cf-email-btn" onclick="ppSubmitEmail()">Seguir el proyecto →</button>
-      </div>
-      <div class="cf-email-success" id="pp-email-success">
-        🎉 <strong>Estás dentro.</strong> Te contaremos cómo avanza todo.
-      </div>
-      <div class="cf-email-note">Sin spam. Solo cuando importe.</div>
+  <!-- Email capture promotor -->
+  <div class="email-capture">
+    <h3>Estamos construyendo<br><span style="color:var(--acid);">algo distinto.</span></h3>
+    <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
+    <div class="email-capture-form" id="pp-email-bar">
+      <input class="email-capture-input" type="email" id="pp-email-input" placeholder="tu@productora.com">
+      <button class="email-capture-btn" onclick="ppSubmitEmail()">Unirme</button>
     </div>
-  </section>
+    <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
+    <div class="email-capture-ok" id="pp-email-success">Gracias por creer en el proyecto.<br>Te mantendremos al tanto.</div>
+  </div>
 
   <div class="site-footer">
     <div class="site-footer-logo">LEZGO</div>
@@ -5498,7 +5610,7 @@ body::after {
       </p>
       <div class="dk-hero-btns">
         <button class="dk-btn-primary" onclick="window.open('mailto:tata@frensonly.club','_blank')" data-es="CONTACTAR EQUIPO" data-en="CONTACT TEAM">CONTACTAR EQUIPO</button>
-        <button class="dk-btn-secondary" onclick="go('asistentes')" data-es="PARA ASISTENTES" data-en="FOR ATTENDEES">PARA ASISTENTES</button>
+        <button class="dk-btn-secondary" onclick="go('fans')" data-es="PARA FANS" data-en="FOR FANS">PARA FANS</button>
       </div>
     </div>
     <div class="dk-tickets">
@@ -6115,7 +6227,11 @@ body::after {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({
+        email: email,
+        fecha: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+        hora: new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima', hour12: false })
+      })
     }).then(() => {
       document.getElementById('email-form').style.display = 'none';
       document.getElementById('email-ok').style.display = 'block';
@@ -6137,7 +6253,11 @@ body::after {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({
+        email: email,
+        fecha: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+        hora: new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima', hour12: false })
+      })
     }).then(() => {
       form.style.display = 'none';
       document.getElementById('email-ok-asist').style.display = 'block';
@@ -6159,7 +6279,11 @@ body::after {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({
+        email: email,
+        fecha: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+        hora: new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima', hour12: false })
+      })
     }).then(() => {
       bar.style.display = 'none';
       document.getElementById('pp-email-success').style.display = 'block';
@@ -6173,9 +6297,12 @@ body::after {
   function go(view) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-cat').forEach(l => l.classList.remove('active'));
-    const map = { eventos: 0, asistentes: 1, promotores: 2, marketplace: 3, deck: 4 };
+    const map = { eventos: 0, fans: 1, promotores: 2, marketplace: 3, deck: 4 };
     const el = document.getElementById('v-' + view);
-    if (el) el.classList.add('active');
+    if (el) {
+      el.classList.add('active');
+      el.scrollTop = 0;
+    }
     if (map[view] !== undefined) {
       document.querySelectorAll('.nav-cat')[map[view]].classList.add('active');
     }
