@@ -2888,6 +2888,44 @@ body::after {
   content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--acid);
 }
 
+/* Quantity stepper */
+.pm-ticket-row {
+  cursor: default !important;
+}
+.pm-ticket-row:hover { border-color: rgba(255,255,255,0.15) !important; }
+.pm-qty-row {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.pm-qty-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.18);
+  color: #fff; font-size: 18px; font-weight: 700; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+}
+.pm-qty-btn:hover:not(:disabled) { background: rgba(229,255,0,0.18); border-color: var(--acid); color: var(--acid); }
+.pm-qty-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.pm-qty-num {
+  font-size: 17px; font-weight: 800; min-width: 22px; text-align: center;
+}
+/* Subtotal row */
+.pm-ticket-subtotal {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; margin-bottom: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 13px; color: var(--text-mid);
+}
+.pm-ticket-subtotal strong { font-size: 17px; font-weight: 800; color: #fff; }
+/* ID-assignment notice */
+.pm-id-notice {
+  display: none; gap: 10px; align-items: flex-start;
+  padding: 13px 16px; margin-bottom: 14px;
+  background: rgba(229,255,0,0.05); border: 1px solid rgba(229,255,0,0.22);
+  border-radius: 12px; font-size: 13px; color: var(--text-mid); line-height: 1.55;
+}
+.pm-id-notice.visible { display: flex; }
+.pm-id-notice-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
 /* Step 2: DNI verification */
 .pm-verify-icon { font-size: 64px; text-align: center; margin-bottom: 20px; }
 .pm-verify-title { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 8px; }
@@ -4724,7 +4762,7 @@ body::after {
         </div>
 
         <!-- Card 2: VIP — Early Access -->
-        <div class="tk-card" onclick="pmOpen('Charlotte de Witte — Lima 2026');pmSelectTicket('vip','VIP','S/280',280)">
+        <div class="tk-card" onclick="pmOpen('Charlotte de Witte — Lima 2026');pmQtyChange('vip',1)">
           <div class="tk-card-inner tk-orange">
             <div>
               <div class="tk-card-type">VIP</div>
@@ -6379,8 +6417,69 @@ body::after {
      PURCHASE MODAL
      ═══════════════════════════════════════════ */
   let pmCurrentStep = 1;
-  let pmSelectedTicket = { id: 'ga', name: 'General Admission', price: 'S/120', amount: 120 };
   let pmSelectedPay = 'card';
+
+  // Ticket quantities & pricing
+  const pmTicketCatalog = {
+    ga:  { name: 'General Admission', price: 120 },
+    vip: { name: '👑 VIP',            price: 280 }
+  };
+  let pmTicketQty = { ga: 0, vip: 0 };
+
+  function pmQtyChange(id, delta) {
+    pmTicketQty[id] = Math.max(0, Math.min(6, (pmTicketQty[id] || 0) + delta));
+    document.getElementById('pm-qty-' + id).textContent = pmTicketQty[id];
+    document.getElementById('pm-minus-' + id).disabled = pmTicketQty[id] === 0;
+    pmUpdateQtyUI();
+  }
+
+  function pmUpdateQtyUI() {
+    let subtotal = 0, totalQty = 0;
+    for (const [id, qty] of Object.entries(pmTicketQty)) {
+      subtotal += qty * pmTicketCatalog[id].price;
+      totalQty += qty;
+    }
+    // Subtotal label
+    document.getElementById('pm-step1-subtotal').textContent = 'S/' + subtotal;
+    // Continue button
+    const btn = document.getElementById('pm-step1-continue');
+    btn.disabled = totalQty === 0;
+    btn.style.opacity = totalQty === 0 ? '0.4' : '1';
+    // ID notice
+    const notice = document.getElementById('pm-id-notice');
+    const noticeText = document.getElementById('pm-id-notice-text');
+    if (totalQty === 0) {
+      notice.classList.remove('visible');
+    } else if (totalQty === 1) {
+      notice.classList.add('visible');
+      noticeText.textContent = 'Tu entrada quedará vinculada a tu DNI en el siguiente paso.';
+    } else {
+      notice.classList.add('visible');
+      noticeText.textContent = `Comprarás ${totalQty} entradas. Solo verificas tu DNI ahora. Podrás asignar las entradas de tus acompañantes desde Mis Entradas después de la compra.`;
+    }
+    // Highlight rows that have qty > 0
+    for (const id of Object.keys(pmTicketQty)) {
+      const row = document.getElementById('pm-opt-' + id);
+      if (row) row.style.borderColor = pmTicketQty[id] > 0 ? 'var(--acid)' : '';
+    }
+  }
+
+  function pmBuildPaySummary() {
+    let subtotal = 0, totalQty = 0;
+    let html = '';
+    for (const [id, qty] of Object.entries(pmTicketQty)) {
+      if (qty === 0) continue;
+      const t = pmTicketCatalog[id];
+      const lineTotal = qty * t.price;
+      subtotal += lineTotal;
+      totalQty += qty;
+      html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>S/${lineTotal}</span></div>`;
+    }
+    const fee = totalQty * 10;
+    document.getElementById('pm-pay-items').innerHTML = html;
+    document.getElementById('pm-pay-fee').textContent = 'S/' + fee;
+    document.getElementById('pm-pay-total').textContent = 'S/' + (subtotal + fee);
+  }
   let pmVerifiedDni = '';
 
   let pmUserLoggedIn = false;   // flip to true after login mock
@@ -6388,13 +6487,22 @@ body::after {
 
   function pmOpen(eventLabel) {
     if (eventLabel) document.getElementById('pm-event-label').textContent = eventLabel;
+    // Reset quantities each time modal opens (unless pre-seeded by card click)
+    pmTicketQty = { ga: 0, vip: 0 };
+    for (const id of Object.keys(pmTicketCatalog)) {
+      const qEl = document.getElementById('pm-qty-' + id);
+      const mEl = document.getElementById('pm-minus-' + id);
+      if (qEl) qEl.textContent = '0';
+      if (mEl) mEl.disabled = true;
+    }
+    pmUpdateQtyUI();
     // Route based on auth state
     if (pmUserLoggedIn && pmUserDniVerified) {
-      pmGoStep(3); // skip straight to payment
+      pmGoStep(3);
     } else if (pmUserLoggedIn) {
-      pmGoStep(2); // already logged in, just verify DNI
+      pmGoStep(2);
     } else {
-      pmGoStep(0); // not logged in — show login first
+      pmGoStep(0);
     }
     document.getElementById('pm-overlay').classList.add('pm-open');
     document.body.style.overflow = 'hidden';
@@ -6407,12 +6515,6 @@ body::after {
 
   function pmOverlayClick(e) {
     if (e.target === document.getElementById('pm-overlay')) pmClose();
-  }
-
-  function pmSelectTicket(id, name, price, amount) {
-    pmSelectedTicket = { id, name, price, amount };
-    document.querySelectorAll('.pm-ticket-row:not(.soldout)').forEach(r => r.classList.remove('selected'));
-    document.getElementById('pm-opt-' + id).classList.add('selected');
   }
 
   function pmGoStep(step) {
@@ -6441,8 +6543,7 @@ body::after {
     document.getElementById('pm-step-title').textContent = titles[step] || '';
 
     if (step === 3) {
-      document.getElementById('pm-pay-ticket-name').textContent = pmSelectedTicket.name;
-      document.getElementById('pm-pay-total').textContent = 'S/' + (pmSelectedTicket.amount + 10);
+      pmBuildPaySummary();
     }
   }
 
@@ -6535,7 +6636,11 @@ body::after {
       btn.style.display = '';
       backBtn.style.display = '';
       // Show confirmation
-      document.getElementById('pm-confirm-ticket-name').textContent = pmSelectedTicket.name;
+      // Build confirm ticket label from qty
+      const confirmedParts = Object.entries(pmTicketQty)
+        .filter(([,q]) => q > 0)
+        .map(([id,q]) => q + '× ' + pmTicketCatalog[id].name.replace('👑 ',''));
+      document.getElementById('pm-confirm-ticket-name').textContent = confirmedParts.join(' + ') || 'Entrada';
       document.getElementById('pm-confirm-dni').textContent = pmVerifiedDni || '73XXXXXX';
       pmGoStep(4);
     }, 2000);
@@ -7322,37 +7427,61 @@ body::after {
 
       <!-- PANEL 1: Select ticket -->
       <div class="pm-panel active" id="pm-panel-1">
-        <div class="pm-ticket-row selected" id="pm-opt-ga" onclick="pmSelectTicket('ga', 'General Admission', 'S/120', 120)">
-          <div style="display:flex;align-items:center;gap:14px;flex:1">
-            <div class="pm-ticket-radio"></div>
-            <div>
-              <div class="pm-ticket-name">General Admission</div>
-              <div class="pm-ticket-sub">Early Access · 1 día</div>
+
+        <!-- GA row -->
+        <div class="pm-ticket-row" id="pm-opt-ga">
+          <div style="flex:1">
+            <div class="pm-ticket-name">General Admission</div>
+            <div class="pm-ticket-sub">Early Access · 1 día</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div class="pm-ticket-price" style="font-size:16px;">S/120</div>
+            <div class="pm-qty-row">
+              <button class="pm-qty-btn" id="pm-minus-ga" onclick="pmQtyChange('ga',-1)" disabled>−</button>
+              <span class="pm-qty-num" id="pm-qty-ga">0</span>
+              <button class="pm-qty-btn" id="pm-plus-ga" onclick="pmQtyChange('ga',1)">+</button>
             </div>
           </div>
-          <div class="pm-ticket-price">S/120</div>
         </div>
-        <div class="pm-ticket-row" id="pm-opt-vip" onclick="pmSelectTicket('vip', 'VIP', 'S/280', 280)">
-          <div style="display:flex;align-items:center;gap:14px;flex:1">
-            <div class="pm-ticket-radio"></div>
-            <div>
-              <div class="pm-ticket-name">👑 VIP</div>
-              <div class="pm-ticket-sub">Early Access · 1 día · Bar open + zona exclusiva</div>
+
+        <!-- VIP row -->
+        <div class="pm-ticket-row" id="pm-opt-vip">
+          <div style="flex:1">
+            <div class="pm-ticket-name">👑 VIP</div>
+            <div class="pm-ticket-sub">Early Access · 1 día · Bar open + zona exclusiva</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div class="pm-ticket-price" style="font-size:16px;">S/280</div>
+            <div class="pm-qty-row">
+              <button class="pm-qty-btn" id="pm-minus-vip" onclick="pmQtyChange('vip',-1)" disabled>−</button>
+              <span class="pm-qty-num" id="pm-qty-vip">0</span>
+              <button class="pm-qty-btn" id="pm-plus-vip" onclick="pmQtyChange('vip',1)">+</button>
             </div>
           </div>
-          <div class="pm-ticket-price">S/280</div>
         </div>
-        <div class="pm-ticket-row soldout" onclick="return false">
-          <div style="display:flex;align-items:center;gap:14px;flex:1">
-            <div class="pm-ticket-radio"></div>
-            <div>
-              <div class="pm-ticket-name">Festival Pass (2 días)</div>
-              <div class="pm-ticket-sub">Preventa — Agotado</div>
-            </div>
+
+        <!-- Festival Pass (soldout) -->
+        <div class="pm-ticket-row soldout">
+          <div style="flex:1">
+            <div class="pm-ticket-name">Festival Pass (2 días)</div>
+            <div class="pm-ticket-sub">Preventa — Agotado</div>
           </div>
           <div class="pm-ticket-price" style="color:rgba(255,255,255,0.3);font-size:14px">AGOTADO</div>
         </div>
-        <button class="pm-cta" onclick="pmGoStep(2)">Continuar →</button>
+
+        <!-- Subtotal row -->
+        <div class="pm-ticket-subtotal">
+          <span>Subtotal</span>
+          <strong id="pm-step1-subtotal">S/0</strong>
+        </div>
+
+        <!-- ID assignment notice -->
+        <div class="pm-id-notice" id="pm-id-notice">
+          <span class="pm-id-notice-icon">🪪</span>
+          <span id="pm-id-notice-text">Tu entrada quedará vinculada a tu DNI en el siguiente paso.</span>
+        </div>
+
+        <button class="pm-cta" id="pm-step1-continue" onclick="pmGoStep(2)" disabled style="opacity:0.4;">Continuar →</button>
       </div>
 
       <!-- PANEL 2: DNI verification -->
@@ -7372,8 +7501,8 @@ body::after {
       <!-- PANEL 3: Payment -->
       <div class="pm-panel" id="pm-panel-3">
         <div class="pm-pay-summary">
-          <div class="pm-pay-row"><span>Ticket</span><span id="pm-pay-ticket-name">General Admission</span></div>
-          <div class="pm-pay-row"><span>Cargo por servicio</span><span>S/10</span></div>
+          <div id="pm-pay-items"><!-- filled by pmUpdatePaySummary() --></div>
+          <div class="pm-pay-row"><span>Cargo por servicio</span><span id="pm-pay-fee">S/10</span></div>
           <div class="pm-pay-row total"><span>Total</span><span id="pm-pay-total">S/130</span></div>
         </div>
         <div class="pm-card-row">
