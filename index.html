@@ -684,6 +684,53 @@ body::after {
 /* ═══════════════════════════════════════════
    FOOTER (shared)
    ═══════════════════════════════════════════ */
+/* Standards teaser pill */
+.std-teaser {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 13px 20px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; cursor: pointer; transition: all 0.2s;
+  max-width: 640px; margin: 0 auto 40px;
+}
+.std-teaser:hover { background: rgba(229,255,0,0.05); border-color: rgba(229,255,0,0.3); }
+.std-teaser-left { display: flex; align-items: center; gap: 12px; }
+.std-teaser-icon {
+  font-size: 22px; width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(229,255,0,0.1); display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.std-teaser-text { font-size: 14px; font-weight: 600; color: var(--text-mid); line-height: 1.4; }
+.std-teaser-text strong { color: #fff; display: block; font-size: 15px; }
+.std-teaser-arrow { font-size: 16px; color: var(--acid); flex-shrink: 0; transition: transform 0.2s; }
+.std-teaser:hover .std-teaser-arrow { transform: translateX(4px); }
+
+/* Compromisos section */
+.cf-compromisos {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 40px;
+}
+.cf-compromiso {
+  padding: 24px 24px; background: var(--bg-raised);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
+  transition: border-color 0.2s;
+}
+.cf-compromiso:hover { border-color: rgba(229,255,0,0.25); }
+.cf-compromiso-num {
+  font-size: 11px; font-weight: 800; letter-spacing: 2px;
+  color: var(--acid); margin-bottom: 12px; opacity: 0.7;
+}
+.cf-compromiso h4 {
+  font-size: 17px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.2px;
+}
+.cf-compromiso p { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+.cf-compromiso-badge {
+  display: inline-block; margin-top: 12px; padding: 3px 10px;
+  background: rgba(229,255,0,0.1); border-radius: 20px;
+  font-size: 11px; font-weight: 700; color: var(--acid); letter-spacing: 0.5px;
+}
+/* Cap highlight — the specific % number */
+.cf-compromiso .cap { color: var(--acid); font-weight: 800; }
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 48px 48px;
@@ -2596,6 +2643,9 @@ body::after {
   .cf-step-num { text-align: center; }
   .cf-compare { grid-template-columns: 1fr; }
   .cf-compare-new { border-left: none; border-top: 3px solid var(--acid); }
+  .cf-compromisos { grid-template-columns: 1fr; }
+  .std-teaser { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .std-teaser-arrow { display: none; }
   .cf-btns { flex-direction: column; align-items: center; }
   .cf-cta { text-align: center; }
 
@@ -3806,6 +3856,18 @@ body::after {
       <p>Cada entrada en Lezgo está vinculada a tu DNI, carnet de extranjería o pasaporte.<br>Escanea tu identificación en la puerta y entra. Cero fraude.</p>
     </div>
 
+    <!-- Standards teaser -->
+    <div class="std-teaser" onclick="go('como');setTimeout(()=>document.getElementById('cf-compromisos')?.scrollIntoView({behavior:'smooth',block:'start'}),120)">
+      <div class="std-teaser-left">
+        <div class="std-teaser-icon">📋</div>
+        <div class="std-teaser-text">
+          <strong>Estándares Lezgo para fans</strong>
+          Cargos transparentes, cap de reventa, sin datos vendidos. Conoce nuestros compromisos →
+        </div>
+      </div>
+      <span class="std-teaser-arrow">→</span>
+    </div>
+
     <!-- Próximos Eventos -->
     <div class="section-head">
       <h2 class="section-title">Próximos eventos</h2>
@@ -4240,6 +4302,58 @@ body::after {
         🎉 <strong>Estás dentro.</strong> Te avisamos en cuanto lancemos.
       </div>
       <div class="cf-email-note">Sin spam. Solo cuando importe.</div>
+    </div>
+  </section>
+
+  <!-- Nuestros Compromisos -->
+  <section class="cf-section" id="cf-compromisos" style="border-top:1px solid var(--border);">
+    <div class="cf-section-label">// Para los fans</div>
+    <h2 class="cf-section-title">Nuestros compromisos<br>con <span style="color:var(--acid);">los fans.</span></h2>
+    <p class="cf-section-text">El ticketing en Perú lleva años siendo opaco, caro y fácil de estafar. Acá están, en negro sobre blanco, las reglas con las que operamos.</p>
+    <div class="cf-compromisos">
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">01 — CARGOS</div>
+        <h4>Cargos 100% transparentes</h4>
+        <p>Nunca verás un "cargo por servicio" sin saber a dónde va cada sol. Desglosamos plataforma, verificación y procesamiento por separado. Sin letra chica.</p>
+        <span class="cf-compromiso-badge">∼8% cargo total</span>
+      </div>
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">02 — REVENTA</div>
+        <h4>Cap de precio en el marketplace</h4>
+        <p>Ninguna entrada puede revenderse por más de <span class="cap">20% sobre el precio original</span>. Lo que pagaste en taquilla es lo que pagarás en reventa. Sin scalpers.</p>
+        <span class="cf-compromiso-badge">Máx. +20% en P2P</span>
+      </div>
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">03 — PRIVACIDAD</div>
+        <h4>Tu data no se vende. Nunca.</h4>
+        <p>Tu DNI y datos personales se usan exclusivamente para verificar tu identidad en la compra y en puerta. No los vendemos a marcas, promotores ni terceros. Punto.</p>
+        <span class="cf-compromiso-badge">Datos solo para verificar</span>
+      </div>
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">04 — ANTI-SCALPING</div>
+        <h4>Un DNI, una entrada</h4>
+        <p>Cada entrada está atada a un documento real. Un revendedor no puede comprar 50 entradas sin 50 identidades verificadas ante RENIEC. Anti-scalping by design, no una promesa vacía.</p>
+        <span class="cf-compromiso-badge">Verificado con RENIEC</span>
+      </div>
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">05 — SOPORTE</div>
+        <h4>Soporte real en menos de 24h</h4>
+        <p>Si algo sale mal — pago duplicado, error de verificación, entrada que no aparece — respondemos en menos de <span class="cap">24 horas</span>. Una persona, no un bot.</p>
+        <span class="cf-compromiso-badge">Respuesta &lt;24h</span>
+      </div>
+
+      <div class="cf-compromiso">
+        <div class="cf-compromiso-num">06 — ESTÁNDARES</div>
+        <h4>Seguimos a RA, no a Teleticket</h4>
+        <p>Nos alineamos con los estándares de Resident Advisor y Dice.fm: fees declarados, política de reembolso publicada, sin cambios de precio sorpresa. Si ellos lo hacen bien, nosotros también.</p>
+        <span class="cf-compromiso-badge">Estándares internacionales</span>
+      </div>
+
     </div>
   </section>
 
