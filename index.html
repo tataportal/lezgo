@@ -1321,18 +1321,18 @@ body::after {
   backdrop-filter: blur(10px);
 }
 
-/* Checkmark + features below cards */
+/* Checkmark + features below cards — 2×2 grid */
 .tk-features {
-  display: flex; gap: 40px; margin-top: 48px;
-  padding-top: 32px; border-top: 1px solid var(--border);
-  flex-wrap: wrap;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);
 }
 .tk-feature {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 14px; color: var(--text-mid);
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px; font-weight: 600; color: var(--text-mid);
+  background: var(--bg-raised); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 14px 16px;
 }
 .tk-feature svg { width: 18px; height: 18px; color: var(--acid); flex-shrink: 0; }
-.tk-feature:first-child::before, .tk-feature::before { content: ''; }
 
 /* Event info section */
 .ev-info-section {
@@ -1347,13 +1347,20 @@ body::after {
   font-size: 17px; color: var(--text-mid); line-height: 1.7;
 }
 .ev-lineup-list {
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 0;
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; overflow: hidden;
 }
 .ev-lineup-item {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 20px; background: var(--bg-raised); border: 1px solid var(--border);
+  padding: 14px 20px; background: var(--bg-raised);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   font-size: 14px; font-weight: 600;
+  border-left: 3px solid transparent;
+  transition: background 0.15s;
 }
+.ev-lineup-item:last-child { border-bottom: none; }
+.ev-lineup-item.headliner { border-left-color: var(--acid); background: rgba(229,255,0,0.04); }
+.ev-lineup-item:hover { background: rgba(255,255,255,0.06); }
 .ev-lineup-time { color: var(--acid); font-size: 13px; }
 
 /* ═══════════════════════════════════════════
@@ -4794,7 +4801,7 @@ body::after {
         <div class="ev-lineup-list">
           <div class="ev-lineup-item"><span>Local Warm-Up</span><span class="ev-lineup-time">21:00</span></div>
           <div class="ev-lineup-item"><span>Indira Paganotto</span><span class="ev-lineup-time">23:00</span></div>
-          <div class="ev-lineup-item"><span>Charlotte de Witte</span><span class="ev-lineup-time">01:00</span></div>
+          <div class="ev-lineup-item headliner"><span>Charlotte de Witte</span><span class="ev-lineup-time">01:00</span></div>
           <div class="ev-lineup-item"><span>Amelie Lens</span><span class="ev-lineup-time">03:00</span></div>
           <div class="ev-lineup-item"><span>Closing Set</span><span class="ev-lineup-time">04:30</span></div>
         </div>
