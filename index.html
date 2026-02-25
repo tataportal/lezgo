@@ -784,6 +784,35 @@ body::after {
   margin-bottom: 24px;
 }
 
+/* Mechanics grid (2x3) */
+.pp-mechanics-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin-top: 48px; max-width: 900px; margin-left: auto; margin-right: auto;
+  text-align: left;
+}
+.pp-mech-card {
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 24px;
+  transition: border-color 0.2s;
+}
+.pp-mech-card:hover { border-color: rgba(229,255,0,0.3); }
+.pp-mech-tag {
+  display: inline-block; border: 1px solid var(--acid); color: var(--acid);
+  padding: 3px 10px; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+  border-radius: 4px;
+}
+.pp-mech-card h3 {
+  font-size: 18px; font-weight: 800; margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+.pp-mech-card p {
+  font-size: 14px; color: var(--text-mid); line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .pp-mechanics-grid { grid-template-columns: 1fr; }
+}
+
 /* Dashboard mock */
 .pp-dashboard-mock {
   background: var(--bg-raised); border: 1px solid var(--border);
@@ -839,21 +868,23 @@ body::after {
 .pp-revenue-box {
   background: var(--bg-raised); border: 1px solid var(--border);
   border-radius: 16px; padding: 32px;
-  margin: 40px auto; max-width: 600px;
+  margin: 40px auto; max-width: 600px; text-align: left;
 }
 .pp-rev-bars { display: flex; flex-direction: column; gap: 16px; }
 .pp-rev-item { display: flex; align-items: center; gap: 16px; }
 .pp-rev-label {
-  font-size: 13px; color: var(--text-mid); min-width: 100px; text-align: right;
+  font-size: 13px; color: var(--text-mid); min-width: 140px; text-align: right;
 }
 .pp-rev-bar {
   flex: 1; height: 32px; background: rgba(255,255,255,0.04);
-  border-radius: 8px; overflow: hidden; position: relative;
+  border-radius: 8px; position: relative;
+  display: flex; align-items: center;
 }
 .pp-rev-fill {
   height: 100%; border-radius: 8px;
-  display: flex; align-items: center; padding-left: 12px;
-  font-size: 13px; font-weight: 700; color: #0A0A0A;
+}
+.pp-rev-bar span {
+  margin-left: 12px; font-size: 13px; font-weight: 700; color: var(--text-mid);
 }
 
 /* Responsive: dashboard + resale */
@@ -4460,46 +4491,36 @@ body::after {
     <div class="cf-section-label">// Mecánicas de venta</div>
     <h2 class="cf-section-title">Elige cómo<br><span style="color:var(--acid);">vender tus entradas.</span></h2>
     <p class="cf-section-text" style="margin:0 auto;">Cada evento es diferente. Elige la mecánica que mejor funcione para tu audiencia.</p>
-    <div class="cf-steps">
-      <div class="cf-step">
-        <div class="cf-step-num">01</div>
-        <div>
-          <h3>Cola virtual tradicional</h3>
-          <p>First-come, first-served. Los fans se alinean en orden y compran en tiempo real. La mecánica clásica que todos conocen.</p>
-          <div class="cf-step-tag">FCFS</div>
-        </div>
+    <div class="pp-mechanics-grid">
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">FCFS</div>
+        <h3>Cola virtual tradicional</h3>
+        <p>First-come, first-served. Los fans hacen fila en orden y compran en tiempo real.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">02</div>
-        <div>
-          <h3>Cola virtual aleatoria</h3>
-          <p>Todos los fans registrados tienen la misma probabilidad de entrar. Elimina la ventaja de bots y conexiones rápidas.</p>
-          <div class="cf-step-tag">RANDOM</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">RANDOM</div>
+        <h3>Cola virtual aleatoria</h3>
+        <p>Todos tienen la misma probabilidad. Elimina la ventaja de bots y conexiones rápidas.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">03</div>
-        <div>
-          <h3>Preferencia para leales</h3>
-          <p>Los fans con badges de eventos anteriores acceden primero a la compra. Premia a quien realmente apoya tu escena.</p>
-          <div class="cf-step-tag">LOYALTY</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">LOYALTY</div>
+        <h3>Preferencia para leales</h3>
+        <p>Fans con badges acceden primero a la compra. Premia a quien realmente apoya tu escena.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">04</div>
-        <div>
-          <h3>Subasta holandesa</h3>
-          <p>El precio empieza alto y baja gradualmente. Los fans compran cuando el precio les parece justo. Maximiza revenue y genera expectativa.</p>
-          <div class="cf-step-tag">DUTCH AUCTION</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">DUTCH AUCTION</div>
+        <h3>Subasta holandesa</h3>
+        <p>El precio empieza alto y baja gradualmente. Los fans compran cuando les parece justo.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">05</div>
-        <div>
-          <h3>Mecánicas custom</h3>
-          <p>Drops sorpresa, collabs con artistas, acceso por invitación. Si tienes una idea, la hacemos realidad.</p>
-          <div class="cf-step-tag">CUSTOM</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">DROPS</div>
+        <h3>Lanzamientos por oleadas</h3>
+        <p>Libera entradas en fechas específicas. Genera urgencia y controla el flujo de venta.</p>
+      </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">CUSTOM</div>
+        <h3>Mecánicas custom</h3>
+        <p>Collabs con artistas, acceso por invitación, preventas exclusivas. Tu idea, tu mecánica.</p>
       </div>
     </div>
   </section>
@@ -4595,30 +4616,21 @@ body::after {
     </div>
 
     <!-- Control features -->
-    <div class="cf-steps" style="margin-top:48px;">
-      <div class="cf-step">
-        <div class="cf-step-num">01</div>
-        <div>
-          <h3>Topes de precio en reventa</h3>
-          <p>Tú defines el precio máximo de reventa por categoría. Ejemplo: máx. +20% sobre el original. Evita scalping masivo.</p>
-          <div class="cf-step-tag">PRICE CAP</div>
-        </div>
+    <div class="pp-mechanics-grid" style="margin-top:48px;grid-template-columns:repeat(3,1fr);">
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">PRICE CAP</div>
+        <h3>Topes de precio</h3>
+        <p>Tú defines el precio máximo de reventa por categoría. Evita scalping masivo.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">02</div>
-        <div>
-          <h3>Límites de cambio de nombre</h3>
-          <p>Define cuántas veces un boleto puede cambiar de dueño. Previene ciclos infinitos de especulación. Tú tienes el control.</p>
-          <div class="cf-step-tag">TRANSFER LIMIT</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">TRANSFER LIMIT</div>
+        <h3>Límites de transferencia</h3>
+        <p>Define cuántas veces un boleto puede cambiar de dueño. Previene especulación.</p>
       </div>
-      <div class="cf-step">
-        <div class="cf-step-num">03</div>
-        <div>
-          <h3>Scanner y verificación en puerta</h3>
-          <p>Tu staff escanea el DNI del asistente. Lezgo verifica que coincida con el dueño del boleto en tiempo real. Cero fraude.</p>
-          <div class="cf-step-tag">ID VERIFICATION</div>
-        </div>
+      <div class="pp-mech-card">
+        <div class="pp-mech-tag">ID VERIFICATION</div>
+        <h3>Scanner en puerta</h3>
+        <p>Tu staff escanea el ID del asistente. Lezgo verifica en tiempo real. Cero fraude.</p>
       </div>
     </div>
   </section>
