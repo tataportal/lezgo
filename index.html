@@ -184,15 +184,23 @@ body::after {
   transform: scale(1.02);
   animation: hero-breathe 8s ease-in-out infinite;
 }
-.hero-video {
+.hero-video-wrap {
   position: absolute;
   inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  filter: brightness(0.80) saturate(1.3) contrast(1.1);
-  transform: scale(1.02);
-  animation: hero-breathe 8s ease-in-out infinite;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-video-wrap iframe {
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100%;
+  min-width: 177.77vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: brightness(0.45) saturate(1.3) contrast(1.1);
 }
 @keyframes hero-breathe {
   0%, 100% { transform: scale(1.02); }
@@ -1208,10 +1216,25 @@ body::after {
 .ev-hero-img {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
+  overflow: hidden;
 }
 .ev-hero-img::after {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,1) 100%);
+}
+.ev-hero-video-wrap {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none; z-index: 0;
+}
+.ev-hero-video-wrap iframe {
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100%;
+  min-width: 177.77vh;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  filter: brightness(0.55) saturate(1.3) contrast(1.1);
 }
 .ev-hero-content {
   position: relative; z-index: 2;
@@ -3757,9 +3780,9 @@ body::after {
 
   <!-- Hero -->
   <section class="hero" id="home-hero">
-    <video class="hero-video" autoplay muted loop playsinline>
-      <source src="hero-bg.mp4" type="video/mp4">
-    </video>
+    <div class="hero-video-wrap">
+      <iframe src="https://www.youtube.com/embed/yIFUKf3I3sU?autoplay=1&mute=1&loop=1&playlist=yIFUKf3I3sU&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
     <div class="hero-gradient"></div>
     <div class="hero-content">
       <div class="hero-badge">Destacado</div>
@@ -4837,7 +4860,11 @@ body::after {
 
     <!-- Event Hero -->
     <section class="ev-hero">
-      <div class="ev-hero-img" style="background-image:url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80');"></div>
+      <div class="ev-hero-img" style="background-image:url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80');">
+        <div class="ev-hero-video-wrap">
+          <iframe src="https://www.youtube.com/embed/yIFUKf3I3sU?autoplay=1&mute=1&loop=1&playlist=yIFUKf3I3sU&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&start=90" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+        </div>
+      </div>
       <div class="ev-hero-content">
         <div class="ev-hero-back" onclick="go('eventos')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
