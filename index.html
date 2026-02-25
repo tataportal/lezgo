@@ -771,6 +771,98 @@ body::after {
   border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--acid);
 }
 
+/* ═══════════════════════════════════════════
+   PROMOTORES — Phase tags, dashboard, resale flow
+   ═══════════════════════════════════════════ */
+.pp-phase-tag {
+  display: inline-block; padding: 4px 14px;
+  background: rgba(229,255,0,0.1); border: 1px solid rgba(229,255,0,0.2);
+  border-radius: 20px; font-size: 11px; font-weight: 700;
+  color: var(--acid); letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+/* Dashboard mock */
+.pp-dashboard-mock {
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px;
+  margin: 40px auto; max-width: 900px;
+}
+.pp-dash-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-bottom: 16px;
+}
+.pp-dash-row:last-child { margin-bottom: 0; }
+.pp-dash-stat {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 16px; text-align: center;
+}
+.pp-dash-num {
+  font-size: 28px; font-weight: 800; color: var(--acid);
+  letter-spacing: -1px; margin-bottom: 4px;
+}
+.pp-dash-label {
+  font-size: 11px; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Resale flow diagram */
+.pp-resale-flow {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+  padding: 40px 24px; margin: 40px auto; max-width: 800px;
+}
+.pp-flow-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; min-width: 100px;
+}
+.pp-flow-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--bg-raised); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.pp-flow-text {
+  font-size: 12px; color: var(--text-mid); text-align: center;
+  max-width: 100px;
+}
+.pp-flow-arrow {
+  font-size: 24px; color: var(--acid); font-weight: 700;
+}
+.pp-flow-highlight {
+  color: var(--acid); font-weight: 700;
+}
+
+/* Revenue share box */
+.pp-revenue-box {
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px;
+  margin: 40px auto; max-width: 600px;
+}
+.pp-rev-bars { display: flex; flex-direction: column; gap: 16px; }
+.pp-rev-item { display: flex; align-items: center; gap: 16px; }
+.pp-rev-label {
+  font-size: 13px; color: var(--text-mid); min-width: 100px; text-align: right;
+}
+.pp-rev-bar {
+  flex: 1; height: 32px; background: rgba(255,255,255,0.04);
+  border-radius: 8px; overflow: hidden; position: relative;
+}
+.pp-rev-fill {
+  height: 100%; border-radius: 8px;
+  display: flex; align-items: center; padding-left: 12px;
+  font-size: 13px; font-weight: 700; color: #0A0A0A;
+}
+
+/* Responsive: dashboard + resale */
+@media (max-width: 768px) {
+  .pp-dash-row { grid-template-columns: repeat(2, 1fr); }
+  .pp-resale-flow { flex-direction: column; }
+  .pp-flow-arrow { transform: rotate(90deg); }
+  .pp-rev-item { flex-direction: column; align-items: stretch; gap: 4px; }
+  .pp-rev-label { text-align: left; min-width: unset; }
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 48px 48px;
@@ -3724,9 +3816,9 @@ body::after {
     <div class="nav-logo" onclick="go('eventos')">LEZGO</div>
     <div class="nav-categories">
       <div class="nav-cat active" onclick="go('eventos')" data-es="Eventos" data-en="Events">Eventos</div>
-      <div class="nav-cat" onclick="go('como')" data-es="Cómo Funciona" data-en="How It Works">Cómo Funciona</div>
+      <div class="nav-cat" onclick="go('asistentes')" data-es="Para Asistentes" data-en="For Attendees">Para Asistentes</div>
+      <div class="nav-cat" onclick="go('promotores')" data-es="Para Promotores" data-en="For Promoters">Para Promotores</div>
       <div class="nav-cat" onclick="go('marketplace')" data-es="Marketplace" data-en="Marketplace">Marketplace</div>
-      <div class="nav-cat" onclick="go('scanner')" data-es="Scanner" data-en="Scanner">Scanner</div>
       <div class="nav-cat" onclick="go('deck')" data-es="Deck" data-en="Deck">Deck</div>
     </div>
     <div class="nav-right">
@@ -4060,9 +4152,9 @@ body::after {
 
 
 <!-- ═══════════════════════════════════════════
-     VIEW 2: CÓMO FUNCIONA
+     VIEW 2A: PARA ASISTENTES
      ═══════════════════════════════════════════ -->
-<div id="v-como" class="view">
+<div id="v-asistentes" class="view">
 
   <!-- Hero con Fake vs Real -->
   <section class="cf-hero" id="cf-hero">
@@ -4222,81 +4314,31 @@ body::after {
     </div>
   </section>
 
-  <!-- Para Promotores -->
+  <!-- Badges y Recompensas -->
   <section class="cf-section" style="border-top:1px solid var(--border);">
-    <div class="cf-section-label">// Para Promotores y Productoras</div>
-    <h2 class="cf-section-title">Tu evento,<br><span style="color:var(--acid);">protegido.</span></h2>
-    <p class="cf-section-text">Herramientas que ninguna otra plataforma en LATAM ofrece.</p>
-    <div class="cf-steps">
-      <div class="cf-step">
-        <div class="cf-step-num">01</div>
-        <div>
-          <h3>Anti-fraude nativo</h3>
-          <p>Cada entrada vinculada al DNI del comprador. Eliminamos la falsificación de raíz.</p>
-          <div class="cf-step-tag">VERIFICACIÓN</div>
-        </div>
-      </div>
-      <div class="cf-step">
-        <div class="cf-step-num">02</div>
-        <div>
-          <h3>Revenue en reventa</h3>
-          <p>Cuando un fan revende, el promotor recibe un % automático de la transacción. Monetiza lo que antes era informal.</p>
-          <div class="cf-step-tag">MONETIZACIÓN</div>
-        </div>
-      </div>
-      <div class="cf-step">
-        <div class="cf-step-num">03</div>
-        <div>
-          <h3>Data de tu audiencia</h3>
-          <p>Dashboard con métricas en tiempo real: perfiles verificados, tendencias de compra, tasa de reventa.</p>
-          <div class="cf-step-tag">ANALYTICS</div>
-        </div>
-      </div>
-      <div class="cf-step">
-        <div class="cf-step-num">04</div>
-        <div>
-          <h3>Loyalty para fans</h3>
-          <p>Tus asistentes acumulan rewards por evento y se convierten en embajadores de tu marca.</p>
-          <div class="cf-step-tag" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;" onclick="go('perfil')">FIDELIZACIÓN →</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="cf-section" style="border-top:1px solid var(--border);">
-    <div class="cf-section-label">// Funcionalidades</div>
-    <h2 class="cf-section-title">Todo lo que necesitas.<br><span style="color:var(--acid);">Nada que no.</span></h2>
+    <div class="cf-section-label">// Recompensas</div>
+    <h2 class="cf-section-title">Mientras más vas,<br><span style="color:var(--acid);">más ganas.</span></h2>
+    <p class="cf-section-text">Cada evento que asistes cuenta. Acumula badges, desbloquea beneficios y accede antes que nadie.</p>
     <div class="cf-features">
       <div class="cf-feature">
-        <div class="cf-feature-icon">🪪</div>
-        <h3>Verificación con DNI / Pasaporte</h3>
-        <p>Cada entrada vinculada a tu documento de identidad. Imposible duplicar, imposible falsificar.</p>
+        <div class="cf-feature-icon">🏆</div>
+        <h3>Badges por asistencia</h3>
+        <p>Cada evento te da un badge único. Tu perfil se convierte en tu historial musical verificado.</p>
+      </div>
+      <div class="cf-feature">
+        <div class="cf-feature-icon">⚡</div>
+        <h3>Acceso anticipado</h3>
+        <p>Los fans con más badges entran primero a la preventa. Tu lealtad se premia con prioridad real.</p>
+      </div>
+      <div class="cf-feature">
+        <div class="cf-feature-icon">💎</div>
+        <h3>Perks exclusivos</h3>
+        <p>Descuentos, upgrades de zona y merch exclusivo para los más fieles. Sin sorteos — lo ganas asistiendo.</p>
       </div>
       <div class="cf-feature">
         <div class="cf-feature-icon">🔄</div>
-        <h3>Reventa P2P transparente</h3>
-        <p>Marketplace integrado para reventa entre fans verificados. Precios visibles, transacciones seguras.</p>
-      </div>
-      <div class="cf-feature">
-        <div class="cf-feature-icon">🚫</div>
-        <h3>Sin QR codes</h3>
-        <p>Adiós a los screenshots y QR falsos. En la puerta escaneas tu documento físico y entras.</p>
-      </div>
-      <div class="cf-feature">
-        <div class="cf-feature-icon">🏆</div>
-        <h3>Badges y Rewards</h3>
-        <p>Colecciona badges por cada evento. Season Passes exclusivos. Tu perfil es tu historial musical.</p>
-      </div>
-      <div class="cf-feature">
-        <div class="cf-feature-icon">📊</div>
-        <h3>Dashboard para Productoras</h3>
-        <p>Métricas en tiempo real, data de audiencia, control de revenue share en mercado secundario.</p>
-      </div>
-      <div class="cf-feature">
-        <div class="cf-feature-icon">👻</div>
-        <h3>Tecnología invisible</h3>
-        <p>Toda la verificación en segundo plano. El usuario solo ve simplicidad: compra, escanea ID, entra.</p>
+        <h3>Reventa sin riesgo</h3>
+        <p>¿No puedes ir? Publica tu entrada en el marketplace. Otro fan verificado la compra y se revincula a su DNI.</p>
       </div>
     </div>
   </section>
@@ -4404,6 +4446,258 @@ body::after {
         <span class="cf-compromiso-badge">Estándares internacionales</span>
       </div>
 
+    </div>
+  </section>
+
+  <div class="site-footer">
+    <div class="site-footer-logo">LEZGO</div>
+    <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     VIEW 2B: PARA PROMOTORES
+     ═══════════════════════════════════════════ -->
+<div id="v-promotores" class="view">
+
+  <!-- Hero Promotor -->
+  <section class="cf-hero" style="min-height:auto;padding:100px 48px 60px;">
+    <div class="cf-glow cf-glow-1"></div>
+    <div class="cf-glow cf-glow-2"></div>
+    <div style="max-width:800px;margin:0 auto;text-align:center;">
+      <div class="cf-hero-badge">PARA ORGANIZADORES Y PRODUCTORAS</div>
+      <h1 style="font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:20px;">
+        <span class="outline">TU EVENTO</span><br>
+        <span class="acid-text">TUS REGLAS</span>
+      </h1>
+      <p class="cf-hero-text" style="max-width:560px;margin:0 auto 32px;">Control total sobre la creación, venta y reventa de tus boletos. Desde el contrato inicial hasta el escaneo en puerta.</p>
+      <div class="cf-btns">
+        <button class="btn-acid" onclick="go('organizer')">Crear evento →</button>
+        <button class="btn-border" onclick="go('asistentes')">¿Cómo funciona para fans?</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FASE 1: PRE-LANZAMIENTO ═══ -->
+  <section class="cf-section">
+    <div class="pp-phase-tag">PRE-LANZAMIENTO</div>
+    <div class="cf-section-label">// Antes de vender</div>
+    <h2 class="cf-section-title">Configura todo<br><span style="color:var(--acid);">desde el inicio.</span></h2>
+    <p class="cf-section-text">El contrato inicial de tus boletos define las reglas del juego: cantidades, precios, límites y más.</p>
+    <div class="dk-how-grid">
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-1">
+          <div class="dk-how-num">01</div>
+          <div class="dk-how-logo">📋</div>
+          <h3>Crea tu<br>evento</h3>
+          <div class="dk-how-tooltip">Setup rápido →</div>
+        </div>
+        <div class="dk-how-desc">Nombre, fecha, ubicación, lineup, descripción. Sin formularios eternos. En minutos queda listo.</div>
+      </div>
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-2">
+          <div class="dk-how-num">02</div>
+          <div class="dk-how-logo">🎫</div>
+          <h3>Define tus<br>boletos</h3>
+          <div class="dk-how-tooltip">Control total →</div>
+        </div>
+        <div class="dk-how-desc">Cantidades por categoría, precio base, máximo por persona, fechas de drops. Tú decides todo en el contrato inicial.</div>
+      </div>
+      <div class="dk-how-card">
+        <div class="dk-how-inner dk-grad-3">
+          <div class="dk-how-num">03</div>
+          <div class="dk-how-logo">🎨</div>
+          <h3>Página<br>del evento</h3>
+          <div class="dk-how-tooltip">Tu marca →</div>
+        </div>
+        <div class="dk-how-desc">Landing personalizada con tu branding, imágenes y descripción. Lista para compartir y vender desde el primer momento.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FASE 2: LANZAMIENTO ═══ -->
+  <section class="cf-section" style="border-top:1px solid var(--border);">
+    <div class="pp-phase-tag">LANZAMIENTO</div>
+    <div class="cf-section-label">// Mecánicas de venta</div>
+    <h2 class="cf-section-title">Elige cómo<br><span style="color:var(--acid);">vender tus entradas.</span></h2>
+    <p class="cf-section-text">Cada evento es diferente. Elige la mecánica que mejor funcione para tu audiencia.</p>
+    <div class="cf-steps">
+      <div class="cf-step">
+        <div class="cf-step-num">01</div>
+        <div>
+          <h3>Cola virtual tradicional</h3>
+          <p>First-come, first-served. Los fans se alinean en orden y compran en tiempo real. La mecánica clásica que todos conocen.</p>
+          <div class="cf-step-tag">FCFS</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">02</div>
+        <div>
+          <h3>Cola virtual aleatoria</h3>
+          <p>Todos los fans registrados tienen la misma probabilidad de entrar. Elimina la ventaja de bots y conexiones rápidas.</p>
+          <div class="cf-step-tag">RANDOM</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">03</div>
+        <div>
+          <h3>Preferencia para leales</h3>
+          <p>Los fans con badges de eventos anteriores acceden primero a la compra. Premia a quien realmente apoya tu escena.</p>
+          <div class="cf-step-tag">LOYALTY</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">04</div>
+        <div>
+          <h3>Subasta holandesa</h3>
+          <p>El precio empieza alto y baja gradualmente. Los fans compran cuando el precio les parece justo. Maximiza revenue y genera expectativa.</p>
+          <div class="cf-step-tag">DUTCH AUCTION</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">05</div>
+        <div>
+          <h3>Mecánicas custom</h3>
+          <p>Drops sorpresa, collabs con artistas, acceso por invitación. Si tienes una idea, la hacemos realidad.</p>
+          <div class="cf-step-tag">CUSTOM</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="cf-section" style="border-top:1px solid var(--border);">
+    <div class="cf-section-label">// Dashboard en tiempo real</div>
+    <h2 class="cf-section-title">Todo tu evento<br><span style="color:var(--acid);">en una pantalla.</span></h2>
+    <p class="cf-section-text">Mientras se venden las entradas, tú ves todo en vivo.</p>
+    <div class="pp-dashboard-mock">
+      <div class="pp-dash-row">
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num" style="color:var(--acid);">847</div>
+          <div class="pp-dash-label">Boletos vendidos</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num">1,200</div>
+          <div class="pp-dash-label">Capacidad total</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num" style="color:var(--green);">70.6%</div>
+          <div class="pp-dash-label">Ocupación</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num">S/76,230</div>
+          <div class="pp-dash-label">Revenue bruto</div>
+        </div>
+      </div>
+      <div class="pp-dash-row" style="margin-top:16px;">
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num">3m 22s</div>
+          <div class="pp-dash-label">Tiempo promedio de compra</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num">12</div>
+          <div class="pp-dash-label">En cola ahora</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num" style="color:var(--acid);">94%</div>
+          <div class="pp-dash-label">Tasa de conversión</div>
+        </div>
+        <div class="pp-dash-stat">
+          <div class="pp-dash-num">Lima 68%</div>
+          <div class="pp-dash-label">Top región</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FASE 3: POST-LANZAMIENTO ═══ -->
+  <section class="cf-section" style="border-top:1px solid var(--border);">
+    <div class="pp-phase-tag">POST-LANZAMIENTO</div>
+    <div class="cf-section-label">// Reventa y evento</div>
+    <h2 class="cf-section-title">Después de la venta,<br><span style="color:var(--acid);">tú sigues ganando.</span></h2>
+    <p class="cf-section-text">La reventa deja de ser mercado negro. Ahora es revenue directo para ti, con tus reglas.</p>
+
+    <!-- Diagrama de reventa -->
+    <div class="pp-resale-flow">
+      <div class="pp-flow-step">
+        <div class="pp-flow-icon">👤</div>
+        <div class="pp-flow-text">Fan original<br><small>Ya no puede ir</small></div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+      <div class="pp-flow-step pp-flow-highlight">
+        <div class="pp-flow-icon">🔄</div>
+        <div class="pp-flow-text">Marketplace Lezgo<br><small>Precio controlado</small></div>
+      </div>
+      <div class="pp-flow-arrow">→</div>
+      <div class="pp-flow-step">
+        <div class="pp-flow-icon">👤</div>
+        <div class="pp-flow-text">Nuevo fan<br><small>ID re-verificado</small></div>
+      </div>
+    </div>
+
+    <!-- Revenue share -->
+    <div class="pp-revenue-box">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:16px;">Revenue share en cada reventa</h3>
+      <div class="pp-rev-bars">
+        <div class="pp-rev-item">
+          <div class="pp-rev-label">Vendedor (fan original)</div>
+          <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:75%;background:rgba(255,255,255,0.15);"></div><span>75%</span></div>
+        </div>
+        <div class="pp-rev-item">
+          <div class="pp-rev-label">Promotor / Productora</div>
+          <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:15%;background:var(--acid);"></div><span style="color:var(--acid);font-weight:700;">15%</span></div>
+        </div>
+        <div class="pp-rev-item">
+          <div class="pp-rev-label">Plataforma Lezgo</div>
+          <div class="pp-rev-bar"><div class="pp-rev-fill" style="width:10%;background:rgba(229,255,0,0.3);"></div><span>10%</span></div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-top:12px;">* Porcentajes configurables por el promotor en el contrato inicial del evento.</p>
+    </div>
+
+    <!-- Control features -->
+    <div class="cf-steps" style="margin-top:48px;">
+      <div class="cf-step">
+        <div class="cf-step-num">01</div>
+        <div>
+          <h3>Topes de precio en reventa</h3>
+          <p>Tú defines el precio máximo de reventa por categoría. Ejemplo: máx. +20% sobre el original. Evita scalping masivo.</p>
+          <div class="cf-step-tag">PRICE CAP</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">02</div>
+        <div>
+          <h3>Límites de cambio de nombre</h3>
+          <p>Define cuántas veces un boleto puede cambiar de dueño. Previene ciclos infinitos de especulación. Tú tienes el control.</p>
+          <div class="cf-step-tag">TRANSFER LIMIT</div>
+        </div>
+      </div>
+      <div class="cf-step">
+        <div class="cf-step-num">03</div>
+        <div>
+          <h3>Scanner y verificación en puerta</h3>
+          <p>Tu staff escanea el DNI del asistente. Lezgo verifica que coincida con el dueño del boleto en tiempo real. Cero fraude.</p>
+          <div class="cf-step-tag">ID VERIFICATION</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA promotor -->
+  <section class="cf-cta">
+    <h2>Esto recién <span>empieza</span></h2>
+    <p>Estamos construyendo las herramientas para que organizar eventos sea más seguro y rentable.<br>Dejá tu correo y te contamos cuando esté listo.</p>
+    <div class="cf-email-wrap">
+      <div class="cf-email-bar" id="pp-email-bar">
+        <input type="email" class="cf-email-input" id="pp-email-input" placeholder="tu@productora.com" autocomplete="email" />
+        <button class="cf-email-btn" onclick="ppSubmitEmail()">Seguir el proyecto →</button>
+      </div>
+      <div class="cf-email-success" id="pp-email-success">
+        🎉 <strong>Estás dentro.</strong> Te contaremos cómo avanza todo.
+      </div>
+      <div class="cf-email-note">Sin spam. Solo cuando importe.</div>
     </div>
   </section>
 
@@ -5254,7 +5548,7 @@ body::after {
       </p>
       <div class="dk-hero-btns">
         <button class="dk-btn-primary" onclick="window.open('mailto:tata@frensonly.club','_blank')" data-es="CONTACTAR EQUIPO" data-en="CONTACT TEAM">CONTACTAR EQUIPO</button>
-        <button class="dk-btn-secondary" onclick="go('como')" data-es="¿CÓMO FUNCIONA?" data-en="HOW IT WORKS?">¿CÓMO FUNCIONA?</button>
+        <button class="dk-btn-secondary" onclick="go('asistentes')" data-es="PARA ASISTENTES" data-en="FOR ATTENDEES">PARA ASISTENTES</button>
       </div>
     </div>
     <div class="dk-tickets">
@@ -5882,10 +6176,32 @@ body::after {
     });
   }
 
+  function ppSubmitEmail() {
+    const input = document.getElementById('pp-email-input');
+    const bar = document.getElementById('pp-email-bar');
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) { input.focus(); return; }
+    bar.style.opacity = '0.5';
+    bar.style.pointerEvents = 'none';
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    }).then(() => {
+      bar.style.display = 'none';
+      document.getElementById('pp-email-success').style.display = 'block';
+    }).catch(() => {
+      bar.style.opacity = '1';
+      bar.style.pointerEvents = 'auto';
+      alert('Error al enviar. Intenta de nuevo.');
+    });
+  }
+
   function go(view) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-cat').forEach(l => l.classList.remove('active'));
-    const map = { eventos: 0, como: 1, marketplace: 2, scanner: 3, deck: 4 };
+    const map = { eventos: 0, asistentes: 1, promotores: 2, marketplace: 3, deck: 4 };
     const el = document.getElementById('v-' + view);
     if (el) el.classList.add('active');
     if (map[view] !== undefined) {
