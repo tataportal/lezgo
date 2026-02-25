@@ -5857,13 +5857,29 @@ body::after {
     if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') cfSubmitEmail(); });
   });
 
+  // ← PEGA TU URL DE GOOGLE APPS SCRIPT ACÁ ↓
+  const SHEET_URL = 'TU_URL_DE_APPS_SCRIPT';
+
   function submitEmail() {
     const input = document.getElementById('email-input');
+    const btn = document.querySelector('.email-capture-btn');
     const email = input.value.trim();
     if (!email || !email.includes('@')) { input.focus(); return; }
-    document.getElementById('email-form').style.display = 'none';
-    document.getElementById('email-ok').style.display = 'block';
-    console.log('Email captured:', email);
+    btn.textContent = '...';
+    btn.disabled = true;
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    }).then(() => {
+      document.getElementById('email-form').style.display = 'none';
+      document.getElementById('email-ok').style.display = 'block';
+    }).catch(() => {
+      btn.textContent = 'Unirme';
+      btn.disabled = false;
+      alert('Error al enviar. Intenta de nuevo.');
+    });
   }
 
   function go(view) {
