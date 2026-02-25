@@ -962,7 +962,50 @@ body::after {
   margin-bottom: 16px; letter-spacing: -1px;
 }
 .cf-cta h2 span { color: var(--acid); text-shadow: 0 0 30px var(--acid-glow); }
-.cf-cta p { font-size: 18px; color: rgba(255,255,255,0.5); margin-bottom: 40px; }
+.cf-cta p { font-size: 18px; color: rgba(255,255,255,0.5); margin-bottom: 40px; line-height: 1.6; }
+
+/* Email capture */
+.cf-email-wrap { max-width: 520px; margin: 0 auto; }
+.cf-email-bar {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(229,255,0,0.3);
+  border-radius: 16px; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.cf-email-bar:focus-within { border-color: var(--acid); }
+.cf-email-input {
+  flex: 1; background: none; border: none; outline: none;
+  padding: 18px 24px; font-size: 17px; color: #fff;
+  font-family: 'Sora', sans-serif;
+}
+.cf-email-input::placeholder { color: rgba(255,255,255,0.3); }
+.cf-email-btn {
+  background: var(--acid); color: var(--bg);
+  border: none; padding: 18px 28px;
+  font-size: 15px; font-weight: 800;
+  font-family: 'Sora', sans-serif;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s;
+  letter-spacing: -0.3px;
+}
+.cf-email-btn:hover { opacity: 0.85; }
+.cf-email-success {
+  display: none;
+  background: rgba(229,255,0,0.08);
+  border: 1.5px solid rgba(229,255,0,0.3);
+  border-radius: 16px; padding: 20px 28px;
+  font-size: 17px; color: #fff; text-align: center;
+}
+.cf-email-note {
+  margin-top: 14px; font-size: 13px;
+  color: rgba(255,255,255,0.3); text-align: center;
+}
+@media (max-width: 480px) {
+  .cf-email-bar { flex-direction: column; border-radius: 14px; }
+  .cf-email-input { width: 100%; padding: 16px 20px; text-align: center; }
+  .cf-email-btn { width: 100%; padding: 16px; border-radius: 0 0 12px 12px; }
+}
 
 /* ═══════════════════════════════════════════
    PROFILE VIEW
@@ -1241,10 +1284,9 @@ body::after {
 
 .tk-card-logo {
   display: flex; justify-content: center; align-items: center;
-  flex: 1;
+  flex: 1; font-size: 52px; line-height: 1; filter: saturate(1.2);
 }
-.tk-card-logo svg { width: 36px; height: 36px; opacity: 0.5; }
-.tk-card-inner.tk-dark .tk-card-logo svg { opacity: 0.25; }
+.tk-card-inner.tk-dark .tk-card-logo { opacity: 0.35; }
 
 .tk-card-bottom {
   font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9);
@@ -1290,6 +1332,7 @@ body::after {
   font-size: 14px; color: var(--text-mid);
 }
 .tk-feature svg { width: 18px; height: 18px; color: var(--acid); flex-shrink: 0; }
+.tk-feature:first-child::before, .tk-feature::before { content: ''; }
 
 /* Event info section */
 .ev-info-section {
@@ -2503,48 +2546,74 @@ body::after {
   .dk-profile-section { padding: 60px 40px; gap: 40px; }
 }
 @media (max-width: 768px) {
+  /* === NAV === */
   .util-bar { display: none; }
   .nav-cat .soon-tag { display: none; }
   .nav-categories { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .nav-cat { padding: 0 12px; font-size: 13px; }
+  .nav-cat { padding: 0 14px; font-size: 13px; }
+
+  /* === HERO === */
   .hero { height: 65vh; min-height: 480px; max-height: 650px; }
   .hero h1 { font-size: 42px; letter-spacing: -2px; }
-  .srb-grid { grid-template-columns: 1fr; }
-  .hero-content, .search-section, .content, .footer { padding-left: 24px; padding-right: 24px; }
+  .hero-content { padding-left: 24px; padding-right: 24px; text-align: center; }
+  .hero-content h1, .hero-content p { text-align: center; }
+  .hero-sub { margin: 0 auto; }
+
+  /* === GLOBAL PADDING === */
+  .search-section, .content, .footer { padding-left: 24px; padding-right: 24px; }
+
+  /* === SEARCH === */
   .search-bar { flex-direction: column; height: auto; }
-  .search-field { padding: 14px 20px; border-right: none; border-bottom: 1px solid var(--border); }
-  .search-btn { padding: 14px 20px; justify-content: center; }
-  .promo-grid { grid-template-columns: 1fr; }
-  .events-grid { grid-template-columns: repeat(2, 1fr); }
-  .cf-hero { padding: 80px 24px; }
-  .cf-hero-inner { grid-template-columns: 1fr; gap: 40px; }
-  .cf-tickets { max-width: 400px; }
+  .search-field { padding: 14px 20px; border-right: none; border-bottom: 1px solid var(--border); text-align: left; }
+  .search-btn { padding: 16px 20px; justify-content: center; }
+
+  /* === EVENTS === */
+  .srb-grid { grid-template-columns: 1fr; gap: 16px; }
+  .promo-grid { grid-template-columns: 1fr; gap: 16px; }
+  .events-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .section-header { text-align: center; flex-direction: column; align-items: center; gap: 12px; }
+
+  /* === CÓMO FUNCIONA === */
+  .cf-hero { padding: 80px 24px; text-align: center; }
+  .cf-hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .cf-hero h1, .cf-hero p { text-align: center; }
+  .cf-tickets { max-width: 400px; margin: 0 auto; }
   .cf-stats { grid-template-columns: repeat(2, 1fr); gap: 24px; padding: 40px 24px; }
-  .cf-section { padding: 60px 24px; }
-  .cf-features { grid-template-columns: 1fr; }
+  .cf-stat { text-align: center; }
+  .cf-section { padding: 64px 24px; text-align: center; }
+  .cf-section-label, .cf-section-title { text-align: center; }
+  .cf-features { grid-template-columns: 1fr; gap: 16px; }
+  .cf-feature { text-align: center; }
+  .cf-steps { max-width: 480px; margin: 0 auto; }
+  .cf-step { grid-template-columns: 1fr; text-align: center; gap: 12px; }
+  .cf-step-num { text-align: center; }
   .cf-compare { grid-template-columns: 1fr; }
   .cf-compare-new { border-left: none; border-top: 3px solid var(--acid); }
+  .cf-btns { flex-direction: column; align-items: center; }
+  .cf-cta { text-align: center; }
+
+  /* === MARKETPLACE === */
   .mp { padding: 48px 24px 60px; }
   .mp-search-bar { flex-direction: column; height: auto; }
   .mp-search-field { padding: 14px 20px; border-right: none; border-bottom: 1px solid var(--border); }
-  .mp-listing { grid-template-columns: 44px 70px 1fr auto; gap: 16px; padding: 18px 20px; }
-  .mp-listing-img { width: 70px; height: 70px; }
-  .mp-listing-date-day { font-size: 22px; }
   .mp-top { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .mp-listing { grid-template-columns: 1fr; gap: 12px; }
+  .mp-listing { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
   .mp-listing-img { display: none; }
   .mp-listing-date { display: none; }
   .mp-listing-right { align-items: flex-start; flex-direction: row; gap: 12px; }
   .mp-filters-row { flex-direction: column; align-items: flex-start; }
-  .cf-btns { flex-direction: column; }
+
+  /* === PERFIL === */
+  .pf { padding: 48px 24px; }
   .pf-header { flex-direction: column; align-items: flex-start; gap: 24px; }
   .pf-edit-btn { margin-left: 0; }
-  .pf-badges { grid-template-columns: repeat(2, 1fr); }
+  .pf-badges { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .pf-memberships { grid-template-columns: 1fr; }
   .pf-ticket-row { grid-template-columns: 1fr; gap: 12px; }
   .pf-ticket-img { display: none; }
   .pf-ticket-right { text-align: left; }
-  .pf { padding: 48px 24px; }
+
+  /* === EVENTO === */
   .ev-hero { min-height: 420px; }
   .ev-hero-content { padding: 48px 24px 40px; }
   .ev-hero-title { font-size: 32px; }
@@ -2553,77 +2622,101 @@ body::after {
   .ev-info-section { grid-template-columns: 1fr; padding: 0 24px 48px; gap: 32px; }
   .tk-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .tk-features { gap: 20px; }
-  /* Scanner 768 */
+
+  /* === SCANNER === */
   .sc { padding: 48px 24px 60px; }
+  .sc-header { text-align: center; }
   .sc-header h1 { font-size: 36px; }
   .sc-main { grid-template-columns: 1fr; gap: 48px; }
   .sc-results { grid-template-columns: 1fr; }
   .sc-stats { grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 32px 24px; }
   .sc-viewfinder { width: 180px; height: 180px; }
-  .sc-stamps-grid { grid-template-columns: 1fr; max-width: 480px; }
-  /* Deck 768 */
-  .dk-hero { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px; }
+  .sc-stamps-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+
+  /* === DECK === */
+  .dk-hero { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px; text-align: center; }
   .dk-hero h1 { font-size: 56px; }
-  .dk-tickets { max-width: 400px; }
+  .dk-hero-text { text-align: center; }
+  .dk-tickets { max-width: 400px; margin: 0 auto; }
   .dk-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; padding: 0 24px; }
   .dk-slide { padding: 60px 24px; }
   .dk-slide-half { padding: 48px 24px; }
   .dk-slide h2 { font-size: 36px; }
-  .dk-problems { grid-template-columns: 1fr; }
-  .dk-how-grid { grid-template-columns: repeat(2, 1fr) !important; max-width: 100%; }
+  .dk-problems { grid-template-columns: 1fr; gap: 16px; }
+  .dk-how-grid { grid-template-columns: repeat(2, 1fr) !important; max-width: 100%; gap: 16px; }
   .dk-revenue-grid { grid-template-columns: 1fr; }
-  .dk-benefits-grid { grid-template-columns: repeat(2, 1fr); }
-  .dk-value-grid { grid-template-columns: 1fr; }
+  .dk-benefits-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .dk-benefit-card { padding: 32px; }
+  .dk-value-grid { grid-template-columns: 1fr; gap: 16px; }
   .dk-value-section { padding: 60px 24px; }
   .dk-value-section h2 { font-size: 32px; }
   .dk-news-grid { grid-template-columns: 1fr; }
-  .dk-eco-grid { grid-template-columns: repeat(2, 1fr); }
+  .dk-eco-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .dk-eco-arrow { display: none; }
-  .dk-comp-grid { grid-template-columns: 1fr; }
-  .dk-flow-grid { flex-direction: column; align-items: center; gap: 16px; }
+  .dk-comp-grid { grid-template-columns: 1fr; gap: 16px; }
+  .dk-flow-grid { flex-direction: column; align-items: center; gap: 20px; }
   .dk-flow-arrow { transform: rotate(90deg); padding: 0; font-size: 36px; }
-  .dk-flow-step { max-width: 400px; }
+  .dk-flow-step { max-width: 400px; width: 100%; }
   .dk-flow-emoji { font-size: 64px; }
-  .dk-profile-section { padding: 60px 24px; gap: 32px; flex-direction: column; text-align: center; }
-  .dk-profile-left { flex: none; align-items: center; text-align: center; }
+  .dk-profile-section { padding: 60px 24px; gap: 40px; flex-direction: column; text-align: center; }
+  .dk-profile-left { flex: none; align-items: center; text-align: center; width: 100%; }
   .dk-profile-left > p { max-width: 100%; }
+  .dk-profile-features { width: 100%; max-width: 480px; }
   .dk-showcase { flex: none; min-height: 500px; width: 100%; }
   .dk-phone-secondary { display: none; }
   .dk-notif { display: none; }
-  .dk-phone { width: 300px; min-height: 580px; }
+  .dk-phone { width: 300px; min-height: 560px; }
   .dk-mission-line { font-size: clamp(24px, 4vw, 40px); }
   .dk-market-circle.big { width: 220px; height: 220px; }
   .dk-market-circle.small { width: 160px; height: 160px; }
-  .dk-cta { padding: 60px 24px; }
+  .dk-cta { padding: 60px 24px; text-align: center; }
   .dk-cta h2 { font-size: 36px; }
-  .dk-hero-btns { flex-direction: column; }
+  .dk-hero-btns { flex-direction: column; align-items: center; }
   .dk-toggle-bar { padding: 12px 24px; }
+  .dk-slide-label { text-align: center; }
+  .dk-value-inner { text-align: center; }
+  .dk-value-badge { margin: 0 auto 20px; }
+  .id-banner { margin: 0 -24px 48px -24px; }
 }
+
 @media (max-width: 480px) {
+  /* === HERO === */
   .hero { height: 55vh; min-height: 380px; max-height: 500px; }
   .hero h1 { font-size: 32px; letter-spacing: -1.5px; }
+  .hero-content, .search-section, .content, .footer { padding-left: 16px; padding-right: 16px; }
+  .hero-content { padding-bottom: 40px; }
+
+  /* === EVENTS === */
+  .nav-cat { padding: 0 8px; font-size: 12px; }
   .cal-dropdown { width: 280px; }
   .srb-card-img { width: 100px; min-height: 90px; }
-  .events-grid { grid-template-columns: 1fr; }
-  .hero-content { padding-bottom: 40px; }
-  .hero-content, .search-section, .content, .footer { padding-left: 16px; padding-right: 16px; }
-  .nav-cat { padding: 0 8px; font-size: 12px; }
+  .events-grid { grid-template-columns: 1fr; gap: 14px; }
+
+  /* === CÓMO FUNCIONA === */
   .cf-hero { padding: 60px 16px; }
-  .cf-hero h1 { font-size: 48px; }
+  .cf-hero h1 { font-size: 44px; }
   .cf-ticket { padding: 18px; }
   .cf-ticket-fake { margin-bottom: -40px; }
   .cf-ticket-event { font-size: 16px; }
   .cf-ticket-price { font-size: 28px; }
   .cf-stat-num { font-size: 32px; }
-  .cf-stats { padding: 32px 16px; }
-  .cf-section { padding: 48px 16px; }
-  .cf-step { grid-template-columns: 1fr; }
+  .cf-stats { padding: 32px 16px; gap: 20px; }
+  .cf-section { padding: 52px 16px; }
+  .cf-section-title { font-size: 28px; }
   .cf-step-num { font-size: 28px; }
-  .cf-cta { padding: 80px 16px; }
+  .cf-cta { padding: 64px 16px; }
+  .cf-feature { padding: 24px 20px; }
+  .cf-feature-icon { font-size: 40px; }
+
+  /* === MARKETPLACE === */
   .mp { padding: 36px 16px 48px; }
+
+  /* === PERFIL === */
   .pf { padding: 36px 16px; }
   .pf-badges { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .pf-stats-row { gap: 16px; flex-wrap: wrap; }
+  .pf-stats-row { gap: 16px; flex-wrap: wrap; justify-content: center; }
+
+  /* === EVENTO === */
   .ev-hero-content { padding: 40px 16px 32px; }
   .ev-hero-title { font-size: 28px; letter-spacing: -1px; }
   .ev-hero-info { flex-direction: column; gap: 10px; }
@@ -2634,26 +2727,36 @@ body::after {
   .tk-card-inner { padding: 20px; }
   .tk-card-price { font-size: 15px; }
   .tk-features { flex-direction: column; gap: 12px; }
-  /* Scanner 480 */
+
+  /* === SCANNER === */
   .sc { padding: 36px 16px 48px; }
   .sc-header h1 { font-size: 28px; letter-spacing: -1px; }
   .sc-viewfinder { width: 160px; height: 160px; }
   .sc-stats { grid-template-columns: 1fr 1fr; padding: 24px 16px; }
   .sc-stat-num { font-size: 28px; }
-  /* Deck 480 */
+
+  /* === DECK === */
   .dk-hero { padding: 48px 16px; gap: 36px; }
-  .dk-hero h1 { font-size: 42px; }
+  .dk-hero h1 { font-size: 38px; }
   .dk-slide { padding: 48px 16px; min-height: auto; }
   .dk-slide-half { padding: 36px 16px; }
-  .dk-slide h2 { font-size: 28px; }
+  .dk-slide h2 { font-size: 28px; letter-spacing: -1px; }
   .dk-stats-inner { padding: 0 16px; }
   .dk-cta { padding: 48px 16px; }
   .dk-cta h2 { font-size: 28px; }
   .dk-stat-num { font-size: 32px; }
   .dk-revenue-pct { font-size: 36px; }
-  .dk-benefits-grid { grid-template-columns: 1fr; }
-  .dk-eco-grid { grid-template-columns: 1fr; }
-  .dk-how-grid { grid-template-columns: 1fr !important; max-width: 280px; }
+  .dk-benefits-grid { grid-template-columns: 1fr; gap: 14px; }
+  .dk-benefit-card { padding: 28px 24px; }
+  .dk-bc-icon { font-size: 44px; }
+  .dk-benefit-card h3 { font-size: 22px; }
+  .dk-benefit-card p { font-size: 16px; }
+  .dk-eco-grid { grid-template-columns: 1fr; gap: 14px; }
+  .dk-how-grid { grid-template-columns: 1fr !important; max-width: 100%; gap: 16px; }
+  .dk-how-inner { aspect-ratio: 4/3; padding: 32px 28px; }
+  .dk-how-logo { font-size: 80px; }
+  .dk-how-num { font-size: 48px; }
+  .dk-how-inner h3 { font-size: 24px; }
   .dk-flow-step h3 { font-size: 22px; }
   .dk-flow-step p { font-size: 16px; }
   .dk-flow-emoji { font-size: 56px; }
@@ -2663,14 +2766,721 @@ body::after {
   .dk-market-circle .amount { font-size: 24px; }
   .dk-toggle-bar { padding: 10px 16px; gap: 8px; }
   .dk-toggle button { padding: 6px 12px; font-size: 10px; }
-  .dk-profile-section { padding: 48px 16px; flex-direction: column; }
+  .dk-profile-section { padding: 48px 16px; }
   .dk-profile-left { text-align: center; align-items: center; }
   .dk-phone { width: 260px; min-height: 480px; }
   .dk-showcase { min-height: 420px; }
-  .dk-profile-feat { padding: 14px 18px; }
+  .dk-profile-feat { padding: 14px 16px; gap: 12px; }
   .dk-profile-feat-icon { font-size: 26px; }
+  .dk-profile-feat-text h4 { font-size: 15px; }
+  .dk-profile-feat-text p { font-size: 13px; }
   .dk-value-section { padding: 48px 16px; }
-  .dk-value-section h2 { font-size: 28px; }
+  .dk-value-section h2 { font-size: 26px; }
+  .dk-value-card { padding: 28px 24px; }
+  .dk-value-icon { font-size: 32px; }
+  .dk-value-card h3 { font-size: 20px; }
+  .dk-value-card p { font-size: 15px; }
+  .id-banner { margin: 0 -16px 40px -16px; padding: 20px 16px; }
+  .dk-comp-lezgo { padding: 24px; }
+  .dk-comp-lezgo h3 { font-size: 24px; }
+}
+
+/* ═══════════════════════════════════════════
+   PURCHASE MODAL
+   ═══════════════════════════════════════════ */
+.pm-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.pm-overlay.pm-open {
+  opacity: 1; pointer-events: all;
+}
+.pm-sheet {
+  width: 100%; max-width: 560px; max-height: 88vh;
+  background: #111; border-radius: 28px 28px 0 0;
+  border: 1px solid rgba(229,255,0,0.15);
+  border-bottom: none;
+  padding: 0;
+  overflow: hidden;
+  transform: translateY(40px);
+  transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+  display: flex; flex-direction: column;
+}
+.pm-overlay.pm-open .pm-sheet { transform: translateY(0); }
+.pm-handle {
+  width: 40px; height: 4px; background: rgba(255,255,255,0.2);
+  border-radius: 2px; margin: 16px auto 0;
+}
+.pm-header {
+  padding: 20px 28px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.pm-header-event { font-size: 13px; font-weight: 600; color: var(--acid); letter-spacing: 0.08em; text-transform: uppercase; }
+.pm-header-title { font-size: 20px; font-weight: 800; margin-top: 4px; }
+.pm-close {
+  width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08);
+  border: none; cursor: pointer; color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.pm-close:hover { background: rgba(255,255,255,0.15); }
+.pm-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+/* Steps indicator */
+.pm-steps {
+  display: flex; align-items: center; gap: 0; margin-bottom: 28px;
+}
+.pm-step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4);
+  flex-shrink: 0; transition: all 0.3s;
+}
+.pm-step-dot.active { background: var(--acid); border-color: var(--acid); color: #000; }
+.pm-step-dot.done { background: rgba(229,255,0,0.15); border-color: var(--acid); color: var(--acid); }
+.pm-step-line {
+  flex: 1; height: 1px; background: rgba(255,255,255,0.1); transition: background 0.3s;
+}
+.pm-step-line.done { background: rgba(229,255,0,0.4); }
+
+/* Step panels */
+.pm-panel { display: none; }
+.pm-panel.active { display: block; }
+
+/* Step 1: ticket summary */
+.pm-ticket-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; margin-bottom: 12px;
+  cursor: pointer; transition: border-color 0.2s;
+}
+.pm-ticket-row:hover { border-color: rgba(229,255,0,0.3); }
+.pm-ticket-row.selected { border-color: var(--acid); background: rgba(229,255,0,0.06); }
+.pm-ticket-row.soldout { opacity: 0.4; cursor: not-allowed; }
+.pm-ticket-name { font-size: 16px; font-weight: 700; }
+.pm-ticket-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.pm-ticket-price { font-size: 20px; font-weight: 800; color: var(--acid); }
+.pm-ticket-radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.pm-ticket-row.selected .pm-ticket-radio { border-color: var(--acid); }
+.pm-ticket-row.selected .pm-ticket-radio::after {
+  content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--acid);
+}
+
+/* Step 2: DNI verification */
+.pm-verify-icon { font-size: 64px; text-align: center; margin-bottom: 20px; }
+.pm-verify-title { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+.pm-verify-sub { font-size: 14px; color: var(--text-mid); text-align: center; margin-bottom: 24px; line-height: 1.6; }
+.pm-input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 14px 18px; font-size: 16px; color: #fff;
+  font-family: 'Sora', sans-serif; outline: none; box-sizing: border-box; margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+.pm-input:focus { border-color: rgba(229,255,0,0.5); }
+.pm-input::placeholder { color: rgba(255,255,255,0.3); }
+.pm-security-note {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(229,255,0,0.06); border: 1px solid rgba(229,255,0,0.2);
+  border-radius: 10px; padding: 12px 16px; font-size: 12px; color: var(--text-mid);
+  margin-top: 4px;
+}
+
+/* Step 3: Payment */
+.pm-pay-summary {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 20px; margin-bottom: 20px;
+}
+.pm-pay-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; color: var(--text-mid); }
+.pm-pay-row.total { font-size: 18px; font-weight: 800; color: #fff; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 4px; margin-bottom: 0; }
+.pm-pay-row.total span:last-child { color: var(--acid); }
+.pm-card-row {
+  display: flex; gap: 10px; margin-bottom: 12px;
+}
+.pm-card-opt {
+  flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer;
+  font-size: 13px; font-weight: 600; text-align: center; color: var(--text-mid);
+  transition: all 0.2s;
+}
+.pm-card-opt.selected { border-color: var(--acid); color: var(--acid); background: rgba(229,255,0,0.06); }
+.pm-card-opt .pm-card-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+/* Step 4: Confirmation */
+.pm-confirm-icon { font-size: 72px; text-align: center; margin-bottom: 16px; animation: pm-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes pm-pop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.pm-confirm-title { font-size: 28px; font-weight: 900; text-align: center; margin-bottom: 8px; }
+.pm-confirm-sub { font-size: 15px; color: var(--text-mid); text-align: center; margin-bottom: 28px; line-height: 1.6; }
+.pm-ticket-card-preview {
+  background: linear-gradient(135deg, #1a1a00 0%, #111 100%);
+  border: 1.5px solid rgba(229,255,0,0.4); border-radius: 20px;
+  padding: 24px; text-align: center; position: relative; overflow: hidden;
+}
+.pm-ticket-card-preview::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--acid), transparent);
+}
+.pm-ticket-card-event { font-size: 13px; font-weight: 700; color: var(--acid); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.pm-ticket-card-name { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
+.pm-ticket-card-details { display: flex; justify-content: space-around; margin-bottom: 20px; }
+.pm-ticket-card-detail { font-size: 12px; color: var(--text-dim); text-align: center; }
+.pm-ticket-card-detail strong { display: block; font-size: 14px; color: #fff; font-weight: 700; margin-bottom: 2px; }
+.pm-ticket-qr { font-size: 56px; margin: 0 auto; display: block; }
+.pm-ticket-verified { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--acid); margin-top: 12px; }
+
+/* CTA button in modal */
+.pm-cta {
+  width: 100%; background: var(--acid); color: var(--bg);
+  border: none; border-radius: 14px; padding: 18px;
+  font-size: 16px; font-weight: 800; font-family: 'Sora', sans-serif;
+  cursor: pointer; margin-top: 20px; transition: transform 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.02em;
+}
+.pm-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(229,255,0,0.35); }
+.pm-cta:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.pm-cta-secondary {
+  width: 100%; background: transparent; color: var(--text-mid);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 14px;
+  font-size: 14px; font-weight: 600; font-family: 'Sora', sans-serif;
+  cursor: pointer; margin-top: 10px;
+}
+.pm-cta-secondary:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* Loading state */
+.pm-loading {
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; padding: 40px 0; gap: 16px;
+}
+.pm-loading.visible { display: flex; }
+.pm-spinner {
+  width: 40px; height: 40px; border: 3px solid rgba(229,255,0,0.15);
+  border-top-color: var(--acid); border-radius: 50%;
+  animation: pm-spin 0.8s linear infinite;
+}
+@keyframes pm-spin { to { transform: rotate(360deg); } }
+.pm-loading-text { font-size: 14px; color: var(--text-mid); }
+
+/* Countdown timer */
+.ev-countdown {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(229,255,0,0.06); border: 1px solid rgba(229,255,0,0.2);
+  border-radius: 12px; padding: 10px 16px; margin-top: 16px;
+  font-size: 13px; color: var(--text-mid);
+  flex-wrap: wrap;
+}
+.ev-countdown-label { font-weight: 600; color: var(--acid); margin-right: 4px; }
+.ev-countdown-unit { background: rgba(0,0,0,0.4); border: 1px solid rgba(229,255,0,0.15); border-radius: 6px; padding: 4px 8px; font-size: 16px; font-weight: 800; color: #fff; min-width: 36px; text-align: center; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 480px) {
+  .pm-sheet { max-height: 95vh; border-radius: 24px 24px 0 0; }
+  .pm-body { padding: 20px 20px; }
+  .pm-header { padding: 16px 20px 14px; }
+  .pm-confirm-title { font-size: 22px; }
+}
+
+/* ═══════════════════════════════════════════
+   AUTH VIEW
+   ═══════════════════════════════════════════ */
+.auth-view {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; position: relative; overflow: hidden;
+}
+.auth-view::before {
+  content: ''; position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px; background: radial-gradient(circle, rgba(229,255,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.auth-logo {
+  font-size: 28px; font-weight: 900; letter-spacing: -1px;
+  color: var(--acid); margin-bottom: 48px; cursor: pointer;
+}
+.auth-card {
+  width: 100%; max-width: 420px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px; overflow: hidden;
+}
+.auth-tabs {
+  display: flex; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.auth-tab {
+  flex: 1; padding: 18px; text-align: center; font-size: 15px; font-weight: 700;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+}
+.auth-tab.active { color: #fff; border-bottom: 2px solid var(--acid); }
+.auth-body { padding: 32px; }
+.auth-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.auth-sub { font-size: 14px; color: var(--text-mid); margin-bottom: 28px; line-height: 1.5; }
+
+/* Auth steps */
+.auth-step { display: none; }
+.auth-step.active { display: block; }
+.auth-input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 14px 18px; font-size: 15px; color: #fff;
+  font-family: 'Sora', sans-serif; outline: none; box-sizing: border-box; margin-bottom: 12px;
+}
+.auth-input:focus { border-color: rgba(229,255,0,0.5); }
+.auth-input::placeholder { color: rgba(255,255,255,0.3); }
+.auth-label { font-size: 12px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; display: block; letter-spacing: 0.06em; text-transform: uppercase; }
+.auth-btn {
+  width: 100%; background: var(--acid); color: var(--bg);
+  border: none; border-radius: 12px; padding: 16px;
+  font-size: 15px; font-weight: 800; font-family: 'Sora', sans-serif;
+  cursor: pointer; margin-top: 8px; transition: transform 0.15s, box-shadow 0.15s;
+}
+.auth-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(229,255,0,0.3); }
+.auth-btn-ghost {
+  width: 100%; background: transparent; color: var(--text-mid);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 14px;
+  font-size: 14px; font-weight: 600; font-family: 'Sora', sans-serif;
+  cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.auth-btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; margin: 20px 0;
+  font-size: 12px; color: var(--text-dim);
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+}
+.auth-legal { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 16px; line-height: 1.5; }
+.auth-legal a { color: var(--acid); text-decoration: none; }
+
+/* Auth step indicator */
+.auth-steps-bar { display: flex; gap: 8px; margin-bottom: 28px; }
+.auth-steps-bar span {
+  flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1);
+  transition: background 0.3s;
+}
+.auth-steps-bar span.done { background: var(--acid); }
+.auth-steps-bar span.active { background: rgba(229,255,0,0.5); }
+
+/* Photo capture mock */
+.auth-photo-box {
+  width: 180px; height: 180px; margin: 0 auto 20px;
+  background: rgba(255,255,255,0.04); border: 2px dashed rgba(229,255,0,0.3);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 64px; cursor: pointer; transition: border-color 0.2s;
+  position: relative; overflow: hidden;
+}
+.auth-photo-box:hover { border-color: var(--acid); }
+.auth-photo-box.captured { border-style: solid; border-color: var(--acid); }
+.auth-photo-box .auth-photo-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--acid); opacity: 0; transition: opacity 0.2s;
+}
+.auth-photo-box:hover .auth-photo-overlay { opacity: 1; }
+.auth-success-icon { font-size: 72px; text-align: center; margin-bottom: 16px; animation: pm-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+.auth-success-title { font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 8px; }
+.auth-success-sub { font-size: 14px; color: var(--text-mid); text-align: center; line-height: 1.6; margin-bottom: 24px; }
+.auth-verified-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(229,255,0,0.1); border: 1px solid rgba(229,255,0,0.3);
+  border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 700;
+  color: var(--acid); margin: 0 auto 24px; display: flex; justify-content: center;
+}
+
+/* ═══════════════════════════════════════════
+   MY TICKETS VIEW (v-mis-entradas)
+   ═══════════════════════════════════════════ */
+.mt-view { min-height: 100vh; padding: 0 0 80px; }
+.mt-header {
+  padding: 32px 32px 0; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0;
+}
+.mt-header-left h1 { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+.mt-header-left p { font-size: 14px; color: var(--text-mid); margin-top: 4px; }
+.mt-header-right { display: flex; gap: 12px; align-items: center; }
+.mt-filter-tabs {
+  display: flex; gap: 0; padding: 24px 32px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mt-tab {
+  padding: 12px 20px; font-size: 14px; font-weight: 700; color: var(--text-dim);
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap;
+}
+.mt-tab.active { color: #fff; border-bottom-color: var(--acid); }
+.mt-tab-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(229,255,0,0.15); color: var(--acid);
+  border-radius: 10px; padding: 2px 7px; font-size: 11px; font-weight: 800; margin-left: 6px;
+}
+.mt-panel { display: none; padding: 24px 32px; }
+.mt-panel.active { display: block; }
+
+/* Ticket cards */
+.mt-ticket {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; overflow: hidden; margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.mt-ticket:hover { border-color: rgba(229,255,0,0.2); }
+.mt-ticket-head {
+  display: flex; align-items: center; gap: 0; cursor: pointer; padding: 0;
+}
+.mt-ticket-img {
+  width: 100px; height: 100px; flex-shrink: 0;
+  background-size: cover; background-position: center;
+}
+.mt-ticket-info { flex: 1; padding: 16px 20px; }
+.mt-ticket-event { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.mt-ticket-meta { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+.mt-ticket-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.mt-ticket-tag {
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;
+  letter-spacing: 0.06em;
+}
+.mt-ticket-tag.upcoming { background: rgba(229,255,0,0.12); color: var(--acid); }
+.mt-ticket-tag.attended { background: rgba(255,255,255,0.06); color: var(--text-mid); }
+.mt-ticket-tag.resale { background: rgba(255,165,0,0.15); color: #ffa500; }
+.mt-ticket-tag.tier { background: rgba(255,255,255,0.06); color: var(--text-mid); }
+.mt-ticket-right { padding: 16px 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+.mt-ticket-price { font-size: 18px; font-weight: 800; color: var(--acid); }
+.mt-ticket-actions { display: flex; gap: 8px; }
+.mt-ticket-btn {
+  padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  font-family: 'Sora', sans-serif; cursor: pointer; border: none; transition: all 0.2s;
+}
+.mt-ticket-btn.primary { background: var(--acid); color: var(--bg); }
+.mt-ticket-btn.ghost { background: rgba(255,255,255,0.06); color: var(--text-mid); border: 1px solid rgba(255,255,255,0.1); }
+.mt-ticket-btn.ghost:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* Digital ticket expand */
+.mt-ticket-expand {
+  display: none; border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 24px;
+}
+.mt-ticket-expand.open { display: block; }
+.mt-digital-ticket {
+  background: linear-gradient(135deg, #111 0%, #0d1a00 50%, #111 100%);
+  border: 1.5px solid rgba(229,255,0,0.35); border-radius: 20px;
+  padding: 28px; max-width: 360px; margin: 0 auto; position: relative; overflow: hidden;
+}
+.mt-digital-ticket::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--acid), transparent);
+}
+/* Tear line */
+.mt-tear-line {
+  display: flex; align-items: center; margin: 20px 0;
+  position: relative;
+}
+.mt-tear-line::before {
+  content: ''; position: absolute; left: -28px; right: -28px;
+  border-top: 1px dashed rgba(255,255,255,0.15);
+}
+.mt-tear-dot { width: 20px; height: 20px; background: var(--bg); border-radius: 50%; flex-shrink: 0; }
+.mt-tear-dot:last-child { margin-left: auto; }
+.mt-dt-event { font-size: 12px; font-weight: 700; color: var(--acid); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.mt-dt-name { font-size: 22px; font-weight: 900; margin-bottom: 20px; line-height: 1.2; }
+.mt-dt-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.mt-dt-field label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+.mt-dt-field span { font-size: 13px; font-weight: 700; }
+.mt-qr-area { text-align: center; }
+.mt-qr-emoji { font-size: 80px; display: block; filter: grayscale(0.1); }
+.mt-qr-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+.mt-dt-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+.mt-dt-verified { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--acid); }
+.mt-dt-id { font-size: 11px; color: var(--text-dim); font-family: monospace; }
+.mt-ticket-share { display: flex; gap: 10px; margin-top: 16px; }
+.mt-share-btn {
+  flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+  font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; color: var(--text-mid);
+  font-family: 'Sora', sans-serif; transition: all 0.2s;
+}
+.mt-share-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* Empty state */
+.mt-empty {
+  text-align: center; padding: 60px 24px; color: var(--text-dim);
+}
+.mt-empty-icon { font-size: 64px; margin-bottom: 16px; }
+.mt-empty-text { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text-mid); }
+.mt-empty-sub { font-size: 14px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════
+   ORGANIZER DASHBOARD (v-organizer)
+   ═══════════════════════════════════════════ */
+.og-view { min-height: 100vh; padding: 0 0 80px; }
+.og-header { padding: 32px 32px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.og-header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.og-header h1 { font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+.og-header p { font-size: 14px; color: var(--text-mid); margin-top: 4px; }
+.og-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(229,255,0,0.1); border: 1px solid rgba(229,255,0,0.25);
+  border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--acid);
+}
+.og-btn-new {
+  background: var(--acid); color: var(--bg); border: none; border-radius: 10px;
+  padding: 10px 18px; font-size: 13px; font-weight: 800; font-family: 'Sora', sans-serif;
+  cursor: pointer; transition: transform 0.15s;
+}
+.og-btn-new:hover { transform: translateY(-1px); }
+
+/* Metric cards */
+.og-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 32px; }
+.og-metric {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 20px;
+}
+.og-metric-label { font-size: 12px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.og-metric-value { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+.og-metric-value.acid { color: var(--acid); }
+.og-metric-change { font-size: 12px; color: var(--text-dim); }
+.og-metric-change.up { color: #4ade80; }
+.og-metric-change.down { color: #f87171; }
+
+/* Events managed */
+.og-section { padding: 0 32px 24px; }
+.og-section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+.og-section-title a { font-size: 13px; font-weight: 600; color: var(--text-dim); text-decoration: none; cursor: pointer; }
+.og-section-title a:hover { color: var(--acid); }
+.og-events { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 8px; }
+.og-event-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; overflow: hidden; cursor: pointer; transition: border-color 0.2s;
+}
+.og-event-card:hover { border-color: rgba(229,255,0,0.25); }
+.og-event-img { height: 120px; background-size: cover; background-position: center; position: relative; }
+.og-event-status {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(0,0,0,0.7); border: 1px solid rgba(229,255,0,0.4);
+  border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: var(--acid);
+}
+.og-event-body { padding: 16px; }
+.og-event-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.og-event-meta { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+.og-event-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 8px; }
+.og-event-bar-fill { height: 100%; background: var(--acid); border-radius: 2px; }
+.og-event-sell { font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between; }
+.og-event-sell strong { color: #fff; }
+.og-event-actions { display: flex; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.og-act-btn {
+  flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700;
+  font-family: 'Sora', sans-serif; cursor: pointer; text-align: center;
+}
+.og-act-btn.primary { background: var(--acid); color: var(--bg); }
+.og-act-btn.ghost { background: rgba(255,255,255,0.06); color: var(--text-mid); }
+.og-act-btn.ghost:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* Attendee table */
+.og-table { width: 100%; border-collapse: collapse; }
+.og-table th {
+  text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.og-table td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.og-table tr:last-child td { border-bottom: none; }
+.og-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.og-attendee-name { font-weight: 700; margin-bottom: 2px; }
+.og-attendee-dni { font-size: 12px; color: var(--text-dim); font-family: monospace; }
+.og-status-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.og-status-pill.checked { background: rgba(74,222,128,0.15); color: #4ade80; }
+.og-status-pill.pending { background: rgba(229,255,0,0.1); color: var(--acid); }
+.og-status-pill.resale { background: rgba(255,165,0,0.15); color: #ffa500; }
+.og-table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; }
+.og-table-head { padding: 16px 16px 0; display: flex; align-items: center; justify-content: space-between; }
+.og-table-head-title { font-size: 15px; font-weight: 700; }
+.og-search-mini {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #fff;
+  font-family: 'Sora', sans-serif; outline: none; width: 200px;
+}
+.og-search-mini::placeholder { color: rgba(255,255,255,0.3); }
+
+/* Revenue chart bars */
+.og-chart { display: flex; align-items: flex-end; gap: 8px; height: 80px; padding: 0 0 0; margin-bottom: 8px; }
+.og-bar { flex: 1; background: rgba(229,255,0,0.15); border-radius: 4px 4px 0 0; border: 1px solid rgba(229,255,0,0.2); transition: background 0.2s; }
+.og-bar:hover { background: rgba(229,255,0,0.4); }
+.og-bar.highlight { background: var(--acid); }
+.og-chart-labels { display: flex; gap: 8px; }
+.og-chart-label { flex: 1; text-align: center; font-size: 10px; color: var(--text-dim); }
+
+/* ═══════════════════════════════════════════
+   NOTIFICATION PANEL
+   ═══════════════════════════════════════════ */
+.notif-overlay {
+  position: fixed; inset: 0; z-index: 8000;
+  background: rgba(0,0,0,0.5);
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.notif-overlay.open { opacity: 1; pointer-events: all; }
+.notif-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 380px; max-width: 100vw;
+  background: #111; border-left: 1px solid rgba(255,255,255,0.08);
+  transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  overflow-y: auto; z-index: 8001;
+}
+.notif-overlay.open .notif-panel { transform: translateX(0); }
+.notif-header {
+  padding: 24px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0;
+  background: #111; z-index: 1;
+}
+.notif-header h2 { font-size: 18px; font-weight: 800; }
+.notif-close { background: rgba(255,255,255,0.08); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+.notif-close:hover { background: rgba(255,255,255,0.15); }
+.notif-mark-all { font-size: 12px; font-weight: 600; color: var(--acid); background: none; border: none; cursor: pointer; font-family: 'Sora', sans-serif; }
+.notif-item {
+  display: flex; align-items: flex-start; gap: 14px; padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s;
+}
+.notif-item:hover { background: rgba(255,255,255,0.02); }
+.notif-item.unread { background: rgba(229,255,0,0.03); }
+.notif-item-icon { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; }
+.notif-item-body { flex: 1; }
+.notif-item-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.notif-item-text { font-size: 13px; color: var(--text-mid); line-height: 1.4; margin-bottom: 6px; }
+.notif-item-time { font-size: 11px; color: var(--text-dim); }
+.notif-unread-dot { width: 8px; height: 8px; background: var(--acid); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+.notif-section-label { padding: 12px 24px 6px; font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+.notif-bell {
+  position: relative; cursor: pointer; padding: 6px;
+  background: rgba(255,255,255,0.06); border-radius: 10px; font-size: 18px;
+  border: none; color: #fff; display: flex; align-items: center; justify-content: center;
+}
+.notif-bell .notif-badge {
+  position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+  background: var(--acid); border-radius: 50%; font-size: 9px; font-weight: 800;
+  color: var(--bg); display: flex; align-items: center; justify-content: center;
+}
+
+/* ═══════════════════════════════════════════
+   RESALE MODAL
+   ═══════════════════════════════════════════ */
+.resale-overlay {
+  position: fixed; inset: 0; z-index: 9001;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.resale-overlay.open { opacity: 1; pointer-events: all; }
+.resale-sheet {
+  width: 100%; max-width: 520px; background: #111;
+  border-radius: 28px 28px 0 0; border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+  padding: 20px 28px 40px;
+  transform: translateY(40px); transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.resale-overlay.open .resale-sheet { transform: translateY(0); }
+.resale-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 24px; }
+.resale-title { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.resale-sub { font-size: 14px; color: var(--text-mid); margin-bottom: 24px; }
+.resale-ticket-preview {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 14px 18px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.resale-ticket-preview .rtp-icon { font-size: 28px; }
+.resale-ticket-preview .rtp-info h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.resale-ticket-preview .rtp-info p { font-size: 12px; color: var(--text-dim); }
+.resale-price-section { margin-bottom: 16px; }
+.resale-price-label { font-size: 12px; font-weight: 700; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.resale-price-input-wrap {
+  display: flex; align-items: center; background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; overflow: hidden;
+}
+.resale-price-input-wrap:focus-within { border-color: rgba(229,255,0,0.5); }
+.resale-currency { padding: 14px 16px; font-size: 16px; font-weight: 700; color: var(--acid); background: rgba(229,255,0,0.06); border-right: 1px solid rgba(255,255,255,0.08); }
+.resale-price-input {
+  flex: 1; background: none; border: none; outline: none; padding: 14px 16px;
+  font-size: 24px; font-weight: 800; color: #fff; font-family: 'Sora', sans-serif; width: 100%;
+}
+.resale-price-hints { display: flex; gap: 8px; margin-top: 8px; }
+.resale-hint-btn {
+  padding: 6px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--text-mid);
+  cursor: pointer; font-family: 'Sora', sans-serif;
+}
+.resale-hint-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.resale-info-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; color: var(--text-mid); }
+.resale-info-row strong { color: #fff; }
+.resale-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 12px 0; }
+.resale-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; }
+.resale-total span:last-child { color: var(--acid); }
+.resale-terms { display: flex; align-items: flex-start; gap: 10px; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 20px; cursor: pointer; }
+.resale-terms input[type="checkbox"] { margin-top: 1px; accent-color: var(--acid); cursor: pointer; }
+.resale-terms label { font-size: 12px; color: var(--text-dim); line-height: 1.5; cursor: pointer; }
+.resale-btn { width: 100%; background: var(--acid); color: var(--bg); border: none; border-radius: 14px; padding: 18px; font-size: 15px; font-weight: 800; font-family: 'Sora', sans-serif; cursor: pointer; transition: transform 0.15s; }
+.resale-btn:hover { transform: translateY(-1px); }
+.resale-cancel { width: 100%; background: transparent; color: var(--text-dim); border: none; padding: 12px; font-size: 14px; cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 6px; }
+
+/* ═══════════════════════════════════════════
+   SCANNER RESULT OVERLAY
+   ═══════════════════════════════════════════ */
+.scan-result-overlay {
+  position: fixed; inset: 0; z-index: 9002;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.scan-result-overlay.open { opacity: 1; pointer-events: all; }
+.scan-result-bg {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.9);
+}
+.scan-result-card {
+  position: relative; z-index: 1; width: 100%; max-width: 400px;
+  background: #111; border-radius: 28px; padding: 40px 32px; text-align: center;
+  border: 2px solid rgba(255,255,255,0.1);
+  animation: pm-pop 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.scan-result-card.approved { border-color: rgba(74,222,128,0.5); }
+.scan-result-card.denied { border-color: rgba(248,113,113,0.5); }
+.scan-result-icon { font-size: 80px; margin-bottom: 16px; display: block; }
+.scan-result-status {
+  font-size: 24px; font-weight: 900; margin-bottom: 6px; letter-spacing: -0.5px;
+}
+.scan-result-status.approved { color: #4ade80; }
+.scan-result-status.denied { color: #f87171; }
+.scan-result-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.scan-result-detail { font-size: 14px; color: var(--text-mid); margin-bottom: 24px; }
+.scan-result-info {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 16px; margin-bottom: 24px; text-align: left;
+}
+.scan-result-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; }
+.scan-result-row span:first-child { color: var(--text-dim); }
+.scan-result-row span:last-child { font-weight: 700; }
+.scan-next-btn {
+  width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 15px; font-weight: 800;
+  font-family: 'Sora', sans-serif; cursor: pointer;
+}
+.scan-next-btn.approved { background: #4ade80; color: #000; }
+.scan-next-btn.denied { background: #f87171; color: #000; }
+
+/* Responsive for new views */
+@media (max-width: 768px) {
+  .og-metrics { grid-template-columns: repeat(2, 1fr); }
+  .og-events { grid-template-columns: 1fr; }
+  .og-section { padding: 0 16px 24px; }
+  .og-header { padding: 24px 16px 16px; }
+  .og-metrics { padding: 16px; }
+  .mt-header { padding: 24px 16px 0; }
+  .mt-filter-tabs { padding: 16px 16px 0; }
+  .mt-panel { padding: 16px; }
+  .mt-ticket-img { width: 80px; height: 80px; }
+  .notif-panel { width: 100vw; }
+  .auth-card { border-radius: 0; border-left: none; border-right: none; }
+  .auth-view { padding: 24px 0; }
+}
+@media (max-width: 480px) {
+  .og-metrics { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mt-ticket-head { flex-direction: column; }
+  .mt-ticket-img { width: 100%; height: 120px; }
+  .mt-ticket-right { align-items: flex-start; padding: 0 16px 16px; }
+  .mt-ticket-actions { flex-wrap: wrap; }
 }
 </style>
 </head>
@@ -2690,7 +3500,7 @@ body::after {
       <div class="nav-cat" onclick="go('deck')">Deck</div>
     </div>
     <div class="nav-right">
-      <div class="nav-user" onclick="go('perfil')">
+      <div class="nav-user" onclick="go('mis-entradas')">
         <div class="nav-avatar">ML</div>
         <span class="nav-username">Mario</span>
       </div>
@@ -2850,7 +3660,7 @@ body::after {
     <div class="events-grid">
       <div class="ev-card" onclick="go('evento')" style="cursor:pointer" data-distrito="cercado" data-date="2026-05-01" data-name="rorschach">
         <div class="ev-card-img">
-          <img src="https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80" alt="Rorschach">
+          <img src="https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=500&q=80" alt="Rorschach">
           <div class="ev-card-badge badge-hot">Hot</div>
         </div>
         <div class="ev-card-body">
@@ -2863,9 +3673,9 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="surco" data-date="2026-05-15" data-name="hernan cattaneo">
+      <div class="ev-card" data-distrito="surco" data-date="2026-05-15" data-name="hernan cattaneo" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
-          <img src="https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=500&q=80" alt="Hernán Cattáneo">
+          <img src="https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=500&q=80" alt="Hernán Cattáneo">
         </div>
         <div class="ev-card-body">
           <div class="ev-card-date">15 Mayo 2026</div>
@@ -2877,9 +3687,9 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="chorrillos" data-date="2026-05-22" data-name="solomun">
+      <div class="ev-card" data-distrito="chorrillos" data-date="2026-05-22" data-name="solomun" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
-          <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&q=80" alt="Solomun">
+          <img src="https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=500&q=80" alt="Solomun">
           <div class="ev-card-badge badge-preventa">Preventa</div>
         </div>
         <div class="ev-card-body">
@@ -2892,9 +3702,9 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="miraflores" data-date="2026-06-07" data-name="tale of us">
+      <div class="ev-card" data-distrito="miraflores" data-date="2026-06-07" data-name="tale of us" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
-          <img src="https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80" alt="Tale Of Us">
+          <img src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&q=80" alt="Tale Of Us">
           <div class="ev-card-badge badge-nuevo">Nuevo</div>
         </div>
         <div class="ev-card-body">
@@ -2915,7 +3725,7 @@ body::after {
       <span class="section-more">Ver todos →</span>
     </div>
     <div class="events-grid">
-      <div class="ev-card" data-distrito="barranco" data-date="2026-06-14" data-name="bpm lima sessions">
+      <div class="ev-card" data-distrito="barranco" data-date="2026-06-14" data-name="bpm lima sessions" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
           <img src="https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=500&q=80" alt="BPM Sessions">
         </div>
@@ -2929,7 +3739,7 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="miraflores" data-date="2026-06-21" data-name="underground lima">
+      <div class="ev-card" data-distrito="miraflores" data-date="2026-06-21" data-name="underground lima" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
           <img src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&q=80" alt="Underground Lima">
         </div>
@@ -2943,7 +3753,7 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="san isidro" data-date="2026-06-28" data-name="shelter resident night">
+      <div class="ev-card" data-distrito="san isidro" data-date="2026-06-28" data-name="shelter resident night" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
           <img src="https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=500&q=80" alt="Shelter">
         </div>
@@ -2957,9 +3767,9 @@ body::after {
           </div>
         </div>
       </div>
-      <div class="ev-card" data-distrito="callao" data-date="2026-07-05" data-name="nexus warehouse">
+      <div class="ev-card" data-distrito="callao" data-date="2026-07-05" data-name="nexus warehouse" onclick="go('evento')" style="cursor:pointer">
         <div class="ev-card-img">
-          <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?w=500&q=80" alt="Nexus">
+          <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=500&q=80" alt="Nexus">
           <div class="ev-card-badge badge-nuevo">Nuevo</div>
         </div>
         <div class="ev-card-body">
@@ -3258,8 +4068,25 @@ body::after {
   <!-- CTA -->
   <section class="cf-cta">
     <h2>Tu ID = Tu <span>Ticket</span></h2>
-    <p>Únete a la revolución del ticketing seguro.</p>
-    <button class="btn-acid" style="padding:20px 48px;font-size:16px;" onclick="go('eventos')"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> Explorar Eventos <span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span></button>
+    <p>Únete a la revolución del ticketing seguro.<br>Sé el primero en enterarte cuando lancemos.</p>
+
+    <!-- EMAIL CAPTURE -->
+    <div class="cf-email-wrap">
+      <div class="cf-email-bar" id="cf-email-bar">
+        <input
+          type="email"
+          class="cf-email-input"
+          id="cf-email-input"
+          placeholder="tu@email.com"
+          autocomplete="email"
+        />
+        <button class="cf-email-btn" onclick="cfSubmitEmail()">Quiero enterarme →</button>
+      </div>
+      <div class="cf-email-success" id="cf-email-success">
+        🎉 <strong>Estás dentro.</strong> Te avisamos en cuanto lancemos.
+      </div>
+      <div class="cf-email-note">Sin spam. Solo cuando importe.</div>
+    </div>
   </section>
 
   <div class="site-footer">
@@ -3706,6 +4533,20 @@ body::after {
 
   </div>
 
+  <!-- Organizer Access -->
+  <div style="padding: 0 24px 32px; max-width: 560px; margin: 0 auto;">
+    <div style="background: rgba(229,255,0,0.04); border: 1px solid rgba(229,255,0,0.15); border-radius: 16px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--acid); letter-spacing: 0.06em; margin-bottom: 4px;">MODO ORGANIZADOR</div>
+        <div style="font-size: 14px; color: var(--text-mid);">Accede al dashboard B2B de tu productora</div>
+      </div>
+      <button onclick="go('organizer')" style="background: var(--acid); color: #000; border: none; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; font-family: inherit;">📊 Dashboard →</button>
+    </div>
+    <div style="margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <button onclick="go('auth')" style="background: none; border: none; color: var(--text-dim); font-size: 13px; cursor: pointer; font-family: inherit; padding: 8px 12px; border-radius: 8px; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-dim)'">← Cerrar sesión</button>
+    </div>
+  </div>
+
   <div class="site-footer">
     <div class="site-footer-logo">LEZGO</div>
     <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
@@ -3748,6 +4589,7 @@ body::after {
             21:00 — 05:00
           </div>
         </div>
+        <div class="ev-countdown" id="ev-countdown"></div>
         <button class="ev-hero-cta" onclick="document.getElementById('ev-tickets').scrollIntoView({behavior:'smooth'})">
           Comprar entradas
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 7l10 10M17 7v10H7"/></svg>
@@ -3764,14 +4606,14 @@ body::after {
       <div class="tk-grid">
 
         <!-- Card 1: General — Early Access -->
-        <div class="tk-card" onclick="alert('Flujo de compra próximamente')">
+        <div class="tk-card" onclick="pmOpen('Charlotte de Witte — Lima 2026')">
           <div class="tk-card-inner tk-purple">
             <div>
               <div class="tk-card-type">General<br>Admission</div>
               <div class="tk-card-phase">Early Access</div>
             </div>
             <div class="tk-card-logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke-linecap="round"/></svg>
+              🎉
             </div>
             <div class="tk-card-bottom">1 Día<br>Ticket Diario</div>
           </div>
@@ -3780,14 +4622,14 @@ body::after {
         </div>
 
         <!-- Card 2: VIP — Early Access -->
-        <div class="tk-card" onclick="alert('Flujo de compra próximamente')">
+        <div class="tk-card" onclick="pmOpen('Charlotte de Witte — Lima 2026');pmSelectTicket('vip','VIP','S/280',280)">
           <div class="tk-card-inner tk-orange">
             <div>
               <div class="tk-card-type">VIP</div>
               <div class="tk-card-phase">Early Access</div>
             </div>
             <div class="tk-card-logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke-linecap="round"/></svg>
+              👑
             </div>
             <div class="tk-card-bottom">1 Día<br>Ticket Diario</div>
           </div>
@@ -3803,7 +4645,7 @@ body::after {
               <div class="tk-card-phase">Preventa</div>
             </div>
             <div class="tk-card-logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke-linecap="round"/></svg>
+              🎟️
             </div>
             <div class="tk-card-bottom">2 Días<br>Festival Pass</div>
           </div>
@@ -3819,7 +4661,7 @@ body::after {
               <div class="tk-card-phase">Preventa</div>
             </div>
             <div class="tk-card-logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke-linecap="round"/></svg>
+              💎
             </div>
             <div class="tk-card-bottom">2 Días<br>Festival Pass</div>
           </div>
@@ -3831,20 +4673,16 @@ body::after {
 
       <!-- Features below cards -->
       <div class="tk-features">
-        <div class="tk-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="tk-feature">✅
           Acceso a todos los stages
         </div>
-        <div class="tk-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="tk-feature">✅
           Entrada verificada con DNI
         </div>
-        <div class="tk-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="tk-feature">✅
           Reventa segura P2P
         </div>
-        <div class="tk-feature">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="tk-feature">✅
           Sin colas — escaneo facial
         </div>
       </div>
@@ -4662,6 +5500,35 @@ body::after {
      ═══════════════════════════════════════════ -->
 <script>
   // ── View Switching ──
+  // ── Email capture ──
+  function cfSubmitEmail() {
+    const input = document.getElementById('cf-email-input');
+    const bar = document.getElementById('cf-email-bar');
+    const success = document.getElementById('cf-email-success');
+    const email = input.value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!valid) {
+      bar.style.borderColor = '#ff4d4d';
+      input.focus();
+      setTimeout(() => bar.style.borderColor = 'rgba(229,255,0,0.3)', 1500);
+      return;
+    }
+    // Store locally (replace with real backend later)
+    const emails = JSON.parse(localStorage.getItem('lezgo_emails') || '[]');
+    if (!emails.includes(email)) emails.push(email);
+    localStorage.setItem('lezgo_emails', JSON.stringify(emails));
+    // Show success
+    bar.style.display = 'none';
+    success.style.display = 'block';
+    console.log('Lezgo waitlist:', JSON.parse(localStorage.getItem('lezgo_emails')));
+  }
+
+  // Allow Enter key on input
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('cf-email-input');
+    if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') cfSubmitEmail(); });
+  });
+
   function go(view) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-cat').forEach(l => l.classList.remove('active'));
@@ -4673,6 +5540,225 @@ body::after {
     }
     window.scrollTo(0, 0);
   }
+
+  /* ═══════════════════════════════════════════
+     AUTH FLOW
+     ═══════════════════════════════════════════ */
+  function authSwitchTab(tab) {
+    document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('auth-tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('auth-login-panel').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('auth-register-panel').style.display = tab === 'register' ? 'block' : 'none';
+  }
+
+  function authSendLink() {
+    const email = document.getElementById('auth-email-input').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('auth-email-input').style.borderColor = '#f87171';
+      setTimeout(() => document.getElementById('auth-email-input').style.borderColor = '', 1500);
+      return;
+    }
+    document.getElementById('auth-link-sent').style.display = 'block';
+    setTimeout(() => go('mis-entradas'), 2000);
+  }
+
+  function authGoogleLogin() {
+    go('mis-entradas');
+  }
+
+  let authRegCurrentStep = 1;
+  function authRegStep(step) {
+    document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('auth-reg-' + step);
+    if (target) target.classList.add('active');
+    authRegCurrentStep = step;
+    // Update step bar
+    const bars = document.querySelectorAll('.auth-steps-bar span');
+    bars.forEach((b, i) => {
+      b.classList.remove('active', 'done');
+      if (i < step - 1) b.classList.add('done');
+      else if (i === step - 1) b.classList.add('active');
+    });
+    // If step 3, simulate DNI verification
+    if (step === 3) {
+      const loading = document.getElementById('auth-loading-reg');
+      const actions = document.getElementById('auth-photo-actions');
+      loading.style.display = 'block'; actions.style.display = 'none';
+      setTimeout(() => { loading.style.display = 'none'; actions.style.display = 'block'; }, 1500);
+    }
+  }
+
+  function authTakePhoto() {
+    const box = document.getElementById('auth-photo-box');
+    const emoji = document.getElementById('auth-photo-emoji');
+    box.classList.add('captured');
+    emoji.textContent = '🤳';
+  }
+
+  function authFinishRegister() {
+    const actions = document.getElementById('auth-photo-actions');
+    const loading = document.getElementById('auth-loading-reg');
+    const success = document.getElementById('auth-reg-success');
+    const photoSection = document.getElementById('auth-photo-section');
+    loading.style.display = 'block'; actions.style.display = 'none';
+    setTimeout(() => {
+      loading.style.display = 'none';
+      photoSection.style.display = 'none';
+      success.style.display = 'block';
+    }, 2000);
+  }
+
+  /* ═══════════════════════════════════════════
+     MY TICKETS
+     ═══════════════════════════════════════════ */
+  function mtTab(tab) {
+    document.querySelectorAll('.mt-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.mt-panel').forEach(p => p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('mt-' + tab).classList.add('active');
+  }
+
+  function mtToggleTicket(id) {
+    const expand = document.getElementById(id + '-expand');
+    if (!expand) return;
+    const isOpen = expand.classList.contains('open');
+    document.querySelectorAll('.mt-ticket-expand').forEach(e => e.classList.remove('open'));
+    if (!isOpen) expand.classList.add('open');
+  }
+
+  /* ═══════════════════════════════════════════
+     NOTIFICATION PANEL
+     ═══════════════════════════════════════════ */
+  function notifOpen() {
+    document.getElementById('notif-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function notifClose() {
+    document.getElementById('notif-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function notifOverlayClick(e) {
+    if (e.target === document.getElementById('notif-overlay')) notifClose();
+  }
+  function notifMarkRead(item) {
+    item.classList.remove('unread');
+    const dot = item.querySelector('.notif-unread-dot');
+    if (dot) dot.remove();
+    updateNotifBadge();
+  }
+  function notifMarkAll() {
+    document.querySelectorAll('.notif-item.unread').forEach(item => notifMarkRead(item));
+  }
+  function updateNotifBadge() {
+    const count = document.querySelectorAll('.notif-item.unread').length;
+    document.querySelectorAll('.notif-badge').forEach(b => {
+      b.textContent = count; b.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     RESALE MODAL
+     ═══════════════════════════════════════════ */
+  function resaleOpen(eventName, tier, originalPrice) {
+    document.getElementById('resale-event-name').textContent = eventName;
+    document.getElementById('resale-ticket-tier').textContent = tier;
+    document.getElementById('resale-price').value = Math.round(originalPrice * 1.4);
+    resaleUpdateCalc();
+    document.getElementById('resale-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function resaleClose() {
+    document.getElementById('resale-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function resaleOverlayClick(e) {
+    if (e.target === document.getElementById('resale-overlay')) resaleClose();
+  }
+  function resaleSetPrice(p) {
+    document.getElementById('resale-price').value = p;
+    resaleUpdateCalc();
+  }
+  function resaleUpdateCalc() {
+    const price = parseFloat(document.getElementById('resale-price').value) || 0;
+    const fee = Math.round(price * 0.05);
+    const net = price - fee;
+    document.getElementById('calc-sale').textContent = 'S/' + price;
+    document.getElementById('calc-fee').textContent = '-S/' + fee;
+    document.getElementById('calc-net').textContent = 'S/' + net;
+  }
+  function resaleConfirm() {
+    const cb = document.getElementById('resale-terms-cb');
+    if (!cb.checked) { alert('Debes aceptar los términos para continuar.'); return; }
+    resaleClose();
+    setTimeout(() => {
+      alert('¡Entrada publicada en el marketplace! Te notificaremos cuando alguien la compre.');
+      go('marketplace');
+    }, 300);
+  }
+
+  /* ═══════════════════════════════════════════
+     SCANNER RESULT
+     ═══════════════════════════════════════════ */
+  function scanResult(type) {
+    // type: 'approved' | 'denied' | 'used' | 'invalid'
+    const overlay = document.getElementById('scan-result-overlay');
+    const card = document.getElementById('scan-result-card');
+    const icon = document.getElementById('scan-result-icon');
+    const status = document.getElementById('scan-result-status');
+    const detail = document.getElementById('scan-result-detail');
+    const btn = document.getElementById('scan-next-btn');
+    const time = new Date().toTimeString().slice(0, 8);
+    document.getElementById('sr-time').textContent = time;
+    card.className = 'scan-result-card ' + (type === 'approved' ? 'approved' : 'denied');
+    if (type === 'approved') {
+      icon.textContent = '✅'; status.textContent = 'ACCESO APROBADO';
+      status.className = 'scan-result-status approved'; detail.textContent = 'DNI verificado · Entrada válida';
+      btn.className = 'scan-next-btn approved'; btn.textContent = 'Siguiente →';
+    } else if (type === 'used') {
+      icon.textContent = '⚠️'; status.textContent = 'ENTRADA YA USADA';
+      status.className = 'scan-result-status denied'; detail.textContent = 'Esta entrada ya fue escaneada';
+      btn.className = 'scan-next-btn denied'; btn.textContent = 'Cerrar ×';
+    } else if (type === 'denied') {
+      icon.textContent = '❌'; status.textContent = 'ACCESO DENEGADO';
+      status.className = 'scan-result-status denied'; detail.textContent = 'DNI no coincide con la entrada';
+      btn.className = 'scan-next-btn denied'; btn.textContent = 'Cerrar ×';
+    } else {
+      icon.textContent = '🚫'; status.textContent = 'ENTRADA INVÁLIDA';
+      status.className = 'scan-result-status denied'; detail.textContent = 'Entrada no encontrada en el sistema';
+      btn.className = 'scan-next-btn denied'; btn.textContent = 'Cerrar ×';
+    }
+    overlay.classList.add('open');
+  }
+  function scanResultClose() {
+    document.getElementById('scan-result-overlay').classList.remove('open');
+  }
+
+  /* ═══════════════════════════════════════════
+     ORGANIZER HELPERS
+     ═══════════════════════════════════════════ */
+  function ogShowAttendees() {
+    const section = document.getElementById('og-attendees-section');
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Wire nav-user to mis-entradas
+  document.addEventListener('DOMContentLoaded', () => {
+    const navUser = document.querySelector('.nav-user');
+    if (navUser) navUser.onclick = () => go('mis-entradas');
+    // Add scanner demo buttons to scanner view
+    const scDeviceBtn = document.querySelector('.sc-device-status');
+    if (scDeviceBtn) {
+      const demoBar = document.createElement('div');
+      demoBar.style = 'display:flex;gap:8px;margin-top:12px;justify-content:center;';
+      demoBar.innerHTML = `
+        <button onclick="scanResult('approved')" style="padding:8px 14px;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.4);border-radius:8px;color:#4ade80;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">✅ Simular Aprobado</button>
+        <button onclick="scanResult('denied')" style="padding:8px 14px;background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.4);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">❌ Simular Denegado</button>
+        <button onclick="scanResult('used')" style="padding:8px 14px;background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.4);border-radius:8px;color:#ffa500;font-size:12px;font-weight:700;cursor:pointer;font-family:Sora,sans-serif;">⚠️ Ya Usada</button>
+      `;
+      scDeviceBtn.parentNode.insertBefore(demoBar, scDeviceBtn.nextSibling);
+    }
+  });
 
   // ── Glitch effect on Home hero ──
   const homeHero = document.getElementById('home-hero');
@@ -5186,7 +6272,858 @@ body::after {
       mpApplyAllFilters();
     });
   });
+
+  /* ═══════════════════════════════════════════
+     PURCHASE MODAL
+     ═══════════════════════════════════════════ */
+  let pmCurrentStep = 1;
+  let pmSelectedTicket = { id: 'ga', name: 'General Admission', price: 'S/120', amount: 120 };
+  let pmSelectedPay = 'card';
+  let pmVerifiedDni = '';
+
+  function pmOpen(eventLabel) {
+    if (eventLabel) document.getElementById('pm-event-label').textContent = eventLabel;
+    pmGoStep(1);
+    document.getElementById('pm-overlay').classList.add('pm-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function pmClose() {
+    document.getElementById('pm-overlay').classList.remove('pm-open');
+    document.body.style.overflow = '';
+  }
+
+  function pmOverlayClick(e) {
+    if (e.target === document.getElementById('pm-overlay')) pmClose();
+  }
+
+  function pmSelectTicket(id, name, price, amount) {
+    pmSelectedTicket = { id, name, price, amount };
+    document.querySelectorAll('.pm-ticket-row:not(.soldout)').forEach(r => r.classList.remove('selected'));
+    document.getElementById('pm-opt-' + id).classList.add('selected');
+  }
+
+  function pmGoStep(step) {
+    // Hide all panels
+    document.querySelectorAll('.pm-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('pm-panel-' + step).classList.add('active');
+    pmCurrentStep = step;
+
+    // Update dots
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('pm-dot-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < step) dot.classList.add('done');
+      else if (i === step) dot.classList.add('active');
+    }
+    // Update lines
+    for (let i = 1; i <= 3; i++) {
+      const line = document.getElementById('pm-line-' + i);
+      if (i < step) line.classList.add('done');
+      else line.classList.remove('done');
+    }
+
+    // Update header title
+    const titles = { 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: 'Pago', 4: '¡Listo!' };
+    document.getElementById('pm-step-title').textContent = titles[step] || '';
+
+    // Update payment summary
+    if (step === 3) {
+      document.getElementById('pm-pay-ticket-name').textContent = pmSelectedTicket.name;
+      document.getElementById('pm-pay-total').textContent = 'S/' + (pmSelectedTicket.amount + 10);
+    }
+  }
+
+  function pmFormatDni(input) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 8);
+  }
+
+  function pmFormatCard(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 16);
+    input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  function pmFormatExp(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2);
+    input.value = v;
+  }
+
+  function pmSelectPay(method) {
+    pmSelectedPay = method;
+    document.querySelectorAll('.pm-card-opt').forEach(o => o.classList.remove('selected'));
+    document.getElementById('pm-pay-' + method).classList.add('selected');
+    document.getElementById('pm-pay-card-fields').style.display = method === 'card' ? 'block' : 'none';
+    document.getElementById('pm-pay-yape-fields').style.display = method !== 'card' ? 'block' : 'none';
+  }
+
+  function pmVerifyDni() {
+    const dni = document.getElementById('pm-dni-input').value.trim();
+    const name = document.getElementById('pm-name-input').value.trim();
+    if (dni.length < 7 || !name) {
+      document.getElementById('pm-dni-input').style.borderColor = '#ff4d4d';
+      document.getElementById('pm-name-input').style.borderColor = name ? 'rgba(229,255,0,0.5)' : '#ff4d4d';
+      setTimeout(() => {
+        document.getElementById('pm-dni-input').style.borderColor = '';
+        document.getElementById('pm-name-input').style.borderColor = '';
+      }, 1800);
+      return;
+    }
+    pmVerifiedDni = dni;
+    // Simulate verification
+    const btn = document.getElementById('pm-verify-btn');
+    btn.disabled = true;
+    btn.textContent = '🔍 Verificando...';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Verificar y continuar →';
+      pmGoStep(3);
+    }, 1200);
+  }
+
+  function pmPay() {
+    const loading = document.getElementById('pm-loading');
+    const btn = document.getElementById('pm-pay-btn');
+    const backBtn = btn.nextElementSibling;
+    loading.classList.add('visible');
+    btn.style.display = 'none';
+    backBtn.style.display = 'none';
+    setTimeout(() => {
+      loading.classList.remove('visible');
+      btn.style.display = '';
+      backBtn.style.display = '';
+      // Show confirmation
+      document.getElementById('pm-confirm-ticket-name').textContent = pmSelectedTicket.name;
+      document.getElementById('pm-confirm-dni').textContent = pmVerifiedDni || '73XXXXXX';
+      pmGoStep(4);
+    }, 2000);
+  }
+
+  /* ═══════════════════════════════════════════
+     COUNTDOWN TIMER
+     ═══════════════════════════════════════════ */
+  function updateCountdown() {
+    const target = new Date('2026-05-16T21:00:00-05:00'); // Lima time
+    const now = new Date();
+    let diff = target - now;
+    if (diff <= 0) {
+      const el = document.getElementById('ev-countdown');
+      if (el) el.innerHTML = '<span class="ev-countdown-label">🔴 EN VIVO</span>';
+      return;
+    }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    const cd = document.getElementById('ev-countdown');
+    if (cd) {
+      cd.innerHTML = `<span class="ev-countdown-label">⏱ Faltan</span>
+        <span class="ev-countdown-unit">${String(days).padStart(2,'0')}</span> días
+        <span class="ev-countdown-unit">${String(hours).padStart(2,'0')}</span> h
+        <span class="ev-countdown-unit">${String(mins).padStart(2,'0')}</span> min
+        <span class="ev-countdown-unit">${String(secs).padStart(2,'0')}</span> seg`;
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
 </script>
+
+<!-- ═══════════════════════════════════════════
+     PURCHASE MODAL
+     ═══════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════
+     VIEW 8: AUTH — Login / Register
+     ═══════════════════════════════════════════ -->
+<div id="v-auth" class="view">
+  <div class="auth-view">
+    <div class="auth-logo" onclick="go('eventos')">LEZGO ☺</div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="auth-tab-login" onclick="authSwitchTab('login')">Iniciar sesión</div>
+        <div class="auth-tab" id="auth-tab-register" onclick="authSwitchTab('register')">Crear cuenta</div>
+      </div>
+      <div class="auth-body">
+        <!-- LOGIN PANEL -->
+        <div id="auth-login-panel">
+          <div class="auth-title">Bienvenido de vuelta 👋</div>
+          <div class="auth-sub">Entra con tu email. Te mandamos un link mágico, sin contraseñas.</div>
+          <label class="auth-label">Email</label>
+          <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com">
+          <button class="auth-btn" onclick="authSendLink()">Enviar link mágico →</button>
+          <div class="auth-divider">o continúa con</div>
+          <button class="auth-btn-ghost" onclick="authGoogleLogin()">
+            <span>🔵</span> Google
+          </button>
+          <button class="auth-btn-ghost" onclick="authGoogleLogin()" style="margin-top:0">
+            <span>📱</span> Apple
+          </button>
+          <div id="auth-link-sent" style="display:none; margin-top:16px; background:rgba(229,255,0,0.08); border:1px solid rgba(229,255,0,0.2); border-radius:12px; padding:16px; font-size:14px; text-align:center; color:var(--acid);">
+            ✉️ Link enviado a tu email. Revisa tu bandeja.
+          </div>
+        </div>
+        <!-- REGISTER PANEL -->
+        <div id="auth-register-panel" style="display:none">
+          <div class="auth-steps-bar" id="auth-reg-steps">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+          </div>
+          <!-- REG STEP 1: Email -->
+          <div class="auth-step active" id="auth-reg-1">
+            <div class="auth-title">Crea tu cuenta 🚀</div>
+            <div class="auth-sub">Necesitas email y DNI. En 2 minutos estás dentro.</div>
+            <label class="auth-label">Nombre completo</label>
+            <input class="auth-input" type="text" id="reg-name" placeholder="Mario Leder">
+            <label class="auth-label">Email</label>
+            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com">
+            <label class="auth-label">Teléfono (opcional)</label>
+            <input class="auth-input" type="tel" id="reg-phone" placeholder="+51 999 000 000">
+            <button class="auth-btn" onclick="authRegStep(2)">Continuar →</button>
+          </div>
+          <!-- REG STEP 2: DNI -->
+          <div class="auth-step" id="auth-reg-2">
+            <div class="auth-title">Verifica tu identidad 🪪</div>
+            <div class="auth-sub">Tu DNI vincula tus entradas a ti. Protegemos tu compra y eliminamos la reventa trucha.</div>
+            <label class="auth-label">Número de DNI</label>
+            <input class="auth-input" type="text" id="reg-dni" placeholder="73XXXXXX" maxlength="8">
+            <label class="auth-label">Fecha de nacimiento</label>
+            <input class="auth-input" type="text" id="reg-dob" placeholder="DD/MM/AAAA" maxlength="10">
+            <div class="pm-security-note" style="margin-top:0; margin-bottom:0;">
+              🔒 Tu DNI solo se usa para verificar tu identidad. No almacenamos datos sensibles.
+            </div>
+            <button class="auth-btn" style="margin-top:16px" onclick="authRegStep(3)">Verificar DNI →</button>
+            <button class="auth-btn-ghost" onclick="authRegStep(1)" style="margin-top:0">← Volver</button>
+          </div>
+          <!-- REG STEP 3: Photo + Success -->
+          <div class="auth-step" id="auth-reg-3">
+            <div id="auth-photo-section">
+              <div class="auth-title">Una foto tuya 🤳</div>
+              <div class="auth-sub">El staff en puerta compara tu foto con tu DNI. Sin app, sin QR.</div>
+              <div class="auth-photo-box" id="auth-photo-box" onclick="authTakePhoto()">
+                <span id="auth-photo-emoji">📷</span>
+                <div class="auth-photo-overlay">Tomar foto</div>
+              </div>
+              <div id="auth-photo-actions">
+                <button class="auth-btn" onclick="authFinishRegister()">Tomar foto y registrarme →</button>
+                <button class="auth-btn-ghost" onclick="authRegStep(2)" style="margin-top:0">← Volver</button>
+              </div>
+              <div id="auth-loading-reg" style="display:none; text-align:center; padding:20px 0;">
+                <div class="pm-spinner" style="margin:0 auto 12px;"></div>
+                <div style="font-size:14px; color:var(--text-mid);">Verificando identidad...</div>
+              </div>
+            </div>
+            <div id="auth-reg-success" style="display:none">
+              <div class="auth-success-icon">🎉</div>
+              <div class="auth-success-title">¡Cuenta creada!</div>
+              <div class="auth-success-sub">Tu identidad está verificada. Ya puedes comprar entradas con tu DNI vinculado.</div>
+              <div class="auth-verified-badge">🪪 Identidad verificada con RENIEC</div>
+              <button class="auth-btn" onclick="go('eventos')">Explorar eventos →</button>
+            </div>
+          </div>
+        </div>
+        <div class="auth-legal">
+          Al continuar aceptas los <a href="#">Términos de Uso</a> y <a href="#">Política de Privacidad</a> de Lezgo.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 9: MIS ENTRADAS — Digital Wallet
+     ═══════════════════════════════════════════ -->
+<div id="v-mis-entradas" class="view">
+  <div class="mt-view">
+    <div class="mt-header">
+      <div class="mt-header-left">
+        <h1>Mis Entradas</h1>
+        <p>3 entradas activas · DNI verificado ✓</p>
+      </div>
+      <div class="mt-header-right" style="display:flex;align-items:center;gap:10px;">
+        <button class="notif-bell" onclick="notifOpen()">🔔<span class="notif-badge">3</span></button>
+        <div onclick="go('perfil')" style="width:36px;height:36px;border-radius:50%;background:rgba(229,255,0,0.12);border:1.5px solid rgba(229,255,0,0.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--acid);cursor:pointer;letter-spacing:0.04em;">ML</div>
+      </div>
+    </div>
+    <div class="mt-filter-tabs">
+      <div class="mt-tab active" onclick="mtTab('proximas')">Próximas <span class="mt-tab-count">2</span></div>
+      <div class="mt-tab" onclick="mtTab('pasadas')">Pasadas <span class="mt-tab-count">5</span></div>
+      <div class="mt-tab" onclick="mtTab('reventas')">En Reventa <span class="mt-tab-count">1</span></div>
+    </div>
+    <!-- PRÓXIMAS -->
+    <div class="mt-panel active" id="mt-proximas">
+      <div class="mt-ticket" id="mt-t1">
+        <div class="mt-ticket-head" onclick="mtToggleTicket('mt-t1')">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">Charlotte de Witte en Lima</div>
+            <div class="mt-ticket-meta">Sáb 16 Mayo 2026 · Arena Perú, Santa Anita · 21:00</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag upcoming">PRÓXIMO</span>
+              <span class="mt-ticket-tag tier">General</span>
+              <span class="mt-ticket-tag tier">🪪 DNI Vinculado</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price">S/180</div>
+            <div class="mt-ticket-actions">
+              <button class="mt-ticket-btn primary" onclick="event.stopPropagation();mtToggleTicket('mt-t1')">Ver entrada</button>
+              <button class="mt-ticket-btn ghost" onclick="event.stopPropagation();resaleOpen('Charlotte de Witte en Lima','General · 16 Mayo 2026',180)">Revender</button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-ticket-expand" id="mt-t1-expand">
+          <div class="mt-digital-ticket">
+            <div class="mt-dt-event">Charlotte de Witte — Lima 2026</div>
+            <div class="mt-dt-name">General Admission</div>
+            <div class="mt-dt-grid">
+              <div class="mt-dt-field"><label>Fecha</label><span>16 Mayo</span></div>
+              <div class="mt-dt-field"><label>Hora</label><span>21:00</span></div>
+              <div class="mt-dt-field"><label>Venue</label><span>Arena Perú</span></div>
+            </div>
+            <div class="mt-tear-line"><div class="mt-tear-dot"></div><div class="mt-tear-dot"></div></div>
+            <div class="mt-qr-area">
+              <span class="mt-qr-emoji">🪪</span>
+              <div class="mt-qr-label">Presenta tu DNI en puerta · No necesitas app</div>
+            </div>
+            <div class="mt-dt-footer">
+              <div class="mt-dt-verified">✅ Verificado con Lezgo</div>
+              <div class="mt-dt-id">DNI: 73•••456</div>
+            </div>
+          </div>
+          <div class="mt-ticket-share">
+            <button class="mt-share-btn" onclick="alert('Próximamente')">📤 Compartir</button>
+            <button class="mt-share-btn" onclick="alert('PDF próximamente')">📄 PDF</button>
+            <button class="mt-share-btn" onclick="go('evento')">🎫 Ver evento</button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-ticket" id="mt-t2">
+        <div class="mt-ticket-head" onclick="mtToggleTicket('mt-t2')">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">Rorschach.Inc 2026</div>
+            <div class="mt-ticket-meta">Jue 01 Mayo 2026 · Av. 9 de Diciembre 203 · 22:00</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag upcoming">PRÓXIMO</span>
+              <span class="mt-ticket-tag tier">Season Pass</span>
+              <span class="mt-ticket-tag tier">🪪 DNI Vinculado</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price">S/120</div>
+            <div class="mt-ticket-actions">
+              <button class="mt-ticket-btn primary" onclick="event.stopPropagation();mtToggleTicket('mt-t2')">Ver entrada</button>
+              <button class="mt-ticket-btn ghost" onclick="event.stopPropagation();resaleOpen('Rorschach.Inc 2026','Season Pass · 01 Mayo 2026',120)">Revender</button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-ticket-expand" id="mt-t2-expand">
+          <div class="mt-digital-ticket">
+            <div class="mt-dt-event">Rorschach.Inc 2026</div>
+            <div class="mt-dt-name">Season Pass 🎫</div>
+            <div class="mt-dt-grid">
+              <div class="mt-dt-field"><label>Fecha</label><span>01 Mayo</span></div>
+              <div class="mt-dt-field"><label>Hora</label><span>22:00</span></div>
+              <div class="mt-dt-field"><label>Venue</label><span>9 Dic. 203</span></div>
+            </div>
+            <div class="mt-tear-line"><div class="mt-tear-dot"></div><div class="mt-tear-dot"></div></div>
+            <div class="mt-qr-area">
+              <span class="mt-qr-emoji">🪪</span>
+              <div class="mt-qr-label">Presenta tu DNI en puerta · No necesitas app</div>
+            </div>
+            <div class="mt-dt-footer">
+              <div class="mt-dt-verified">✅ Verificado con Lezgo</div>
+              <div class="mt-dt-id">DNI: 73•••456</div>
+            </div>
+          </div>
+          <div class="mt-ticket-share">
+            <button class="mt-share-btn" onclick="alert('Próximamente')">📤 Compartir</button>
+            <button class="mt-share-btn" onclick="alert('PDF próximamente')">📄 PDF</button>
+            <button class="mt-share-btn" onclick="go('evento')">🎫 Ver evento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- PASADAS -->
+    <div class="mt-panel" id="mt-pasadas">
+      <div class="mt-ticket">
+        <div class="mt-ticket-head">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">Hernán Cattáneo</div>
+            <div class="mt-ticket-meta">20 Marzo 2026 · Arena Perú</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag attended">ASISTIDO ✓</span>
+              <span class="mt-ticket-tag tier">VIP</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price" style="color:var(--text-mid)">S/280</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-ticket">
+        <div class="mt-ticket-head">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">DGTL Lima 2026</div>
+            <div class="mt-ticket-meta">08 Marzo 2026 · Costa Verde</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag attended">ASISTIDO ✓</span>
+              <span class="mt-ticket-tag tier">Full Weekend</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price" style="color:var(--text-mid)">S/350</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-ticket">
+        <div class="mt-ticket-head">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">Solomun en Lima</div>
+            <div class="mt-ticket-meta">14 Febrero 2026 · Lurin Live</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag attended">ASISTIDO ✓</span>
+              <span class="mt-ticket-tag tier">General</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price" style="color:var(--text-mid)">S/200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- EN REVENTA -->
+    <div class="mt-panel" id="mt-reventas">
+      <div class="mt-ticket">
+        <div class="mt-ticket-head">
+          <div class="mt-ticket-img" style="background-image:url('https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=200&q=80')"></div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">Solomun en Lima</div>
+            <div class="mt-ticket-meta">22 Mayo 2026 · Lurin Live</div>
+            <div class="mt-ticket-tags">
+              <span class="mt-ticket-tag resale">EN REVENTA</span>
+              <span class="mt-ticket-tag tier">General</span>
+            </div>
+          </div>
+          <div class="mt-ticket-right">
+            <div class="mt-ticket-price">S/280</div>
+            <div class="mt-ticket-actions">
+              <button class="mt-ticket-btn ghost" onclick="alert('Retirar próximamente')">Retirar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-empty" style="padding:40px 24px">
+        <div class="mt-empty-icon">💸</div>
+        <div class="mt-empty-text">¿Tienes una entrada que no usarás?</div>
+        <div class="mt-empty-sub">Ve a "Próximas" y presiona "Revender" para listarla en el marketplace seguro.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 10: ORGANIZER DASHBOARD
+     ═══════════════════════════════════════════ -->
+<div id="v-organizer" class="view">
+  <div class="og-view">
+    <div class="og-header">
+      <div class="og-header-top">
+        <div>
+          <div class="og-badge">🏢 Panel Organizador</div>
+          <h1>Mi Dashboard</h1>
+          <p>Bienvenido, Rorschach Productions · 2 eventos activos</p>
+        </div>
+        <button class="og-btn-new" onclick="alert('Crear evento próximamente')">+ Nuevo Evento</button>
+      </div>
+    </div>
+    <div class="og-metrics">
+      <div class="og-metric">
+        <div class="og-metric-label">Entradas vendidas</div>
+        <div class="og-metric-value acid">1,247</div>
+        <div class="og-metric-change up">↑ 18% vs semana anterior</div>
+      </div>
+      <div class="og-metric">
+        <div class="og-metric-label">Revenue total</div>
+        <div class="og-metric-value">S/187,050</div>
+        <div class="og-metric-change up">↑ S/24,200 esta semana</div>
+      </div>
+      <div class="og-metric">
+        <div class="og-metric-label">Check-ins hoy</div>
+        <div class="og-metric-value">0</div>
+        <div class="og-metric-change">Próximo evento: 01 Mayo</div>
+      </div>
+      <div class="og-metric">
+        <div class="og-metric-label">Tasa de reventa</div>
+        <div class="og-metric-value">4.2%</div>
+        <div class="og-metric-change down">↓ -1.1% vs mes pasado</div>
+      </div>
+    </div>
+    <div class="og-section">
+      <div class="og-section-title">Revenue — últimas 8 semanas</div>
+      <div class="og-chart">
+        <div class="og-bar" style="height:35%"></div>
+        <div class="og-bar" style="height:52%"></div>
+        <div class="og-bar" style="height:41%"></div>
+        <div class="og-bar" style="height:68%"></div>
+        <div class="og-bar" style="height:55%"></div>
+        <div class="og-bar" style="height:72%"></div>
+        <div class="og-bar" style="height:88%"></div>
+        <div class="og-bar highlight" style="height:100%"></div>
+      </div>
+      <div class="og-chart-labels">
+        <div class="og-chart-label">Ene 4</div>
+        <div class="og-chart-label">Ene 11</div>
+        <div class="og-chart-label">Ene 18</div>
+        <div class="og-chart-label">Ene 25</div>
+        <div class="og-chart-label">Feb 1</div>
+        <div class="og-chart-label">Feb 8</div>
+        <div class="og-chart-label">Feb 15</div>
+        <div class="og-chart-label">Feb 22</div>
+      </div>
+    </div>
+    <div class="og-section">
+      <div class="og-section-title">Mis eventos <a onclick="alert('Ver todos próximamente')">Ver todos →</a></div>
+      <div class="og-events">
+        <div class="og-event-card">
+          <div class="og-event-img" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&q=80')">
+            <div class="og-event-status">🟢 ACTIVO</div>
+          </div>
+          <div class="og-event-body">
+            <div class="og-event-name">Rorschach.Inc 2026</div>
+            <div class="og-event-meta">01 Mayo 2026 · Av. 9 de Diciembre 203 · Lima</div>
+            <div class="og-event-bar"><div class="og-event-bar-fill" style="width:78%"></div></div>
+            <div class="og-event-sell"><span>Vendidas</span><strong>975 / 1,250</strong></div>
+          </div>
+          <div class="og-event-actions">
+            <button class="og-act-btn primary" onclick="go('scanner')">📡 Scanner</button>
+            <button class="og-act-btn ghost" onclick="ogShowAttendees()">👥 Asistentes</button>
+            <button class="og-act-btn ghost" onclick="alert('Exportar próximamente')">📊 Export</button>
+          </div>
+        </div>
+        <div class="og-event-card">
+          <div class="og-event-img" style="background-image:url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=400&q=80')">
+            <div class="og-event-status" style="color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.2)">📝 BORRADOR</div>
+          </div>
+          <div class="og-event-body">
+            <div class="og-event-name">Rorschach.Inc — Afterparty</div>
+            <div class="og-event-meta">02 Mayo 2026 · Venue TBD</div>
+            <div class="og-event-bar"><div class="og-event-bar-fill" style="width:12%"></div></div>
+            <div class="og-event-sell"><span>Vendidas</span><strong>37 / 300</strong></div>
+          </div>
+          <div class="og-event-actions">
+            <button class="og-act-btn primary" onclick="alert('Editar próximamente')">✏️ Editar</button>
+            <button class="og-act-btn ghost" onclick="alert('Publicar próximamente')">🚀 Publicar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="og-section" id="og-attendees-section" style="display:none">
+      <div class="og-section-title">Asistentes — Rorschach.Inc 2026 <a onclick="document.getElementById('og-attendees-section').style.display='none'">Cerrar ×</a></div>
+      <div class="og-table-wrap">
+        <div class="og-table-head">
+          <div class="og-table-head-title">1,247 asistentes</div>
+          <input class="og-search-mini" type="text" placeholder="Buscar por nombre o DNI...">
+        </div>
+        <table class="og-table">
+          <thead>
+            <tr><th>Asistente</th><th>Ticket</th><th>Compra</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="og-attendee-name">Mario Leder</div><div class="og-attendee-dni">DNI: 73•••456</div></td>
+              <td>General</td><td>S/120</td>
+              <td><span class="og-status-pill pending">⏳ Pendiente</span></td>
+            </tr>
+            <tr>
+              <td><div class="og-attendee-name">Ana Torres</div><div class="og-attendee-dni">DNI: 47•••219</div></td>
+              <td>VIP</td><td>S/280</td>
+              <td><span class="og-status-pill checked">✅ Ingresó 22:14</span></td>
+            </tr>
+            <tr>
+              <td><div class="og-attendee-name">Carlos Vega</div><div class="og-attendee-dni">DNI: 61•••803</div></td>
+              <td>Season Pass</td><td>S/0</td>
+              <td><span class="og-status-pill checked">✅ Ingresó 21:52</span></td>
+            </tr>
+            <tr>
+              <td><div class="og-attendee-name">Lucia Mendez</div><div class="og-attendee-dni">DNI: 80•••134</div></td>
+              <td>General (Reventa)</td><td>S/180</td>
+              <td><span class="og-status-pill resale">🔄 Reventa MP</span></td>
+            </tr>
+            <tr>
+              <td><div class="og-attendee-name">Diego Ríos</div><div class="og-attendee-dni">DNI: 55•••671</div></td>
+              <td>VIP</td><td>S/280</td>
+              <td><span class="og-status-pill pending">⏳ Pendiente</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NOTIFICATION PANEL
+     ═══════════════════════════════════════════ -->
+<div class="notif-overlay" id="notif-overlay" onclick="notifOverlayClick(event)">
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">
+      <h2>Notificaciones</h2>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="notif-mark-all" onclick="notifMarkAll()">Marcar todas leídas</button>
+        <button class="notif-close" onclick="notifClose()">✕</button>
+      </div>
+    </div>
+    <div class="notif-section-label">Nuevas</div>
+    <div class="notif-item unread" onclick="notifMarkRead(this);go('mis-entradas')">
+      <div class="notif-item-icon">🎫</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">Entrada confirmada</div>
+        <div class="notif-item-text">Tu entrada para Charlotte de Witte está lista. Solo lleva tu DNI.</div>
+        <div class="notif-item-time">Hace 2 minutos</div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" onclick="notifMarkRead(this)">
+      <div class="notif-item-icon">⚡</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">Preventa abierta</div>
+        <div class="notif-item-text">La preventa de Solomun en Lima acaba de abrir. Quedan 80 entradas.</div>
+        <div class="notif-item-time">Hace 1 hora</div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" onclick="notifMarkRead(this)">
+      <div class="notif-item-icon">🏆</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">Badge desbloqueado</div>
+        <div class="notif-item-text">¡Obtuviste "Preventa Hunter"! Has comprado 3 preventas seguidas.</div>
+        <div class="notif-item-time">Ayer</div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-section-label">Anteriores</div>
+    <div class="notif-item" onclick="notifMarkRead(this)">
+      <div class="notif-item-icon">💸</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">Tu reventa fue comprada</div>
+        <div class="notif-item-text">Alguien compró tu entrada de Solomun a S/280. Pago en camino.</div>
+        <div class="notif-item-time">Hace 3 días</div>
+      </div>
+    </div>
+    <div class="notif-item" onclick="notifMarkRead(this)">
+      <div class="notif-item-icon">🪪</div>
+      <div class="notif-item-body">
+        <div class="notif-item-title">Identidad verificada</div>
+        <div class="notif-item-text">Tu DNI fue verificado. Ya puedes comprar entradas.</div>
+        <div class="notif-item-time">Hace 1 semana</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     RESALE MODAL
+     ═══════════════════════════════════════════ -->
+<div class="resale-overlay" id="resale-overlay" onclick="resaleOverlayClick(event)">
+  <div class="resale-sheet">
+    <div class="resale-handle"></div>
+    <div class="resale-title">Poner en reventa 🔄</div>
+    <div class="resale-sub">Tu entrada se listará en el marketplace. Solo fans verificados pueden comprarla.</div>
+    <div class="resale-ticket-preview">
+      <div class="rtp-icon">🎫</div>
+      <div class="rtp-info">
+        <h3 id="resale-event-name">Charlotte de Witte en Lima</h3>
+        <p id="resale-ticket-tier">General · 16 Mayo 2026</p>
+      </div>
+    </div>
+    <div class="resale-price-section">
+      <div class="resale-price-label">Precio de venta</div>
+      <div class="resale-price-input-wrap">
+        <div class="resale-currency">S/</div>
+        <input class="resale-price-input" type="number" id="resale-price" value="200" min="1" oninput="resaleUpdateCalc()">
+      </div>
+      <div class="resale-price-hints">
+        <button class="resale-hint-btn" onclick="resaleSetPrice(120)">Precio original</button>
+        <button class="resale-hint-btn" onclick="resaleSetPrice(150)">+25%</button>
+        <button class="resale-hint-btn" onclick="resaleSetPrice(200)">+67%</button>
+      </div>
+    </div>
+    <div class="resale-info-row"><span>Precio de venta</span><strong id="calc-sale">S/200</strong></div>
+    <div class="resale-info-row"><span>Comisión Lezgo (5%)</span><strong id="calc-fee">-S/10</strong></div>
+    <hr class="resale-divider">
+    <div class="resale-total"><span>Tú recibes</span><span id="calc-net">S/190</span></div>
+    <div style="height:16px"></div>
+    <div class="resale-terms">
+      <input type="checkbox" id="resale-terms-cb">
+      <label for="resale-terms-cb">Entiendo que la entrada se transferirá al comprador verificado y mi DNI quedará desvinculado de esta entrada.</label>
+    </div>
+    <button class="resale-btn" onclick="resaleConfirm()">Publicar en marketplace →</button>
+    <button class="resale-cancel" onclick="resaleClose()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCANNER RESULT OVERLAY
+     ═══════════════════════════════════════════ -->
+<div class="scan-result-overlay" id="scan-result-overlay">
+  <div class="scan-result-bg" onclick="scanResultClose()"></div>
+  <div class="scan-result-card" id="scan-result-card">
+    <span class="scan-result-icon" id="scan-result-icon">✅</span>
+    <div class="scan-result-status approved" id="scan-result-status">ACCESO APROBADO</div>
+    <div class="scan-result-name" id="scan-result-name">Mario Leder</div>
+    <div class="scan-result-detail" id="scan-result-detail">DNI verificado · Entrada válida</div>
+    <div class="scan-result-info">
+      <div class="scan-result-row"><span>DNI</span><span id="sr-dni">73•••456</span></div>
+      <div class="scan-result-row"><span>Ticket</span><span id="sr-ticket">General Admission</span></div>
+      <div class="scan-result-row"><span>Evento</span><span id="sr-event">Rorschach.Inc 2026</span></div>
+      <div class="scan-result-row"><span>Check-in</span><span id="sr-time">22:14:07</span></div>
+    </div>
+    <button class="scan-next-btn approved" id="scan-next-btn" onclick="scanResultClose()">Siguiente →</button>
+  </div>
+</div>
+
+<div class="pm-overlay" id="pm-overlay" onclick="pmOverlayClick(event)">
+  <div class="pm-sheet" id="pm-sheet">
+    <div class="pm-handle"></div>
+    <div class="pm-header">
+      <div>
+        <div class="pm-header-event" id="pm-event-label">Charlotte de Witte — Lima 2026</div>
+        <div class="pm-header-title" id="pm-step-title">Elige tu entrada</div>
+      </div>
+      <button class="pm-close" onclick="pmClose()">✕</button>
+    </div>
+    <div class="pm-body">
+
+      <!-- Steps indicator -->
+      <div class="pm-steps">
+        <div class="pm-step-dot active" id="pm-dot-1">1</div>
+        <div class="pm-step-line" id="pm-line-1"></div>
+        <div class="pm-step-dot" id="pm-dot-2">2</div>
+        <div class="pm-step-line" id="pm-line-2"></div>
+        <div class="pm-step-dot" id="pm-dot-3">3</div>
+        <div class="pm-step-line" id="pm-line-3"></div>
+        <div class="pm-step-dot" id="pm-dot-4">✓</div>
+      </div>
+
+      <!-- PANEL 1: Select ticket -->
+      <div class="pm-panel active" id="pm-panel-1">
+        <div class="pm-ticket-row selected" id="pm-opt-ga" onclick="pmSelectTicket('ga', 'General Admission', 'S/120', 120)">
+          <div style="display:flex;align-items:center;gap:14px;flex:1">
+            <div class="pm-ticket-radio"></div>
+            <div>
+              <div class="pm-ticket-name">General Admission</div>
+              <div class="pm-ticket-sub">Early Access · 1 día</div>
+            </div>
+          </div>
+          <div class="pm-ticket-price">S/120</div>
+        </div>
+        <div class="pm-ticket-row" id="pm-opt-vip" onclick="pmSelectTicket('vip', 'VIP', 'S/280', 280)">
+          <div style="display:flex;align-items:center;gap:14px;flex:1">
+            <div class="pm-ticket-radio"></div>
+            <div>
+              <div class="pm-ticket-name">👑 VIP</div>
+              <div class="pm-ticket-sub">Early Access · 1 día · Bar open + zona exclusiva</div>
+            </div>
+          </div>
+          <div class="pm-ticket-price">S/280</div>
+        </div>
+        <div class="pm-ticket-row soldout" onclick="return false">
+          <div style="display:flex;align-items:center;gap:14px;flex:1">
+            <div class="pm-ticket-radio"></div>
+            <div>
+              <div class="pm-ticket-name">Festival Pass (2 días)</div>
+              <div class="pm-ticket-sub">Preventa — Agotado</div>
+            </div>
+          </div>
+          <div class="pm-ticket-price" style="color:rgba(255,255,255,0.3);font-size:14px">AGOTADO</div>
+        </div>
+        <button class="pm-cta" onclick="pmGoStep(2)">Continuar →</button>
+      </div>
+
+      <!-- PANEL 2: DNI verification -->
+      <div class="pm-panel" id="pm-panel-2">
+        <div class="pm-verify-icon">🪪</div>
+        <div class="pm-verify-title">Verifica tu identidad</div>
+        <div class="pm-verify-sub">Tu entrada quedará vinculada a tu DNI. Así protegemos tu compra y eliminamos las reventas truchas.</div>
+        <input class="pm-input" type="text" id="pm-dni-input" placeholder="DNI (ej: 73XXXXXX)" maxlength="10" oninput="pmFormatDni(this)">
+        <input class="pm-input" type="text" id="pm-name-input" placeholder="Nombres y apellidos (como en tu DNI)">
+        <div class="pm-security-note">
+          🔒 Tu DNI se usa solo para verificar tu identidad. No almacenamos datos sensibles.
+        </div>
+        <button class="pm-cta" id="pm-verify-btn" onclick="pmVerifyDni()">Verificar y continuar →</button>
+        <button class="pm-cta-secondary" onclick="pmGoStep(1)">← Volver</button>
+      </div>
+
+      <!-- PANEL 3: Payment -->
+      <div class="pm-panel" id="pm-panel-3">
+        <div class="pm-pay-summary">
+          <div class="pm-pay-row"><span>Ticket</span><span id="pm-pay-ticket-name">General Admission</span></div>
+          <div class="pm-pay-row"><span>Cargo por servicio</span><span>S/10</span></div>
+          <div class="pm-pay-row total"><span>Total</span><span id="pm-pay-total">S/130</span></div>
+        </div>
+        <div class="pm-card-row">
+          <div class="pm-card-opt selected" id="pm-pay-card" onclick="pmSelectPay('card')">
+            <span class="pm-card-icon">💳</span>
+            Tarjeta
+          </div>
+          <div class="pm-card-opt" id="pm-pay-yape" onclick="pmSelectPay('yape')">
+            <span class="pm-card-icon">📱</span>
+            Yape / Plin
+          </div>
+          <div class="pm-card-opt" id="pm-pay-izipay" onclick="pmSelectPay('izipay')">
+            <span class="pm-card-icon">🏦</span>
+            Izipay
+          </div>
+        </div>
+        <div id="pm-pay-card-fields">
+          <input class="pm-input" type="text" placeholder="Número de tarjeta" maxlength="19" oninput="pmFormatCard(this)">
+          <div style="display:flex;gap:10px">
+            <input class="pm-input" type="text" placeholder="MM/AA" maxlength="5" style="flex:1" oninput="pmFormatExp(this)">
+            <input class="pm-input" type="text" placeholder="CVV" maxlength="3" style="flex:1;letter-spacing:0.2em">
+          </div>
+        </div>
+        <div id="pm-pay-yape-fields" style="display:none">
+          <div style="text-align:center;font-size:14px;color:var(--text-mid);padding:20px 0">
+            📲 Se abrirá el flujo de Yape/Plin al continuar
+          </div>
+        </div>
+        <!-- Loading -->
+        <div class="pm-loading" id="pm-loading">
+          <div class="pm-spinner"></div>
+          <div class="pm-loading-text">Procesando pago seguro...</div>
+        </div>
+        <button class="pm-cta" id="pm-pay-btn" onclick="pmPay()">Pagar ahora 🔒</button>
+        <button class="pm-cta-secondary" onclick="pmGoStep(2)">← Volver</button>
+      </div>
+
+      <!-- PANEL 4: Confirmation -->
+      <div class="pm-panel" id="pm-panel-4">
+        <div class="pm-confirm-icon">🎉</div>
+        <div class="pm-confirm-title">¡Entrada confirmada!</div>
+        <div class="pm-confirm-sub">Tu entrada está vinculada a tu DNI. En puerta solo presentas tu documento — sin QR, sin app, sin complicaciones.</div>
+        <div class="pm-ticket-card-preview">
+          <div class="pm-ticket-card-event">Charlotte de Witte — Lima 2026</div>
+          <div class="pm-ticket-card-name" id="pm-confirm-ticket-name">General Admission</div>
+          <div class="pm-ticket-card-details">
+            <div class="pm-ticket-card-detail"><strong>Sáb 16 Mayo</strong>21:00 – 05:00</div>
+            <div class="pm-ticket-card-detail"><strong>Arena Perú</strong>Santa Anita</div>
+            <div class="pm-ticket-card-detail"><strong id="pm-confirm-dni">———</strong>DNI Vinculado</div>
+          </div>
+          <div class="pm-ticket-qr" style="text-align:center">🪪</div>
+          <div class="pm-ticket-verified">✅ Verificado con Lezgo</div>
+        </div>
+        <button class="pm-cta" onclick="pmClose()" style="margin-top:24px">Ver mis entradas →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
