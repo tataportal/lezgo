@@ -3486,13 +3486,13 @@ body::after {
   /* ─── Nav Profile Dropdown ─── */
   .nav-user { position: relative; }
   .nav-dropdown {
-    position: absolute; top: calc(100% + 14px); right: 0;
+    position: fixed; top: 72px; right: 16px;
     width: 230px; background: #1c1c1c;
     border: 1px solid rgba(255,255,255,0.1); border-radius: 18px;
-    padding: 8px; z-index: 7000;
-    opacity: 0; pointer-events: none; transform: translateY(-6px);
+    padding: 8px; z-index: 99999;
+    opacity: 0; pointer-events: none; transform: translateY(-8px);
     transition: opacity 0.18s ease, transform 0.18s ease;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
   }
   .nav-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0); }
   .nd-item {
@@ -3561,14 +3561,12 @@ body::after {
             <span class="nd-icon">⚙️</span> Configuración
           </div>
           <div class="nd-divider"></div>
-          <div class="nd-item" onclick="ndToggleDark(event)">
-            <span class="nd-icon" id="nd-mode-icon">🌙</span>
-            <span id="nd-mode-label">Modo oscuro</span>
-            <div class="nd-toggle on" id="nd-dark-toggle"></div>
-          </div>
           <div class="nd-item" onclick="ndToggleLang(event)">
             <span class="nd-icon">🌐</span> Idioma
-            <span class="nd-lang-badge" id="nd-lang-badge">ES</span>
+            <div style="margin-left:auto;display:flex;gap:4px;align-items:center;">
+              <span id="nd-lang-es" style="font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;background:var(--acid);color:#000;">ES</span>
+              <span id="nd-lang-en" style="font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,0.08);color:var(--text-dim);">EN</span>
+            </div>
           </div>
           <div class="nd-divider"></div>
           <div class="nd-item danger" onclick="ndGo('auth')">
@@ -5816,8 +5814,6 @@ body::after {
 
   // Wire nav-user to mis-entradas
   document.addEventListener('DOMContentLoaded', () => {
-    const navUser = document.querySelector('.nav-user');
-    if (navUser) navUser.onclick = () => go('mis-entradas');
     // Add scanner demo buttons to scanner view
     const scDeviceBtn = document.querySelector('.sc-device-status');
     if (scDeviceBtn) {
@@ -6508,7 +6504,18 @@ body::after {
   function ndToggle(e) {
     e.stopPropagation();
     const dd = document.getElementById('nav-dropdown');
-    if (dd) dd.classList.toggle('open');
+    if (!dd) return;
+    const isOpen = dd.classList.contains('open');
+    if (isOpen) {
+      dd.classList.remove('open');
+    } else {
+      // Position based on trigger button
+      const btn = e.currentTarget;
+      const rect = btn.getBoundingClientRect();
+      dd.style.top = (rect.bottom + 8) + 'px';
+      dd.style.right = (window.innerWidth - rect.right) + 'px';
+      dd.classList.add('open');
+    }
   }
 
   function ndGo(view) {
@@ -6517,34 +6524,32 @@ body::after {
     go(view);
   }
 
-  function ndToggleDark(e) {
-    e.stopPropagation();
-    ndDarkOn = !ndDarkOn;
-    const toggle = document.getElementById('nd-dark-toggle');
-    const icon = document.getElementById('nd-mode-icon');
-    const label = document.getElementById('nd-mode-label');
-    if (toggle) toggle.classList.toggle('on', ndDarkOn);
-    if (icon) icon.textContent = ndDarkOn ? '🌙' : '☀️';
-    if (label) label.textContent = ndDarkOn ? 'Modo oscuro' : 'Modo claro';
-    document.body.classList.toggle('light-mode', !ndDarkOn);
-  }
-
   function ndToggleLang(e) {
     e.stopPropagation();
     ndLang = ndLang === 'ES' ? 'EN' : 'ES';
-    const badge = document.getElementById('nd-lang-badge');
-    if (badge) badge.textContent = ndLang;
-    // Apply to all data-es/data-en elements globally
     const lang = ndLang.toLowerCase();
-    const alt = lang === 'es' ? 'en' : 'es';
-    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+
+    // Update pill UI
+    const esEl = document.getElementById('nd-lang-es');
+    const enEl = document.getElementById('nd-lang-en');
+    if (esEl) {
+      esEl.style.background = lang === 'es' ? 'var(--acid)' : 'rgba(255,255,255,0.08)';
+      esEl.style.color = lang === 'es' ? '#000' : 'var(--text-dim)';
+    }
+    if (enEl) {
+      enEl.style.background = lang === 'en' ? 'var(--acid)' : 'rgba(255,255,255,0.08)';
+      enEl.style.color = lang === 'en' ? '#000' : 'var(--text-dim)';
+    }
+
+    // Apply text swap to every element with data-es / data-en
+    document.querySelectorAll('[data-es][data-en]').forEach(el => {
       const val = el.getAttribute('data-' + lang);
-      if (val !== null) {
-        if (val.includes('<')) el.innerHTML = val;
-        else el.textContent = val;
-      }
+      if (val === null) return;
+      if (val.includes('<')) el.innerHTML = val;
+      else el.textContent = val;
     });
-    // Sync deck lang toggle if visible
+
+    // Sync deck toggle buttons visually
     if (typeof dkLang === 'function') dkLang(lang);
   }
 
