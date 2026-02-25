@@ -713,6 +713,7 @@ body::after {
   padding: 24px 24px; background: var(--bg-raised);
   border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
   transition: border-color 0.2s;
+  display: flex; flex-direction: column;
 }
 .cf-compromiso:hover { border-color: rgba(229,255,0,0.25); }
 .cf-compromiso-num {
@@ -723,8 +724,9 @@ body::after {
   font-size: 17px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.2px;
 }
 .cf-compromiso p { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+.cf-compromiso p { flex: 1; }
 .cf-compromiso-badge {
-  display: inline-block; margin-top: 12px; padding: 3px 10px;
+  display: inline-block; margin-top: 16px; padding: 3px 10px;
   background: rgba(229,255,0,0.1); border-radius: 20px;
   font-size: 11px; font-weight: 700; color: var(--acid); letter-spacing: 0.5px;
 }
