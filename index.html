@@ -3092,7 +3092,7 @@ body::after {
 /* ═══════════════════════════════════════════
    MY TICKETS VIEW (v-mis-entradas)
    ═══════════════════════════════════════════ */
-.mt-view { min-height: 100vh; padding: 0 0 80px; }
+.mt-view { min-height: 100vh; padding: 0 0 80px; max-width: 760px; margin: 0 auto; }
 .mt-header {
   padding: 32px 32px 0; display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 0;
@@ -3482,6 +3482,53 @@ body::after {
   .mt-ticket-right { align-items: flex-start; padding: 0 16px 16px; }
   .mt-ticket-actions { flex-wrap: wrap; }
 }
+
+  /* ─── Nav Profile Dropdown ─── */
+  .nav-user { position: relative; }
+  .nav-dropdown {
+    position: absolute; top: calc(100% + 14px); right: 0;
+    width: 230px; background: #1c1c1c;
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 18px;
+    padding: 8px; z-index: 7000;
+    opacity: 0; pointer-events: none; transform: translateY(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  }
+  .nav-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .nd-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 11px; cursor: pointer;
+    font-size: 14px; color: var(--text-mid); transition: background 0.15s, color 0.15s;
+    user-select: none;
+  }
+  .nd-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nd-icon { width: 22px; text-align: center; font-size: 15px; flex-shrink: 0; }
+  .nd-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 5px 2px; }
+  .nd-item.danger { color: #f87171; }
+  .nd-item.danger:hover { background: rgba(248,113,113,0.1); color: #f87171; }
+  .nd-toggle {
+    margin-left: auto; width: 36px; height: 20px;
+    background: rgba(255,255,255,0.1); border-radius: 10px;
+    position: relative; transition: background 0.2s; flex-shrink: 0;
+  }
+  .nd-toggle.on { background: var(--acid); }
+  .nd-toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; background: #fff; border-radius: 50%;
+    transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .nd-toggle.on::after { transform: translateX(16px); }
+  .nd-lang-badge {
+    margin-left: auto; font-size: 11px; font-weight: 800;
+    color: var(--acid); letter-spacing: 0.06em;
+  }
+  /* dark mode overrides */
+  body.light-mode { --bg: #f4f4f0; --text: #111; --text-mid: #444; --text-dim: #888; }
+  body.light-mode .nav-dropdown { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 24px 64px rgba(0,0,0,0.12); }
+  body.light-mode .nd-item { color: #555; }
+  body.light-mode .nd-item:hover { background: rgba(0,0,0,0.05); color: #111; }
+  body.light-mode .nd-divider { background: rgba(0,0,0,0.08); }
+
 </style>
 </head>
 <body>
@@ -3500,9 +3547,34 @@ body::after {
       <div class="nav-cat" onclick="go('deck')">Deck</div>
     </div>
     <div class="nav-right">
-      <div class="nav-user" onclick="go('mis-entradas')">
+      <div class="nav-user" onclick="ndToggle(event)">
         <div class="nav-avatar">ML</div>
         <span class="nav-username">Mario</span>
+        <div class="nav-dropdown" id="nav-dropdown" onclick="event.stopPropagation()">
+          <div class="nd-item" onclick="ndGo('perfil')">
+            <span class="nd-icon">👤</span> Mi Perfil
+          </div>
+          <div class="nd-item" onclick="ndGo('mis-entradas')">
+            <span class="nd-icon">🎟️</span> Mis Entradas
+          </div>
+          <div class="nd-item" onclick="ndGo('configuracion')">
+            <span class="nd-icon">⚙️</span> Configuración
+          </div>
+          <div class="nd-divider"></div>
+          <div class="nd-item" onclick="ndToggleDark(event)">
+            <span class="nd-icon" id="nd-mode-icon">🌙</span>
+            <span id="nd-mode-label">Modo oscuro</span>
+            <div class="nd-toggle on" id="nd-dark-toggle"></div>
+          </div>
+          <div class="nd-item" onclick="ndToggleLang(event)">
+            <span class="nd-icon">🌐</span> Idioma
+            <span class="nd-lang-badge" id="nd-lang-badge">ES</span>
+          </div>
+          <div class="nd-divider"></div>
+          <div class="nd-item danger" onclick="ndGo('auth')">
+            <span class="nd-icon">🚪</span> Cerrar sesión
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -6426,6 +6498,61 @@ body::after {
   }
   updateCountdown();
   setInterval(updateCountdown, 1000);
+
+  /* ═══════════════════════════════════════════
+     NAV PROFILE DROPDOWN
+     ═══════════════════════════════════════════ */
+  let ndDarkOn = true;
+  let ndLang = 'ES';
+
+  function ndToggle(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('nav-dropdown');
+    if (dd) dd.classList.toggle('open');
+  }
+
+  function ndGo(view) {
+    const dd = document.getElementById('nav-dropdown');
+    if (dd) dd.classList.remove('open');
+    go(view);
+  }
+
+  function ndToggleDark(e) {
+    e.stopPropagation();
+    ndDarkOn = !ndDarkOn;
+    const toggle = document.getElementById('nd-dark-toggle');
+    const icon = document.getElementById('nd-mode-icon');
+    const label = document.getElementById('nd-mode-label');
+    if (toggle) toggle.classList.toggle('on', ndDarkOn);
+    if (icon) icon.textContent = ndDarkOn ? '🌙' : '☀️';
+    if (label) label.textContent = ndDarkOn ? 'Modo oscuro' : 'Modo claro';
+    document.body.classList.toggle('light-mode', !ndDarkOn);
+  }
+
+  function ndToggleLang(e) {
+    e.stopPropagation();
+    ndLang = ndLang === 'ES' ? 'EN' : 'ES';
+    const badge = document.getElementById('nd-lang-badge');
+    if (badge) badge.textContent = ndLang;
+    // Apply to all data-es/data-en elements globally
+    const lang = ndLang.toLowerCase();
+    const alt = lang === 'es' ? 'en' : 'es';
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val !== null) {
+        if (val.includes('<')) el.innerHTML = val;
+        else el.textContent = val;
+      }
+    });
+    // Sync deck lang toggle if visible
+    if (typeof dkLang === 'function') dkLang(lang);
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function() {
+    const dd = document.getElementById('nav-dropdown');
+    if (dd) dd.classList.remove('open');
+  });
 
 </script>
 
