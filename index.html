@@ -6401,7 +6401,19 @@ body::after {
     }
   })();
 
+  // ── Demo mode: everyone logs in as demo user ──
+  var DEMO_MODE = true;
+  var DEMO_UID = 'demo-user-001';
+
   auth.onAuthStateChanged(async (user) => {
+    if (DEMO_MODE) {
+      // Override with demo user regardless of auth state
+      currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
+      const doc = await db.collection('users').doc(DEMO_UID).get();
+      userProfile = doc.exists ? doc.data() : { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: 'fan', dni: '72345678' };
+      updateUIForAuth(true);
+      return;
+    }
     currentUser = user;
     if (user) {
       // Load or create user profile
