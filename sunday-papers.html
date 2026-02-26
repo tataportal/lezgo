@@ -168,7 +168,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   margin: 0 auto;
 }
 
-.tk-grid { grid-template-columns: repeat(3, 1fr); }
+.tk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .tk-card {
   position: relative;
   border-radius: 20px;
@@ -540,50 +540,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <div class="section-label">Entradas</div>
   <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
 
-  <div class="tk-grid">
+    <div class="tk-grid">
 
-    <!-- Brunch General -->
-    <div class="tk-card">
-      <div class="tk-inner tk-tier-1">
-        <div class="tk-header">
-          <div class="tk-name">Brunch General</div>
-          <ul class="tk-includes">
-            <li>Acceso al jardín</li>
-            <li>Comida de mercado</li>
-            <li>Música todo el día</li>
-          </ul>
-        </div>
-        <div class="tk-phases">
-          <div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Brunch General</span></div><span class="tk-phase-price">S/ 95</span></div>
-        </div>
-        <div class="tk-avail">
-          <div class="tk-avail-bar"><div class="tk-avail-fill" style="width:63%"></div></div>
-          <div class="tk-avail-text">111 disponibles</div>
-        </div>
-        <div class="tk-bottom">
-          <button class="tk-buy">Comprar →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Brunch + Mesa -->
-    <div class="tk-card tk-card--sold" onclick="goMarketplace('brunch-+-mesa')">
+    <!-- General -->
+    <div class="tk-card tk-card--sold" onclick="goMarketplace('general')">
       <div class="tk-overlay">
         <div class="tk-overlay-icon">🔄</div>
         <div class="tk-overlay-text">Buscar en Marketplace</div>
-        <div class="tk-overlay-hint">Brunch + Mesa · reventa verificada</div>
+        <div class="tk-overlay-hint">General · reventa verificada</div>
       </div>
       <div class="tk-inner tk-sold">
         <div class="tk-header">
-          <div class="tk-name">Brunch + Mesa</div>
+          <div class="tk-name">General</div>
           <ul class="tk-includes">
-            <li>Mesa reservada 6 pax</li>
-            <li>Menú degustación</li>
-            <li>Vino natural</li>
+            <li>Acceso a 3 rooms</li>
+            <li>Barra standard</li>
           </ul>
         </div>
         <div class="tk-phases">
-          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Brunch + Mesa</span></div><span class="tk-phase-price">S/ 180</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Early Bird</span></div><span class="tk-phase-price">S/ 55</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 1</span></div><span class="tk-phase-price">S/ 65</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 2</span></div><span class="tk-phase-price">S/ 75</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 85</span></div>
         </div>
         <div class="tk-bottom">
           <div class="tk-sold-all">SOLD OUT</div>
@@ -591,33 +569,100 @@ button { font-family: inherit; cursor: pointer; border: none; }
       </div>
     </div>
 
-    <!-- Solo Música -->
-    <div class="tk-card">
-      <div class="tk-inner tk-tier-2">
+    <!-- VIP -->
+    <div class="tk-card tk-card--sold" onclick="goMarketplace('vip')">
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🔄</div>
+        <div class="tk-overlay-text">Buscar en Marketplace</div>
+        <div class="tk-overlay-hint">VIP · reventa verificada</div>
+      </div>
+      <div class="tk-inner tk-sold">
         <div class="tk-header">
-          <div class="tk-name">Solo Música</div>
+          <div class="tk-name">VIP</div>
           <ul class="tk-includes">
-            <li>Acceso desde 16:00</li>
-            <li>Solo área musical</li>
+            <li>Zona exclusiva Room 1</li>
+            <li>Barra premium</li>
+            <li>Fast-lane ingreso</li>
           </ul>
         </div>
         <div class="tk-phases">
-          <div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Solo Música (desde 16:00)</span></div><span class="tk-phase-price">S/ 65</span></div>
-        </div>
-        <div class="tk-avail">
-          <div class="tk-avail-bar"><div class="tk-avail-fill" style="width:23%"></div></div>
-          <div class="tk-avail-text">116 disponibles</div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Early Bird</span></div><span class="tk-phase-price">S/ 100</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 1</span></div><span class="tk-phase-price">S/ 120</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 2</span></div><span class="tk-phase-price">S/ 135</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 150</span></div>
         </div>
         <div class="tk-bottom">
-          <button class="tk-buy">Comprar →</button>
+          <div class="tk-sold-all">SOLD OUT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Super VIP -->
+    <div class="tk-card tk-card--sold" onclick="goMarketplace('super-vip')">
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🔄</div>
+        <div class="tk-overlay-text">Buscar en Marketplace</div>
+        <div class="tk-overlay-hint">Super VIP · reventa verificada</div>
+      </div>
+      <div class="tk-inner tk-sold">
+        <div class="tk-header">
+          <div class="tk-name">Super VIP</div>
+          <ul class="tk-includes">
+            <li>Backstage access</li>
+            <li>Open bar premium</li>
+            <li>Meet & greet artistas</li>
+          </ul>
+        </div>
+        <div class="tk-phases">
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Early Bird</span></div><span class="tk-phase-price">S/ 200</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 1</span></div><span class="tk-phase-price">S/ 250</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 2</span></div><span class="tk-phase-price">S/ 280</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 300</span></div>
+        </div>
+        <div class="tk-bottom">
+          <div class="tk-sold-all">SOLD OUT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Box -->
+    <div class="tk-card tk-card--sold" onclick="goMarketplace('box')">
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🔄</div>
+        <div class="tk-overlay-text">Buscar en Marketplace</div>
+        <div class="tk-overlay-hint">Box · reventa verificada</div>
+      </div>
+      <div class="tk-inner tk-sold">
+        <div class="tk-header">
+          <div class="tk-name">Box</div>
+          <ul class="tk-includes">
+            <li>Sala lounge 10 pax</li>
+            <li>4 botellas + mixer</li>
+            <li>Vista al stage</li>
+          </ul>
+        </div>
+        <div class="tk-phases">
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa</span></div><span class="tk-phase-price">S/ 1,500</span></div>
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 1,800</span></div>
+        </div>
+        <div class="tk-bottom">
+          <div class="tk-sold-all">SOLD OUT</div>
         </div>
       </div>
     </div>
 
   </div>
 
-
-</section>
+  <!-- Marketplace CTA -->
+  <div class="mp-banner">
+    <div class="mp-info">
+      <div class="mp-title">Busca en el marketplace de reventa</div>
+      <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
+    </div>
+    <div class="mp-action">
+      <button class="btn btn-primary">Ver Marketplace →</button>
+    </div>
+  </div></section>
 
 <div class="divider"></div>
 <section class="section">
