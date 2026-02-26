@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "scanner.lezgo.fans" }],
+      "destination": "/scanner/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "deck.lezgo.fans" }],
+      "destination": "/deck/index.html"
+    }
+  ]
+}

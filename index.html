@@ -8513,7 +8513,8 @@ body::after {
     });
   }
 
-  function go(view) {
+  function go(view, opts) {
+    opts = opts || {};
     // Protected views require auth
     const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner', 'event-form'];
     if (protectedViews.includes(view) && !currentUser) {
@@ -8532,12 +8533,34 @@ body::after {
       document.querySelectorAll('.nav-cat')[map[view]].classList.add('active');
     }
     window.scrollTo(0, 0);
+
+    // Update URL hash (skip if triggered by popstate to avoid loop)
+    if (!opts._fromPop) {
+      const hash = view === 'eventos' ? '' : '#' + view;
+      history.pushState({ view: view }, '', hash || window.location.pathname);
+    }
+
     // Trigger data loads for Firebase-powered views
     if (view === 'mis-entradas' && typeof loadMyTickets === 'function') loadMyTickets();
     if (view === 'marketplace' && typeof loadMarketplace === 'function') loadMarketplace();
     if (view === 'organizer' && typeof loadOrganizerDashboard === 'function') loadOrganizerDashboard();
     if (view === 'perfil' && typeof loadProfile === 'function') loadProfile();
   }
+
+  // ── Hash Router: handle back/forward + page load ──
+  window.addEventListener('popstate', function(e) {
+    const view = (e.state && e.state.view) ? e.state.view : (location.hash.replace('#','') || 'eventos');
+    go(view, { _fromPop: true });
+  });
+
+  // On page load: read hash and navigate
+  (function initHashRoute() {
+    const hash = location.hash.replace('#', '');
+    if (hash && hash !== 'eventos') {
+      // Delay slightly so Firebase auth + events can initialize
+      setTimeout(function() { go(hash); }, 300);
+    }
+  })();
 
   /* ═══════════════════════════════════════════
      AUTH FLOW

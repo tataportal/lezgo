@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lezgo Scanner — Verificación de Entradas</title>
+  <meta name="description" content="Scanner de verificación de entradas Lezgo. Control de acceso en puerta con ID verificado.">
+  <meta property="og:title" content="Lezgo Scanner">
+  <meta property="og:description" content="Demo del scanner de verificación de entradas en puerta.">
+  <meta property="og:type" content="website">
+  <style>
+    body { margin: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: system-ui, sans-serif; }
+    .loader { text-align: center; color: #fff; }
+    .loader h2 { font-size: 14px; font-weight: 400; opacity: 0.5; letter-spacing: 0.1em; }
+    .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #E5FF00; margin: 0 3px; animation: pulse 1s infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+  </style>
+  <script>
+    // Redirect to main app with scanner view
+    window.location.replace('https://lezgo.fans/#scanner');
+  </script>
+</head>
+<body>
+  <div class="loader">
+    <h2>LEZGO SCANNER</h2>
+    <div><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div>
+</body>
+</html>
