@@ -6376,6 +6376,25 @@ body::after {
   var currentUser = null;
   var userProfile = null;
 
+  // ── Magic Link Handler ──
+  (async function handleMagicLink() {
+    if (auth.isSignInWithEmailLink(window.location.href)) {
+      let email = window.localStorage.getItem('lezgoEmailForSignIn');
+      if (!email) {
+        email = window.prompt('Confirma tu email para entrar:');
+      }
+      if (email) {
+        try {
+          await auth.signInWithEmailLink(email, window.location.href);
+          window.localStorage.removeItem('lezgoEmailForSignIn');
+          window.history.replaceState(null, '', window.location.pathname);
+        } catch (err) {
+          console.error('Magic link sign-in error:', err);
+        }
+      }
+    }
+  })();
+
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
@@ -7216,9 +7235,10 @@ body::after {
     // ── LINEUP ──
     const lineupSection = document.getElementById('ev-lineup-section');
     const lineupGrid = document.getElementById('ev-lineup-grid');
-    if (lineupGrid && Array.isArray(ev.lineup) && ev.lineup.length > 0) {
+    if (lineupGrid && lineupSection && Array.isArray(ev.lineup) && ev.lineup.length > 0) {
       lineupSection.style.display = '';
-      document.getElementById('ev-lineup-title').textContent = ev.lineup.length + ' Artistas';
+      const lineupTitle = document.getElementById('ev-lineup-title');
+      if (lineupTitle) lineupTitle.textContent = ev.lineup.length + ' Artistas';
       let h = '';
       ev.lineup.forEach((artist, i) => {
         const isHL = i === 0;
@@ -7386,26 +7406,24 @@ body::after {
       return;
     }
     try {
-      // Use email/password for simplicity — create or sign in
-      // First try sign in
-      try {
-        await auth.signInWithEmailAndPassword(email, 'lezgo2026temp');
-        go('eventos');
-        return;
-      } catch (e) {
-        // If user doesn't exist, create
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-          await auth.createUserWithEmailAndPassword(email, 'lezgo2026temp');
-          go('eventos');
-          return;
-        }
-        throw e;
+      const actionCodeSettings = {
+        url: window.location.origin + '/',
+        handleCodeInApp: true
+      };
+      await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+      window.localStorage.setItem('lezgoEmailForSignIn', email);
+      const msgEl = document.getElementById('auth-link-sent');
+      if (msgEl) {
+        msgEl.textContent = '✉️ Link enviado a ' + email + '. Revisa tu bandeja (y spam).';
+        msgEl.style.display = 'block';
       }
     } catch (err) {
-      console.error('Email auth error:', err);
-      // Show error as fallback UX
-      document.getElementById('auth-link-sent').style.display = 'block';
-      document.getElementById('auth-link-sent').textContent = 'Error: ' + (err.message || 'Intenta de nuevo');
+      console.error('Magic link error:', err);
+      const msgEl = document.getElementById('auth-link-sent');
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.textContent = 'Error: ' + (err.message || 'Intenta de nuevo');
+      }
     }
   }
 
@@ -7505,8 +7523,10 @@ body::after {
 
       // Show confirmation
       const confirmedParts = selectedTickets.map(([id,q]) => q + '× ' + (pmTicketCatalog[id]?.name || id).replace('👑 ',''));
-      document.getElementById('pm-confirm-ticket-name').textContent = confirmedParts.join(' + ') || 'Entrada';
-      document.getElementById('pm-confirm-dni').textContent = pmVerifiedDni || userProfile?.dni || '———';
+      const confirmTicketName = document.getElementById('pm-confirm-ticket-name');
+      if (confirmTicketName) confirmTicketName.textContent = confirmedParts.join(' + ') || 'Entrada';
+      const confirmDni = document.getElementById('pm-confirm-dni');
+      if (confirmDni) confirmDni.textContent = pmVerifiedDni || userProfile?.dni || '———';
       // Populate confirmation card with current event data
       const cev = window._currentEvent || {};
       const confirmEvent = document.getElementById('pm-confirm-event');
@@ -7600,17 +7620,21 @@ body::after {
         return;
       }
       try {
-        try {
-          await auth.signInWithEmailAndPassword(email, 'lezgo2026temp');
-        } catch (e) {
-          if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-            await auth.createUserWithEmailAndPassword(email, 'lezgo2026temp');
-          } else throw e;
+        const actionCodeSettings = {
+          url: window.location.href,
+          handleCodeInApp: true
+        };
+        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+        window.localStorage.setItem('lezgoEmailForSignIn', email);
+        // Show confirmation in the modal
+        const emailEl = document.getElementById('pm-login-email');
+        if (emailEl) {
+          emailEl.value = '';
+          emailEl.placeholder = '✉️ Link enviado! Revisa tu email';
+          emailEl.style.borderColor = 'var(--acid)';
         }
-        pmUserLoggedIn = true;
-        pmGoStep(1);
       } catch (err) {
-        console.error(err);
+        console.error('Magic link error:', err);
       }
       return;
     }
@@ -8206,16 +8230,22 @@ body::after {
     if (e.target === document.getElementById('resale-overlay')) resaleClose();
   }
   function resaleSetPrice(p) {
-    document.getElementById('resale-price').value = p;
+    const el = document.getElementById('resale-price');
+    if (el) el.value = p;
     resaleUpdateCalc();
   }
   function resaleUpdateCalc() {
-    const price = parseFloat(document.getElementById('resale-price').value) || 0;
+    const priceEl = document.getElementById('resale-price');
+    if (!priceEl) return;
+    const price = parseFloat(priceEl.value) || 0;
     const fee = Math.round(price * 0.05);
     const net = price - fee;
-    document.getElementById('calc-sale').textContent = 'S/' + price;
-    document.getElementById('calc-fee').textContent = '-S/' + fee;
-    document.getElementById('calc-net').textContent = 'S/' + net;
+    const saleEl = document.getElementById('calc-sale');
+    const feeEl = document.getElementById('calc-fee');
+    const netEl = document.getElementById('calc-net');
+    if (saleEl) saleEl.textContent = 'S/' + price;
+    if (feeEl) feeEl.textContent = '-S/' + fee;
+    if (netEl) netEl.textContent = 'S/' + net;
   }
   /* resaleConfirm — moved to Firebase block above */
 
@@ -8231,7 +8261,9 @@ body::after {
     const detail = document.getElementById('scan-result-detail');
     const btn = document.getElementById('scan-next-btn');
     const time = new Date().toTimeString().slice(0, 8);
-    document.getElementById('sr-time').textContent = time;
+    const srTime = document.getElementById('sr-time');
+    if (srTime) srTime.textContent = time;
+    if (!card) return;
     card.className = 'scan-result-card ' + (type === 'approved' ? 'approved' : 'denied');
     if (type === 'approved') {
       icon.textContent = '✅'; status.textContent = 'ACCESO APROBADO';
@@ -9398,9 +9430,6 @@ body::after {
           <div class="auth-divider">o continúa con</div>
           <button class="auth-btn-ghost" onclick="authGoogleLogin()">
             <span>🔵</span> Google
-          </button>
-          <button class="auth-btn-ghost" onclick="authGoogleLogin()" style="margin-top:0">
-            <span>📱</span> Apple
           </button>
           <div id="auth-link-sent" style="display:none; margin-top:16px; background:rgba(229,255,0,0.08); border:1px solid rgba(229,255,0,0.2); border-radius:12px; padding:16px; font-size:14px; text-align:center; color:var(--acid);">
             ✉️ Link enviado a tu email. Revisa tu bandeja.
