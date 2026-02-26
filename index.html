@@ -5287,8 +5287,8 @@ body::after {
           </div>
           <div class="mp-listing-img" style="background-image:url('https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=200&q=80');"></div>
           <div class="mp-listing-info">
-            <div class="mp-listing-event">Hernán Cattáneo</div>
-            <div class="mp-listing-meta">15 Mayo · Arena Perú · VIP</div>
+            <div class="mp-listing-event">Drumcode Night Lima</div>
+            <div class="mp-listing-meta">15 Mayo · Almacén 77, Callao · VIP</div>
             <div class="mp-listing-seller">
               <span class="verified-dot">&#10003;</span>
               <span>Diego M. · Identidad verificada</span>
@@ -8037,6 +8037,9 @@ body::after {
     const container = document.getElementById('mp-listings');
     if (!container) return;
 
+    // Only replace static demo listings if Firestore has real data
+    if (snapshot.empty) return;
+
     let html = '';
     snapshot.forEach(doc => {
       const r = doc.data();
@@ -8050,7 +8053,7 @@ body::after {
       </div>`;
     });
 
-    container.innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-dim)">No hay entradas en reventa por ahora.</div>';
+    container.innerHTML = html;
     } catch (err) { console.error('loadMarketplace error:', err); }
   }
 
