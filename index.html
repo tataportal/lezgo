@@ -6719,6 +6719,179 @@ body::after {
   // Events are loaded from Firestore — no local seed data
   loadEvents();
 
+  // ── Demo User Data (seed once) ──
+  var DEMO_SEED_VERSION = 2;
+  async function seedDemoData() {
+    try {
+      var metaDoc = await db.collection('_meta').doc('demo-seed').get();
+      var currentV = metaDoc.exists ? (metaDoc.data().version || 0) : 0;
+      if (currentV >= DEMO_SEED_VERSION) return;
+
+      var demoUid = 'demo-user-001';
+      var batch = db.batch();
+
+      // Demo user profile
+      batch.set(db.collection('users').doc(demoUid), {
+        displayName: 'Lucas Demo',
+        email: 'lucas@lezgo.fans',
+        role: 'fan',
+        dni: '72345678',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Demo tickets — upcoming (fields match loadMyTickets renderer)
+      batch.set(db.collection('tickets').doc('demo-tk-1'), {
+        userId: demoUid,
+        eventId: 'fabriclima-001',
+        eventName: 'FABRICLIMA 001',
+        eventDate: '2026-04-12',
+        eventDateLabel: '12 Abril 2026',
+        eventVenue: 'Almacén 77',
+        eventLocation: 'Callao',
+        eventTimeStart: '22:00',
+        eventTimeEnd: '06:00',
+        ticketName: 'General',
+        price: 85,
+        userName: 'Lucas Demo',
+        userEmail: 'lucas@lezgo.fans',
+        userDni: '72345678',
+        status: 'active',
+        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.set(db.collection('tickets').doc('demo-tk-2'), {
+        userId: demoUid,
+        eventId: 'dekmantel-lima',
+        eventName: 'Dekmantel 2026',
+        eventDate: '2026-05-25',
+        eventDateLabel: '25 Mayo 2026',
+        eventVenue: 'Parque de la Exposición',
+        eventLocation: 'Lima',
+        eventTimeStart: '14:00',
+        eventTimeEnd: '23:00',
+        ticketName: 'Picnic VIP',
+        price: 220,
+        userName: 'Lucas Demo',
+        userEmail: 'lucas@lezgo.fans',
+        userDni: '72345678',
+        status: 'active',
+        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.set(db.collection('tickets').doc('demo-tk-3'), {
+        userId: demoUid,
+        eventId: 'whp-lima',
+        eventName: 'WHP Lima',
+        eventDate: '2026-06-27',
+        eventDateLabel: '27 Junio 2026',
+        eventVenue: 'Almacén Industrial',
+        eventLocation: 'Callao',
+        eventTimeStart: '20:00',
+        eventTimeEnd: '05:00',
+        ticketName: 'Full Access',
+        price: 200,
+        userName: 'Lucas Demo',
+        userEmail: 'lucas@lezgo.fans',
+        userDni: '72345678',
+        status: 'active',
+        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Demo tickets — past (attended)
+      batch.set(db.collection('tickets').doc('demo-tk-4'), {
+        userId: demoUid,
+        eventId: 'bodysonic-lima',
+        eventName: 'Bodysonic',
+        eventDate: '2026-02-14',
+        eventDateLabel: '14 Febrero 2026',
+        eventVenue: 'La Cueva',
+        eventLocation: 'Cercado de Lima',
+        eventTimeStart: '23:59',
+        eventTimeEnd: '06:00',
+        ticketName: 'General',
+        price: 65,
+        userName: 'Lucas Demo',
+        userEmail: 'lucas@lezgo.fans',
+        userDni: '72345678',
+        status: 'used',
+        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.set(db.collection('tickets').doc('demo-tk-5'), {
+        userId: demoUid,
+        eventId: 'room3-sessions-lima',
+        eventName: 'Room 3 Sessions',
+        eventDate: '2026-01-22',
+        eventDateLabel: '22 Enero 2026',
+        eventVenue: 'Hotel B Rooftop',
+        eventLocation: 'Barranco',
+        eventTimeStart: '22:00',
+        eventTimeEnd: '03:00',
+        ticketName: 'Entrada + Drink',
+        price: 60,
+        userName: 'Lucas Demo',
+        userEmail: 'lucas@lezgo.fans',
+        userDni: '72345678',
+        status: 'used',
+        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Demo resale listing
+      batch.set(db.collection('resale').doc('demo-resale-1'), {
+        sellerId: demoUid,
+        sellerName: 'Lucas D.',
+        sellerVerified: true,
+        eventId: 'hessle-audio-lima',
+        eventName: 'HESSLE AUDIO Lima Session',
+        eventDate: '2026-05-03',
+        eventVenue: 'MATE Museo, Barranco',
+        ticketTier: 'General',
+        originalPrice: 70,
+        askingPrice: 60,
+        reason: 'Me salió un viaje de último momento',
+        status: 'listed',
+        listedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.set(db.collection('resale').doc('demo-resale-2'), {
+        sellerId: 'demo-user-002',
+        sellerName: 'Camila R.',
+        sellerVerified: true,
+        eventId: 'drumcode-night-lima',
+        eventName: 'Drumcode Night Lima Edition',
+        eventDate: '2026-05-10',
+        eventVenue: 'Arena Perú, Santa Anita',
+        ticketTier: 'VIP',
+        originalPrice: 389,
+        askingPrice: 350,
+        reason: 'Cambio de planes familiar',
+        status: 'listed',
+        listedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.set(db.collection('resale').doc('demo-resale-3'), {
+        sellerId: 'demo-user-003',
+        sellerName: 'Diego M.',
+        sellerVerified: true,
+        eventId: 'exit-through-warehouse',
+        eventName: 'EXIT Through The Warehouse',
+        eventDate: '2026-06-06',
+        eventVenue: 'Ubicación secreta, Callao',
+        ticketTier: 'Blind Ticket',
+        originalPrice: 50,
+        askingPrice: 50,
+        reason: 'Compré doble por error',
+        status: 'listed',
+        listedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Version marker
+      batch.set(db.collection('_meta').doc('demo-seed'), {
+        version: DEMO_SEED_VERSION,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      await batch.commit();
+      console.log('Demo data seeded (v' + DEMO_SEED_VERSION + ')');
+    } catch (err) { console.error('seedDemoData error:', err); }
+  }
+  seedDemoData();
+
   // ── Load Events from Firestore ──
   var allEvents = [];
   var currentEventId = null;
