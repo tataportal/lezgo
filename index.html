@@ -4356,7 +4356,7 @@ body::after {
           <div class="nd-item nd-logged-in nd-promoter-only" onclick="ndGo('organizer')">
             <span class="nd-icon">📊</span> <span data-es="Dashboard Organizador" data-en="Organizer Dashboard">Dashboard Organizador</span>
           </div>
-          <div class="nd-item nd-logged-in" onclick="ndGo('scanner')">
+          <div class="nd-item nd-logged-in nd-promoter-only" onclick="ndGo('scanner')">
             <span class="nd-icon">📡</span> <span data-es="Scanner" data-en="Scanner">Scanner</span>
           </div>
           <div class="nd-divider nd-logged-in"></div>
@@ -8528,6 +8528,12 @@ body::after {
     const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner'];
     if (protectedViews.includes(view) && !currentUser) {
       go('auth');
+      return;
+    }
+    // Promoter-only views
+    const promoterViews = ['scanner', 'organizer'];
+    if (promoterViews.includes(view) && userProfile?.role !== 'promoter') {
+      go('eventos');
       return;
     }
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
