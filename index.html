@@ -4084,6 +4084,15 @@ body::after {
 .ef-btn-save:hover { filter: brightness(1.1); }
 .ef-btn-cancel { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--text-mid); border-radius: 10px; padding: 14px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
 
+/* Preview mode banner */
+.ef-preview-banner { display: none; background: rgba(229,255,0,0.08); border: 1px solid rgba(229,255,0,0.25); border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; }
+.ef-preview-banner.active { display: flex; align-items: center; gap: 14px; }
+.ef-preview-banner-icon { font-size: 20px; flex-shrink: 0; }
+.ef-preview-banner-text { font-size: 13px; color: var(--text-main); line-height: 1.5; }
+.ef-preview-banner-text a { color: var(--acid); text-decoration: underline; }
+.ef-btn-contact { background: rgba(229,255,0,0.12); color: var(--acid); border: 1px solid rgba(229,255,0,0.3); border-radius: 10px; padding: 14px 32px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.ef-btn-contact:hover { background: rgba(229,255,0,0.2); }
+
 .ef-toggle-label { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-main); cursor:pointer; padding:8px 12px; border-radius:8px; background:rgba(255,255,255,0.04); }
 .ef-toggle-label input[type="checkbox"] { accent-color: var(--acid); width:16px; height:16px; cursor:pointer; }
 .ef-toggle-label input[type="checkbox"]:disabled { opacity:0.4; cursor:default; }
@@ -4951,6 +4960,7 @@ body::after {
           <div class="dk-how-tooltip">Setup rápido →</div>
         </div>
         <div class="dk-how-desc">Nombre, fecha, ubicación, lineup, descripción. <strong>Sin formularios eternos. Listo en minutos.</strong></div>
+        <button class="btn-acid" onclick="openEventForm()" style="margin-top:12px;padding:10px 24px;font-size:13px;width:100%">Probar ahora</button>
       </div>
       <div class="dk-how-card">
         <div class="dk-how-inner dk-grad-2">
@@ -8199,6 +8209,20 @@ body::after {
 
     const titleEl = document.getElementById('ef-title');
 
+    // Preview mode for non-promoters
+    const isPromoter = currentUser && userProfile && userProfile.role === 'promoter';
+    const previewBanner = document.getElementById('ef-preview-banner');
+    const actionsPromoter = document.getElementById('ef-actions-promoter');
+    const actionsPreview = document.getElementById('ef-actions-preview');
+    if (previewBanner) previewBanner.classList.toggle('active', !isPromoter);
+    if (actionsPromoter) actionsPromoter.style.display = isPromoter ? '' : 'none';
+    if (actionsPreview) actionsPreview.style.display = isPromoter ? 'none' : '';
+    // Back button goes to organizer for promoters, promotores for preview
+    const backBtn = document.querySelector('.ef-back');
+    if (backBtn) {
+      backBtn.onclick = function() { go(isPromoter ? 'organizer' : 'promotores'); };
+    }
+
     if (eventId) {
       // Load existing event for editing
       if (titleEl) titleEl.textContent = 'Editar Evento';
@@ -8697,7 +8721,7 @@ body::after {
   function go(view, opts) {
     opts = opts || {};
     // Protected views require auth
-    const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner', 'event-form'];
+    const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner'];
     if (protectedViews.includes(view) && !currentUser) {
       go('auth');
       return;
@@ -10468,6 +10492,12 @@ body::after {
       <button class="ef-back" onclick="go('organizer')">← Dashboard</button>
     </div>
 
+    <!-- Preview mode banner -->
+    <div class="ef-preview-banner" id="ef-preview-banner">
+      <span class="ef-preview-banner-icon">👁️</span>
+      <span class="ef-preview-banner-text">Modo preview — Explora el formulario y arma tu evento. Para publicarlo, escríbenos a <a href="mailto:hola@lezgo.fans?subject=Quiero ser promotor en Lezgo&body=Hola! Me interesa publicar eventos en Lezgo.">hola@lezgo.fans</a></span>
+    </div>
+
     <!-- A. Info básica -->
     <div class="ef-section">
       <div class="ef-section-title">Info básica</div>
@@ -10599,9 +10629,13 @@ body::after {
     </div>
 
     <!-- Actions -->
-    <div class="ef-actions">
+    <div class="ef-actions" id="ef-actions-promoter">
       <button class="ef-btn-cancel" onclick="go('organizer')">Cancelar</button>
       <button class="ef-btn-save" id="ef-save-btn" onclick="efSaveEvent()">Guardar evento</button>
+    </div>
+    <div class="ef-actions" id="ef-actions-preview" style="display:none">
+      <button class="ef-btn-cancel" onclick="go('promotores')">Volver</button>
+      <button class="ef-btn-contact" onclick="contactPromoter()">Quiero publicar mi evento</button>
     </div>
   </div>
 </div>
