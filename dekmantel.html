@@ -46,7 +46,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background: url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80') center/cover no-repeat;
 }
 .hero-bg::after {
   content: ''; position: absolute; inset: 0;
@@ -56,6 +55,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
     rgba(5,5,5,0.92) 70%,
     var(--bg) 100%
   );
+  z-index: 1;
 }
 .hero-content {
   position: relative; z-index: 2;
@@ -546,7 +546,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <body>
 
 <section class="hero">
-  <div class="hero-bg"></div>
+  <div class="hero-bg" style="background:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600&q=80') center/cover no-repeat">
+  </div>
   <div class="hero-content">
     <a href="index.html" class="hero-back" style="text-decoration:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -711,7 +712,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <h2 class="section-heading">Artistas <em>confirmados</em></h2>
   <div class="lineup-grid">
     <div class="lineup-card">
-      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=800&q=80')"></div>
+      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1485579149621-3123dd979885?w=600&q=80')"></div>
       <div class="lineup-card-overlay"></div>
       <div class="lineup-card-content">
         <div class="lineup-name">Hunee</div>
@@ -720,7 +721,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
       </div>
     </div>
     <div class="lineup-card">
-      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80')"></div>
+      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80')"></div>
       <div class="lineup-card-overlay"></div>
       <div class="lineup-card-content">
         <div class="lineup-name">Antal</div>
@@ -729,7 +730,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
       </div>
     </div>
     <div class="lineup-card">
-      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1504704911898-68304a7d2571?w=600&q=80')"></div>
+      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80')"></div>
       <div class="lineup-card-overlay"></div>
       <div class="lineup-card-content">
         <div class="lineup-name">Young Marco</div>
@@ -738,7 +739,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
       </div>
     </div>
     <div class="lineup-card">
-      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=600&q=80')"></div>
+      <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=80')"></div>
       <div class="lineup-card-overlay"></div>
       <div class="lineup-card-content">
         <div class="lineup-name">Selectors locales</div>
