@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concrete × Lima — LEZGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --acid: #E5FF00;
+  --acid-dim: rgba(229,255,0,0.12);
+  --acid-glow: rgba(229,255,0,0.35);
+  --red: #FF3B3B;
+  --green: #00FF85;
+  --bg: #050505;
+  --surface: #0D0D0D;
+  --surface-2: #141414;
+  --surface-3: #1A1A1A;
+  --border: rgba(255,255,255,0.06);
+  --border-light: rgba(255,255,255,0.1);
+  --text: #F5F5F5;
+  --text-2: #BBBBBB;
+  --text-3: #777777;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --pad: clamp(20px, 5vw, 80px);
+}
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; }
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80') center/cover no-repeat;
+}
+.hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,5,5,0) 0%,
+    rgba(5,5,5,0.3) 35%,
+    rgba(5,5,5,0.92) 70%,
+    var(--bg) 100%
+  );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 var(--pad) 0;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+.hero-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text-3);
+  background: none; margin-bottom: 28px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  transition: color 0.2s;
+}
+.hero-back:hover { color: var(--acid); }
+.hero-back svg { width: 14px; height: 14px; }
+.hero-title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: clamp(16px, 2.5vw, 24px);
+  font-weight: 300;
+  color: var(--acid);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-desc {
+  font-size: 15px; color: var(--text-2);
+  max-width: 520px; line-height: 1.7;
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 600;
+}
+.hero-meta-item .icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(229,255,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.hero-ctas {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 48px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 32px; font-size: 14px; font-weight: 700;
+  border-radius: var(--radius-sm); transition: all 0.25s;
+  letter-spacing: -0.2px;
+}
+.btn-primary {
+  background: var(--acid); color: #000;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 50px var(--acid-glow);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-light);
+  color: var(--text);
+}
+.btn-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(229,255,0,0.04);
+}
+.btn-sold {
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--red);
+}
+.btn-sold:hover {
+  background: rgba(255,59,59,0.06);
+}
+
+.section {
+  padding: 72px var(--pad);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acid);
+  margin-bottom: 16px; opacity: 0.8;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 40px;
+}
+.section-heading em { font-style: normal; color: var(--acid); }
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light) 20%, var(--border-light) 80%, transparent);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.tk-grid { grid-template-columns: repeat(2, 1fr); }
+.tk-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+}
+.tk-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+.tk-inner {
+  padding: 32px 28px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.tk-tier-1 {
+  background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-color: rgba(15,52,96,0.5);
+}
+.tk-tier-2 {
+  background: linear-gradient(155deg, #1a1a1a 0%, #2d1b69 50%, #5b21b6 100%);
+  border-color: rgba(91,33,182,0.4);
+}
+.tk-tier-3 {
+  background: linear-gradient(155deg, #1a1a0a 0%, #3d3d00 50%, #656500 100%);
+  border-color: rgba(229,255,0,0.2);
+}
+.tk-tier-4 {
+  background: linear-gradient(155deg, #1a0a0a 0%, #4a1515 50%, #7c1d1d 100%);
+  border-color: rgba(255,59,59,0.25);
+}
+.tk-sold {
+  background: var(--surface);
+  border-color: var(--border);
+  opacity: 0.55;
+  transition: opacity 0.3s;
+}
+.tk-card--sold { cursor: pointer; }
+.tk-card--sold:hover .tk-sold { opacity: 0.25; }
+.tk-card--sold:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.08); }
+.tk-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: 20px;
+  background: rgba(5,5,5,0.7);
+  backdrop-filter: blur(6px);
+}
+.tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
+.tk-overlay-icon { font-size: 32px; margin-bottom: 12px; }
+.tk-overlay-text {
+  font-size: 15px; font-weight: 800; color: var(--acid);
+  letter-spacing: -0.3px; margin-bottom: 4px;
+}
+.tk-overlay-hint {
+  font-size: 11px; color: var(--text-3); font-weight: 500;
+}
+.tk-name {
+  font-size: 32px; font-weight: 900;
+  letter-spacing: -1px; line-height: 1;
+  margin-bottom: 16px;
+}
+.tk-includes {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  line-height: 1.6; margin-top: 0;
+}
+.tk-includes li {
+  list-style: none;
+  padding-left: 16px;
+  position: relative;
+}
+.tk-includes li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+}
+.tk-header {
+  min-height: 110px;
+}
+.tk-phases {
+  padding-top: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tk-phase {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  font-size: 13px; font-weight: 600;
+}
+.tk-phase-name { color: rgba(255,255,255,0.35); }
+.tk-phase-price { color: rgba(255,255,255,0.35); }
+.tk-phase--past .tk-phase-name { text-decoration: line-through; }
+.tk-phase--past .tk-phase-price { text-decoration: line-through; }
+.tk-phase--active .tk-phase-name { color: var(--acid); }
+.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: 15px; }
+.tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.2); }
+.tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.2); }
+.tk-phase-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); flex-shrink: 0; margin-right: 10px;
+}
+.tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.2); }
+.tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
+.tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.08); }
+.tk-phase-left { display: flex; align-items: center; }
+.tk-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tk-buy {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  color: #fff; font-size: 12px; font-weight: 700;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tk-buy:hover { background: #fff; color: #000; }
+.tk-sold-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-3);
+}
+.tk-sold-all {
+  font-size: 11px; color: #ff4444; font-weight: 700;
+  text-align: center; padding: 10px 0;
+  letter-spacing: 1.5px;
+}
+.tk-avail {
+  margin-top: 16px;
+}
+.tk-avail-bar {
+  height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.tk-avail-fill {
+  height: 100%; border-radius: 2px;
+  background: rgba(255,255,255,0.3);
+  transition: width 0.6s ease;
+}
+.tk-avail-text {
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  margin-top: 5px; text-align: right;
+}
+
+.mp-banner {
+  margin-top: 24px;
+  padding: 48px 40px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.mp-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(229,255,0,0.04), transparent 60%);
+  pointer-events: none;
+}
+.mp-info { position: relative; z-index: 1; }
+.mp-title {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.mp-desc {
+  font-size: 14px; color: var(--text-3); line-height: 1.6;
+}
+.mp-action { position: relative; z-index: 1; flex-shrink: 0; }
+
+.lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.lineup-card {
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.25s;
+  position: relative;
+}
+.lineup-card:hover {
+  border-color: rgba(229,255,0,0.15);
+  transform: translateY(-3px);
+}
+.lineup-card--hl {
+  border-color: rgba(229,255,0,0.2);
+  background: linear-gradient(135deg, rgba(229,255,0,0.03), transparent);
+}
+.lineup-card--hl::after {
+  content: 'HEADLINER'; position: absolute; top: 12px; right: 14px;
+  font-size: 8px; font-weight: 800; letter-spacing: 1.5px;
+  background: var(--acid); color: #000;
+  padding: 3px 8px; border-radius: 4px;
+}
+.lineup-name { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+.lineup-role { font-size: 12px; color: var(--text-3); font-weight: 500; }
+.lineup-tags {
+  display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap;
+}
+.lineup-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 4px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text-3);
+}
+
+.info-list {
+  display: flex; flex-wrap: wrap; gap: 10px 16px;
+}
+.info-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-1);
+}
+.info-chip span { font-size: 15px; }
+.info-prohibited {
+  margin-top: 20px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.info-prohibited-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-3);
+  margin-bottom: 10px;
+}
+.info-prohibited-items {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.info-prohibited-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,60,60,0.06);
+  border: 1px solid rgba(255,60,60,0.15);
+  border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,120,120,0.9);
+}
+
+.about-text {
+  font-size: 16px; color: var(--text-2); line-height: 1.8;
+  max-width: 700px;
+}
+.about-text + .about-text { margin-top: 16px; }
+
+.venue-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: stretch;
+}
+.venue-info {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.venue-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+.venue-addr { font-size: 15px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; }
+.venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.venue-chip {
+  font-size: 11px; font-weight: 600; padding: 8px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-3);
+}
+.venue-map {
+  min-height: 280px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.trust-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.trust-item {
+  text-align: center; padding: 24px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.trust-icon { font-size: 24px; margin-bottom: 10px; }
+.trust-text { font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.4; }
+
+.footer {
+  padding: 40px var(--pad);
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.footer-logo { font-size: 16px; font-weight: 900; letter-spacing: 5px; color: var(--text-3); }
+.footer-copy { font-size: 11px; color: var(--text-3); margin-top: 6px; opacity: 0.6; }
+
+@media (max-width: 768px) {
+  .hero { min-height: 85vh; }
+  .hero-meta { gap: 12px; }
+  .hero-meta-item { font-size: 13px; }
+  .hero-meta-item .icon { width: 36px; height: 36px; font-size: 16px; }
+  .section { padding: 56px 20px; }
+  .tk-grid { grid-template-columns: 1fr 1fr; }
+  .tk-inner { min-height: 280px; padding: 24px 20px; }
+  .tk-name { font-size: 24px; }
+  .tk-price { font-size: 28px; }
+  .tk-buy { padding: 10px 18px; font-size: 12px; }
+  .info-list { gap: 8px 12px; }
+  .venue-block { grid-template-columns: 1fr; }
+  .lineup-grid { grid-template-columns: 1fr 1fr; }
+  .mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
+  .mp-desc { max-width: 100%; }
+  .trust-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .tk-grid { grid-template-columns: 1fr; }
+  .lineup-grid { grid-template-columns: 1fr; }
+  .trust-row { grid-template-columns: 1fr; }
+  .hero-title { letter-spacing: -2px; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <a href="index.html" class="hero-back" style="text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Eventos
+    </a>
+    <h1 class="hero-title">Concrete × Lima</h1>
+    <div class="hero-sub">Riverside Afterhours</div>
+    <p class="hero-desc">Homenaje al extinto club parisino Concrete. Afterhours a orilla del río. Empieza cuando sale el sol, termina cuando quema. Para los que no quieren que la noche se acabe.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="icon">📅</div>
+        <div>Dom 14 Junio 2026</div>
+      </div>
+      <a class="hero-meta-item" href="https://www.google.com/maps/search/?api=1&query=Ribera+del+Rimac+Lima+Peru" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="icon">📍</div>
+        <div>Ribera del Rímac, Rímac, Lima</div>
+      </a>
+      <div class="hero-meta-item">
+        <div class="icon">🕐</div>
+        <div>06:00 — 14:00</div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <button class="btn btn-primary">Comprar entradas →</button>
+      <a class="btn btn-outline" href="https://www.google.com/calendar/render?action=TEMPLATE&text=Concrete+x+Lima+·+Riverside+Afterhours&dates=20260614T060000/20260614T140000&location=Ribera+del+Rímac,+Rímac,+Lima&details=🎫 Tu entrada es tu identidad. Con Lezgo no necesitas QR ni impresiones, solo tu DNI.%0A%0A⚠️ Recomendaciones:%0A· Evento solo para mayores de 18 años (DNI obligatorio)%0A· Puertas abren 06:00%0A· No se permite reingreso%0A%0A🔗 lezgo.fans" target="_blank" rel="noopener">Agregar al calendario</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">Entradas</div>
+  <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
+
+  <div class="tk-grid">
+
+    <!-- Preventa -->
+    <div class="tk-card tk-card--sold" onclick="goMarketplace('preventa')">
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🔄</div>
+        <div class="tk-overlay-text">Buscar en Marketplace</div>
+        <div class="tk-overlay-hint">Preventa · reventa verificada</div>
+      </div>
+      <div class="tk-inner tk-sold">
+        <div class="tk-header">
+          <div class="tk-name">Preventa</div>
+          <ul class="tk-includes">
+            <li>Acceso general</li>
+            <li>Barra standard</li>
+          </ul>
+        </div>
+        <div class="tk-phases">
+          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa</span></div><span class="tk-phase-price">S/ 55</span></div>
+        </div>
+        <div class="tk-bottom">
+          <div class="tk-sold-all">SOLD OUT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Puerta -->
+    <div class="tk-card">
+      <div class="tk-inner tk-tier-2">
+        <div class="tk-header">
+          <div class="tk-name">Puerta</div>
+          <ul class="tk-includes">
+            <li>Acceso general</li>
+            <li>Barra standard</li>
+          </ul>
+        </div>
+        <div class="tk-phases">
+          <div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Puerta</span></div><span class="tk-phase-price">S/ 80</span></div>
+        </div>
+        <div class="tk-avail">
+          <div class="tk-avail-bar"><div class="tk-avail-fill" style="width:39%"></div></div>
+          <div class="tk-avail-text">122 disponibles</div>
+        </div>
+        <div class="tk-bottom">
+          <button class="tk-buy">Comprar →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">Lineup</div>
+  <h2 class="section-heading">Artistas <em>confirmados</em></h2>
+  <div class="lineup-grid">
+    <div class="lineup-card lineup-card--hl">
+      <div class="lineup-name">Dax J</div>
+      <div class="lineup-role">Headliner</div>
+      <div class="lineup-tags"><span class="lineup-tag">Techno</span><span class="lineup-tag">UK</span></div>
+    </div>
+    <div class="lineup-card">
+      <div class="lineup-name">Rebekah</div>
+      <div class="lineup-role">Main</div>
+      <div class="lineup-tags"><span class="lineup-tag">Techno</span><span class="lineup-tag">UK</span></div>
+    </div>
+    <div class="lineup-card">
+      <div class="lineup-name">DVS1</div>
+      <div class="lineup-role">Main</div>
+      <div class="lineup-tags"><span class="lineup-tag">Techno</span><span class="lineup-tag">US</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">Info del evento</div>
+  <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
+
+  <div class="info-list">
+    <div class="info-chip"><span>🎵</span> Techno</div>
+    <div class="info-chip"><span>🪪</span> 18+</div>
+    <div class="info-chip"><span>🏛️</span> Outdoor · Open air</div>
+    <div class="info-chip"><span>🍸</span> Barra disponible</div>
+    <div class="info-chip"><span>🍽️</span> Food disponible</div>
+    <div class="info-chip"><span>🚫</span> No reingreso</div>
+  </div>
+
+  <div class="info-prohibited">
+    <div class="info-prohibited-title">No ingresan</div>
+    <div class="info-prohibited-items">
+      <div class="info-prohibited-tag">🚫 Cámaras profesionales</div>
+      <div class="info-prohibited-tag">🚫 Bebidas externas</div>
+      <div class="info-prohibited-tag">🚫 Armas / objetos punzantes</div>
+      <div class="info-prohibited-tag">🚫 Sustancias ilegales</div>
+      <div class="info-prohibited-tag">🚫 Mascotas</div>
+      <div class="info-prohibited-tag">🚫 Menores de edad</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">Sobre el evento</div>
+  <h2 class="section-heading">Afterhours a orilla <em>del río</em></h2>
+  <p class="about-text">Homenaje al extinto club parisino Concrete. Afterhours a orilla del río. Empieza cuando sale el sol, termina cuando quema.</p>
+  <p class="about-text">Para los que no quieren que la noche se acabe. Techno al amanecer con vista al Rímac. Comida para la resaca incluida.</p>
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="venue-block">
+    <div class="venue-info">
+      <div class="section-label">Venue</div>
+      <div class="venue-name">Ribera del Rímac</div>
+      <div class="venue-addr">Rímac, Lima<br>A orilla del río — al aire libre</div>
+      <div class="venue-chips">
+        <div class="venue-chip">Open air</div>
+        <div class="venue-chip">Capacidad: 350</div>
+        <div class="venue-chip">Riverside</div>
+        <div class="venue-chip">Verificación en puerta</div>
+      </div>
+    </div>
+    <div class="venue-map">
+      <iframe
+        src="https://maps.google.com/maps?q=Ribera+del+Rimac+Lima+Peru&t=&z=17&ie=UTF8&iwloc=&output=embed"
+        width="100%" height="100%" style="border:0; border-radius: inherit;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="section">
+  <div class="trust-row">
+    <div class="trust-item">
+      <div class="trust-icon">✅</div>
+      <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🔄</div>
+      <div class="trust-text">Reventa segura<br>P2P</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🪪</div>
+      <div class="trust-text">Verificación<br>en puerta</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💬</div>
+      <div class="trust-text">Soporte en<br>menos de 24h</div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="footer-logo">L E Z G O</div>
+  <div class="footer-copy">Tickets verificados con tu identidad.</div>
+</div>
+
+<script>
+function goMarketplace(tier) {
+  alert('→ Marketplace · filtro: ' + tier);
+}
+</script>
+</body>
+</html>
