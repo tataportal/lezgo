@@ -6747,6 +6747,202 @@ body::after {
     }
   }
 
+  function previewEvent() {
+    var name = (document.getElementById('ef-name')?.value || '').trim() || 'Mi Evento';
+    var subtitle = (document.getElementById('ef-subtitle')?.value || '').trim();
+    var date = (document.getElementById('ef-date')?.value || '').trim();
+    var timeStart = (document.getElementById('ef-time-start')?.value || '').trim() || '22:00';
+    var timeEnd = (document.getElementById('ef-time-end')?.value || '').trim() || '05:00';
+    var venue = (document.getElementById('ef-venue')?.value || '').trim() || 'Venue';
+    var location = (document.getElementById('ef-location')?.value || '').trim();
+    var genre = (document.getElementById('ef-genre')?.value || '').trim();
+    var description = (document.getElementById('ef-description')?.value || '').trim();
+    var imageUrl = (document.getElementById('ef-image')?.value || '').trim() || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
+
+    // Format date
+    var dateFormatted = '';
+    if (date) {
+      var d = new Date(date + 'T12:00:00');
+      var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      var meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      dateFormatted = dias[d.getDay()] + ' ' + d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    // Build ticket cards
+    var tierGradients = ['tk-tier-1','tk-tier-2','tk-tier-3','tk-tier-4'];
+    var ticketsHtml = '';
+    if (efTiers && efTiers.length > 0) {
+      efTiers.forEach(function(t, ti) {
+        var phasesHtml = '';
+        if (t.phases) t.phases.forEach(function(p, pi) {
+          var cls = pi === 0 ? 'tk-phase--active' : 'tk-phase--future';
+          phasesHtml += '<div class="tk-phase ' + cls + '"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">' + (p.name || 'Fase ' + (pi+1)) + '</span></div><span class="tk-phase-price">S/ ' + (p.price || 0) + '</span></div>';
+        });
+        var totalQty = 0;
+        if (t.phases) t.phases.forEach(function(p) { totalQty += parseInt(p.quantity) || 0; });
+        ticketsHtml += '<div class="tk-card"><div class="tk-inner ' + tierGradients[ti % 4] + '"><div class="tk-header"><div class="tk-name">' + (t.name || 'Tier ' + (ti+1)) + '</div></div><div class="tk-phases">' + phasesHtml + '</div><div class="tk-bottom"><button class="tk-buy">Comprar →</button></div></div></div>';
+      });
+    } else {
+      ticketsHtml = '<div class="tk-card"><div class="tk-inner tk-tier-1"><div class="tk-header"><div class="tk-name">General</div></div><div class="tk-phases"><div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa</span></div><span class="tk-phase-price">S/ —</span></div></div><div class="tk-bottom"><button class="tk-buy">Comprar →</button></div></div></div>';
+    }
+
+    // Build lineup cards
+    var lineupHtml = '';
+    if (efLineup && efLineup.length > 0) {
+      efLineup.forEach(function(artist, i) {
+        var isHl = i === 0 ? ' lineup-card--hl' : '';
+        lineupHtml += '<div class="lineup-card' + isHl + '"><div class="lineup-card-img" style="background:var(--surface-2);"></div><div class="lineup-card-overlay"></div><div class="lineup-card-content"><div class="lineup-name">' + artist + '</div><div class="lineup-role">' + (i === 0 ? 'Headliner' : 'Artista') + '</div></div></div>';
+      });
+    }
+
+    // Genre chips
+    var chipsHtml = '';
+    if (genre) chipsHtml += '<div class="info-chip"><span>🎵</span> ' + genre + '</div>';
+    chipsHtml += '<div class="info-chip"><span>🪪</span> 18+</div>';
+    if (venue) chipsHtml += '<div class="info-chip"><span>🏛️</span> ' + venue + '</div>';
+
+    // Build full proto HTML
+    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+      + '<title>' + name + ' — LEZGO Preview</title>'
+      + '<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">'
+      + '<style>'
+      + '*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }'
+      + ':root { --acid:#E5FF00; --acid-dim:rgba(229,255,0,0.12); --acid-glow:rgba(229,255,0,0.35); --red:#FF3B3B; --green:#00FF85; --bg:#050505; --surface:#0D0D0D; --surface-2:#141414; --surface-3:#1A1A1A; --border:rgba(255,255,255,0.06); --border-light:rgba(255,255,255,0.1); --text:#F5F5F5; --text-2:#BBBBBB; --text-3:#777777; --radius:16px; --radius-sm:10px; --pad:clamp(20px,5vw,80px); }'
+      + 'body { font-family:"Sora",sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; }'
+      + 'a { color:inherit; text-decoration:none; } button { font-family:inherit; cursor:pointer; border:none; }'
+      + '.preview-bar { position:fixed; top:0; left:0; right:0; z-index:999; background:rgba(229,255,0,0.12); border-bottom:1px solid rgba(229,255,0,0.3); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(12px); }'
+      + '.preview-bar-text { font-size:13px; font-weight:700; color:var(--acid); }'
+      + '.preview-bar-text span { font-weight:400; color:var(--text-2); margin-left:8px; }'
+      + '.preview-bar a { font-size:12px; color:var(--acid); text-decoration:underline; font-weight:600; }'
+      + '.hero { position:relative; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; justify-content:flex-end; }'
+      + '.hero-bg { position:absolute; inset:0; background:url(\'' + imageUrl.replace(/'/g, "\\'") + '\') center/cover no-repeat; }'
+      + '.hero-bg::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(5,5,5,0) 0%,rgba(5,5,5,0.3) 35%,rgba(5,5,5,0.92) 70%,var(--bg) 100%); }'
+      + '.hero-content { position:relative; z-index:2; padding:0 var(--pad) 0; max-width:1440px; width:100%; margin:0 auto; }'
+      + '.hero-title { font-size:clamp(48px,8vw,96px); font-weight:900; letter-spacing:-3px; line-height:0.9; margin-bottom:8px; }'
+      + '.hero-sub { font-size:clamp(16px,2.5vw,24px); font-weight:300; color:var(--acid); letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; }'
+      + '.hero-desc { font-size:15px; color:var(--text-2); max-width:520px; line-height:1.7; margin-bottom:32px; }'
+      + '.hero-meta { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:36px; }'
+      + '.hero-meta-item { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; }'
+      + '.hero-meta-item .icon { width:40px; height:40px; border-radius:12px; background:rgba(229,255,0,0.08); display:flex; align-items:center; justify-content:center; font-size:18px; }'
+      + '.hero-ctas { display:flex; gap:12px; flex-wrap:wrap; padding-bottom:48px; }'
+      + '.btn { display:inline-flex; align-items:center; gap:8px; padding:16px 32px; font-size:14px; font-weight:700; border-radius:var(--radius-sm); transition:all 0.25s; letter-spacing:-0.2px; }'
+      + '.btn-primary { background:var(--acid); color:#000; }'
+      + '.btn-primary:hover { box-shadow:0 0 50px var(--acid-glow); transform:translateY(-2px); }'
+      + '.section { padding:72px var(--pad); max-width:1440px; margin:0 auto; }'
+      + '.section-label { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--acid); margin-bottom:16px; opacity:0.8; }'
+      + '.section-heading { font-size:clamp(28px,4vw,44px); font-weight:800; letter-spacing:-1.5px; line-height:1.1; margin-bottom:40px; }'
+      + '.section-heading em { font-style:normal; color:var(--acid); }'
+      + '.divider { height:1px; background:linear-gradient(90deg,transparent,var(--border-light) 20%,var(--border-light) 80%,transparent); max-width:1440px; margin:0 auto; }'
+      + '.tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }'
+      + '.tk-card { position:relative; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s; }'
+      + '.tk-card:hover { transform:translateY(-8px); box-shadow:0 24px 80px rgba(0,0,0,0.6); }'
+      + '.tk-inner { padding:32px 28px; height:100%; display:flex; flex-direction:column; border:1.5px solid rgba(255,255,255,0.08); border-radius:20px; position:relative; overflow:hidden; }'
+      + '.tk-tier-1 { background:linear-gradient(155deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); border-color:rgba(15,52,96,0.5); }'
+      + '.tk-tier-2 { background:linear-gradient(155deg,#1a1a1a 0%,#2d1b69 50%,#5b21b6 100%); border-color:rgba(91,33,182,0.4); }'
+      + '.tk-tier-3 { background:linear-gradient(155deg,#1a1a0a 0%,#3d3d00 50%,#656500 100%); border-color:rgba(229,255,0,0.2); }'
+      + '.tk-tier-4 { background:linear-gradient(155deg,#1a0a0a 0%,#4a1515 50%,#7c1d1d 100%); border-color:rgba(255,59,59,0.25); }'
+      + '.tk-header { min-height:60px; }'
+      + '.tk-name { font-size:32px; font-weight:900; letter-spacing:-1px; line-height:1; margin-bottom:16px; }'
+      + '.tk-phases { padding-top:20px; display:flex; flex-direction:column; gap:6px; }'
+      + '.tk-phase { display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:13px; font-weight:600; }'
+      + '.tk-phase-name { color:rgba(255,255,255,0.35); } .tk-phase-price { color:rgba(255,255,255,0.35); }'
+      + '.tk-phase--active .tk-phase-name { color:var(--acid); } .tk-phase--active .tk-phase-price { color:var(--acid); font-weight:800; font-size:15px; }'
+      + '.tk-phase--future .tk-phase-name { color:rgba(255,255,255,0.2); } .tk-phase--future .tk-phase-price { color:rgba(255,255,255,0.2); }'
+      + '.tk-phase-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.12); flex-shrink:0; margin-right:10px; }'
+      + '.tk-phase--active .tk-phase-dot { background:var(--acid); box-shadow:0 0 8px var(--acid-glow); }'
+      + '.tk-phase--future .tk-phase-dot { background:rgba(255,255,255,0.08); }'
+      + '.tk-phase-left { display:flex; align-items:center; }'
+      + '.tk-bottom { margin-top:auto; padding-top:12px; border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:space-between; }'
+      + '.tk-buy { padding:10px 20px; background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.15); border-radius:var(--radius-sm); color:#fff; font-size:12px; font-weight:700; transition:all 0.2s; white-space:nowrap; }'
+      + '.tk-buy:hover { background:#fff; color:#000; }'
+      + '.lineup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }'
+      + '.lineup-card { position:relative; border-radius:16px; overflow:hidden; aspect-ratio:3/4; background:var(--surface); border:1px solid var(--border); transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s; cursor:pointer; }'
+      + '.lineup-card:hover { transform:translateY(-6px); box-shadow:0 20px 60px rgba(0,0,0,0.5); }'
+      + '.lineup-card-img { position:absolute; inset:0; background-size:cover; background-position:center top; }'
+      + '.lineup-card-overlay { position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 40%,transparent 60%); z-index:1; }'
+      + '.lineup-card-content { position:absolute; bottom:0; left:0; right:0; padding:24px 20px; z-index:2; }'
+      + '.lineup-name { font-size:22px; font-weight:800; letter-spacing:-0.5px; line-height:1.1; margin-bottom:6px; }'
+      + '.lineup-role { font-size:12px; color:rgba(255,255,255,0.55); font-weight:500; }'
+      + '.lineup-card--hl { grid-column:span 2; aspect-ratio:4/3; }'
+      + '.lineup-card--hl .lineup-name { font-size:36px; letter-spacing:-1px; }'
+      + '.info-list { display:flex; flex-wrap:wrap; gap:10px 16px; }'
+      + '.info-chip { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:var(--surface); border:1px solid var(--border); border-radius:100px; font-size:13px; font-weight:600; }'
+      + '.about-text { font-size:16px; color:var(--text-2); line-height:1.8; max-width:700px; }'
+      + '.venue-block { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:stretch; }'
+      + '.venue-info { display:flex; flex-direction:column; justify-content:center; }'
+      + '.venue-name { font-size:26px; font-weight:800; letter-spacing:-0.5px; margin-bottom:8px; }'
+      + '.venue-addr { font-size:15px; color:var(--text-2); line-height:1.6; margin-bottom:20px; }'
+      + '.venue-map { min-height:280px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--border); overflow:hidden; }'
+      + '.trust-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }'
+      + '.trust-item { text-align:center; padding:24px 12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); }'
+      + '.trust-icon { font-size:24px; margin-bottom:10px; } .trust-text { font-size:12px; font-weight:600; color:var(--text-3); line-height:1.4; }'
+      + '.footer { padding:40px var(--pad); text-align:center; border-top:1px solid var(--border); }'
+      + '.footer-logo { font-size:16px; font-weight:900; letter-spacing:5px; color:var(--text-3); }'
+      + '.footer-copy { font-size:11px; color:var(--text-3); margin-top:6px; opacity:0.6; }'
+      + '@media (max-width:768px) { .hero { min-height:85vh; } .section { padding:56px 20px; } .tk-grid { grid-template-columns:1fr 1fr; } .tk-name { font-size:24px; } .venue-block { grid-template-columns:1fr; } .lineup-grid { grid-template-columns:1fr 1fr; } .lineup-card--hl { grid-column:span 2; } .trust-row { grid-template-columns:1fr 1fr; } }'
+      + '@media (max-width:480px) { .tk-grid { grid-template-columns:1fr; } .lineup-grid { grid-template-columns:1fr; } .lineup-card--hl { grid-column:span 1; aspect-ratio:3/4; } .trust-row { grid-template-columns:1fr; } }'
+      + '</style></head><body>';
+
+    // Preview bar
+    html += '<div class="preview-bar"><div class="preview-bar-text">👁 PREVIEW<span>Así se verá tu evento en Lezgo</span></div><a href="mailto:hola@lezgo.fans?subject=Quiero publicar: ' + encodeURIComponent(name) + '">¿Listo? Publícalo →</a></div>';
+
+    // Hero
+    html += '<section class="hero"><div class="hero-bg"></div><div class="hero-content" style="padding-top:60px;">';
+    html += '<h1 class="hero-title">' + name.toUpperCase() + '</h1>';
+    if (subtitle) html += '<div class="hero-sub">' + subtitle + '</div>';
+    if (description) html += '<p class="hero-desc">' + description + '</p>';
+    html += '<div class="hero-meta">';
+    if (dateFormatted) html += '<div class="hero-meta-item"><div class="icon">📅</div><div>' + dateFormatted + '</div></div>';
+    if (venue || location) html += '<div class="hero-meta-item"><div class="icon">📍</div><div>' + (venue + (location ? ', ' + location : '')) + '</div></div>';
+    html += '<div class="hero-meta-item"><div class="icon">🕐</div><div>' + timeStart + ' — ' + timeEnd + '</div></div>';
+    html += '</div>';
+    html += '<div class="hero-ctas"><button class="btn btn-primary">Comprar entrada →</button></div>';
+    html += '</div></section>';
+
+    // Tickets
+    html += '<div class="divider"></div><section class="section"><div class="section-label">Entradas</div><h2 class="section-heading">Elige tu <em>experiencia</em></h2><div class="tk-grid">' + ticketsHtml + '</div></section>';
+
+    // Lineup
+    if (lineupHtml) {
+      html += '<div class="divider"></div><section class="section"><div class="section-label">Lineup</div><h2 class="section-heading">Artistas <em>confirmados</em></h2><div class="lineup-grid">' + lineupHtml + '</div></section>';
+    }
+
+    // Info
+    if (chipsHtml) {
+      html += '<div class="divider"></div><section class="section"><div class="section-label">Info del evento</div><h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2><div class="info-list">' + chipsHtml + '</div></section>';
+    }
+
+    // About
+    if (description) {
+      html += '<div class="divider"></div><section class="section"><div class="section-label">Sobre el evento</div><h2 class="section-heading">' + name + '</h2><p class="about-text">' + description + '</p></section>';
+    }
+
+    // Venue
+    if (venue) {
+      var mapQuery = encodeURIComponent((venue + ' ' + location).trim());
+      html += '<div class="divider"></div><section class="section"><div class="venue-block"><div class="venue-info"><div class="section-label">Venue</div><div class="venue-name">' + venue + '</div>';
+      if (location) html += '<div class="venue-addr">' + location + '</div>';
+      html += '</div><div class="venue-map"><iframe src="https://maps.google.com/maps?q=' + mapQuery + '&t=&z=17&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;border-radius:inherit;" allowfullscreen loading="lazy"></iframe></div></div></section>';
+    }
+
+    // Trust
+    html += '<div class="divider"></div><section class="section"><div class="trust-row">';
+    html += '<div class="trust-item"><div class="trust-icon">✅</div><div class="trust-text">Entrada vinculada<br>a tu ID</div></div>';
+    html += '<div class="trust-item"><div class="trust-icon">🔄</div><div class="trust-text">Reventa segura<br>P2P</div></div>';
+    html += '<div class="trust-item"><div class="trust-icon">🪪</div><div class="trust-text">Verificación<br>en puerta</div></div>';
+    html += '<div class="trust-item"><div class="trust-icon">💬</div><div class="trust-text">Soporte en<br>menos de 24h</div></div>';
+    html += '</div></section>';
+
+    // Footer
+    html += '<div class="footer"><div class="footer-logo">L E Z G O</div><div class="footer-copy">Tickets verificados con tu identidad.</div></div>';
+    html += '</body></html>';
+
+    // Open preview in new tab
+    var blob = new Blob([html], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+
   // ── Seed Events (run once) ──
   // ── EVENT DATA MODEL ──
   // Two-layer architecture:
@@ -10676,9 +10872,12 @@ body::after {
       <button class="ef-btn-cancel" onclick="go('organizer')">Cancelar</button>
       <button class="ef-btn-save" id="ef-save-btn" onclick="efSaveEvent()">Guardar evento</button>
     </div>
-    <div class="ef-actions" id="ef-actions-preview" style="display:none">
-      <button class="ef-btn-cancel" onclick="go('promotores')">Volver</button>
-      <button class="ef-btn-contact" onclick="contactPromoter(true)">Quiero publicar mi evento</button>
+    <div class="ef-actions" id="ef-actions-preview" style="display:none;flex-direction:column;gap:12px;">
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button class="ef-btn-cancel" onclick="go('promotores')">Volver</button>
+        <button class="ef-btn-save" onclick="previewEvent()">Preview de mi evento</button>
+      </div>
+      <div style="text-align:right;font-size:12px;color:var(--text-mid);">¿Listo para publicar? <a href="mailto:hola@lezgo.fans?subject=Quiero publicar mi evento" style="color:var(--acid);text-decoration:underline;cursor:pointer;" onclick="contactPromoter(true);return false;">Escríbenos a hola@lezgo.fans</a></div>
     </div>
   </div>
 </div>
