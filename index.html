@@ -1005,14 +1005,19 @@ body::after {
   background: radial-gradient(ellipse at 50% 40%, rgba(229,255,0,0.04) 0%, transparent 70%);
 }
 #v-fans .faq-section,
-#v-promotores .faq-section,
-#v-eventos .faq-section {
+#v-promotores .faq-section {
   scroll-snap-align: start;
-  min-height: auto;
+  min-height: calc(100vh - 56px);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
   max-width: none;
   border-top: 1px solid var(--border);
+  padding: 80px 48px;
   text-align: left;
-  padding: 60px 48px 40px;
+}
+#v-fans .faq-section > *,
+#v-promotores .faq-section > * {
+  max-width: 800px;
+  width: 100%;
 }
 #v-fans .marquee,
 #v-promotores .marquee {
