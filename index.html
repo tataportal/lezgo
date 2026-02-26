@@ -5365,10 +5365,10 @@ body::after {
           </div>
         </div>
 
-        <div class="mp-listing" data-price="180" data-original="180" data-date="2026-05-16" data-oferta="0" data-distrito="surco">
+        <div class="mp-listing" data-price="180" data-original="180" data-date="2026-04-12" data-oferta="0" data-distrito="callao">
           <div class="mp-listing-date">
-            <div class="mp-listing-date-day">16</div>
-            <div class="mp-listing-date-month">MAY</div>
+            <div class="mp-listing-date-day">12</div>
+            <div class="mp-listing-date-month">ABR</div>
           </div>
           <div class="mp-listing-img" style="background-image:url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=200&q=80');"></div>
           <div class="mp-listing-info">
@@ -6697,11 +6697,55 @@ body::after {
   }
 
   // ── Promoter contact CTA ──
-  function contactPromoter() {
-    const msg = '¿Quieres publicar tu evento en Lezgo?\n\nEscríbenos a: hola@lezgo.fans\n\nTe contactaremos para verificar tu cuenta y darte acceso de promotor.';
-    alert(msg);
-    // Also try to open email client
-    window.open('mailto:hola@lezgo.fans?subject=Quiero ser promotor en Lezgo&body=Hola! Me interesa publicar eventos en Lezgo.', '_blank');
+  function contactPromoter(fromPreview) {
+    if (fromPreview) {
+      // Collect event form data for the email
+      var name = (document.getElementById('ef-name')?.value || '').trim();
+      var subtitle = (document.getElementById('ef-subtitle')?.value || '').trim();
+      var date = (document.getElementById('ef-date')?.value || '').trim();
+      var timeStart = (document.getElementById('ef-time-start')?.value || '').trim();
+      var timeEnd = (document.getElementById('ef-time-end')?.value || '').trim();
+      var venue = (document.getElementById('ef-venue')?.value || '').trim();
+      var location = (document.getElementById('ef-location')?.value || '').trim();
+      var genre = (document.getElementById('ef-genre')?.value || '').trim();
+      var description = (document.getElementById('ef-description')?.value || '').trim();
+
+      var tierInfo = '';
+      if (efTiers && efTiers.length > 0) {
+        tierInfo = '\n\nTiers:\n';
+        efTiers.forEach(function(t) {
+          tierInfo += '- ' + t.name + '\n';
+          if (t.phases) t.phases.forEach(function(p) {
+            tierInfo += '  · ' + p.name + ': S/' + p.price + ' x' + p.quantity + (p.releaseDate ? ' (sale: ' + p.releaseDate + ')' : '') + '\n';
+          });
+        });
+      }
+
+      var lineupInfo = '';
+      if (efLineup && efLineup.length > 0) {
+        lineupInfo = '\n\nLineup: ' + efLineup.join(', ');
+      }
+
+      var body = 'Hola! Quiero publicar mi evento en Lezgo.\n\n'
+        + '--- DATOS DEL EVENTO ---\n'
+        + (name ? 'Nombre: ' + name + '\n' : '')
+        + (subtitle ? 'Subtítulo: ' + subtitle + '\n' : '')
+        + (date ? 'Fecha: ' + date + '\n' : '')
+        + (timeStart || timeEnd ? 'Horario: ' + timeStart + ' - ' + timeEnd + '\n' : '')
+        + (venue ? 'Venue: ' + venue + '\n' : '')
+        + (location ? 'Dirección: ' + location + '\n' : '')
+        + (genre ? 'Género: ' + genre + '\n' : '')
+        + (description ? 'Descripción: ' + description + '\n' : '')
+        + tierInfo
+        + lineupInfo;
+
+      var subject = 'Quiero publicar: ' + (name || 'Mi evento');
+      window.open('mailto:hola@lezgo.fans?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body), '_blank');
+    } else {
+      var msg = '¿Quieres publicar tu evento en Lezgo?\n\nEscríbenos a: hola@lezgo.fans\n\nTe contactaremos para verificar tu cuenta y darte acceso de promotor.';
+      alert(msg);
+      window.open('mailto:hola@lezgo.fans?subject=Quiero ser promotor en Lezgo&body=Hola! Me interesa publicar eventos en Lezgo.', '_blank');
+    }
   }
 
   // ── Seed Events (run once) ──
@@ -10635,7 +10679,7 @@ body::after {
     </div>
     <div class="ef-actions" id="ef-actions-preview" style="display:none">
       <button class="ef-btn-cancel" onclick="go('promotores')">Volver</button>
-      <button class="ef-btn-contact" onclick="contactPromoter()">Quiero publicar mi evento</button>
+      <button class="ef-btn-contact" onclick="contactPromoter(true)">Quiero publicar mi evento</button>
     </div>
   </div>
 </div>
