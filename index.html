@@ -4050,6 +4050,10 @@ body::after {
 .ef-btn-save:hover { filter: brightness(1.1); }
 .ef-btn-cancel { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--text-mid); border-radius: 10px; padding: 14px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
 
+.ef-toggle-label { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-main); cursor:pointer; padding:8px 12px; border-radius:8px; background:rgba(255,255,255,0.04); }
+.ef-toggle-label input[type="checkbox"] { accent-color: var(--acid); width:16px; height:16px; cursor:pointer; }
+.ef-toggle-label input[type="checkbox"]:disabled { opacity:0.4; cursor:default; }
+
 /* Responsive */
 @media (max-width: 768px) {
   .ef-view { padding: 16px; }
@@ -5273,7 +5277,7 @@ body::after {
         </div>
       </div>
       <button class="pf-edit-btn">Editar perfil</button>
-      <button class="pf-edit-btn" id="pf-promoter-btn" onclick="switchToPromoter()" style="margin-left:8px;background:rgba(229,255,0,0.1);border-color:var(--acid);color:var(--acid);display:none">🏢 Soy Promotor</button>
+      <button class="pf-edit-btn" id="pf-promoter-btn" onclick="contactPromoter()" style="margin-left:8px;background:rgba(229,255,0,0.1);border-color:var(--acid);color:var(--acid);display:none">🏢 Quiero ser Promotor</button>
     </div>
 
     <!-- Badges -->
@@ -6510,17 +6514,12 @@ body::after {
     }
   }
 
-  // ── Switch to promoter role ──
-  async function switchToPromoter() {
-    if (!currentUser) return;
-    try {
-      await db.collection('users').doc(currentUser.uid).update({ role: 'promoter' });
-      if (userProfile) userProfile.role = 'promoter';
-      updateUIForAuth(true);
-      alert('¡Ahora eres promotor! Accede a tu Dashboard desde el menú.');
-    } catch (err) {
-      console.error('switchToPromoter error:', err);
-    }
+  // ── Promoter contact CTA ──
+  function contactPromoter() {
+    const msg = '¿Quieres publicar tu evento en Lezgo?\n\nEscríbenos a: hola@lezgo.fans\n\nTe contactaremos para verificar tu cuenta y darte acceso de promotor.';
+    alert(msg);
+    // Also try to open email client
+    window.open('mailto:hola@lezgo.fans?subject=Quiero ser promotor en Lezgo&body=Hola! Me interesa publicar eventos en Lezgo.', '_blank');
   }
 
   // ── Seed Events (run once) ──
@@ -7316,10 +7315,15 @@ body::after {
       `;
     }
 
+    // ── VISIBLE SECTIONS CONFIG ──
+    const vs = ev.visibleSections || {};
+
     // ── LINEUP ──
     const lineupSection = document.getElementById('ev-lineup-section');
     const lineupGrid = document.getElementById('ev-lineup-grid');
-    if (lineupGrid && lineupSection && Array.isArray(ev.lineup) && ev.lineup.length > 0) {
+    if (vs.lineup === false) {
+      if (lineupSection) lineupSection.style.display = 'none';
+    } else if (lineupGrid && lineupSection && Array.isArray(ev.lineup) && ev.lineup.length > 0) {
       lineupSection.style.display = '';
       const lineupTitle = document.getElementById('ev-lineup-title');
       if (lineupTitle) lineupTitle.textContent = ev.lineup.length + ' Artistas';
@@ -7337,6 +7341,9 @@ body::after {
     }
 
     // ── ABOUT ──
+    const aboutSection = document.getElementById('ev-about-section');
+    if (vs.about === false && aboutSection) { aboutSection.style.display = 'none'; }
+    else if (aboutSection) { aboutSection.style.display = ''; }
     const aboutText = document.getElementById('ev-about-text');
     if (aboutText) aboutText.textContent = ev.description || '';
     const aboutDetails = document.getElementById('ev-about-details');
@@ -7425,6 +7432,9 @@ body::after {
     }
 
     // ── VENUE ──
+    const venueSection = document.getElementById('ev-venue-section');
+    if (vs.venue === false && venueSection) { venueSection.style.display = 'none'; }
+    else if (venueSection) { venueSection.style.display = ''; }
     const venueName = document.getElementById('ev-venue-name');
     if (venueName) venueName.textContent = ev.venue || '';
     const venueAddr = document.getElementById('ev-venue-address');
@@ -7442,6 +7452,9 @@ body::after {
     }
 
     // ── TAGS CLOUD ──
+    const tagsSection = document.getElementById('ev-tags-section');
+    if (vs.tags === false && tagsSection) { tagsSection.style.display = 'none'; }
+    else if (tagsSection) { tagsSection.style.display = ''; }
     const tagsCloud = document.getElementById('ev-tags-cloud');
     if (tagsCloud) {
       tagsCloud.innerHTML = evTags.map(t => `<div class="ev-tag-pill">${prettify(t)}</div>`).join('');
@@ -8048,6 +8061,15 @@ body::after {
             ]
           }));
         }
+        // Load visible sections toggles
+        const vs = ev.visibleSections || {};
+        const setToggle = (id, def) => { const el = document.getElementById(id); if (el) el.checked = vs[def] !== false; };
+        setToggle('ef-show-lineup', 'lineup');
+        setToggle('ef-show-about', 'about');
+        setToggle('ef-show-venue', 'venue');
+        setToggle('ef-show-video', 'video');
+        setToggle('ef-show-tags', 'tags');
+
         // Load changelog
         const clSection = document.getElementById('ef-changelog-section');
         const clList = document.getElementById('ef-changelog-list');
@@ -8290,7 +8312,14 @@ body::after {
       tickets: tickets,
       status: document.getElementById('ef-status')?.value || 'draft',
       featured: false,
-      organizer: currentUser.uid
+      organizer: currentUser.uid,
+      visibleSections: {
+        lineup: document.getElementById('ef-show-lineup')?.checked !== false,
+        about: document.getElementById('ef-show-about')?.checked !== false,
+        venue: document.getElementById('ef-show-venue')?.checked !== false,
+        video: document.getElementById('ef-show-video')?.checked !== false,
+        tags: document.getElementById('ef-show-tags')?.checked !== false
+      }
     };
 
     // Changelog entry
@@ -10343,6 +10372,20 @@ body::after {
         <!-- Dynamically populated -->
       </div>
       <button class="ef-add-btn" onclick="efAddTier()">+ Agregar tier</button>
+    </div>
+
+    <!-- F. Secciones visibles -->
+    <div class="ef-section">
+      <div class="ef-section-title">Secciones visibles en la página</div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 12px">Elige qué bloques de info se muestran en la página pública del evento.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-lineup" checked> Lineup</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-about" checked> Descripción / About</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-venue" checked> Venue / Mapa</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-video" checked> Video hero</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-tags" checked> Tags</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-show-tickets" checked disabled> Tickets (siempre visible)</label>
+      </div>
     </div>
 
     <!-- Changelog (visible when editing) -->
