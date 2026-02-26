@@ -3995,6 +3995,69 @@ body::after {
 .og-chart-label { flex: 1; text-align: center; font-size: 10px; color: var(--text-dim); }
 
 /* ═══════════════════════════════════════════
+   EVENT FORM (v-event-form)
+   ═══════════════════════════════════════════ */
+.ef-view { min-height: 100vh; padding: 32px; max-width: 860px; margin: 0 auto; }
+.ef-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+.ef-header h1 { font-size: 24px; font-weight: 900; }
+.ef-back { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--text-mid); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.ef-back:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+.ef-section { margin-bottom: 28px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; }
+.ef-section-title { font-size: 14px; font-weight: 800; color: var(--acid); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+.ef-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.ef-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.ef-field { display: flex; flex-direction: column; gap: 6px; }
+.ef-field.full { grid-column: 1 / -1; }
+.ef-label { font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+.ef-input, .ef-select, .ef-textarea {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #fff;
+  font-family: 'Sora', sans-serif; outline: none; transition: border-color 0.2s;
+}
+.ef-input:focus, .ef-select:focus, .ef-textarea:focus { border-color: var(--acid); }
+.ef-textarea { min-height: 80px; resize: vertical; }
+.ef-select { cursor: pointer; }
+.ef-select option { background: #1a1a1a; }
+
+/* Lineup artist rows */
+.ef-artist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ef-artist-row input { flex: 1; }
+.ef-remove-btn { background: rgba(255,77,77,0.15); color: #ff4d4d; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ef-remove-btn:hover { background: rgba(255,77,77,0.3); }
+.ef-add-btn { background: rgba(229,255,0,0.08); color: var(--acid); border: 1px dashed rgba(229,255,0,0.3); border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; width: 100%; text-align: center; margin-top: 8px; }
+.ef-add-btn:hover { background: rgba(229,255,0,0.15); border-style: solid; }
+
+/* Ticket tier cards */
+.ef-tier { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+.ef-tier-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ef-tier-num { font-size: 12px; font-weight: 800; color: var(--acid); text-transform: uppercase; letter-spacing: 0.06em; }
+.ef-phase-row { display: grid; grid-template-columns: 1fr 100px 100px 36px; gap: 8px; margin-bottom: 8px; align-items: center; }
+.ef-phase-labels { display: grid; grid-template-columns: 1fr 100px 100px 36px; gap: 8px; margin-bottom: 6px; }
+.ef-phase-labels span { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+.ef-includes-input { width: 100%; }
+
+/* Gross margin box */
+.ef-margin { margin-top: 16px; background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.15); border-radius: 10px; padding: 14px 16px; }
+.ef-margin-title { font-size: 11px; font-weight: 800; color: #4ade80; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.ef-margin-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+.ef-margin-row .label { color: var(--text-mid); }
+.ef-margin-row .value { font-weight: 700; color: var(--text); }
+.ef-margin-row.total .value { color: #4ade80; font-size: 15px; }
+
+/* Actions bar */
+.ef-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); }
+.ef-btn-save { background: var(--acid); color: #000; border: none; border-radius: 10px; padding: 14px 32px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.ef-btn-save:hover { filter: brightness(1.1); }
+.ef-btn-cancel { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--text-mid); border-radius: 10px; padding: 14px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ef-view { padding: 16px; }
+  .ef-row, .ef-row-3 { grid-template-columns: 1fr; }
+  .ef-phase-row { grid-template-columns: 1fr 80px 80px 36px; }
+}
+
+/* ═══════════════════════════════════════════
    NOTIFICATION PANEL
    ═══════════════════════════════════════════ */
 .notif-overlay {
@@ -4242,7 +4305,7 @@ body::after {
           <div class="nd-item nd-logged-in" onclick="ndGo('mis-entradas')">
             <span class="nd-icon">🎟️</span> <span data-es="Mis Entradas" data-en="My Tickets">Mis Entradas</span>
           </div>
-          <div class="nd-item nd-logged-in" onclick="ndGo('organizer')">
+          <div class="nd-item nd-logged-in nd-promoter-only" onclick="ndGo('organizer')">
             <span class="nd-icon">📊</span> <span data-es="Dashboard Organizador" data-en="Organizer Dashboard">Dashboard Organizador</span>
           </div>
           <div class="nd-item nd-logged-in" onclick="ndGo('scanner')">
@@ -5209,6 +5272,7 @@ body::after {
         </div>
       </div>
       <button class="pf-edit-btn">Editar perfil</button>
+      <button class="pf-edit-btn" id="pf-promoter-btn" onclick="switchToPromoter()" style="margin-left:8px;background:rgba(229,255,0,0.1);border-color:var(--acid);color:var(--acid);display:none">🏢 Soy Promotor</button>
     </div>
 
     <!-- Badges -->
@@ -6431,11 +6495,30 @@ body::after {
       // Show logged-in items in dropdown
       document.querySelectorAll('.nd-logged-in').forEach(el => el.style.display = '');
       document.querySelectorAll('.nd-logged-out').forEach(el => el.style.display = 'none');
+      // Show promoter-only items
+      const isPromoter = userProfile?.role === 'promoter';
+      document.querySelectorAll('.nd-promoter-only').forEach(el => el.style.display = isPromoter ? '' : 'none');
+      // Show "Soy Promotor" button only for fans
+      const promoterBtn = document.getElementById('pf-promoter-btn');
+      if (promoterBtn) promoterBtn.style.display = isPromoter ? 'none' : '';
     } else {
       if (navAvatar) navAvatar.textContent = '?';
       if (navUsername) navUsername.textContent = 'Entrar';
       document.querySelectorAll('.nd-logged-in').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.nd-logged-out').forEach(el => el.style.display = '');
+    }
+  }
+
+  // ── Switch to promoter role ──
+  async function switchToPromoter() {
+    if (!currentUser) return;
+    try {
+      await db.collection('users').doc(currentUser.uid).update({ role: 'promoter' });
+      if (userProfile) userProfile.role = 'promoter';
+      updateUIForAuth(true);
+      alert('¡Ahora eres promotor! Accede a tu Dashboard desde el menú.');
+    } catch (err) {
+      console.error('switchToPromoter error:', err);
     }
   }
 
@@ -7885,6 +7968,7 @@ body::after {
         </div>
         <div style="display:flex;gap:8px;margin-top:12px">
           <button class="og-act-btn primary" onclick="openEvent('${doc.id}')">👁 Ver</button>
+          <button class="og-act-btn primary" onclick="openEventForm('${doc.id}')" style="background:var(--acid);color:#000">✏️ Editar</button>
           <button class="og-act-btn ghost" onclick="exportEventTickets('${doc.id}')">📊 Export</button>
         </div>
       </div>`;
@@ -7899,44 +7983,312 @@ body::after {
     } catch (err) { console.error('loadOrganizerDashboard error:', err); }
   }
 
-  async function createEvent() {
+  function createEvent() {
+    if (!currentUser) { go('auth'); return; }
+    openEventForm();
+  }
+
+  // ── Event Form (Create / Edit) ──
+  var efEditingId = null; // null = new event, string = editing existing
+  var efTiers = [];       // array of tier objects
+  var efLineup = [];      // array of artist name strings
+
+  function openEventForm(eventId) {
+    efEditingId = eventId || null;
+    efTiers = [];
+    efLineup = [];
+
+    // Reset all fields
+    const fields = ['ef-name','ef-subtitle','ef-genre','ef-description','ef-date','ef-time-start','ef-time-end','ef-venue','ef-location','ef-image','ef-video'];
+    fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    const statusEl = document.getElementById('ef-status');
+    if (statusEl) statusEl.value = 'draft';
+    const timeStartEl = document.getElementById('ef-time-start');
+    if (timeStartEl && !timeStartEl.value) timeStartEl.value = '22:00';
+    const timeEndEl = document.getElementById('ef-time-end');
+    if (timeEndEl && !timeEndEl.value) timeEndEl.value = '05:00';
+
+    const titleEl = document.getElementById('ef-title');
+
+    if (eventId) {
+      // Load existing event for editing
+      if (titleEl) titleEl.textContent = 'Editar Evento';
+      db.collection('events').doc(eventId).get().then(doc => {
+        if (!doc.exists) { alert('Evento no encontrado'); go('organizer'); return; }
+        const ev = doc.data();
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+        setVal('ef-name', ev.name);
+        setVal('ef-subtitle', ev.subtitle);
+        setVal('ef-genre', ev.genre);
+        setVal('ef-description', ev.description);
+        setVal('ef-date', ev.date);
+        setVal('ef-time-start', ev.timeStart);
+        setVal('ef-time-end', ev.timeEnd);
+        setVal('ef-venue', ev.venue);
+        setVal('ef-distrito', ev.distrito);
+        setVal('ef-location', ev.location);
+        setVal('ef-image', ev.image);
+        setVal('ef-video', ev.heroVideo);
+        setVal('ef-status', ev.status);
+
+        // Load lineup
+        efLineup = Array.isArray(ev.lineup) ? [...ev.lineup] : [];
+        efRenderLineup();
+
+        // Load tiers
+        if (Array.isArray(ev.tickets)) {
+          efTiers = ev.tickets.map(t => ({
+            name: t.name || '',
+            includes: Array.isArray(t.includes) ? [...t.includes] : (t.includes ? [t.includes] : []),
+            capacity: t.capacity || 0,
+            sold: t.sold || 0,
+            phases: Array.isArray(t.phases) ? t.phases.map(p => ({...p})) : [
+              { name: 'Full Price', price: t.price || 0, quantity: t.capacity || 100 }
+            ]
+          }));
+        }
+        efRenderTiers();
+      });
+    } else {
+      if (titleEl) titleEl.textContent = 'Nuevo Evento';
+      // Start with 1 default tier
+      efTiers = [{
+        name: 'General',
+        includes: [],
+        capacity: 200,
+        sold: 0,
+        phases: [
+          { name: 'Early Bird', price: 0, quantity: 50 },
+          { name: 'Preventa 1', price: 0, quantity: 50 },
+          { name: 'Full Price', price: 0, quantity: 100 }
+        ]
+      }];
+      efRenderTiers();
+      efRenderLineup();
+    }
+
+    go('event-form');
+  }
+
+  // ── Lineup management ──
+  function efAddArtist() {
+    efLineup.push('');
+    efRenderLineup();
+    // Focus the new input
+    const inputs = document.querySelectorAll('#ef-lineup-list input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }
+
+  function efRemoveArtist(index) {
+    efLineup.splice(index, 1);
+    efRenderLineup();
+  }
+
+  function efUpdateArtist(index, value) {
+    efLineup[index] = value;
+  }
+
+  function efRenderLineup() {
+    const container = document.getElementById('ef-lineup-list');
+    if (!container) return;
+    let html = '';
+    efLineup.forEach((artist, i) => {
+      html += `<div class="ef-artist-row">
+        <input class="ef-input" type="text" value="${(artist || '').replace(/"/g, '&quot;')}" placeholder="Nombre del artista" oninput="efUpdateArtist(${i}, this.value)">
+        <button class="ef-remove-btn" onclick="efRemoveArtist(${i})">✕</button>
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  // ── Tier management ──
+  function efAddTier() {
+    efTiers.push({
+      name: '',
+      includes: [],
+      capacity: 100,
+      sold: 0,
+      phases: [
+        { name: 'Early Bird', price: 0, quantity: 30 },
+        { name: 'Full Price', price: 0, quantity: 70 }
+      ]
+    });
+    efRenderTiers();
+  }
+
+  function efRemoveTier(index) {
+    if (efTiers.length <= 1) return; // keep at least 1
+    efTiers.splice(index, 1);
+    efRenderTiers();
+  }
+
+  function efAddPhase(tierIndex) {
+    efTiers[tierIndex].phases.push({ name: '', price: 0, quantity: 50 });
+    efRenderTiers();
+  }
+
+  function efRemovePhase(tierIndex, phaseIndex) {
+    if (efTiers[tierIndex].phases.length <= 1) return;
+    efTiers[tierIndex].phases.splice(phaseIndex, 1);
+    efRenderTiers();
+  }
+
+  function efUpdateTier(tierIndex, field, value) {
+    efTiers[tierIndex][field] = value;
+    if (field === 'includes') {
+      efTiers[tierIndex].includes = value.split(',').map(s => s.trim()).filter(Boolean);
+    }
+  }
+
+  function efUpdatePhase(tierIndex, phaseIndex, field, value) {
+    if (field === 'price' || field === 'quantity') value = parseFloat(value) || 0;
+    efTiers[tierIndex].phases[phaseIndex][field] = value;
+    // Recalc capacity = sum of phase quantities
+    efTiers[tierIndex].capacity = efTiers[tierIndex].phases.reduce((s, p) => s + (p.quantity || 0), 0);
+    efCalcMargin(tierIndex);
+  }
+
+  function efCalcMargin(tierIndex) {
+    const tier = efTiers[tierIndex];
+    if (!tier) return;
+    const phases = tier.phases || [];
+    const totalQty = phases.reduce((s, p) => s + (p.quantity || 0), 0);
+    const grossRevenue = phases.reduce((s, p) => s + (p.price || 0) * (p.quantity || 0), 0);
+    const avgPrice = totalQty > 0 ? (grossRevenue / totalQty) : 0;
+    const platformFee = grossRevenue * 0.08;
+    const netRevenue = grossRevenue - platformFee;
+
+    const box = document.getElementById('ef-margin-' + tierIndex);
+    if (!box) return;
+    box.innerHTML = `
+      <div class="ef-margin-title">Gross Margin Post-Fees</div>
+      <div class="ef-margin-row"><span class="label">Capacidad total</span><span class="value">${totalQty} entradas</span></div>
+      <div class="ef-margin-row"><span class="label">Precio promedio</span><span class="value">S/ ${avgPrice.toFixed(0)}</span></div>
+      <div class="ef-margin-row"><span class="label">Revenue bruto</span><span class="value">S/ ${grossRevenue.toLocaleString()}</span></div>
+      <div class="ef-margin-row"><span class="label">Fee plataforma (8%)</span><span class="value" style="color:#ff4d4d">- S/ ${platformFee.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+      <div class="ef-margin-row total"><span class="label">Tu revenue neto</span><span class="value">S/ ${netRevenue.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    `;
+  }
+
+  function efRenderTiers() {
+    const container = document.getElementById('ef-tiers-list');
+    if (!container) return;
+    let html = '';
+    efTiers.forEach((tier, ti) => {
+      html += `<div class="ef-tier">
+        <div class="ef-tier-header">
+          <span class="ef-tier-num">Tier ${ti + 1}</span>
+          ${efTiers.length > 1 ? `<button class="ef-remove-btn" onclick="efRemoveTier(${ti})">🗑</button>` : ''}
+        </div>
+        <div class="ef-row">
+          <div class="ef-field">
+            <label class="ef-label">Nombre del tier *</label>
+            <input class="ef-input" type="text" value="${(tier.name || '').replace(/"/g, '&quot;')}" oninput="efUpdateTier(${ti},'name',this.value)" placeholder="ej: General, VIP, Super VIP">
+          </div>
+          <div class="ef-field">
+            <label class="ef-label">Incluye (separado por comas)</label>
+            <input class="ef-input ef-includes-input" type="text" value="${(tier.includes || []).join(', ')}" oninput="efUpdateTier(${ti},'includes',this.value)" placeholder="ej: Acceso a 3 rooms, Barra standard">
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="ef-phase-labels">
+            <span>Fase</span><span>Precio (S/)</span><span>Cantidad</span><span></span>
+          </div>`;
+
+      tier.phases.forEach((phase, pi) => {
+        html += `<div class="ef-phase-row">
+            <input class="ef-input" type="text" value="${(phase.name || '').replace(/"/g, '&quot;')}" oninput="efUpdatePhase(${ti},${pi},'name',this.value)" placeholder="ej: Early Bird">
+            <input class="ef-input" type="number" value="${phase.price || 0}" min="0" oninput="efUpdatePhase(${ti},${pi},'price',this.value)" placeholder="0">
+            <input class="ef-input" type="number" value="${phase.quantity || 0}" min="0" oninput="efUpdatePhase(${ti},${pi},'quantity',this.value)" placeholder="100">
+            ${tier.phases.length > 1 ? `<button class="ef-remove-btn" onclick="efRemovePhase(${ti},${pi})">✕</button>` : '<div></div>'}
+          </div>`;
+      });
+
+      html += `<button class="ef-add-btn" onclick="efAddPhase(${ti})" style="margin-top:4px; font-size:12px; padding:8px">+ Agregar fase</button>
+        </div>
+        <div class="ef-margin" id="ef-margin-${ti}"></div>
+      </div>`;
+    });
+    container.innerHTML = html;
+
+    // Calculate margins for all tiers
+    efTiers.forEach((_, ti) => efCalcMargin(ti));
+  }
+
+  // ── Save Event ──
+  async function efSaveEvent() {
     if (!currentUser) { go('auth'); return; }
 
-    const name = prompt('Nombre del evento:');
-    if (!name) return;
-    const date = prompt('Fecha (YYYY-MM-DD):');
-    if (!date) return;
-    const venue = prompt('Venue/Local:');
-    if (!venue) return;
+    const name = (document.getElementById('ef-name')?.value || '').trim();
+    const date = (document.getElementById('ef-date')?.value || '').trim();
+    const venue = (document.getElementById('ef-venue')?.value || '').trim();
 
-    const newEvent = {
+    if (!name) { alert('Nombre del evento es requerido'); return; }
+    if (!date) { alert('Fecha es requerida'); return; }
+    if (!venue) { alert('Venue es requerido'); return; }
+
+    // Build tickets array from tiers
+    const tickets = efTiers.map((tier, i) => {
+      const totalCapacity = tier.phases.reduce((s, p) => s + (p.quantity || 0), 0);
+      // Active phase price (first non-sold phase)
+      const activePhase = tier.phases[0] || { price: 0 };
+      return {
+        id: tier.name.toLowerCase().replace(/[^a-z0-9]/g, '-') || ('tier-' + i),
+        name: tier.name || ('Tier ' + (i + 1)),
+        includes: tier.includes || [],
+        price: activePhase.price,
+        priceLabel: activePhase.price === 0 ? 'GRATIS' : 'S/ ' + activePhase.price,
+        capacity: totalCapacity,
+        sold: tier.sold || 0,
+        phases: tier.phases.map(p => ({ name: p.name, price: p.price || 0, quantity: p.quantity || 0 }))
+      };
+    });
+
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateLabel = dateObj.toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'long' });
+
+    const eventData = {
       name: name,
-      subtitle: '',
+      subtitle: (document.getElementById('ef-subtitle')?.value || '').trim(),
       date: date,
-      dateLabel: new Date(date + 'T12:00:00').toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'long' }),
-      timeStart: '22:00',
-      timeEnd: '05:00',
+      dateLabel: dateLabel,
+      timeStart: document.getElementById('ef-time-start')?.value || '22:00',
+      timeEnd: document.getElementById('ef-time-end')?.value || '05:00',
       venue: venue,
-      distrito: '',
-      location: 'Lima',
-      image: '',
-      description: '',
-      genre: 'Electrónica',
-      tickets: [
-        { id: 'general', name: 'General', price: 0, priceLabel: 'GRATIS (Demo)', capacity: 200, sold: 0 }
-      ],
-      organizer: currentUser.uid,
-      status: 'draft',
+      distrito: document.getElementById('ef-distrito')?.value || '',
+      location: (document.getElementById('ef-location')?.value || '').trim() || 'Lima',
+      image: (document.getElementById('ef-image')?.value || '').trim(),
+      heroVideo: (document.getElementById('ef-video')?.value || '').trim(),
+      description: (document.getElementById('ef-description')?.value || '').trim(),
+      genre: (document.getElementById('ef-genre')?.value || '').trim() || 'Electrónica',
+      lineup: efLineup.filter(a => a.trim()),
+      tickets: tickets,
+      status: document.getElementById('ef-status')?.value || 'draft',
       featured: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      organizer: currentUser.uid
     };
 
+    const saveBtn = document.getElementById('ef-save-btn');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Guardando...'; }
+
     try {
-      const ref = await db.collection('events').add(newEvent);
-      alert('¡Evento creado! ID: ' + ref.id);
-      loadOrganizerDashboard();
+      if (efEditingId) {
+        await db.collection('events').doc(efEditingId).update(eventData);
+      } else {
+        eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection('events').add(eventData);
+      }
+      if (saveBtn) { saveBtn.textContent = '✅ Guardado!'; }
+      setTimeout(() => {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Guardar evento'; }
+        go('organizer');
+        loadOrganizerDashboard();
+      }, 1000);
     } catch (err) {
-      alert('Error: ' + err.message);
+      console.error('Save event error:', err);
+      alert('Error al guardar: ' + err.message);
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Guardar evento'; }
     }
   }
 
@@ -8100,7 +8452,7 @@ body::after {
 
   function go(view) {
     // Protected views require auth
-    const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner'];
+    const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner', 'event-form'];
     if (protectedViews.includes(view) && !currentUser) {
       go('auth');
       return;
@@ -9835,6 +10187,134 @@ body::after {
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     VIEW 11: EVENT FORM (Create/Edit)
+     ═══════════════════════════════════════════ -->
+<div id="v-event-form" class="view">
+  <div class="ef-view">
+    <div class="ef-header">
+      <h1 id="ef-title">Nuevo Evento</h1>
+      <button class="ef-back" onclick="go('organizer')">← Dashboard</button>
+    </div>
+
+    <!-- A. Info básica -->
+    <div class="ef-section">
+      <div class="ef-section-title">Info básica</div>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label class="ef-label">Nombre del evento *</label>
+          <input class="ef-input" type="text" id="ef-name" placeholder="ej: FABRICLIMA 001">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Subtítulo / Tagline</label>
+          <input class="ef-input" type="text" id="ef-subtitle" placeholder="ej: Grand Opening">
+        </div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label class="ef-label">Género *</label>
+          <input class="ef-input" type="text" id="ef-genre" placeholder="ej: Techno / House">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Estado</label>
+          <select class="ef-select" id="ef-status">
+            <option value="draft">Borrador</option>
+            <option value="published">Publicado</option>
+            <option value="sold-out">Agotado</option>
+          </select>
+        </div>
+      </div>
+      <div class="ef-field full">
+        <label class="ef-label">Descripción *</label>
+        <textarea class="ef-textarea" id="ef-description" placeholder="Describe tu evento..."></textarea>
+      </div>
+    </div>
+
+    <!-- B. Fecha y lugar -->
+    <div class="ef-section">
+      <div class="ef-section-title">Fecha y lugar</div>
+      <div class="ef-row-3">
+        <div class="ef-field">
+          <label class="ef-label">Fecha *</label>
+          <input class="ef-input" type="date" id="ef-date">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Hora inicio *</label>
+          <input class="ef-input" type="time" id="ef-time-start" value="22:00">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Hora fin *</label>
+          <input class="ef-input" type="time" id="ef-time-end" value="05:00">
+        </div>
+      </div>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label class="ef-label">Venue / Local *</label>
+          <input class="ef-input" type="text" id="ef-venue" placeholder="ej: Almacén 77">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Distrito *</label>
+          <select class="ef-select" id="ef-distrito">
+            <option value="">Seleccionar...</option>
+            <option value="callao">Callao</option>
+            <option value="cercado">Cercado de Lima</option>
+            <option value="barranco">Barranco</option>
+            <option value="miraflores">Miraflores</option>
+            <option value="santa-anita">Santa Anita</option>
+            <option value="rimac">Rímac</option>
+            <option value="surco">Surco</option>
+            <option value="san-isidro">San Isidro</option>
+            <option value="la-molina">La Molina</option>
+          </select>
+        </div>
+      </div>
+      <div class="ef-field">
+        <label class="ef-label">Ubicación (display)</label>
+        <input class="ef-input" type="text" id="ef-location" placeholder="ej: Callao, Lima">
+      </div>
+    </div>
+
+    <!-- C. Media -->
+    <div class="ef-section">
+      <div class="ef-section-title">Media</div>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label class="ef-label">URL imagen hero</label>
+          <input class="ef-input" type="text" id="ef-image" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">YouTube Video ID</label>
+          <input class="ef-input" type="text" id="ef-video" placeholder="ej: fJqXu9x0tX4">
+        </div>
+      </div>
+    </div>
+
+    <!-- D. Lineup -->
+    <div class="ef-section">
+      <div class="ef-section-title">Lineup</div>
+      <div id="ef-lineup-list">
+        <!-- Dynamically populated -->
+      </div>
+      <button class="ef-add-btn" onclick="efAddArtist()">+ Agregar artista</button>
+    </div>
+
+    <!-- E. Tickets -->
+    <div class="ef-section">
+      <div class="ef-section-title">Tickets</div>
+      <div id="ef-tiers-list">
+        <!-- Dynamically populated -->
+      </div>
+      <button class="ef-add-btn" onclick="efAddTier()">+ Agregar tier</button>
+    </div>
+
+    <!-- Actions -->
+    <div class="ef-actions">
+      <button class="ef-btn-cancel" onclick="go('organizer')">Cancelar</button>
+      <button class="ef-btn-save" id="ef-save-btn" onclick="efSaveEvent()">Guardar evento</button>
     </div>
   </div>
 </div>
