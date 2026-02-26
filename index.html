@@ -8451,15 +8451,19 @@ body::after {
     // Preview mode for non-promoters
     const isPromoter = currentUser && userProfile && userProfile.role === 'promoter';
     const previewBanner = document.getElementById('ef-preview-banner');
-    const actionsPromoter = document.getElementById('ef-actions-promoter');
-    const actionsPreview = document.getElementById('ef-actions-preview');
+    const saveBtn = document.getElementById('ef-save-btn');
+    const publishCta = document.getElementById('ef-publish-cta');
+    const backBtn = document.getElementById('ef-btn-back');
+    const headerBack = document.querySelector('.ef-back');
     if (previewBanner) previewBanner.classList.toggle('active', !isPromoter);
-    if (actionsPromoter) actionsPromoter.style.display = isPromoter ? '' : 'none';
-    if (actionsPreview) actionsPreview.style.display = isPromoter ? 'none' : '';
-    // Back button goes to organizer for promoters, promotores for preview
-    const backBtn = document.querySelector('.ef-back');
+    if (saveBtn) saveBtn.style.display = isPromoter ? '' : 'none';
+    if (publishCta) publishCta.style.display = isPromoter ? 'none' : '';
     if (backBtn) {
+      backBtn.textContent = isPromoter ? 'Cancelar' : 'Volver';
       backBtn.onclick = function() { go(isPromoter ? 'organizer' : 'promotores'); };
+    }
+    if (headerBack) {
+      headerBack.onclick = function() { go(isPromoter ? 'organizer' : 'promotores'); };
     }
 
     if (eventId) {
@@ -10868,16 +10872,13 @@ body::after {
     </div>
 
     <!-- Actions -->
-    <div class="ef-actions" id="ef-actions-promoter">
-      <button class="ef-btn-cancel" onclick="go('organizer')">Cancelar</button>
-      <button class="ef-btn-save" id="ef-save-btn" onclick="efSaveEvent()">Guardar evento</button>
-    </div>
-    <div class="ef-actions" id="ef-actions-preview" style="display:none;flex-direction:column;gap:12px;">
+    <div class="ef-actions" style="flex-direction:column;gap:12px;">
       <div style="display:flex;gap:12px;justify-content:flex-end;">
-        <button class="ef-btn-cancel" onclick="go('promotores')">Volver</button>
+        <button class="ef-btn-cancel" id="ef-btn-back" onclick="go('organizer')">Cancelar</button>
         <button class="ef-btn-save" onclick="previewEvent()">Preview de mi evento</button>
+        <button class="ef-btn-save" id="ef-save-btn" onclick="efSaveEvent()">Guardar evento</button>
       </div>
-      <div style="text-align:right;font-size:12px;color:var(--text-mid);">¿Listo para publicar? <a href="mailto:hola@lezgo.fans?subject=Quiero publicar mi evento" style="color:var(--acid);text-decoration:underline;cursor:pointer;" onclick="contactPromoter(true);return false;">Escríbenos a hola@lezgo.fans</a></div>
+      <div id="ef-publish-cta" style="display:none;text-align:right;font-size:12px;color:var(--text-mid);">¿Listo para publicar? <a href="mailto:hola@lezgo.fans?subject=Quiero publicar mi evento" style="color:var(--acid);text-decoration:underline;cursor:pointer;" onclick="contactPromoter(true);return false;">Escríbenos a hola@lezgo.fans</a></div>
     </div>
   </div>
 </div>
