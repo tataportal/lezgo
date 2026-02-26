@@ -4368,6 +4368,14 @@ body::after {
               <span id="nd-lang-en" style="font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,0.08);color:var(--text-dim);">EN</span>
             </div>
           </div>
+          <!-- Demo mode: role switch -->
+          <div class="nd-item nd-logged-in" id="nd-role-switch" onclick="demoToggleRole()" style="display:none">
+            <span class="nd-icon" id="nd-role-icon">👑</span> <span id="nd-role-label">Cambiar a Promotor</span>
+            <div style="margin-left:auto;display:flex;gap:4px;align-items:center;">
+              <span id="nd-role-fan" style="font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;background:var(--acid);color:#000;">FAN</span>
+              <span id="nd-role-promoter" style="font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,0.08);color:var(--text-dim);">PRO</span>
+            </div>
+          </div>
           <div class="nd-divider"></div>
           <!-- Logged-out: login -->
           <div class="nd-item nd-logged-out" onclick="authGoogleLogin()">
@@ -6404,14 +6412,59 @@ body::after {
   // ── Demo mode: everyone logs in as demo user ──
   var DEMO_MODE = true;
   var DEMO_UID = 'demo-user-001';
+  var demoRole = 'fan';
+
+  function demoApplyAuth() {
+    currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
+    userProfile = { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: demoRole, dni: '72345678' };
+    updateUIForAuth(true);
+    // Show role switch toggle
+    var sw = document.getElementById('nd-role-switch');
+    if (sw) sw.style.display = '';
+    demoUpdateRoleUI();
+  }
+
+  function demoToggleRole() {
+    demoRole = demoRole === 'fan' ? 'promoter' : 'fan';
+    demoApplyAuth();
+    // Refresh current view
+    var current = document.querySelector('.view.active');
+    if (current) {
+      var id = current.id.replace('v-', '');
+      go(id);
+    }
+  }
+
+  function demoUpdateRoleUI() {
+    var fanBadge = document.getElementById('nd-role-fan');
+    var proBadge = document.getElementById('nd-role-promoter');
+    var icon = document.getElementById('nd-role-icon');
+    var label = document.getElementById('nd-role-label');
+    if (demoRole === 'fan') {
+      if (fanBadge) { fanBadge.style.background = 'var(--acid)'; fanBadge.style.color = '#000'; }
+      if (proBadge) { proBadge.style.background = 'rgba(255,255,255,0.08)'; proBadge.style.color = 'var(--text-dim)'; }
+      if (icon) icon.textContent = '👑';
+      if (label) label.textContent = 'Cambiar a Promotor';
+    } else {
+      if (proBadge) { proBadge.style.background = 'var(--acid)'; proBadge.style.color = '#000'; }
+      if (fanBadge) { fanBadge.style.background = 'rgba(255,255,255,0.08)'; fanBadge.style.color = 'var(--text-dim)'; }
+      if (icon) icon.textContent = '🎧';
+      if (label) label.textContent = 'Cambiar a Fan';
+    }
+  }
+
+  // Apply demo auth once DOM is ready
+  if (DEMO_MODE) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', demoApplyAuth);
+    } else {
+      demoApplyAuth();
+    }
+  }
 
   auth.onAuthStateChanged(async (user) => {
     if (DEMO_MODE) {
-      // Override with demo user regardless of auth state
-      currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
-      const doc = await db.collection('users').doc(DEMO_UID).get();
-      userProfile = doc.exists ? doc.data() : { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: 'fan', dni: '72345678' };
-      updateUIForAuth(true);
+      demoApplyAuth();
       return;
     }
     currentUser = user;
