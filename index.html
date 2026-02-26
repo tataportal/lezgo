@@ -4031,8 +4031,8 @@ body::after {
 .ef-tier { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
 .ef-tier-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .ef-tier-num { font-size: 12px; font-weight: 800; color: var(--acid); text-transform: uppercase; letter-spacing: 0.06em; }
-.ef-phase-row { display: grid; grid-template-columns: 1fr 100px 100px 36px; gap: 8px; margin-bottom: 8px; align-items: center; }
-.ef-phase-labels { display: grid; grid-template-columns: 1fr 100px 100px 36px; gap: 8px; margin-bottom: 6px; }
+.ef-phase-row { display: grid; grid-template-columns: 1fr 130px 100px 80px 36px; gap: 8px; margin-bottom: 8px; align-items: center; }
+.ef-phase-labels { display: grid; grid-template-columns: 1fr 130px 100px 80px 36px; gap: 8px; margin-bottom: 6px; }
 .ef-phase-labels span { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
 .ef-includes-input { width: 100%; }
 
@@ -4054,7 +4054,8 @@ body::after {
 @media (max-width: 768px) {
   .ef-view { padding: 16px; }
   .ef-row, .ef-row-3 { grid-template-columns: 1fr; }
-  .ef-phase-row { grid-template-columns: 1fr 80px 80px 36px; }
+  .ef-phase-row { grid-template-columns: 1fr 100px 80px 70px 36px; }
+  .ef-phase-labels { grid-template-columns: 1fr 100px 80px 70px 36px; }
 }
 
 /* ═══════════════════════════════════════════
@@ -8042,11 +8043,30 @@ body::after {
             includes: Array.isArray(t.includes) ? [...t.includes] : (t.includes ? [t.includes] : []),
             capacity: t.capacity || 0,
             sold: t.sold || 0,
-            phases: Array.isArray(t.phases) ? t.phases.map(p => ({...p})) : [
-              { name: 'Full Price', price: t.price || 0, quantity: t.capacity || 100 }
+            phases: Array.isArray(t.phases) ? t.phases.map(p => ({...p, releaseDate: p.releaseDate || ''})) : [
+              { name: 'Full Price', price: t.price || 0, quantity: t.capacity || 100, releaseDate: '' }
             ]
           }));
         }
+        // Load changelog
+        const clSection = document.getElementById('ef-changelog-section');
+        const clList = document.getElementById('ef-changelog-list');
+        if (clSection && clList && Array.isArray(ev.changelog) && ev.changelog.length) {
+          clSection.style.display = '';
+          clList.innerHTML = ev.changelog.slice().reverse().map(entry => {
+            const d = new Date(entry.timestamp);
+            const dateStr = d.toLocaleDateString('es-PE', { day:'2-digit', month:'short', year:'numeric' });
+            const timeStr = d.toLocaleTimeString('es-PE', { hour:'2-digit', minute:'2-digit' });
+            return `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05)">
+              <span style="color:var(--text-main)">${entry.summary}</span> —
+              <span>${entry.user}</span> —
+              <span style="opacity:0.6">${dateStr} ${timeStr}</span>
+            </div>`;
+          }).join('');
+        } else if (clSection) {
+          clSection.style.display = 'none';
+        }
+
         efRenderTiers();
       });
     } else {
@@ -8058,13 +8078,16 @@ body::after {
         capacity: 200,
         sold: 0,
         phases: [
-          { name: 'Early Bird', price: 0, quantity: 50 },
-          { name: 'Preventa 1', price: 0, quantity: 50 },
-          { name: 'Full Price', price: 0, quantity: 100 }
+          { name: 'Early Bird', price: 0, quantity: 50, releaseDate: '' },
+          { name: 'Preventa 1', price: 0, quantity: 50, releaseDate: '' },
+          { name: 'Full Price', price: 0, quantity: 100, releaseDate: '' }
         ]
       }];
       efRenderTiers();
       efRenderLineup();
+      // Hide changelog for new events
+      const clSection = document.getElementById('ef-changelog-section');
+      if (clSection) clSection.style.display = 'none';
     }
 
     go('event-form');
@@ -8109,8 +8132,8 @@ body::after {
       capacity: 100,
       sold: 0,
       phases: [
-        { name: 'Early Bird', price: 0, quantity: 30 },
-        { name: 'Full Price', price: 0, quantity: 70 }
+        { name: 'Early Bird', price: 0, quantity: 30, releaseDate: '' },
+        { name: 'Full Price', price: 0, quantity: 70, releaseDate: '' }
       ]
     });
     efRenderTiers();
@@ -8123,7 +8146,7 @@ body::after {
   }
 
   function efAddPhase(tierIndex) {
-    efTiers[tierIndex].phases.push({ name: '', price: 0, quantity: 50 });
+    efTiers[tierIndex].phases.push({ name: '', price: 0, quantity: 50, releaseDate: '' });
     efRenderTiers();
   }
 
@@ -8193,12 +8216,13 @@ body::after {
 
         <div style="margin-top:12px">
           <div class="ef-phase-labels">
-            <span>Fase</span><span>Precio (S/)</span><span>Cantidad</span><span></span>
+            <span>Fase</span><span>Fecha release</span><span>Precio (S/)</span><span>Cantidad</span><span></span>
           </div>`;
 
       tier.phases.forEach((phase, pi) => {
         html += `<div class="ef-phase-row">
             <input class="ef-input" type="text" value="${(phase.name || '').replace(/"/g, '&quot;')}" oninput="efUpdatePhase(${ti},${pi},'name',this.value)" placeholder="ej: Early Bird">
+            <input class="ef-input" type="date" value="${phase.releaseDate || ''}" oninput="efUpdatePhase(${ti},${pi},'releaseDate',this.value)">
             <input class="ef-input" type="number" value="${phase.price || 0}" min="0" oninput="efUpdatePhase(${ti},${pi},'price',this.value)" placeholder="0">
             <input class="ef-input" type="number" value="${phase.quantity || 0}" min="0" oninput="efUpdatePhase(${ti},${pi},'quantity',this.value)" placeholder="100">
             ${tier.phases.length > 1 ? `<button class="ef-remove-btn" onclick="efRemovePhase(${ti},${pi})">✕</button>` : '<div></div>'}
@@ -8241,7 +8265,7 @@ body::after {
         priceLabel: activePhase.price === 0 ? 'GRATIS' : 'S/ ' + activePhase.price,
         capacity: totalCapacity,
         sold: tier.sold || 0,
-        phases: tier.phases.map(p => ({ name: p.name, price: p.price || 0, quantity: p.quantity || 0 }))
+        phases: tier.phases.map(p => ({ name: p.name, price: p.price || 0, quantity: p.quantity || 0, releaseDate: p.releaseDate || '' }))
       };
     });
 
@@ -8269,14 +8293,24 @@ body::after {
       organizer: currentUser.uid
     };
 
+    // Changelog entry
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      user: currentUser.email || currentUser.uid,
+      action: efEditingId ? 'updated' : 'created',
+      summary: efEditingId ? 'Evento editado' : 'Evento creado'
+    };
+
     const saveBtn = document.getElementById('ef-save-btn');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Guardando...'; }
 
     try {
       if (efEditingId) {
+        eventData.changelog = firebase.firestore.FieldValue.arrayUnion(logEntry);
         await db.collection('events').doc(efEditingId).update(eventData);
       } else {
         eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        eventData.changelog = [logEntry];
         await db.collection('events').add(eventData);
       }
       if (saveBtn) { saveBtn.textContent = '✅ Guardado!'; }
@@ -10309,6 +10343,12 @@ body::after {
         <!-- Dynamically populated -->
       </div>
       <button class="ef-add-btn" onclick="efAddTier()">+ Agregar tier</button>
+    </div>
+
+    <!-- Changelog (visible when editing) -->
+    <div class="ef-section" id="ef-changelog-section" style="display:none">
+      <h3 class="ef-section-title">Log de cambios</h3>
+      <div id="ef-changelog-list" style="font-size:12px; color:var(--text-dim); line-height:1.8"></div>
     </div>
 
     <!-- Actions -->
