@@ -877,6 +877,25 @@ body::after {
 /* Cap highlight — the specific % number */
 .cf-compromiso .cap { color: var(--acid); font-weight: 800; }
 
+/* FAQ Accordion */
+.faq-section { max-width: 800px; margin: 0 auto; padding: 60px 48px 20px; }
+.faq-section-title { font-size: 11px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--acid); margin-bottom: 8px; }
+.faq-section-heading { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 32px; line-height: 1.2; }
+.faq-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.faq-question { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; cursor: pointer; gap: 16px; }
+.faq-question:hover { opacity: 0.85; }
+.faq-q-text { font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.faq-toggle { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.2s, background 0.2s; color: var(--text-mid); font-size: 18px; }
+.faq-item.open .faq-toggle { transform: rotate(45deg); background: var(--acid); color: #000; border-color: var(--acid); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+.faq-item.open .faq-answer { max-height: 400px; }
+.faq-a-text { padding: 0 0 20px; font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+@media (max-width: 768px) {
+  .faq-section { padding: 40px 24px 10px; }
+  .faq-section-heading { font-size: 22px; }
+  .faq-q-text { font-size: 15px; }
+}
+
 /* Email capture */
 .email-capture {
   max-width: 800px; margin: 0 auto; padding: 80px 48px;
@@ -4490,6 +4509,52 @@ body::after {
     </div>
   </div>
 
+  <!-- FAQ Plataforma -->
+  <div class="faq-section">
+    <div class="faq-section-title">// Preguntas frecuentes</div>
+    <div class="faq-section-heading">Sobre Lezgo</div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Qué es Lezgo?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Lezgo es una plataforma de ticketing verificado para fiestas, conciertos y próximamente clubes. Cada entrada está vinculada a tu identidad, eliminando las reventas fraudulentas y asegurando que solo personas reales accedan a los eventos.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Cómo funciona la verificación de identidad?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Al comprar tu entrada, esta se vincula a tu cuenta verificada con email o Google. En la puerta, el equipo del evento verifica que la entrada corresponda a la persona que la compró. Sin reventas truchas, sin entradas duplicadas.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿En qué ciudades opera Lezgo?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Empezamos en Lima, Perú. El plan es expandir a otras ciudades de Latinoamérica conforme crecemos.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Lezgo cobra comisión?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Sí, Lezgo cobra una comisión del 8% sobre cada venta. Esta comisión cubre la plataforma, verificación de identidad, soporte al fan y el sistema anti-fraude. El promotor recibe el 92% del valor de cada entrada.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Puedo revender mi entrada?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Sí, pero solo a través del Marketplace oficial de Lezgo. Esto garantiza que la reventa sea segura, a precio justo, y que la entrada se transfiera correctamente al nuevo comprador.</div></div>
+    </div>
+  </div>
+
   <!-- Email capture -->
   <div class="email-capture" id="email-capture-section">
     <h3>Estamos construyendo<br><span style="color:var(--acid);">algo distinto.</span></h3>
@@ -4734,6 +4799,52 @@ body::after {
 
     </div>
   </section>
+
+  <!-- FAQ Fans -->
+  <div class="faq-section">
+    <div class="faq-section-title">// Preguntas frecuentes</div>
+    <div class="faq-section-heading">Para asistentes</div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Cómo compro mi entrada?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Elige tu evento, selecciona el tipo de entrada y la cantidad, inicia sesión con tu email (magic link) o Google, y confirma tu compra. Tu entrada aparece automáticamente en "Mis Entradas".</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Qué necesito para entrar al evento?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Solo tu celular con tu cuenta de Lezgo abierta. El staff del evento verifica que la entrada corresponda a tu cuenta. No necesitas imprimir nada.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Qué pasa si no puedo ir al evento?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Puedes poner tu entrada a la venta en el Marketplace de Lezgo. Se transfiere al nuevo comprador de forma segura. No se aceptan reventas fuera de la plataforma.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Mi entrada es transferible?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Solo a través del Marketplace oficial. No puedes pasar tu entrada a otra persona directamente porque está vinculada a tu cuenta verificada.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Qué tipo de eventos encuentro en Lezgo?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Fiestas, conciertos y próximamente clubes. Trabajamos con promotores verificados para garantizar la calidad de cada evento publicado en la plataforma.</div></div>
+    </div>
+  </div>
 
   <!-- Email Capture -->
   <div class="email-capture">
@@ -4998,6 +5109,52 @@ body::after {
       </div>
     </div>
   </section>
+
+  <!-- FAQ Promotores -->
+  <div class="faq-section">
+    <div class="faq-section-title">// Preguntas frecuentes</div>
+    <div class="faq-section-heading">Para promotores</div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Cómo publico mi evento en Lezgo?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Escríbenos a hola@lezgo.fans. Verificamos tu cuenta, te damos acceso de promotor, y desde el Dashboard puedes crear y editar tus eventos con toda la info: lineup, tiers de tickets, fases de precios y más.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Cuánto cobra Lezgo?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">8% de comisión por cada entrada vendida. No hay costos fijos, ni mensualidades, ni cargos de setup. Solo pagas cuando vendes.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Puedo configurar fases de precio (Early Bird, Preventa, etc.)?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Sí. Cada tier de entrada puede tener múltiples fases con precio, cantidad y fecha de release independientes. Tú controlas cuándo se libera cada fase.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Tengo acceso a métricas y datos?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Sí. Desde el Dashboard ves ventas en tiempo real, capacidad por tier, y puedes exportar la lista de asistentes. Estamos agregando más analytics.</div></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="faqToggle(this)">
+        <span class="faq-q-text">¿Puedo personalizar la página de mi evento?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer"><div class="faq-a-text">Sí. Desde el formulario de evento puedes activar o desactivar secciones como lineup, descripción, venue, video y tags para mostrar solo lo que necesitas.</div></div>
+    </div>
+  </div>
 
   <!-- Email capture promotor -->
   <div class="email-capture">
@@ -8433,6 +8590,12 @@ body::after {
   // cfSubmitEmail removed — HTML elements cf-email-input/bar/success don't exist
 
   // ← PEGA TU URL DE GOOGLE APPS SCRIPT ACÁ ↓
+  // ── FAQ Accordion ──
+  function faqToggle(questionEl) {
+    const item = questionEl.parentElement;
+    item.classList.toggle('open');
+  }
+
   const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxS6AWDwV_ZPD9tIS65X1KOI4wxFBrBmWVxJ7A1MErNiz5uIBppRt4GsR7mBNsXVlMk0w/exec';
 
   function submitEmail() {
