@@ -8473,10 +8473,58 @@ body::after {
     var resales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'listed'; }) : [];
     var uniqueEvents = [];
     tickets.forEach(function(t){ if (uniqueEvents.indexOf(t.eventId) === -1) uniqueEvents.push(t.eventId); });
+
+    // Calculate badges dynamically
+    var badgeStates = {};
+    // Club Connoisseur: 5+ events
+    badgeStates['club-connoisseur'] = uniqueEvents.length >= 5;
+    // Early Adopter: always true in demo (user is early)
+    badgeStates['early-adopter'] = true;
+    // Bass Monster: 3+ techno/bass events
+    var technoCount = 0;
+    tickets.forEach(function(t) {
+      var ev = allEvents.find(function(e){ return e._id === t.eventId; });
+      if (ev && (ev.genre || '').toLowerCase().match(/techno|bass|industrial|dnb/)) technoCount++;
+    });
+    badgeStates['bass-monster'] = technoCount >= 3;
+    // Preventa Hunter: 3+ tickets (demo: consider all active as preventa)
+    badgeStates['preventa-hunter'] = tickets.filter(function(t){ return t.status === 'active'; }).length >= 3;
+    // Lima Explorer: events in 3+ distritos
+    var distritos = [];
+    tickets.forEach(function(t) {
+      var ev = allEvents.find(function(e){ return e._id === t.eventId; });
+      var d = ev ? (ev.distrito || ev.location || '').toLowerCase() : (t.eventLocation || '').toLowerCase();
+      if (d && distritos.indexOf(d) === -1) distritos.push(d);
+    });
+    badgeStates['lima-explorer'] = distritos.length >= 3;
+    // Festival Warrior: 3 festivals (check for multi-day/outdoor)
+    badgeStates['festival-warrior'] = false;
+    // Resale Pro: 5+ reventas
+    var completedResales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'sold'; }).length : 0;
+    badgeStates['resale-pro'] = completedResales >= 5;
+    // VIP Status: 10 VIP events
+    var vipCount = tickets.filter(function(t){ return (t.ticketName || '').toLowerCase().match(/vip|premium|full access/); }).length;
+    badgeStates['vip-status'] = vipCount >= 10;
+
+    var unlockedCount = Object.keys(badgeStates).filter(function(k){ return badgeStates[k]; }).length;
+
+    // Update badge HTML
+    var badgeKeys = ['club-connoisseur','early-adopter','bass-monster','preventa-hunter','lima-explorer','festival-warrior','resale-pro','vip-status'];
+    var badgeEls = document.querySelectorAll('.pf-badges .pf-badge');
+    badgeEls.forEach(function(el, i) {
+      var key = badgeKeys[i];
+      if (!key) return;
+      if (badgeStates[key]) {
+        el.classList.remove('locked');
+      } else {
+        el.classList.add('locked');
+      }
+    });
+
     var statsRow = document.querySelector('.pf-stats-row');
     if (statsRow) {
       statsRow.innerHTML = '<div class="pf-stat"><strong>' + uniqueEvents.length + '</strong> eventos</div>'
-        + '<div class="pf-stat"><strong>5</strong> badges</div>'
+        + '<div class="pf-stat"><strong>' + unlockedCount + '</strong> badges</div>'
         + '<div class="pf-stat"><strong>' + resales.length + '</strong> en reventa</div>';
     }
 
@@ -9004,6 +9052,41 @@ body::after {
   // ── Geolocation: "Cerca de ti" ──
   var userLocation = null; // { lat, lng }
 
+  // District center coordinates (Lima, Perú)
+  var distritoCoords = {
+    'callao': { lat: -12.0565, lng: -77.1185 },
+    'cercado': { lat: -12.0464, lng: -77.0428 },
+    'barranco': { lat: -12.1431, lng: -77.0220 },
+    'miraflores': { lat: -12.1199, lng: -77.0296 },
+    'santa-anita': { lat: -12.0433, lng: -76.9710 },
+    'rimac': { lat: -12.0261, lng: -77.0340 },
+    'surco': { lat: -12.1464, lng: -76.9917 },
+    'san-isidro': { lat: -12.0970, lng: -77.0365 },
+    'la-molina': { lat: -12.0868, lng: -76.9350 },
+    'chorrillos': { lat: -12.1716, lng: -77.0150 },
+    'san-borja': { lat: -12.1058, lng: -77.0032 },
+    'lince': { lat: -12.0832, lng: -77.0340 },
+    'pueblo-libre': { lat: -12.0728, lng: -77.0630 },
+    'magdalena': { lat: -12.0905, lng: -77.0680 },
+    'jesus-maria': { lat: -12.0712, lng: -77.0444 }
+  };
+
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    var R = 6371;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng/2) * Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function getEventDistance(ev) {
+    if (!userLocation) return 999;
+    var d = (ev.distrito || '').toLowerCase();
+    var coords = distritoCoords[d];
+    if (!coords) return 999;
+    return haversineKm(userLocation.lat, userLocation.lng, coords.lat, coords.lng);
+  }
+
   function requestUserLocation(callback) {
     if (!navigator.geolocation) {
       alert('Tu navegador no soporta geolocalización.');
@@ -9052,10 +9135,33 @@ body::after {
   }
 
   function filterHomeCards() {
-    // Re-filter the visible cards based on location
-    document.querySelectorAll('#v-eventos .ev-card').forEach(function(card) {
-      if (homeLocFilter === 'todos') { card.style.display = ''; return; }
-      if (homeLocFilter === 'cerca') { card.style.display = ''; return; } // Show all when geolocated (distance sorting TODO)
+    var cards = Array.from(document.querySelectorAll('#v-eventos .ev-card'));
+    if (homeLocFilter === 'todos') {
+      cards.forEach(function(card) { card.style.display = ''; });
+      return;
+    }
+    if (homeLocFilter === 'cerca' && userLocation) {
+      // Sort by distance: closest first
+      var container = cards[0] && cards[0].parentNode;
+      if (!container) return;
+      cards.forEach(function(card) { card.style.display = ''; });
+      cards.sort(function(a, b) {
+        var dA = (a.dataset.distrito || '').toLowerCase();
+        var dB = (b.dataset.distrito || '').toLowerCase();
+        var coordsA = distritoCoords[dA];
+        var coordsB = distritoCoords[dB];
+        var distA = coordsA ? haversineKm(userLocation.lat, userLocation.lng, coordsA.lat, coordsA.lng) : 999;
+        var distB = coordsB ? haversineKm(userLocation.lat, userLocation.lng, coordsB.lat, coordsB.lng) : 999;
+        return distA - distB;
+      });
+      cards.forEach(function(card) { container.appendChild(card); });
+      return;
+    }
+    if (homeLocFilter === 'cerca') {
+      cards.forEach(function(card) { card.style.display = ''; });
+      return;
+    }
+    cards.forEach(function(card) {
       var distrito = (card.dataset.distrito || '').toLowerCase();
       card.style.display = distrito.includes(homeLocFilter) ? '' : 'none';
     });
