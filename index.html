@@ -7599,30 +7599,32 @@ body::after {
       const docId = t._id;
       const isActive = t.status === 'active';
       if (isActive) activeCount++; else historyCount++;
+      var statusTag = isActive ? '<span class="mt-ticket-tag upcoming">PRÓXIMA</span>' : '<span class="mt-ticket-tag attended">ASISTIDA</span>';
+      var tierTag = '<span class="mt-ticket-tag tier">' + (t.ticketName || 'General') + '</span>';
+      var priceLabel = t.price > 0 ? 'S/' + t.price : 'GRATIS';
       const card = `
-        <div class="mt-ticket-card" onclick="mtToggleTicket('${docId}')">
-          <div class="mt-ticket-header">
+        <div class="mt-ticket" onclick="mtToggleTicket('${docId}')">
+          <div class="mt-ticket-head">
             <div class="mt-ticket-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.5em">🎧</div>
             <div class="mt-ticket-info">
               <div class="mt-ticket-event">${t.eventName}</div>
-              <div class="mt-ticket-detail">${t.eventDateLabel || t.eventDate || ''} · ${t.eventTimeStart || ''} – ${t.eventTimeEnd || ''}</div>
-              <div class="mt-ticket-detail">📍 ${t.eventVenue || ''} · ${t.eventLocation || ''}</div>
-              <div class="mt-ticket-type">${t.ticketName || ''} ${t.price > 0 ? '· S/' + t.price : '· GRATIS'}</div>
+              <div class="mt-ticket-meta">${t.eventDateLabel || t.eventDate || ''} · ${t.eventTimeStart || ''} – ${t.eventTimeEnd || ''}<br>📍 ${t.eventVenue || ''}${t.eventLocation ? ', ' + t.eventLocation : ''}</div>
+              <div class="mt-ticket-tags">${statusTag}${tierTag}</div>
             </div>
-            <div class="mt-ticket-status ${isActive ? 'active' : 'used'}">${isActive ? '✅ Activa' : '⏰ Usada'}</div>
+            <div class="mt-ticket-right">
+              <div class="mt-ticket-price">${priceLabel}</div>
+              <div class="mt-ticket-actions">
+                <button class="mt-ticket-btn" onclick="event.stopPropagation();openEvent('${t.eventId}')" style="background:rgba(255,255,255,0.06);color:var(--text)">Ver evento</button>
+                ${isActive ? '<button class="mt-ticket-btn" onclick="event.stopPropagation();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')" style="background:var(--acid);color:#000">Revender</button>' : ''}
+              </div>
+            </div>
           </div>
-          <div class="mt-ticket-expand" id="${docId}-expand">
-            <div class="mt-ticket-expand-inner">
-              <div style="text-align:center;padding:16px 0">
-                <div style="font-size:3em">🪪</div>
-                <div style="font-size:11px;color:var(--text-dim);margin-top:8px">DNI: ${t.userDni || '—'}</div>
-                <div style="font-size:11px;color:var(--text-dim)">ID: ${docId.slice(0,8)}...</div>
-                <div style="font-size:11px;color:var(--acid);margin-top:4px">✅ Verificado con Lezgo</div>
-              </div>
-              <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-                <button class="mt-share-btn" onclick="event.stopPropagation();openEvent('${t.eventId}')">🎫 Ver evento</button>
-                ${isActive ? '<button class="mt-share-btn" onclick="event.stopPropagation();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Revender</button>' : ''}
-              </div>
+          <div class="mt-ticket-expand" id="${docId}-expand" style="display:none;padding:16px 20px;border-top:1px solid var(--border)">
+            <div style="text-align:center;padding:8px 0">
+              <div style="font-size:2.5em">🪪</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:8px">DNI: ${t.userDni || '—'}</div>
+              <div style="font-size:11px;color:var(--text-dim)">ID: ${docId.slice(0,8)}...</div>
+              <div style="font-size:11px;color:var(--acid);margin-top:4px">✅ Verificado con Lezgo</div>
             </div>
           </div>
         </div>`;
@@ -8534,9 +8536,9 @@ body::after {
   function mtToggleTicket(id) {
     const expand = document.getElementById(id + '-expand');
     if (!expand) return;
-    const isOpen = expand.classList.contains('open');
-    document.querySelectorAll('.mt-ticket-expand').forEach(e => e.classList.remove('open'));
-    if (!isOpen) expand.classList.add('open');
+    const isOpen = expand.style.display !== 'none';
+    document.querySelectorAll('.mt-ticket-expand').forEach(e => e.style.display = 'none');
+    if (!isOpen) expand.style.display = 'block';
   }
 
   /* ═══════════════════════════════════════════
