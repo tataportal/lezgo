@@ -369,7 +369,7 @@ body::after {
 .marquee {
   border-top: 2px solid var(--acid);
   border-bottom: 2px solid var(--acid);
-  padding: 10px 0;
+  padding: 14px 0;
   overflow: hidden;
   background: linear-gradient(90deg, var(--acid) 0%, var(--green) 50%, var(--acid) 100%);
   margin-top: 0;
@@ -380,18 +380,18 @@ body::after {
   animation: marq 30s linear infinite;
 }
 .marquee-item {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: var(--bg);
   text-transform: uppercase;
   white-space: nowrap;
-  letter-spacing: 1px;
-  padding: 0 24px;
+  letter-spacing: 1.2px;
+  padding: 0 28px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
-.marquee-item .acid-smiley { width: 16px; height: 16px; }
+.marquee-item .acid-smiley { width: 18px; height: 18px; }
 @keyframes marq {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
