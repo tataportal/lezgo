@@ -7410,35 +7410,55 @@ body::after {
         return;
       }
 
-      const batch = db.batch();
-      for (const [ticketId, qty] of selectedTickets) {
-        for (let i = 0; i < qty; i++) {
-          const ticketRef = db.collection('tickets').doc();
-          batch.set(ticketRef, {
-            ticketId: ticketRef.id,
-            eventId: ev._id || ev.id,
-            eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
-            eventDate: ev.date,
-            eventDateLabel: ev.dateLabel,
-            eventTimeStart: ev.timeStart,
-            eventTimeEnd: ev.timeEnd,
-            eventVenue: ev.venue,
-            eventLocation: ev.location,
-            ticketType: ticketId,
-            ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
-            price: pmTicketCatalog[ticketId]?.price || 0,
-            userId: currentUser.uid,
-            userEmail: currentUser.email,
-            userDni: pmVerifiedDni || userProfile?.dni || '',
-            userName: pmVerifiedName || userProfile?.displayName || currentUser.displayName || '',
-            status: 'active',
-            usedAt: null,
-            purchasedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            qrCode: ticketRef.id // Use ticket ID as QR code
-          });
+      if (DEMO_MODE) {
+        // Demo: add tickets to DEMO_TICKETS array
+        for (const [ticketId, qty] of selectedTickets) {
+          for (let i = 0; i < qty; i++) {
+            var demoId = 'demo-tk-' + Date.now() + '-' + Math.random().toString(36).substr(2,4);
+            DEMO_TICKETS.push({
+              _id: demoId, userId: currentUser.uid, eventId: ev._id || ev.id,
+              eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
+              eventDate: ev.date, eventDateLabel: ev.dateLabel || '',
+              eventVenue: ev.venue, eventLocation: ev.location,
+              eventTimeStart: ev.timeStart || '22:00', eventTimeEnd: ev.timeEnd || '05:00',
+              ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
+              price: pmTicketCatalog[ticketId]?.price || 0,
+              userDni: pmVerifiedDni || userProfile?.dni || '',
+              status: 'active', _canUpgrade: true, image: ev.image || '',
+              promoter: ev.promoter || ev.name || ''
+            });
+          }
         }
+      } else {
+        const batch = db.batch();
+        for (const [ticketId, qty] of selectedTickets) {
+          for (let i = 0; i < qty; i++) {
+            const ticketRef = db.collection('tickets').doc();
+            batch.set(ticketRef, {
+              ticketId: ticketRef.id,
+              eventId: ev._id || ev.id,
+              eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
+              eventDate: ev.date,
+              eventDateLabel: ev.dateLabel,
+              eventTimeStart: ev.timeStart,
+              eventTimeEnd: ev.timeEnd,
+              eventVenue: ev.venue,
+              eventLocation: ev.location,
+              ticketType: ticketId,
+              ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
+              price: pmTicketCatalog[ticketId]?.price || 0,
+              userId: currentUser.uid,
+              userEmail: currentUser.email,
+              userDni: pmVerifiedDni || userProfile?.dni || '',
+              userName: pmVerifiedName || userProfile?.displayName || currentUser.displayName || '',
+              status: 'active',
+              usedAt: null,
+              purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        }
+        await batch.commit();
       }
-      await batch.commit();
 
       loading.classList.remove('visible');
       btn.style.display = '';
@@ -7492,8 +7512,10 @@ body::after {
 
     // Save DNI to user profile if logged in
     if (currentUser) {
-      await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name });
       if (userProfile) { userProfile.dni = dni; userProfile.displayName = name; }
+      if (!DEMO_MODE) {
+        await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name });
+      }
     }
 
     const btn = document.getElementById('pm-verify-btn');
@@ -7574,9 +7596,9 @@ body::after {
   ];
 
   var DEMO_RESALE = [
-    { _id: 'demo-resale-1', sellerId: 'demo-user-001', sellerName: 'Lucas D.', eventName: 'HESSLE AUDIO Lima Session', eventDate: '2026-05-03', eventVenue: 'MATE Museo, Barranco', ticketTier: 'General', originalPrice: 70, askingPrice: 60, status: 'listed' },
-    { _id: 'demo-resale-2', sellerId: 'demo-user-002', sellerName: 'Camila R.', eventName: 'Drumcode Night Lima Edition', eventDate: '2026-05-10', eventVenue: 'Arena Perú, Santa Anita', ticketTier: 'VIP', originalPrice: 389, askingPrice: 350, status: 'listed' },
-    { _id: 'demo-resale-3', sellerId: 'demo-user-003', sellerName: 'Diego M.', eventName: 'EXIT Through The Warehouse', eventDate: '2026-06-06', eventVenue: 'Ubicación secreta, Callao', ticketTier: 'Blind Ticket', originalPrice: 50, askingPrice: 50, status: 'listed' }
+    { _id: 'demo-resale-1', sellerId: 'demo-user-001', sellerName: 'Lucas D.', eventName: 'HESSLE AUDIO Lima Session', eventDate: '2026-05-03', eventDateLabel: '03 Mayo 2026', eventVenue: 'MATE Museo, Barranco', ticketTier: 'General', originalPrice: 70, askingPrice: 60, status: 'listed', image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&q=80' },
+    { _id: 'demo-resale-2', sellerId: 'demo-user-002', sellerName: 'Camila R.', eventName: 'Drumcode Night Lima Edition', eventDate: '2026-05-10', eventDateLabel: '10 Mayo 2026', eventVenue: 'Arena Perú, Santa Anita', ticketTier: 'VIP', originalPrice: 389, askingPrice: 350, status: 'listed', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80' },
+    { _id: 'demo-resale-3', sellerId: 'demo-user-003', sellerName: 'Diego M.', eventName: 'EXIT Through The Warehouse', eventDate: '2026-06-06', eventDateLabel: '06 Junio 2026', eventVenue: 'Ubicación secreta, Callao', ticketTier: 'Blind Ticket', originalPrice: 50, askingPrice: 50, status: 'listed', image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80' }
   ];
 
   var DEMO_EVENTS = [
@@ -7707,25 +7729,28 @@ body::after {
     if (!eventName || !tier || price <= 0) { alert('Datos incompletos. Intenta de nuevo.'); return; }
 
     try {
-      // Create resale listing
-      await db.collection('resale').add({
-        ticketId: ticketDocId,
-        sellerId: currentUser.uid,
-        sellerEmail: currentUser.email,
-        eventName: eventName,
-        ticketTier: tier,
-        askingPrice: price,
-        fee: Math.round(price * 0.05),
-        netToSeller: price - Math.round(price * 0.05),
-        status: 'listed',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Update ticket status
-      if (ticketDocId) {
-        await db.collection('tickets').doc(ticketDocId).update({ status: 'resale-listed' });
+      if (DEMO_MODE) {
+        // Demo: add to DEMO_RESALE, update ticket status
+        DEMO_RESALE.push({
+          _id: 'demo-resale-' + Date.now(), ticketId: ticketDocId, sellerId: currentUser.uid,
+          sellerName: (userProfile?.displayName || 'Lucas D.').split(' ')[0] + ' ' + ((userProfile?.displayName || '').split(' ')[1] || '')[0] + '.',
+          eventName: eventName, ticketTier: tier, originalPrice: price, askingPrice: price, status: 'listed'
+        });
+        if (ticketDocId) {
+          var tk = DEMO_TICKETS.find(function(t) { return t._id === ticketDocId; });
+          if (tk) tk.status = 'resale-listed';
+        }
+      } else {
+        await db.collection('resale').add({
+          ticketId: ticketDocId, sellerId: currentUser.uid, sellerEmail: currentUser.email,
+          eventName: eventName, ticketTier: tier, askingPrice: price,
+          fee: Math.round(price * 0.05), netToSeller: price - Math.round(price * 0.05),
+          status: 'listed', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        if (ticketDocId) {
+          await db.collection('tickets').doc(ticketDocId).update({ status: 'resale-listed' });
+        }
       }
-
       resaleClose();
       setTimeout(() => {
         alert('¡Entrada publicada en el marketplace! Te notificaremos cuando alguien la compre.');
@@ -7774,13 +7799,27 @@ body::after {
 
     let html = '';
     listings.forEach(r => {
-      html += `<div class="mp-listing-card" style="background:var(--bg-raised);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
-        <div style="font-weight:600;color:var(--text)">${r.eventName}</div>
-        <div style="font-size:13px;color:var(--text-mid);margin-top:4px">${r.ticketTier}</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-          <span style="font-size:20px;font-weight:700;color:var(--acid)">S/${r.askingPrice}</span>
-          <button onclick="buyResale('${r._id}')" style="background:var(--acid);color:#000;border:none;padding:8px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit">Comprar</button>
+      var imgUrl = r.image || '';
+      var imgBg = imgUrl ? 'background-image:url(' + imgUrl + ');background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.2em';
+      var imgInner = imgUrl ? '' : '🎧';
+      var discount = r.originalPrice > r.askingPrice ? Math.round((1 - r.askingPrice / r.originalPrice) * 100) : 0;
+      html += `<div class="mt-ticket" style="margin-bottom:12px">
+        <div class="mt-ticket-head" style="cursor:default">
+          <div class="mt-ticket-img" style="${imgBg}">${imgInner}</div>
+          <div class="mt-ticket-info">
+            <div class="mt-ticket-event">${r.eventName}</div>
+            <div class="mt-ticket-meta">${r.eventDateLabel || r.eventDate || ''} · ${r.ticketTier}</div>
+          </div>
         </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:0 14px 14px">
+          <div>
+            <span style="font-size:18px;font-weight:700;color:var(--acid)">S/${r.askingPrice}</span>
+            ${r.originalPrice !== r.askingPrice ? '<span style="font-size:12px;color:var(--text-dim);text-decoration:line-through;margin-left:6px">S/' + r.originalPrice + '</span>' : ''}
+            ${discount > 0 ? '<span style="font-size:11px;color:#4ade80;margin-left:4px">-' + discount + '%</span>' : ''}
+          </div>
+          <button onclick="buyResale('${r._id}')" style="background:var(--acid);color:#000;border:none;padding:8px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px">Comprar</button>
+        </div>
+        <div style="padding:0 14px 12px;font-size:11px;color:var(--text-dim)">Vendedor: ${r.sellerName || 'Anónimo'} · ${r.eventVenue || ''}</div>
       </div>`;
     });
 
@@ -7791,24 +7830,33 @@ body::after {
   async function buyResale(resaleId) {
     if (!currentUser) { go('auth'); return; }
     try {
-      const resaleDoc = await db.collection('resale').doc(resaleId).get();
-      if (!resaleDoc.exists) { alert('Esta entrada ya no está disponible.'); return; }
-      const r = resaleDoc.data();
-
-      // For demo/free: transfer ticket
-      if (r.ticketId) {
-        await db.collection('tickets').doc(r.ticketId).update({
-          userId: currentUser.uid,
-          userEmail: currentUser.email,
-          userName: userProfile?.displayName || currentUser.displayName || '',
-          userDni: userProfile?.dni || '',
-          status: 'active',
-          transferredAt: firebase.firestore.FieldValue.serverTimestamp()
+      if (DEMO_MODE) {
+        // Find in DEMO_RESALE, mark sold, add ticket to DEMO_TICKETS
+        var idx = DEMO_RESALE.findIndex(r => r._id === resaleId);
+        if (idx === -1) { alert('Esta entrada ya no está disponible.'); return; }
+        var r = DEMO_RESALE[idx];
+        DEMO_RESALE[idx].status = 'sold';
+        DEMO_TICKETS.push({
+          _id: 'demo-tk-' + Date.now(), userId: currentUser.uid, eventId: r.eventName.toLowerCase().replace(/\s+/g,'-'),
+          eventName: r.eventName, eventDate: r.eventDate || '', eventDateLabel: r.eventDate || '',
+          eventVenue: r.eventVenue || '', eventLocation: '', eventTimeStart: '22:00', eventTimeEnd: '05:00',
+          ticketName: r.ticketTier, price: r.askingPrice, userDni: userProfile?.dni || '',
+          status: 'active', _canUpgrade: false, image: '', promoter: ''
         });
+      } else {
+        const resaleDoc = await db.collection('resale').doc(resaleId).get();
+        if (!resaleDoc.exists) { alert('Esta entrada ya no está disponible.'); return; }
+        const r = resaleDoc.data();
+        if (r.ticketId) {
+          await db.collection('tickets').doc(r.ticketId).update({
+            userId: currentUser.uid, userEmail: currentUser.email,
+            userName: userProfile?.displayName || currentUser.displayName || '',
+            userDni: userProfile?.dni || '', status: 'active',
+            transferredAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
       }
-
-      await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
-
       alert('¡Entrada comprada! Ya está en "Mis Entradas".');
       loadMarketplace();
     } catch (err) {
@@ -7819,36 +7867,29 @@ body::after {
 
   // ── Scanner ──
   async function scanVerifyTicket(ticketId) {
-    if (!ticketId) {
-      scanResult('invalid');
-      return;
-    }
+    if (!ticketId) { scanResult('invalid'); return; }
     try {
-      const doc = await db.collection('tickets').doc(ticketId).get();
-      if (!doc.exists) {
-        scanResult('invalid');
-        return;
+      var ticket;
+      if (DEMO_MODE) {
+        // Search in DEMO_TICKETS
+        var tk = DEMO_TICKETS.find(t => t._id === ticketId);
+        if (!tk) { scanResult('invalid'); return; }
+        if (tk.status === 'used') { scanResult('used'); return; }
+        if (tk.status !== 'active') { scanResult('denied'); return; }
+        tk.status = 'used';
+        ticket = tk;
+      } else {
+        const doc = await db.collection('tickets').doc(ticketId).get();
+        if (!doc.exists) { scanResult('invalid'); return; }
+        ticket = doc.data();
+        if (ticket.status === 'used') { scanResult('used'); return; }
+        if (ticket.status !== 'active') { scanResult('denied'); return; }
+        await db.collection('tickets').doc(ticketId).update({ status: 'used', usedAt: firebase.firestore.FieldValue.serverTimestamp() });
       }
-      const ticket = doc.data();
-      if (ticket.status === 'used') {
-        scanResult('used');
-        return;
-      }
-      if (ticket.status !== 'active') {
-        scanResult('denied');
-        return;
-      }
-      // Mark as used
-      await db.collection('tickets').doc(ticketId).update({
-        status: 'used',
-        usedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Update UI
       const srName = document.getElementById('scan-result-name');
       const srType = document.getElementById('sr-ticket');
       const srDni = document.getElementById('sr-dni');
-      if (srName) srName.textContent = ticket.userName || 'Asistente';
+      if (srName) srName.textContent = ticket.userName || ticket.eventName || 'Asistente';
       if (srType) srType.textContent = ticket.ticketName;
       if (srDni) srDni.textContent = ticket.userDni || '—';
       scanResult('approved');
@@ -8272,13 +8313,30 @@ body::after {
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Guardando...'; }
 
     try {
-      if (efEditingId) {
-        eventData.changelog = firebase.firestore.FieldValue.arrayUnion(logEntry);
-        await db.collection('events').doc(efEditingId).update(eventData);
-      } else {
-        eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      if (DEMO_MODE) {
+        // Demo: add/update in DEMO_EVENTS and allEvents arrays
         eventData.changelog = [logEntry];
-        await db.collection('events').add(eventData);
+        eventData.createdAt = new Date().toISOString();
+        if (efEditingId) {
+          var ei = DEMO_EVENTS.findIndex(e => e._id === efEditingId);
+          if (ei !== -1) Object.assign(DEMO_EVENTS[ei], eventData);
+          var ai = allEvents.findIndex(e => e._id === efEditingId);
+          if (ai !== -1) Object.assign(allEvents[ai], eventData);
+        } else {
+          var newId = 'demo-ev-' + Date.now();
+          eventData._id = newId;
+          DEMO_EVENTS.push(eventData);
+          allEvents.push(eventData);
+        }
+      } else {
+        if (efEditingId) {
+          eventData.changelog = firebase.firestore.FieldValue.arrayUnion(logEntry);
+          await db.collection('events').doc(efEditingId).update(eventData);
+        } else {
+          eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          eventData.changelog = [logEntry];
+          await db.collection('events').add(eventData);
+        }
       }
       if (saveBtn) { saveBtn.textContent = '✅ Guardado!'; }
       setTimeout(() => {
@@ -8294,15 +8352,20 @@ body::after {
   }
 
   async function exportEventTickets(eventId) {
-    const snapshot = await db.collection('tickets').where('eventId', '==', eventId).get();
-    let csv = 'Nombre,Email,DNI,Tipo,Estado,Fecha Compra\n';
-    snapshot.forEach(doc => {
-      const t = doc.data();
-      csv += `"${t.userName}","${t.userEmail}","${t.userDni}","${t.ticketName}","${t.status}","${t.purchasedAt?.toDate?.()?.toLocaleDateString?.('es-PE') || ''}"\n`;
+    var tickets = [];
+    if (DEMO_MODE) {
+      tickets = DEMO_TICKETS.filter(function(t) { return t.eventId === eventId; });
+    } else {
+      var snapshot = await db.collection('tickets').where('eventId', '==', eventId).get();
+      snapshot.forEach(function(doc) { tickets.push(doc.data()); });
+    }
+    var csv = 'Nombre,Email,DNI,Tipo,Estado,Fecha Compra\n';
+    tickets.forEach(function(t) {
+      csv += '"' + (t.userName || t.eventName || '') + '","' + (t.userEmail || '') + '","' + (t.userDni || '') + '","' + (t.ticketName || '') + '","' + (t.status || '') + '","' + (t.eventDate || '') + '"\n';
     });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
     a.href = url; a.download = 'tickets-' + eventId + '.csv';
     a.click(); URL.revokeObjectURL(url);
   }
@@ -8345,15 +8408,49 @@ body::after {
   async function loadProfile() {
     if (!currentUser) { go('auth'); return; }
     try {
-    const nameEl = document.getElementById('profile-name');
-    const emailEl = document.getElementById('profile-email');
-    const dniEl = document.getElementById('profile-dni');
-    const avatarEl = document.getElementById('profile-avatar');
+    var displayName = userProfile?.displayName || currentUser.displayName || 'Usuario';
+    var nameEl = document.getElementById('profile-name');
+    var emailEl = document.getElementById('profile-email');
+    var dniEl = document.getElementById('profile-dni');
+    var initialsEl = document.getElementById('profile-initials');
 
-    if (nameEl) nameEl.textContent = userProfile?.displayName || currentUser.displayName || 'Usuario';
-    if (emailEl) emailEl.textContent = currentUser.email || '';
+    if (nameEl) nameEl.innerHTML = displayName + ' <span class="pf-check">&#10003;</span>';
+    if (emailEl) emailEl.innerHTML = 'Identidad verificada con <span>DNI</span> · Miembro desde <span>Enero 2026</span>';
     if (dniEl) dniEl.textContent = userProfile?.dni ? 'DNI: ' + userProfile.dni : 'DNI no verificado';
-    if (avatarEl && currentUser.photoURL) avatarEl.src = currentUser.photoURL;
+    if (initialsEl) initialsEl.textContent = displayName.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().substring(0,2);
+
+    // Dynamic stats from demo data
+    var tickets = DEMO_MODE ? DEMO_TICKETS.filter(function(t){ return t.userId === currentUser.uid; }) : [];
+    var resales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'listed'; }) : [];
+    var uniqueEvents = [];
+    tickets.forEach(function(t){ if (uniqueEvents.indexOf(t.eventId) === -1) uniqueEvents.push(t.eventId); });
+    var statsRow = document.querySelector('.pf-stats-row');
+    if (statsRow) {
+      statsRow.innerHTML = '<div class="pf-stat"><strong>' + uniqueEvents.length + '</strong> eventos</div>'
+        + '<div class="pf-stat"><strong>5</strong> badges</div>'
+        + '<div class="pf-stat"><strong>' + resales.length + '</strong> en reventa</div>';
+    }
+
+    // Ticket history
+    var pfTickets = document.getElementById('pf-tickets');
+    if (pfTickets && tickets.length > 0) {
+      var th = '';
+      tickets.forEach(function(t) {
+        var imgUrl = t.image || '';
+        var imgBg = imgUrl ? 'background-image:url(' + imgUrl + ');background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1em';
+        th += '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;margin-bottom:8px">'
+          + '<div style="width:48px;height:48px;border-radius:10px;flex-shrink:0;' + imgBg + '">' + (imgUrl ? '' : '🎧') + '</div>'
+          + '<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.eventName + '</div>'
+          + '<div style="font-size:11px;color:var(--text-dim)">' + (t.eventDateLabel || t.eventDate || '') + ' · ' + t.ticketName + '</div></div>'
+          + '<div style="font-size:11px;padding:4px 8px;border-radius:6px;font-weight:600;' + (t.status === 'active' ? 'background:rgba(0,255,100,0.1);color:#4ade80' : 'background:rgba(255,255,255,0.05);color:var(--text-dim)') + '">' + (t.status === 'active' ? 'Activa' : 'Usada') + '</div></div>';
+      });
+      pfTickets.innerHTML = th;
+    }
+
+    // Show promoter button only for fans
+    var promBtn = document.getElementById('pf-promoter-btn');
+    if (promBtn) promBtn.style.display = (userProfile?.role === 'fan') ? '' : 'none';
+
     } catch (err) { console.error('loadProfile error:', err); }
   }
 
