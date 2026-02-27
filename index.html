@@ -1023,9 +1023,6 @@ body::after {
 #v-promotores .marquee {
   scroll-snap-align: none;
   min-height: auto;
-  position: sticky;
-  top: 64px;
-  z-index: 10;
 }
 #v-fans .site-footer,
 #v-promotores .site-footer {
@@ -5747,24 +5744,18 @@ body::after {
   </div>
 
   <!-- Marquee -->
-  <div class="dk-marquee">
-    <div class="dk-marquee-track">
-      <span data-es="IDENTIDAD VERIFICADA" data-en="VERIFIED IDENTITY">IDENTIDAD VERIFICADA</span>
-      <span>☺</span>
-      <span data-es="CERO FRAUDE" data-en="ZERO FRAUD">CERO FRAUDE</span>
-      <span>☺</span>
-      <span data-es="REVENTA SEGURA" data-en="SAFE RESALE">REVENTA SEGURA</span>
-      <span>☺</span>
-      <span data-es="TU ID = TU TICKET" data-en="YOUR ID = YOUR TICKET">TU ID = TU TICKET</span>
-      <span>☺</span>
-      <span data-es="IDENTIDAD VERIFICADA" data-en="VERIFIED IDENTITY">IDENTIDAD VERIFICADA</span>
-      <span>☺</span>
-      <span data-es="CERO FRAUDE" data-en="ZERO FRAUD">CERO FRAUDE</span>
-      <span>☺</span>
-      <span data-es="REVENTA SEGURA" data-en="SAFE RESALE">REVENTA SEGURA</span>
-      <span>☺</span>
-      <span data-es="TU ID = TU TICKET" data-en="YOUR ID = YOUR TICKET">TU ID = TU TICKET</span>
-      <span>☺</span>
+  <div class="marquee">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> P2P MARKETPLACE</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> VERIFICADO CON ID</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CERO ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> TU ID = TU ENTRADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> ESCANEA Y ENTRA</span>
     </div>
   </div>
 
@@ -6845,7 +6836,16 @@ body::after {
 
   function getLowestPrice(ev) {
     if (!ev.tickets || ev.tickets.length === 0) return '';
-    if (ev.status === 'sold-out') return 'SOLD OUT';
+    if (ev.status === 'sold-out') {
+      // Check for resale listings for this event
+      var resaleListings = (typeof DEMO_RESALE !== 'undefined' ? DEMO_RESALE : [])
+        .filter(function(r) { return r.status === 'listed' && (r.eventId === ev._id || r.eventName === ev.name); });
+      if (resaleListings.length > 0) {
+        var lowestResale = Math.min.apply(null, resaleListings.map(function(r) { return r.askingPrice; }));
+        return 'Desde S/ ' + lowestResale + ' en Marketplace';
+      }
+      return 'SOLD OUT';
+    }
     var lowest = Math.min.apply(null, ev.tickets.map(function(t) {
       var phase = getActivePhase(t);
       return phase.price || t.price || 0;
@@ -6924,7 +6924,7 @@ body::after {
       '<div class="hero-meta">' + metaDate + ' · ' + feat.venue + ', ' + feat.location + '</div>' +
       '<div class="hero-actions">' +
         '<button class="hero-cta" onclick="openEvent(\'' + feat._id + '\')">' + ctaText + '</button>' +
-        '<div class="hero-sponsor">Presentado por <span>LEZGO ' + smileyIcon + '</span></div>' +
+        '<div class="hero-sponsor">' + (feat.promoter ? feat.promoter + ' · powered by ' : 'Presentado por ') + '<span>LEZGO ' + smileyIcon + '</span></div>' +
       '</div>';
   }
 
@@ -6949,7 +6949,7 @@ body::after {
       var d = new Date(ev.date + 'T12:00:00');
       var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
       var dateStr = d.getDate() + ' ' + months[d.getMonth()];
-      var sub = dateStr + ' · ' + ev.venue + ', ' + ev.location + (isSold ? ' — AGOTADO' : ' — ' + price);
+      var sub = dateStr + ' · ' + ev.venue + ', ' + ev.location + (isSold ? ' — ' + (price !== 'SOLD OUT' ? price : 'AGOTADO') : ' — ' + price);
       return '<div class="promo-card" onclick="openEvent(\'' + ev._id + '\')" style="cursor:pointer">' +
         '<div class="promo-card-img" style="background-image:url(\'' + img + '\');"></div>' +
         '<div class="promo-card-overlay"></div>' +
@@ -7008,7 +7008,7 @@ body::after {
         html += '<div class="dl-event-info"><div class="dl-event-name">' + ev.name + '</div><div class="dl-event-sub">' + venue + (time ? ' · ' + time : '') + '</div></div>';
         html += '<div class="dl-event-right">';
         if (isSold) {
-          html += '<div class="dl-event-sold">SOLD OUT</div>';
+          html += '<div class="dl-event-sold">' + price + '</div>';
         } else if (price) {
           html += '<div class="dl-event-price">' + price + '</div>';
         }
