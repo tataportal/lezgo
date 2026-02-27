@@ -6837,14 +6837,7 @@ body::after {
   function getLowestPrice(ev) {
     if (!ev.tickets || ev.tickets.length === 0) return '';
     if (ev.status === 'sold-out') {
-      // Check for resale listings for this event
-      var resaleListings = (typeof DEMO_RESALE !== 'undefined' ? DEMO_RESALE : [])
-        .filter(function(r) { return r.status === 'listed' && (r.eventId === ev._id || r.eventName === ev.name); });
-      if (resaleListings.length > 0) {
-        var lowestResale = Math.min.apply(null, resaleListings.map(function(r) { return r.askingPrice; }));
-        return 'Desde S/ ' + lowestResale + ' en Marketplace';
-      }
-      return 'SOLD OUT';
+      return 'SOLD OUT · Ver Marketplace';
     }
     var lowest = Math.min.apply(null, ev.tickets.map(function(t) {
       var phase = getActivePhase(t);
@@ -6949,7 +6942,7 @@ body::after {
       var d = new Date(ev.date + 'T12:00:00');
       var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
       var dateStr = d.getDate() + ' ' + months[d.getMonth()];
-      var sub = dateStr + ' · ' + ev.venue + ', ' + ev.location + (isSold ? ' — ' + (price !== 'SOLD OUT' ? price : 'AGOTADO') : ' — ' + price);
+      var sub = dateStr + ' · ' + ev.venue + ', ' + ev.location + ' — ' + price;
       return '<div class="promo-card" onclick="openEvent(\'' + ev._id + '\')" style="cursor:pointer">' +
         '<div class="promo-card-img" style="background-image:url(\'' + img + '\');"></div>' +
         '<div class="promo-card-overlay"></div>' +
