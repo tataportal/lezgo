@@ -1750,6 +1750,7 @@ body::after {
   margin-top: 4px;
 }
 .tk-card-inner.tk-dark .tk-card-phase { color: var(--text-dim); }
+.tk-card-phase-name { font-size: 11px; font-weight: 500; color: var(--acid); opacity: 0.9; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
 .tk-card-logo {
   display: flex; justify-content: center; align-items: center;
@@ -6804,13 +6805,22 @@ body::after {
         allEvents.push({ ...doc.data(), _id: doc.id });
       });
     } catch (err) { console.error('loadEvents error:', err); }
-    // In demo mode, ensure ticket events exist in allEvents so openEvent() works
-    if (DEMO_MODE && typeof DEMO_TICKETS !== 'undefined') {
-      DEMO_TICKETS.forEach(t => {
-        if (!allEvents.find(e => e._id === t.eventId)) {
-          allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
-        }
-      });
+    // In demo mode, inject DEMO_EVENTS (rich data with phases) and DEMO_TICKETS events
+    if (DEMO_MODE) {
+      if (typeof DEMO_EVENTS !== 'undefined') {
+        DEMO_EVENTS.forEach(ev => {
+          if (!allEvents.find(e => e._id === ev._id)) {
+            allEvents.push(ev);
+          }
+        });
+      }
+      if (typeof DEMO_TICKETS !== 'undefined') {
+        DEMO_TICKETS.forEach(t => {
+          if (!allEvents.find(e => e._id === t.eventId)) {
+            allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
+          }
+        });
+      }
     }
     renderAllSections();
   }
@@ -6837,10 +6847,25 @@ body::after {
     return genreImages[(ev.genre || '').toLowerCase()] || defaultImg;
   }
 
+  // ── Active phase logic: returns the current phase for a ticket tier ──
+  function getActivePhase(ticket) {
+    if (!ticket.phases || !ticket.phases.length) return { price: ticket.price || 0, name: '' };
+    var soldSoFar = ticket.sold || 0;
+    for (var i = 0; i < ticket.phases.length; i++) {
+      var phase = ticket.phases[i];
+      if (soldSoFar < (phase.quantity || 0)) return phase;
+      soldSoFar -= (phase.quantity || 0);
+    }
+    return ticket.phases[ticket.phases.length - 1]; // fallback to last phase
+  }
+
   function getLowestPrice(ev) {
     if (!ev.tickets || ev.tickets.length === 0) return '';
     if (ev.status === 'sold-out') return 'SOLD OUT';
-    var lowest = Math.min.apply(null, ev.tickets.map(function(t){ return t.price; }));
+    var lowest = Math.min.apply(null, ev.tickets.map(function(t) {
+      var phase = getActivePhase(t);
+      return phase.price || t.price || 0;
+    }));
     return 'Desde S/ ' + lowest;
   }
 
@@ -7216,17 +7241,22 @@ body::after {
         const tierSold = t.sold >= t.capacity;
         const grad = tierSold ? 'tk-dark' : gradients[i % gradients.length];
         const emoji = emojis[i % emojis.length];
-        const priceLabel = t.priceLabel || (t.price === 0 ? 'GRATIS' : 'S/ ' + t.price);
-        const fee = t.price > 0 ? Math.round(t.price * 0.08) : 0;
-        const total = t.price + fee;
+        const activePhase = getActivePhase(t);
+        const currentPrice = activePhase.price || t.price || 0;
+        const phaseName = activePhase.name || '';
+        const priceLabel = currentPrice === 0 ? 'GRATIS' : 'S/ ' + currentPrice;
+        const fee = currentPrice > 0 ? Math.round(currentPrice * 0.08) : 0;
+        const total = currentPrice + fee;
         const feeText = fee > 0 ? `+ S/${fee} cargos · Total S/${total}` : 'Sin cargos adicionales';
         const soldClass = tierSold ? ' tk-soldout' : '';
         const tooltip = tierSold ? 'Agotado' : 'Comprar entrada →';
         const click = tierSold ? '' : `onclick="pmOpen('${ev.name.replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)"`;
+        const phaseInfo = phaseName && !tierSold ? `<div class="tk-card-phase-name">${phaseName}</div>` : '';
         h += `<div class="tk-card${soldClass}" ${click}>
           <div class="tk-card-inner ${grad}">
             <div>
               <div class="tk-card-type">${t.name}</div>
+              ${phaseInfo}
               <div class="tk-card-phase">${tierSold ? 'AGOTADO' : (t.sold + '/' + t.capacity + ' vendidos')}</div>
             </div>
             <div class="tk-card-logo">${emoji}</div>
@@ -7286,11 +7316,14 @@ body::after {
       tagsCloud.innerHTML = evTags.map(t => `<div class="ev-tag-pill">${prettify(t)}</div>`).join('');
     }
 
-    // ── PURCHASE MODAL CATALOG ──
+    // ── PURCHASE MODAL CATALOG (uses active phase price) ──
     if (ev.tickets) {
       pmTicketCatalog = {};
       ev.tickets.forEach(t => {
-        pmTicketCatalog[t.id] = { name: t.name, price: t.price, priceLabel: t.priceLabel || ('S/' + t.price), capacity: t.capacity, sold: t.sold };
+        var activePhase = getActivePhase(t);
+        var currentPrice = activePhase.price || t.price || 0;
+        var phaseName = activePhase.name ? ' (' + activePhase.name + ')' : '';
+        pmTicketCatalog[t.id] = { name: t.name + phaseName, price: currentPrice, priceLabel: currentPrice === 0 ? 'GRATIS' : 'S/' + currentPrice, capacity: t.capacity, sold: t.sold };
       });
       pmTicketQty = {};
       ev.tickets.forEach(t => pmTicketQty[t.id] = 0);
@@ -7602,8 +7635,13 @@ body::after {
   ];
 
   var DEMO_EVENTS = [
-    { _id: 'demo-ev-past', name: 'Bodysonic', subtitle: 'Warm-Up Sessions', date: '2026-02-14', dateLabel: '14 Febrero 2026', venue: 'La Cueva', location: 'Cercado de Lima', genre: 'techno', status: 'published', organizer: 'demo-user-001', tickets: [{ name: 'General', price: 65 }] },
-    { _id: 'demo-ev-upcoming', name: 'Room 3 Sessions', subtitle: 'Rooftop Edition', date: '2026-04-18', dateLabel: '18 Abril 2026', venue: 'Hotel B Rooftop', location: 'Barranco', genre: 'deep house / minimal', status: 'published', organizer: 'demo-user-001', tickets: [{ name: 'Entrada + Drink', price: 60 }, { name: 'VIP Lounge', price: 120 }] }
+    { _id: 'demo-ev-past', name: 'Bodysonic', subtitle: 'Warm-Up Sessions', date: '2026-02-14', dateLabel: '14 Febrero 2026', venue: 'La Cueva', location: 'Cercado de Lima', distrito: 'cercado', genre: 'techno', status: 'published', organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80', lineup: ['DJ Nobu', 'Lokier'], tickets: [
+      { id: 'general', name: 'General', capacity: 300, sold: 280, includes: ['Acceso general'], phases: [{ name: 'Early Bird', price: 40, quantity: 80 }, { name: 'Preventa', price: 55, quantity: 120 }, { name: 'Full Price', price: 65, quantity: 100 }] }
+    ] },
+    { _id: 'demo-ev-upcoming', name: 'Room 3 Sessions', subtitle: 'Rooftop Edition', date: '2026-04-18', dateLabel: '18 Abril 2026', venue: 'Hotel B Rooftop', location: 'Barranco', distrito: 'barranco', genre: 'deep house / minimal', status: 'published', organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=500&q=80', lineup: ['Binh', 'Sonja Moonear', 'Local Support'], tickets: [
+      { id: 'entrada-drink', name: 'Entrada + Drink', capacity: 200, sold: 45, includes: ['1 drink incluido', 'Acceso rooftop'], phases: [{ name: 'Early Bird', price: 40, quantity: 50 }, { name: 'Preventa', price: 50, quantity: 80 }, { name: 'Full Price', price: 60, quantity: 70 }] },
+      { id: 'vip-lounge', name: 'VIP Lounge', capacity: 40, sold: 12, includes: ['Barra premium open', 'Zona exclusiva', 'Meet & Greet'], phases: [{ name: 'Early Bird', price: 90, quantity: 15 }, { name: 'Full Price', price: 120, quantity: 25 }] }
+    ] }
   ];
 
   async function loadMyTickets() {
@@ -8006,9 +8044,8 @@ body::after {
     if (eventId) {
       // Load existing event for editing
       if (titleEl) titleEl.textContent = 'Editar Evento';
-      db.collection('events').doc(eventId).get().then(doc => {
-        if (!doc.exists) { alert('Evento no encontrado'); go('organizer'); return; }
-        const ev = doc.data();
+
+      function efPopulateForm(ev) {
         const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
         setVal('ef-name', ev.name);
         setVal('ef-subtitle', ev.subtitle);
@@ -8069,7 +8106,19 @@ body::after {
         }
 
         efRenderTiers();
-      });
+      }
+
+      if (DEMO_MODE) {
+        // Find event in DEMO_EVENTS or allEvents
+        var ev = DEMO_EVENTS.find(e => e._id === eventId) || allEvents.find(e => e._id === eventId);
+        if (!ev) { alert('Evento no encontrado'); go('organizer'); return; }
+        efPopulateForm(ev);
+      } else {
+        db.collection('events').doc(eventId).get().then(doc => {
+          if (!doc.exists) { alert('Evento no encontrado'); go('organizer'); return; }
+          efPopulateForm(doc.data());
+        });
+      }
     } else {
       if (titleEl) titleEl.textContent = 'Nuevo Evento';
       // Start with 1 default tier
