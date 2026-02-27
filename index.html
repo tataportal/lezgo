@@ -3837,15 +3837,15 @@ body::after {
 /* Ticket cards — compact collapsed, detailed expanded */
 .mt-ticket {
   background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px; overflow: hidden; margin-bottom: 12px;
-  transition: border-color 0.2s;
+  border-radius: 16px; margin-bottom: 12px;
+  transition: border-color 0.2s; position: relative;
 }
 .mt-ticket:hover { border-color: rgba(229,255,0,0.15); }
 .mt-ticket-head {
-  display: flex; align-items: center; gap: 0; cursor: pointer; padding: 0; position: relative;
+  display: flex; align-items: center; gap: 0; cursor: pointer; padding: 0;
 }
 .mt-ticket-img {
-  width: 64px; height: 64px; flex-shrink: 0; border-radius: 12px; margin: 10px; margin-right: 0;
+  width: 80px; height: 80px; flex-shrink: 0; border-radius: 12px; margin: 10px; margin-right: 0;
   background-size: cover; background-position: center;
 }
 .mt-ticket-info { flex: 1; padding: 12px 14px; min-width: 0; }
@@ -3854,15 +3854,15 @@ body::after {
 /* 3-dot menu */
 .mt-ticket-dots {
   width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; margin-right: 8px; border-radius: 8px; position: relative;
+  cursor: pointer; flex-shrink: 0; margin-right: 8px; border-radius: 8px;
   color: var(--text-dim); font-size: 18px; letter-spacing: 2px;
 }
 .mt-ticket-dots:hover { background: rgba(255,255,255,0.06); color: var(--text); }
 .mt-ticket-menu {
-  display: none; position: absolute; top: 100%; right: 0; z-index: 50;
-  background: var(--bg-raised, #1a1a1a); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px; padding: 6px 0; min-width: 200px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  display: none; position: fixed; z-index: 999;
+  background: #1a1a1a; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 6px 0; min-width: 220px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
 }
 .mt-ticket-menu.open { display: block; }
 .mt-ticket-menu-item {
@@ -4279,7 +4279,7 @@ body::after {
 @media (max-width: 480px) {
   .og-metrics { grid-template-columns: 1fr 1fr; gap: 10px; }
   .mt-ticket-head { flex-direction: row; }
-  .mt-ticket-img { width: 52px; height: 52px; margin: 8px; margin-right: 0; }
+  .mt-ticket-img { width: 64px; height: 64px; margin: 8px; margin-right: 0; }
   .mt-ticket-event { font-size: 13px; }
   .mt-ticket-meta { font-size: 11px; }
 }
@@ -7601,28 +7601,30 @@ body::after {
     let activeCount = 0;
     let historyCount = 0;
 
+    // Remove old floating menus
+    document.querySelectorAll('.mt-ticket-menu').forEach(m => m.remove());
+
+    var menusHtml = '';
     tickets.forEach(t => {
       const docId = t._id;
       const isActive = t.status === 'active';
       if (isActive) activeCount++; else historyCount++;
       var priceLabel = t.price > 0 ? 'S/' + t.price : 'GRATIS';
+
+      // Try to find event image from allEvents
+      var evMatch = allEvents.find(e => e._id === t.eventId);
+      var imgStyle = evMatch && getEventImage(evMatch) ? 'background-image:url(' + getEventImage(evMatch) + ')' : 'background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.2em';
+      var imgContent = evMatch && getEventImage(evMatch) ? '' : '🎧';
+
       const card = `
         <div class="mt-ticket">
           <div class="mt-ticket-head" onclick="mtToggleTicket('${docId}')">
-            <div class="mt-ticket-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.2em">🎧</div>
+            <div class="mt-ticket-img" style="${imgStyle}">${imgContent}</div>
             <div class="mt-ticket-info">
               <div class="mt-ticket-event">${t.eventName}</div>
               <div class="mt-ticket-meta">${t.eventDateLabel || t.eventDate || ''}</div>
             </div>
-            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle('${docId}')">⋮
-              <div class="mt-ticket-menu" id="${docId}-menu">
-                ${isActive ? '<div class="mt-ticket-menu-item" onclick="event.stopPropagation();mtMenuClose();openEvent(\'' + t.eventId + '\')">⬆️ Mejorar</div>' : ''}
-                ${isActive ? '<div class="mt-ticket-menu-item" onclick="event.stopPropagation();mtMenuClose();mtTransfer(\'' + docId + '\')">🔄 Transferir entrada</div>' : ''}
-                ${isActive ? '<div class="mt-ticket-menu-item" onclick="event.stopPropagation();mtMenuClose();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Publicar en reventa</div>' : ''}
-                <div class="mt-ticket-menu-item" onclick="event.stopPropagation();mtMenuClose();mtDownloadReceipt('${docId}','${t.eventName}','${t.ticketName || 'General'}','${priceLabel}')">📄 Descargar comprobante</div>
-                <div class="mt-ticket-menu-item danger" onclick="event.stopPropagation();mtMenuClose();mtReport('${docId}')">⚠️ Reportar un problema</div>
-              </div>
-            </div>
+            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle('${docId}',event)">⋮</div>
           </div>
           <div class="mt-ticket-expand" id="${docId}-expand" style="display:none">
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Venue</span><span class="mt-ticket-detail-value">${t.eventVenue || ''}${t.eventLocation ? ', ' + t.eventLocation : ''}</span></div>
@@ -7635,9 +7637,23 @@ body::after {
           </div>
         </div>`;
 
+      // Menu floats in body, positioned by JS
+      menusHtml += `<div class="mt-ticket-menu" id="${docId}-menu">
+        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent(\'' + t.eventId + '\')">⬆️ Mejorar</div>' : ''}
+        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer(\'' + docId + '\')">🔄 Transferir entrada</div>' : ''}
+        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Publicar en reventa</div>' : ''}
+        <div class="mt-ticket-menu-item" onclick="mtMenuClose();mtDownloadReceipt('${docId}','${t.eventName}','${t.ticketName || 'General'}','${priceLabel}')">📄 Descargar comprobante</div>
+        <div class="mt-ticket-menu-item danger" onclick="mtMenuClose();mtReport('${docId}')">⚠️ Reportar un problema</div>
+      </div>`;
+
       if (isActive) activeHtml += card;
       else historyHtml += card;
     });
+
+    // Append floating menus to body
+    var menuContainer = document.getElementById('mt-menus-container');
+    if (!menuContainer) { menuContainer = document.createElement('div'); menuContainer.id = 'mt-menus-container'; document.body.appendChild(menuContainer); }
+    menuContainer.innerHTML = menusHtml;
 
     // Update tab badge counts
     var cProx = document.getElementById('mt-count-proximas');
@@ -8547,12 +8563,22 @@ body::after {
     if (!isOpen) expand.style.display = 'block';
   }
 
-  function mtMenuToggle(id) {
+  function mtMenuToggle(id, evt) {
     var menu = document.getElementById(id + '-menu');
     if (!menu) return;
     var wasOpen = menu.classList.contains('open');
     mtMenuClose();
-    if (!wasOpen) menu.classList.add('open');
+    if (!wasOpen) {
+      // Position menu near the dots button
+      var dots = evt ? evt.currentTarget : document.querySelector('[onclick*="' + id + '"].mt-ticket-dots');
+      if (dots) {
+        var rect = dots.getBoundingClientRect();
+        menu.style.top = (rect.bottom + 4) + 'px';
+        menu.style.right = (window.innerWidth - rect.right) + 'px';
+        menu.style.left = 'auto';
+      }
+      menu.classList.add('open');
+    }
   }
   function mtMenuClose() {
     document.querySelectorAll('.mt-ticket-menu').forEach(m => m.classList.remove('open'));
