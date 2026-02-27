@@ -7558,9 +7558,9 @@ body::after {
   // ── My Tickets (Mis Entradas) ──
   // Demo tickets data (used when DEMO_MODE is on to bypass Firestore auth)
   var DEMO_TICKETS = [
-    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active' },
-    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active' },
-    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active' },
+    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active', _canUpgrade: true },
+    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active', _canUpgrade: false },
+    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active', _canUpgrade: false },
     { _id: 'demo-tk-4', userId: 'demo-user-001', eventId: 'bodysonic-lima', eventName: 'Bodysonic', eventDate: '2026-02-14', eventDateLabel: '14 Febrero 2026', eventVenue: 'La Cueva', eventLocation: 'Cercado de Lima', eventTimeStart: '23:59', eventTimeEnd: '06:00', ticketName: 'General', price: 65, userDni: '72345678', status: 'used' },
     { _id: 'demo-tk-5', userId: 'demo-user-001', eventId: 'room3-sessions-lima', eventName: 'Room 3 Sessions', eventDate: '2026-01-22', eventDateLabel: '22 Enero 2026', eventVenue: 'Hotel B Rooftop', eventLocation: 'Barranco', eventTimeStart: '22:00', eventTimeEnd: '03:00', ticketName: 'Entrada + Drink', price: 60, userDni: '72345678', status: 'used' }
   ];
@@ -7639,7 +7639,8 @@ body::after {
 
       // Menu floats in body, positioned by JS
       menusHtml += `<div class="mt-ticket-menu" id="${docId}-menu">
-        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent(\'' + t.eventId + '\')">⬆️ Mejorar</div>' : ''}
+        ${isActive && t._canUpgrade ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent(\'' + t.eventId + '\')">⬆️ Mejorar tier</div>' : ''}
+        ${isActive && !t._canUpgrade ? '<div class="mt-ticket-menu-item" style="opacity:0.35;cursor:default;pointer-events:none">⬆️ Mejorar tier — ya tienes el mejor</div>' : ''}
         ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer(\'' + docId + '\')">🔄 Transferir entrada</div>' : ''}
         ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Publicar en reventa</div>' : ''}
         <div class="mt-ticket-menu-item" onclick="mtMenuClose();mtDownloadReceipt('${docId}','${t.eventName}','${t.ticketName || 'General'}','${priceLabel}')">📄 Descargar comprobante</div>
