@@ -6803,8 +6803,16 @@ body::after {
       snapshot.forEach(doc => {
         allEvents.push({ ...doc.data(), _id: doc.id });
       });
-      renderAllSections();
     } catch (err) { console.error('loadEvents error:', err); }
+    // In demo mode, ensure ticket events exist in allEvents so openEvent() works
+    if (DEMO_MODE && typeof DEMO_TICKETS !== 'undefined') {
+      DEMO_TICKETS.forEach(t => {
+        if (!allEvents.find(e => e._id === t.eventId)) {
+          allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
+        }
+      });
+    }
+    renderAllSections();
   }
 
   // ── Smiley SVG (reusable) ──
@@ -7053,8 +7061,8 @@ body::after {
   };
 
   function openEvent(eventId) {
-    // If we have a standalone page for this event, navigate to it
-    if (eventPageMap[eventId]) {
+    // If we have a standalone page for this event, navigate to it (skip in demo mode — stay in SPA)
+    if (!DEMO_MODE && eventPageMap[eventId]) {
       window.location.href = eventPageMap[eventId];
       return;
     }
@@ -7558,11 +7566,11 @@ body::after {
   // ── My Tickets (Mis Entradas) ──
   // Demo tickets data (used when DEMO_MODE is on to bypass Firestore auth)
   var DEMO_TICKETS = [
-    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active', _canUpgrade: true, image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80' },
-    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b71?w=500&q=80' },
-    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80' },
-    { _id: 'demo-tk-4', userId: 'demo-user-001', eventId: 'bodysonic-lima', eventName: 'Bodysonic', eventDate: '2026-02-14', eventDateLabel: '14 Febrero 2026', eventVenue: 'La Cueva', eventLocation: 'Cercado de Lima', eventTimeStart: '23:59', eventTimeEnd: '06:00', ticketName: 'General', price: 65, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80' },
-    { _id: 'demo-tk-5', userId: 'demo-user-001', eventId: 'room3-sessions-lima', eventName: 'Room 3 Sessions', eventDate: '2026-01-22', eventDateLabel: '22 Enero 2026', eventVenue: 'Hotel B Rooftop', eventLocation: 'Barranco', eventTimeStart: '22:00', eventTimeEnd: '03:00', ticketName: 'Entrada + Drink', price: 60, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=500&q=80' }
+    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active', _canUpgrade: true, image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80', promoter: 'Fabric Lima' },
+    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b71?w=500&q=80', promoter: 'Dekmantel' },
+    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80', promoter: 'The Warehouse Project' },
+    { _id: 'demo-tk-4', userId: 'demo-user-001', eventId: 'bodysonic-lima', eventName: 'Bodysonic', eventDate: '2026-02-14', eventDateLabel: '14 Febrero 2026', eventVenue: 'La Cueva', eventLocation: 'Cercado de Lima', eventTimeStart: '23:59', eventTimeEnd: '06:00', ticketName: 'General', price: 65, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80', promoter: 'Bodysonic Collective' },
+    { _id: 'demo-tk-5', userId: 'demo-user-001', eventId: 'room3-sessions-lima', eventName: 'Room 3 Sessions', eventDate: '2026-01-22', eventDateLabel: '22 Enero 2026', eventVenue: 'Hotel B Rooftop', eventLocation: 'Barranco', eventTimeStart: '22:00', eventTimeEnd: '03:00', ticketName: 'Entrada + Drink', price: 60, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=500&q=80', promoter: 'Room 3' }
   ];
 
   var DEMO_RESALE = [
@@ -7636,6 +7644,7 @@ body::after {
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Tipo</span><span class="mt-ticket-detail-value">${t.ticketName || 'General'}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Precio</span><span class="mt-ticket-detail-value">${priceLabel}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI</span><span class="mt-ticket-detail-value">${t.userDni || '—'}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Produce</span><span class="mt-ticket-detail-value">${t.promoter || '—'}</span></div>
             <div class="mt-ticket-detail-row" style="border:none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isActive ? '✅ Activa' : '⏰ Usada'}</span></div>
           </div>
         </div>`;
