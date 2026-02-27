@@ -6785,7 +6785,7 @@ body::after {
   loadEvents();
 
   // ── Demo User Data (seed once) ──
-  var DEMO_SEED_VERSION = 2;
+  var DEMO_SEED_VERSION = 3;
   async function seedDemoData() {
     try {
       var metaDoc = await db.collection('_meta').doc('demo-seed').get();
@@ -6896,6 +6896,45 @@ body::after {
         userDni: '72345678',
         status: 'used',
         purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Demo events — owned by demo promoter (show in organizer dashboard)
+      batch.set(db.collection('events').doc('demo-ev-past'), {
+        name: 'Bodysonic',
+        subtitle: 'Warm-Up Sessions',
+        date: '2026-02-14',
+        dateLabel: '14 Febrero 2026',
+        venue: 'La Cueva',
+        location: 'Cercado de Lima',
+        distrito: 'lima',
+        genre: 'techno',
+        description: 'Una noche de techno crudo en el corazón de Lima.',
+        organizer: demoUid,
+        status: 'published',
+        featured: false,
+        tags: ['techno', 'underground'],
+        tickets: [
+          { name: 'General', price: 65, phases: [{ name: 'Early Bird', price: 45 }, { name: 'Regular', price: 65 }] }
+        ]
+      });
+      batch.set(db.collection('events').doc('demo-ev-upcoming'), {
+        name: 'Room 3 Sessions',
+        subtitle: 'Rooftop Edition',
+        date: '2026-04-18',
+        dateLabel: '18 Abril 2026',
+        venue: 'Hotel B Rooftop',
+        location: 'Barranco',
+        distrito: 'barranco',
+        genre: 'deep house / minimal',
+        description: 'Deep house y minimal con vista al mar en Barranco.',
+        organizer: demoUid,
+        status: 'published',
+        featured: false,
+        tags: ['deep house', 'minimal', 'rooftop'],
+        tickets: [
+          { name: 'Entrada + Drink', price: 60, phases: [{ name: 'Preventa', price: 45 }, { name: 'Puerta', price: 60 }] },
+          { name: 'VIP Lounge', price: 120, phases: [{ name: 'Único', price: 120 }] }
+        ]
       });
 
       // Demo resale listing
