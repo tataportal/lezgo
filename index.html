@@ -6784,217 +6784,7 @@ body::after {
   // Events are loaded from Firestore — no local seed data
   loadEvents();
 
-  // ── Demo User Data (seed once) ──
-  var DEMO_SEED_VERSION = 3;
-  async function seedDemoData() {
-    try {
-      var metaDoc = await db.collection('_meta').doc('demo-seed').get();
-      var currentV = metaDoc.exists ? (metaDoc.data().version || 0) : 0;
-      if (currentV >= DEMO_SEED_VERSION) return;
-
-      var demoUid = 'demo-user-001';
-      var batch = db.batch();
-
-      // Demo user profile
-      batch.set(db.collection('users').doc(demoUid), {
-        displayName: 'Lucas Demo',
-        email: 'lucas@lezgo.fans',
-        role: 'fan',
-        dni: '72345678',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Demo tickets — upcoming (fields match loadMyTickets renderer)
-      batch.set(db.collection('tickets').doc('demo-tk-1'), {
-        userId: demoUid,
-        eventId: 'fabriclima-001',
-        eventName: 'FABRICLIMA 001',
-        eventDate: '2026-04-12',
-        eventDateLabel: '12 Abril 2026',
-        eventVenue: 'Almacén 77',
-        eventLocation: 'Callao',
-        eventTimeStart: '22:00',
-        eventTimeEnd: '06:00',
-        ticketName: 'General',
-        price: 85,
-        userName: 'Lucas Demo',
-        userEmail: 'lucas@lezgo.fans',
-        userDni: '72345678',
-        status: 'active',
-        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      batch.set(db.collection('tickets').doc('demo-tk-2'), {
-        userId: demoUid,
-        eventId: 'dekmantel-lima',
-        eventName: 'Dekmantel 2026',
-        eventDate: '2026-05-25',
-        eventDateLabel: '25 Mayo 2026',
-        eventVenue: 'Parque de la Exposición',
-        eventLocation: 'Lima',
-        eventTimeStart: '14:00',
-        eventTimeEnd: '23:00',
-        ticketName: 'Picnic VIP',
-        price: 220,
-        userName: 'Lucas Demo',
-        userEmail: 'lucas@lezgo.fans',
-        userDni: '72345678',
-        status: 'active',
-        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      batch.set(db.collection('tickets').doc('demo-tk-3'), {
-        userId: demoUid,
-        eventId: 'whp-lima',
-        eventName: 'WHP Lima',
-        eventDate: '2026-06-27',
-        eventDateLabel: '27 Junio 2026',
-        eventVenue: 'Almacén Industrial',
-        eventLocation: 'Callao',
-        eventTimeStart: '20:00',
-        eventTimeEnd: '05:00',
-        ticketName: 'Full Access',
-        price: 200,
-        userName: 'Lucas Demo',
-        userEmail: 'lucas@lezgo.fans',
-        userDni: '72345678',
-        status: 'active',
-        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Demo tickets — past (attended)
-      batch.set(db.collection('tickets').doc('demo-tk-4'), {
-        userId: demoUid,
-        eventId: 'bodysonic-lima',
-        eventName: 'Bodysonic',
-        eventDate: '2026-02-14',
-        eventDateLabel: '14 Febrero 2026',
-        eventVenue: 'La Cueva',
-        eventLocation: 'Cercado de Lima',
-        eventTimeStart: '23:59',
-        eventTimeEnd: '06:00',
-        ticketName: 'General',
-        price: 65,
-        userName: 'Lucas Demo',
-        userEmail: 'lucas@lezgo.fans',
-        userDni: '72345678',
-        status: 'used',
-        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      batch.set(db.collection('tickets').doc('demo-tk-5'), {
-        userId: demoUid,
-        eventId: 'room3-sessions-lima',
-        eventName: 'Room 3 Sessions',
-        eventDate: '2026-01-22',
-        eventDateLabel: '22 Enero 2026',
-        eventVenue: 'Hotel B Rooftop',
-        eventLocation: 'Barranco',
-        eventTimeStart: '22:00',
-        eventTimeEnd: '03:00',
-        ticketName: 'Entrada + Drink',
-        price: 60,
-        userName: 'Lucas Demo',
-        userEmail: 'lucas@lezgo.fans',
-        userDni: '72345678',
-        status: 'used',
-        purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Demo events — owned by demo promoter (show in organizer dashboard)
-      batch.set(db.collection('events').doc('demo-ev-past'), {
-        name: 'Bodysonic',
-        subtitle: 'Warm-Up Sessions',
-        date: '2026-02-14',
-        dateLabel: '14 Febrero 2026',
-        venue: 'La Cueva',
-        location: 'Cercado de Lima',
-        distrito: 'lima',
-        genre: 'techno',
-        description: 'Una noche de techno crudo en el corazón de Lima.',
-        organizer: demoUid,
-        status: 'published',
-        featured: false,
-        tags: ['techno', 'underground'],
-        tickets: [
-          { name: 'General', price: 65, phases: [{ name: 'Early Bird', price: 45 }, { name: 'Regular', price: 65 }] }
-        ]
-      });
-      batch.set(db.collection('events').doc('demo-ev-upcoming'), {
-        name: 'Room 3 Sessions',
-        subtitle: 'Rooftop Edition',
-        date: '2026-04-18',
-        dateLabel: '18 Abril 2026',
-        venue: 'Hotel B Rooftop',
-        location: 'Barranco',
-        distrito: 'barranco',
-        genre: 'deep house / minimal',
-        description: 'Deep house y minimal con vista al mar en Barranco.',
-        organizer: demoUid,
-        status: 'published',
-        featured: false,
-        tags: ['deep house', 'minimal', 'rooftop'],
-        tickets: [
-          { name: 'Entrada + Drink', price: 60, phases: [{ name: 'Preventa', price: 45 }, { name: 'Puerta', price: 60 }] },
-          { name: 'VIP Lounge', price: 120, phases: [{ name: 'Único', price: 120 }] }
-        ]
-      });
-
-      // Demo resale listing
-      batch.set(db.collection('resale').doc('demo-resale-1'), {
-        sellerId: demoUid,
-        sellerName: 'Lucas D.',
-        sellerVerified: true,
-        eventId: 'hessle-audio-lima',
-        eventName: 'HESSLE AUDIO Lima Session',
-        eventDate: '2026-05-03',
-        eventVenue: 'MATE Museo, Barranco',
-        ticketTier: 'General',
-        originalPrice: 70,
-        askingPrice: 60,
-        reason: 'Me salió un viaje de último momento',
-        status: 'listed',
-        listedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      batch.set(db.collection('resale').doc('demo-resale-2'), {
-        sellerId: 'demo-user-002',
-        sellerName: 'Camila R.',
-        sellerVerified: true,
-        eventId: 'drumcode-night-lima',
-        eventName: 'Drumcode Night Lima Edition',
-        eventDate: '2026-05-10',
-        eventVenue: 'Arena Perú, Santa Anita',
-        ticketTier: 'VIP',
-        originalPrice: 389,
-        askingPrice: 350,
-        reason: 'Cambio de planes familiar',
-        status: 'listed',
-        listedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      batch.set(db.collection('resale').doc('demo-resale-3'), {
-        sellerId: 'demo-user-003',
-        sellerName: 'Diego M.',
-        sellerVerified: true,
-        eventId: 'exit-through-warehouse',
-        eventName: 'EXIT Through The Warehouse',
-        eventDate: '2026-06-06',
-        eventVenue: 'Ubicación secreta, Callao',
-        ticketTier: 'Blind Ticket',
-        originalPrice: 50,
-        askingPrice: 50,
-        reason: 'Compré doble por error',
-        status: 'listed',
-        listedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Version marker
-      batch.set(db.collection('_meta').doc('demo-seed'), {
-        version: DEMO_SEED_VERSION,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      await batch.commit();
-      console.log('Demo data seeded (v' + DEMO_SEED_VERSION + ')');
-    } catch (err) { console.error('seedDemoData error:', err); }
-  }
-  seedDemoData();
+  // ── seedDemoData removed — demo data now served from DEMO_TICKETS/DEMO_RESALE/DEMO_EVENTS arrays above ──
 
   // ── Load Events from Firestore ──
   var allEvents = [];
@@ -7760,17 +7550,40 @@ body::after {
   }
 
   // ── My Tickets (Mis Entradas) ──
+  // Demo tickets data (used when DEMO_MODE is on to bypass Firestore auth)
+  var DEMO_TICKETS = [
+    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active' },
+    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active' },
+    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active' },
+    { _id: 'demo-tk-4', userId: 'demo-user-001', eventId: 'bodysonic-lima', eventName: 'Bodysonic', eventDate: '2026-02-14', eventDateLabel: '14 Febrero 2026', eventVenue: 'La Cueva', eventLocation: 'Cercado de Lima', eventTimeStart: '23:59', eventTimeEnd: '06:00', ticketName: 'General', price: 65, userDni: '72345678', status: 'used' },
+    { _id: 'demo-tk-5', userId: 'demo-user-001', eventId: 'room3-sessions-lima', eventName: 'Room 3 Sessions', eventDate: '2026-01-22', eventDateLabel: '22 Enero 2026', eventVenue: 'Hotel B Rooftop', eventLocation: 'Barranco', eventTimeStart: '22:00', eventTimeEnd: '03:00', ticketName: 'Entrada + Drink', price: 60, userDni: '72345678', status: 'used' }
+  ];
+
+  var DEMO_RESALE = [
+    { _id: 'demo-resale-1', sellerId: 'demo-user-001', sellerName: 'Lucas D.', eventName: 'HESSLE AUDIO Lima Session', eventDate: '2026-05-03', eventVenue: 'MATE Museo, Barranco', ticketTier: 'General', originalPrice: 70, askingPrice: 60, status: 'listed' },
+    { _id: 'demo-resale-2', sellerId: 'demo-user-002', sellerName: 'Camila R.', eventName: 'Drumcode Night Lima Edition', eventDate: '2026-05-10', eventVenue: 'Arena Perú, Santa Anita', ticketTier: 'VIP', originalPrice: 389, askingPrice: 350, status: 'listed' },
+    { _id: 'demo-resale-3', sellerId: 'demo-user-003', sellerName: 'Diego M.', eventName: 'EXIT Through The Warehouse', eventDate: '2026-06-06', eventVenue: 'Ubicación secreta, Callao', ticketTier: 'Blind Ticket', originalPrice: 50, askingPrice: 50, status: 'listed' }
+  ];
+
+  var DEMO_EVENTS = [
+    { _id: 'demo-ev-past', name: 'Bodysonic', subtitle: 'Warm-Up Sessions', date: '2026-02-14', dateLabel: '14 Febrero 2026', venue: 'La Cueva', location: 'Cercado de Lima', genre: 'techno', status: 'published', organizer: 'demo-user-001', tickets: [{ name: 'General', price: 65 }] },
+    { _id: 'demo-ev-upcoming', name: 'Room 3 Sessions', subtitle: 'Rooftop Edition', date: '2026-04-18', dateLabel: '18 Abril 2026', venue: 'Hotel B Rooftop', location: 'Barranco', genre: 'deep house / minimal', status: 'published', organizer: 'demo-user-001', tickets: [{ name: 'Entrada + Drink', price: 60 }, { name: 'VIP Lounge', price: 120 }] }
+  ];
+
   async function loadMyTickets() {
     if (!currentUser) { go('auth'); return; }
     try {
-    // Simple query without orderBy to avoid composite index requirement
-    const snapshot = await db.collection('tickets')
-      .where('userId', '==', currentUser.uid)
-      .get();
-
-    // Sort in JS (newest first by eventDate)
-    var tickets = [];
-    snapshot.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
+    // In demo mode, use local data (Firestore rules block unauthenticated queries)
+    var tickets;
+    if (DEMO_MODE) {
+      tickets = DEMO_TICKETS.slice();
+    } else {
+      const snapshot = await db.collection('tickets')
+        .where('userId', '==', currentUser.uid)
+        .get();
+      tickets = [];
+      snapshot.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
+    }
     tickets.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
 
     const activePanel = document.getElementById('mt-proximas');
@@ -7826,8 +7639,12 @@ body::after {
     if (cPas) cPas.textContent = historyCount;
     // Count user's resale listings
     if (cRev) {
-      var resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).where('status', '==', 'listed').get();
-      cRev.textContent = resaleSnap.size;
+      if (DEMO_MODE) {
+        cRev.textContent = DEMO_RESALE.filter(r => r.sellerId === currentUser.uid).length;
+      } else {
+        var resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).where('status', '==', 'listed').get();
+        cRev.textContent = resaleSnap.size;
+      }
     }
 
     activePanel.innerHTML = activeHtml || '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">No tienes entradas activas.<br><button onclick="go(\'eventos\')" style="margin-top:16px;background:var(--acid);color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer">Explorar eventos</button></div>';
@@ -7903,21 +7720,29 @@ body::after {
 
   async function loadMarketplace() {
     try {
-    const snapshot = await db.collection('resale').where('status', '==', 'listed').get();
     const container = document.getElementById('mp-listings');
     if (!container) return;
 
-    if (snapshot.empty) return; // Keep empty state message
+    var listings;
+    if (DEMO_MODE) {
+      listings = DEMO_RESALE.filter(r => r.status === 'listed');
+    } else {
+      const snapshot = await db.collection('resale').where('status', '==', 'listed').get();
+      if (snapshot.empty) return;
+      listings = [];
+      snapshot.forEach(doc => { listings.push({ _id: doc.id, ...doc.data() }); });
+    }
+
+    if (listings.length === 0) return;
 
     let html = '';
-    snapshot.forEach(doc => {
-      const r = doc.data();
+    listings.forEach(r => {
       html += `<div class="mp-listing-card" style="background:var(--bg-raised);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
         <div style="font-weight:600;color:var(--text)">${r.eventName}</div>
         <div style="font-size:13px;color:var(--text-mid);margin-top:4px">${r.ticketTier}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
           <span style="font-size:20px;font-weight:700;color:var(--acid)">S/${r.askingPrice}</span>
-          <button onclick="buyResale('${doc.id}')" style="background:var(--acid);color:#000;border:none;padding:8px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit">Comprar</button>
+          <button onclick="buyResale('${r._id}')" style="background:var(--acid);color:#000;border:none;padding:8px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit">Comprar</button>
         </div>
       </div>`;
     });
@@ -8000,20 +7825,34 @@ body::after {
   async function loadOrganizerDashboard() {
     if (!currentUser) { go('auth'); return; }
     try {
-    const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
     const container = document.getElementById('og-events-list');
     if (!container) return;
 
+    var events;
+    if (DEMO_MODE) {
+      events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
+    } else {
+      const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+      events = [];
+      snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
+    }
+
     let totalTickets = 0;
-    let totalRevenue = 0;
     let html = '';
 
-    for (const doc of snapshot.docs) {
-      const ev = doc.data();
-      // Count tickets sold
-      const ticketSnap = await db.collection('tickets').where('eventId', '==', doc.id).get();
-      const sold = ticketSnap.size;
+    for (const ev of events) {
+      var sold = 0;
+      if (DEMO_MODE) {
+        sold = DEMO_TICKETS.filter(t => t.eventId === ev._id).length;
+      } else {
+        const ticketSnap = await db.collection('tickets').where('eventId', '==', ev._id).get();
+        sold = ticketSnap.size;
+      }
       totalTickets += sold;
+
+      var isPast = new Date(ev.date + 'T23:59:59') < new Date();
+      var statusLabel = isPast ? 'pasado' : ev.status;
+      var statusStyle = isPast ? 'rgba(255,255,255,0.08);color:var(--text-dim)' : (ev.status === 'published' ? 'rgba(0,255,133,0.15);color:#00ff85' : 'rgba(255,77,77,0.15);color:#ff4d4d');
 
       html += `<div class="og-event-card" style="background:var(--bg-raised);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:start">
@@ -8022,12 +7861,12 @@ body::after {
             <div style="font-size:13px;color:var(--text-mid)">${ev.dateLabel || ev.date} · ${ev.venue}</div>
             <div style="font-size:13px;color:var(--acid);margin-top:4px">${sold} entradas vendidas</div>
           </div>
-          <span style="font-size:12px;padding:4px 10px;border-radius:20px;background:${ev.status === 'published' ? 'rgba(0,255,133,0.15);color:#00ff85' : 'rgba(255,77,77,0.15);color:#ff4d4d'}">${ev.status}</span>
+          <span style="font-size:12px;padding:4px 10px;border-radius:20px;background:${statusStyle}">${statusLabel}</span>
         </div>
         <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="og-act-btn primary" onclick="openEvent('${doc.id}')">👁 Ver</button>
-          <button class="og-act-btn primary" onclick="openEventForm('${doc.id}')" style="background:var(--acid);color:#000">✏️ Editar</button>
-          <button class="og-act-btn ghost" onclick="exportEventTickets('${doc.id}')">📊 Export</button>
+          <button class="og-act-btn primary" onclick="openEvent('${ev._id}')">👁 Ver</button>
+          <button class="og-act-btn primary" onclick="openEventForm('${ev._id}')" style="background:var(--acid);color:#000">✏️ Editar</button>
+          <button class="og-act-btn ghost" onclick="exportEventTickets('${ev._id}')">📊 Export</button>
         </div>
       </div>`;
     }
@@ -8036,7 +7875,7 @@ body::after {
 
     // Update stats
     const statEls = document.querySelectorAll('.og-stat-number');
-    if (statEls[0]) statEls[0].textContent = snapshot.size;
+    if (statEls[0]) statEls[0].textContent = events.length;
     if (statEls[1]) statEls[1].textContent = totalTickets;
     } catch (err) { console.error('loadOrganizerDashboard error:', err); }
   }
