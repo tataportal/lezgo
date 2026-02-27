@@ -7763,10 +7763,15 @@ body::after {
   async function loadMyTickets() {
     if (!currentUser) { go('auth'); return; }
     try {
+    // Simple query without orderBy to avoid composite index requirement
     const snapshot = await db.collection('tickets')
       .where('userId', '==', currentUser.uid)
-      .orderBy('purchasedAt', 'desc')
       .get();
+
+    // Sort in JS (newest first by eventDate)
+    var tickets = [];
+    snapshot.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
+    tickets.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
 
     const activePanel = document.getElementById('mt-proximas');
     const historyPanel = document.getElementById('mt-pasadas');
@@ -7774,33 +7779,36 @@ body::after {
 
     let activeHtml = '';
     let historyHtml = '';
+    let activeCount = 0;
+    let historyCount = 0;
 
-    snapshot.forEach(doc => {
-      const t = doc.data();
+    tickets.forEach(t => {
+      const docId = t._id;
       const isActive = t.status === 'active';
+      if (isActive) activeCount++; else historyCount++;
       const card = `
-        <div class="mt-ticket-card" onclick="mtToggleTicket('${doc.id}')">
+        <div class="mt-ticket-card" onclick="mtToggleTicket('${docId}')">
           <div class="mt-ticket-header">
             <div class="mt-ticket-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.5em">🎧</div>
             <div class="mt-ticket-info">
               <div class="mt-ticket-event">${t.eventName}</div>
-              <div class="mt-ticket-detail">${t.eventDateLabel || t.eventDate} · ${t.eventTimeStart} – ${t.eventTimeEnd}</div>
-              <div class="mt-ticket-detail">📍 ${t.eventVenue} · ${t.eventLocation}</div>
-              <div class="mt-ticket-type">${t.ticketName} ${t.price > 0 ? '· S/' + t.price : '· GRATIS'}</div>
+              <div class="mt-ticket-detail">${t.eventDateLabel || t.eventDate || ''} · ${t.eventTimeStart || ''} – ${t.eventTimeEnd || ''}</div>
+              <div class="mt-ticket-detail">📍 ${t.eventVenue || ''} · ${t.eventLocation || ''}</div>
+              <div class="mt-ticket-type">${t.ticketName || ''} ${t.price > 0 ? '· S/' + t.price : '· GRATIS'}</div>
             </div>
             <div class="mt-ticket-status ${isActive ? 'active' : 'used'}">${isActive ? '✅ Activa' : '⏰ Usada'}</div>
           </div>
-          <div class="mt-ticket-expand" id="${doc.id}-expand">
+          <div class="mt-ticket-expand" id="${docId}-expand">
             <div class="mt-ticket-expand-inner">
               <div style="text-align:center;padding:16px 0">
                 <div style="font-size:3em">🪪</div>
                 <div style="font-size:11px;color:var(--text-dim);margin-top:8px">DNI: ${t.userDni || '—'}</div>
-                <div style="font-size:11px;color:var(--text-dim)">ID: ${doc.id.slice(0,8)}...</div>
+                <div style="font-size:11px;color:var(--text-dim)">ID: ${docId.slice(0,8)}...</div>
                 <div style="font-size:11px;color:var(--acid);margin-top:4px">✅ Verificado con Lezgo</div>
               </div>
               <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
                 <button class="mt-share-btn" onclick="event.stopPropagation();openEvent('${t.eventId}')">🎫 Ver evento</button>
-                ${isActive ? '<button class="mt-share-btn" onclick="event.stopPropagation();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + doc.id + '\')">💰 Revender</button>' : ''}
+                ${isActive ? '<button class="mt-share-btn" onclick="event.stopPropagation();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Revender</button>' : ''}
               </div>
             </div>
           </div>
@@ -7809,6 +7817,18 @@ body::after {
       if (isActive) activeHtml += card;
       else historyHtml += card;
     });
+
+    // Update tab badge counts
+    var cProx = document.getElementById('mt-count-proximas');
+    var cPas = document.getElementById('mt-count-pasadas');
+    var cRev = document.getElementById('mt-count-reventas');
+    if (cProx) cProx.textContent = activeCount;
+    if (cPas) cPas.textContent = historyCount;
+    // Count user's resale listings
+    if (cRev) {
+      var resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).where('status', '==', 'listed').get();
+      cRev.textContent = resaleSnap.size;
+    }
 
     activePanel.innerHTML = activeHtml || '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">No tienes entradas activas.<br><button onclick="go(\'eventos\')" style="margin-top:16px;background:var(--acid);color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer">Explorar eventos</button></div>';
     if (historyPanel) historyPanel.innerHTML = historyHtml || '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">No tienes entradas pasadas.</div>';
@@ -10008,9 +10028,9 @@ body::after {
       </div>
     </div>
     <div class="mt-filter-tabs">
-      <div class="mt-tab active" onclick="mtTab('proximas',this)">Próximas <span class="mt-tab-count">2</span></div>
-      <div class="mt-tab" onclick="mtTab('pasadas',this)">Pasadas <span class="mt-tab-count">5</span></div>
-      <div class="mt-tab" onclick="mtTab('reventas',this)">En Reventa <span class="mt-tab-count">1</span></div>
+      <div class="mt-tab active" onclick="mtTab('proximas',this)">Próximas <span class="mt-tab-count" id="mt-count-proximas">0</span></div>
+      <div class="mt-tab" onclick="mtTab('pasadas',this)">Pasadas <span class="mt-tab-count" id="mt-count-pasadas">0</span></div>
+      <div class="mt-tab" onclick="mtTab('reventas',this)">En Reventa <span class="mt-tab-count" id="mt-count-reventas">0</span></div>
     </div>
     <!-- PRÓXIMAS -->
     <div class="mt-panel active" id="mt-proximas">
