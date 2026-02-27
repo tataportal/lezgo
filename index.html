@@ -1538,8 +1538,9 @@ body::after {
 }
 .pf-badge {
   background: var(--bg-raised); border: 1px solid var(--border);
-  padding: 24px 20px; text-align: center;
-  transition: all 0.2s; cursor: default;
+  padding: 20px 16px; text-align: center;
+  transition: all 0.2s; cursor: default; border-radius: 12px;
+  position: relative; overflow: hidden;
 }
 .pf-badge:hover {
   border-color: var(--acid);
@@ -1547,15 +1548,37 @@ body::after {
   transform: translateY(-2px);
 }
 .pf-badge-icon {
-  font-size: 44px; line-height: 1; margin: 0 auto 12px;
+  font-size: 36px; line-height: 1; margin: 0 auto 8px;
   text-align: center; filter: saturate(1.2);
 }
 .pf-badge-name {
-  font-size: 13px; font-weight: 700; margin-bottom: 4px;
+  font-size: 12px; font-weight: 700; margin-bottom: 2px;
   letter-spacing: -0.2px;
 }
 .pf-badge-desc {
-  font-size: 11px; color: var(--text-dim); line-height: 1.4;
+  font-size: 10px; color: var(--text-dim); line-height: 1.3;
+}
+.pf-badge-tier {
+  display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-top: 6px;
+}
+.pf-badge-tier.bronce { background: rgba(205,127,50,0.2); color: #CD7F32; }
+.pf-badge-tier.plata { background: rgba(192,192,192,0.2); color: #C0C0C0; }
+.pf-badge-tier.oro { background: rgba(255,215,0,0.2); color: #FFD700; }
+.pf-badge-tier.locked { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+.pf-badge-progress {
+  width: 100%; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px;
+  margin-top: 8px; overflow: hidden;
+}
+.pf-badge-progress-fill {
+  height: 100%; border-radius: 2px; transition: width 0.6s ease;
+}
+.pf-badge-progress-fill.bronce { background: #CD7F32; }
+.pf-badge-progress-fill.plata { background: #C0C0C0; }
+.pf-badge-progress-fill.oro { background: #FFD700; }
+.pf-badge-progress-fill.none { background: var(--text-dim); }
+.pf-badge-count {
+  font-size: 9px; color: var(--text-dim); margin-top: 4px;
 }
 .pf-badge.locked { opacity: 0.35; }
 .pf-badge.locked .pf-badge-icon { filter: grayscale(1); opacity: 0.4; }
@@ -5338,47 +5361,8 @@ body::after {
         <div class="pf-section-title">Badges</div>
         <span class="pf-section-more">Ver todos →</span>
       </div>
-      <div class="pf-badges">
-        <div class="pf-badge">
-          <div class="pf-badge-icon">🎧</div>
-          <div class="pf-badge-name">Club Connoisseur</div>
-          <div class="pf-badge-desc">Asistió a 5+ eventos de club</div>
-        </div>
-        <div class="pf-badge">
-          <div class="pf-badge-icon">⚡</div>
-          <div class="pf-badge-name">Early Adopter</div>
-          <div class="pf-badge-desc">Entre los primeros 1,000 usuarios</div>
-        </div>
-        <div class="pf-badge">
-          <div class="pf-badge-icon">🔊</div>
-          <div class="pf-badge-name">Bass Monster</div>
-          <div class="pf-badge-desc">3+ eventos de techno/bass</div>
-        </div>
-        <div class="pf-badge">
-          <div class="pf-badge-icon">🎯</div>
-          <div class="pf-badge-name">Preventa Hunter</div>
-          <div class="pf-badge-desc">Compró 3+ preventas</div>
-        </div>
-        <div class="pf-badge">
-          <div class="pf-badge-icon">🧭</div>
-          <div class="pf-badge-name">Lima Explorer</div>
-          <div class="pf-badge-desc">Eventos en 3+ distritos</div>
-        </div>
-        <div class="pf-badge locked">
-          <div class="pf-badge-icon">👑</div>
-          <div class="pf-badge-name">Festival Warrior</div>
-          <div class="pf-badge-desc">Asiste a 3 festivales</div>
-        </div>
-        <div class="pf-badge locked">
-          <div class="pf-badge-icon">🤝</div>
-          <div class="pf-badge-name">Resale Pro</div>
-          <div class="pf-badge-desc">5+ reventas exitosas</div>
-        </div>
-        <div class="pf-badge locked">
-          <div class="pf-badge-icon">💎</div>
-          <div class="pf-badge-name">VIP Status</div>
-          <div class="pf-badge-desc">10 eventos VIP</div>
-        </div>
+      <div class="pf-badges" id="pf-badges-grid">
+        <!-- Dynamically rendered by loadProfile() -->
       </div>
     </div>
 
@@ -8474,52 +8458,122 @@ body::after {
     var uniqueEvents = [];
     tickets.forEach(function(t){ if (uniqueEvents.indexOf(t.eventId) === -1) uniqueEvents.push(t.eventId); });
 
-    // Calculate badges dynamically
-    var badgeStates = {};
-    // Club Connoisseur: 5+ events
-    badgeStates['club-connoisseur'] = uniqueEvents.length >= 5;
-    // Early Adopter: always true in demo (user is early)
-    badgeStates['early-adopter'] = true;
-    // Bass Monster: 3+ techno/bass events
+    // ── Badge system with tiers (Bronce → Plata → Oro) ──
+    // Gather metrics
     var technoCount = 0;
-    tickets.forEach(function(t) {
-      var ev = allEvents.find(function(e){ return e._id === t.eventId; });
-      if (ev && (ev.genre || '').toLowerCase().match(/techno|bass|industrial|dnb/)) technoCount++;
-    });
-    badgeStates['bass-monster'] = technoCount >= 3;
-    // Preventa Hunter: 3+ tickets (demo: consider all active as preventa)
-    badgeStates['preventa-hunter'] = tickets.filter(function(t){ return t.status === 'active'; }).length >= 3;
-    // Lima Explorer: events in 3+ distritos
     var distritos = [];
     tickets.forEach(function(t) {
       var ev = allEvents.find(function(e){ return e._id === t.eventId; });
+      if (ev && (ev.genre || '').toLowerCase().match(/techno|bass|industrial|dnb/)) technoCount++;
       var d = ev ? (ev.distrito || ev.location || '').toLowerCase() : (t.eventLocation || '').toLowerCase();
       if (d && distritos.indexOf(d) === -1) distritos.push(d);
     });
-    badgeStates['lima-explorer'] = distritos.length >= 3;
-    // Festival Warrior: 3 festivals (check for multi-day/outdoor)
-    badgeStates['festival-warrior'] = false;
-    // Resale Pro: 5+ reventas
+    var activeTickets = tickets.filter(function(t){ return t.status === 'active'; }).length;
     var completedResales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'sold'; }).length : 0;
-    badgeStates['resale-pro'] = completedResales >= 5;
-    // VIP Status: 10 VIP events
     var vipCount = tickets.filter(function(t){ return (t.ticketName || '').toLowerCase().match(/vip|premium|full access/); }).length;
-    badgeStates['vip-status'] = vipCount >= 10;
+    var totalSpent = tickets.reduce(function(s, t){ return s + (t.price || 0); }, 0);
 
-    var unlockedCount = Object.keys(badgeStates).filter(function(k){ return badgeStates[k]; }).length;
+    // Badge definitions: each has icon, name, tiers with thresholds
+    var BADGE_DEFS = [
+      { icon: '🎧', name: 'Fiestero', metric: uniqueEvents.length, tiers: [
+        { name: 'Bronce', need: 5, desc: '5 eventos' },
+        { name: 'Plata', need: 15, desc: '15 eventos' },
+        { name: 'Oro', need: 30, desc: '30 eventos' }
+      ]},
+      { icon: '⚡', name: 'Early Adopter', metric: 1, tiers: [
+        { name: 'Oro', need: 1, desc: 'Primeros 1,000 usuarios' }
+      ]},
+      { icon: '🔊', name: 'Bass Monster', metric: technoCount, tiers: [
+        { name: 'Bronce', need: 5, desc: '5 eventos techno/bass' },
+        { name: 'Plata', need: 15, desc: '15 eventos techno/bass' },
+        { name: 'Oro', need: 30, desc: '30 eventos techno/bass' }
+      ]},
+      { icon: '🎯', name: 'Preventa Hunter', metric: activeTickets, tiers: [
+        { name: 'Bronce', need: 5, desc: '5 preventas' },
+        { name: 'Plata', need: 15, desc: '15 preventas' },
+        { name: 'Oro', need: 30, desc: '30 preventas' }
+      ]},
+      { icon: '🧭', name: 'Lima Explorer', metric: distritos.length, tiers: [
+        { name: 'Bronce', need: 3, desc: '3 distritos' },
+        { name: 'Plata', need: 6, desc: '6 distritos' },
+        { name: 'Oro', need: 10, desc: '10 distritos' }
+      ]},
+      { icon: '🤝', name: 'Resale Pro', metric: completedResales, tiers: [
+        { name: 'Bronce', need: 3, desc: '3 reventas' },
+        { name: 'Plata', need: 10, desc: '10 reventas' },
+        { name: 'Oro', need: 25, desc: '25 reventas' }
+      ]},
+      { icon: '💎', name: 'VIP Status', metric: vipCount, tiers: [
+        { name: 'Bronce', need: 3, desc: '3 eventos VIP' },
+        { name: 'Plata', need: 10, desc: '10 eventos VIP' },
+        { name: 'Oro', need: 25, desc: '25 eventos VIP' }
+      ]},
+      { icon: '💰', name: 'Big Spender', metric: totalSpent, tiers: [
+        { name: 'Bronce', need: 500, desc: 'S/ 500 gastados' },
+        { name: 'Plata', need: 2000, desc: 'S/ 2,000 gastados' },
+        { name: 'Oro', need: 5000, desc: 'S/ 5,000 gastados' }
+      ]}
+    ];
 
-    // Update badge HTML
-    var badgeKeys = ['club-connoisseur','early-adopter','bass-monster','preventa-hunter','lima-explorer','festival-warrior','resale-pro','vip-status'];
-    var badgeEls = document.querySelectorAll('.pf-badges .pf-badge');
-    badgeEls.forEach(function(el, i) {
-      var key = badgeKeys[i];
-      if (!key) return;
-      if (badgeStates[key]) {
-        el.classList.remove('locked');
-      } else {
-        el.classList.add('locked');
+    // Calculate tier for each badge
+    var unlockedCount = 0;
+    var badgesHtml = '';
+    BADGE_DEFS.forEach(function(b) {
+      var currentTier = null;
+      var nextTier = null;
+      var progress = 0;
+      for (var i = 0; i < b.tiers.length; i++) {
+        if (b.metric >= b.tiers[i].need) {
+          currentTier = b.tiers[i];
+        } else {
+          nextTier = b.tiers[i];
+          break;
+        }
       }
+      // If all tiers achieved, mark last as current
+      if (currentTier && !nextTier && b.metric >= b.tiers[b.tiers.length - 1].need) {
+        nextTier = null; // maxed out
+      }
+
+      var isUnlocked = currentTier !== null;
+      if (isUnlocked) unlockedCount++;
+
+      // Progress bar: towards next tier (or 100% if maxed)
+      if (!isUnlocked && b.tiers[0]) {
+        progress = Math.min(100, Math.round((b.metric / b.tiers[0].need) * 100));
+      } else if (nextTier && currentTier) {
+        var prevNeed = currentTier.need;
+        var range = nextTier.need - prevNeed;
+        progress = range > 0 ? Math.min(100, Math.round(((b.metric - prevNeed) / range) * 100)) : 100;
+      } else {
+        progress = 100; // maxed
+      }
+
+      var tierClass = currentTier ? currentTier.name.toLowerCase() : 'locked';
+      var tierLabel = currentTier ? currentTier.name : (b.tiers[0] ? b.tiers[0].need - b.metric + ' para ' + b.tiers[0].name : '');
+      var progressClass = nextTier ? nextTier.name.toLowerCase() : (currentTier ? currentTier.name.toLowerCase() : 'none');
+      var countText = '';
+      if (nextTier) {
+        countText = b.metric + ' / ' + nextTier.need;
+      } else if (currentTier) {
+        countText = 'MAX';
+      } else {
+        countText = b.metric + ' / ' + (b.tiers[0] ? b.tiers[0].need : '?');
+      }
+      var desc = currentTier ? currentTier.desc : (b.tiers[0] ? b.tiers[0].desc : '');
+
+      badgesHtml += '<div class="pf-badge' + (isUnlocked ? '' : ' locked') + '">'
+        + '<div class="pf-badge-icon">' + b.icon + '</div>'
+        + '<div class="pf-badge-name">' + b.name + '</div>'
+        + '<div class="pf-badge-desc">' + desc + '</div>'
+        + '<div class="pf-badge-tier ' + tierClass + '">' + (currentTier ? currentTier.name : 'Bloqueado') + '</div>'
+        + '<div class="pf-badge-progress"><div class="pf-badge-progress-fill ' + progressClass + '" style="width:' + progress + '%"></div></div>'
+        + '<div class="pf-badge-count">' + countText + '</div>'
+        + '</div>';
     });
+
+    var badgesGrid = document.getElementById('pf-badges-grid');
+    if (badgesGrid) badgesGrid.innerHTML = badgesHtml;
 
     var statsRow = document.querySelector('.pf-stats-row');
     if (statsRow) {
