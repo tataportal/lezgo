@@ -4,7 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LEZGO — Tickets Verificados</title>
+<meta name="description" content="Compra y revende tickets verificados con tu identidad. Cero estafas, cero reventas falsas. La plataforma de ticketing segura para fiestas y conciertos en Lima.">
+<link rel="canonical" href="https://lezgo.fans/">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lezgo.fans/">
+<meta property="og:title" content="LEZGO — Tickets Verificados con tu Identidad">
+<meta property="og:description" content="Compra y revende tickets verificados con tu identidad. Cero estafas. La plataforma de ticketing segura para fiestas y conciertos en Lima.">
+<meta property="og:image" content="https://lezgo.fans/og-image.png">
+<meta property="og:site_name" content="LEZGO">
+<meta property="og:locale" content="es_PE">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LEZGO — Tickets Verificados">
+<meta name="twitter:description" content="Compra y revende tickets verificados con tu identidad. Cero estafas, cero reventas falsas.">
+<meta name="twitter:image" content="https://lezgo.fans/og-image.png">
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23E5FF00'/><text x='50' y='72' font-size='60' text-anchor='middle' font-family='sans-serif' font-weight='900' fill='%23000'>L</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23E5FF00'/><text x='50' y='72' font-size='60' text-anchor='middle' font-family='sans-serif' font-weight='900' fill='%23000'>L</text></svg>">
+<!-- Structured Data -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"LEZGO","url":"https://lezgo.fans","description":"Plataforma de ticketing verificado con identidad para eventos en Lima, Perú","applicationCategory":"EventApplication","operatingSystem":"Web","offers":{"@type":"AggregateOffer","priceCurrency":"PEN","lowPrice":"0","offerCount":"100+"},"author":{"@type":"Organization","name":"LEZGO","url":"https://lezgo.fans"}}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5WY8YPW3MV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5WY8YPW3MV');</script>
 <style>
 /* ═══════════════════════════════════════════
    RESET & VARIABLES — Paleta unificada
@@ -4610,7 +4635,7 @@ body::after {
         <span class="faq-q-text">¿Puedo revender mi entrada?</span>
         <span class="faq-toggle">+</span>
       </div>
-      <div class="faq-answer"><div class="faq-a-text">Sí, pero a través de nuestro <a href="#marketplace" onclick="go('marketplace')" style="color:var(--acid);text-decoration:underline">Marketplace oficial</a>. Esto garantiza que cuentes con toda la información para una compra/venta segura y a precio justo, y que la entrada se transfiera al nuevo fan.</div></div>
+      <div class="faq-answer"><div class="faq-a-text">Sí, pero a través de nuestro <a href="javascript:void(0)" onclick="go('marketplace')" style="color:var(--acid);text-decoration:underline">Marketplace oficial</a>. Esto garantiza que cuentes con toda la información para una compra/venta segura y a precio justo, y que la entrada se transfiera al nuevo fan.</div></div>
     </div>
   </div>
 
@@ -4885,7 +4910,7 @@ body::after {
         <span class="faq-q-text">¿Qué pasa si no puedo ir al evento?</span>
         <span class="faq-toggle">+</span>
       </div>
-      <div class="faq-answer"><div class="faq-a-text">Puedes poner tu entrada a la venta en el <a href="#marketplace" onclick="go('marketplace')" style="color:var(--acid);text-decoration:underline">Marketplace de Lezgo</a>. Se transfiere al nuevo fan de forma segura. Con más fans usando la plataforma, entre todos podemos acabar con la reventa abusiva.</div></div>
+      <div class="faq-answer"><div class="faq-a-text">Puedes poner tu entrada a la venta en el <a href="javascript:void(0)" onclick="go('marketplace')" style="color:var(--acid);text-decoration:underline">Marketplace de Lezgo</a>. Se transfiere al nuevo fan de forma segura. Con más fans usando la plataforma, entre todos podemos acabar con la reventa abusiva.</div></div>
     </div>
 
     <div class="faq-item">
@@ -9151,7 +9176,7 @@ body::after {
             lastLocation: { lat: userLocation.lat, lng: userLocation.lng, ts: new Date().toISOString() }
           }, { merge: true }).catch(function(){});
         }
-        console.log('📍 User location:', userLocation.lat, userLocation.lng);
+        // User location acquired
         if (callback) callback();
       },
       function(err) {
@@ -10228,7 +10253,7 @@ body::after {
           </div>
         </div>
         <div class="auth-legal">
-          Al continuar aceptas los <a href="#">Términos de Uso</a> y <a href="#">Política de Privacidad</a> de Lezgo.
+          Al continuar aceptas los <a href="javascript:void(0)" onclick="go('terminos');return false;">Términos de Uso</a> y <a href="javascript:void(0)" onclick="go('privacidad');return false;">Política de Privacidad</a> de Lezgo.
         </div>
       </div>
     </div>
@@ -10786,10 +10811,10 @@ body::after {
           </div>
         </div>
         <div id="pm-pay-card-fields">
-          <input class="pm-input" type="text" placeholder="Número de tarjeta" maxlength="19" oninput="pmFormatCard(this)">
+          <input class="pm-input" type="text" placeholder="Número de tarjeta" maxlength="19" inputmode="numeric" autocomplete="cc-number" oninput="pmFormatCard(this)">
           <div style="display:flex;gap:10px">
-            <input class="pm-input" type="text" placeholder="MM/AA" maxlength="5" style="flex:1" oninput="pmFormatExp(this)">
-            <input class="pm-input" type="text" placeholder="CVV" maxlength="3" style="flex:1;letter-spacing:0.2em">
+            <input class="pm-input" type="text" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp" style="flex:1" oninput="pmFormatExp(this)">
+            <input class="pm-input" type="password" placeholder="CVV" maxlength="3" inputmode="numeric" autocomplete="cc-csc" style="flex:1;letter-spacing:0.2em">
           </div>
         </div>
         <div id="pm-pay-yape-fields" style="display:none">
