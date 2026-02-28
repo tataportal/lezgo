@@ -984,7 +984,7 @@ body::after {
   position: fixed;
   top: 64px; left: 0; right: 0; bottom: 0;
   overflow-y: auto;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   z-index: 5;
   background: var(--bg);
@@ -2794,17 +2794,32 @@ body::after {
   display: flex; flex-direction: column; justify-content: space-between;
   border-radius: 20px; overflow: hidden;
 }
+.dk-how-inner {
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
 .dk-how-inner.dk-grad-1 {
   background: rgba(15,15,15,0.6);
-  border: 2px solid rgba(155,143,255,0.35);
+  border: 2px solid rgba(155,143,255,0.5);
+}
+.dk-how-card:hover .dk-how-inner.dk-grad-1 {
+  border-color: rgba(155,143,255,0.9);
+  box-shadow: 0 0 24px rgba(155,143,255,0.3), 0 0 48px rgba(155,143,255,0.1);
 }
 .dk-how-inner.dk-grad-2 {
   background: rgba(15,15,15,0.6);
-  border: 2px solid rgba(255,179,71,0.35);
+  border: 2px solid rgba(255,179,71,0.5);
+}
+.dk-how-card:hover .dk-how-inner.dk-grad-2 {
+  border-color: rgba(255,179,71,0.9);
+  box-shadow: 0 0 24px rgba(255,179,71,0.3), 0 0 48px rgba(255,179,71,0.1);
 }
 .dk-how-inner.dk-grad-3 {
   background: rgba(15,15,15,0.6);
-  border: 2px solid rgba(229,255,0,0.35);
+  border: 2px solid rgba(229,255,0,0.5);
+}
+.dk-how-card:hover .dk-how-inner.dk-grad-3 {
+  border-color: rgba(229,255,0,0.9);
+  box-shadow: 0 0 24px rgba(229,255,0,0.3), 0 0 48px rgba(229,255,0,0.1);
 }
 .dk-how-num {
   font-size: 72px; font-weight: 900; color: rgba(255,255,255,0.5); line-height: 1;
@@ -2863,7 +2878,7 @@ body::after {
 }
 .dk-benefit-card {
   border-radius: 20px; padding: 44px;
-  transition: transform 0.25s;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
   position: relative; overflow: hidden;
 }
 .dk-benefit-card:hover { transform: translateY(-6px); }
@@ -2873,10 +2888,14 @@ body::after {
   font-size: 56px; line-height: 1; margin-bottom: 20px;
   filter: saturate(1.2);
 }
-.dk-bc-blue { background: rgba(15,15,15,0.6); border: 1px solid rgba(100,149,237,0.35); }
-.dk-bc-green { background: rgba(15,15,15,0.6); border: 1px solid rgba(0,200,83,0.35); }
-.dk-bc-purple { background: rgba(15,15,15,0.6); border: 1px solid rgba(155,63,199,0.35); }
-.dk-bc-yellow { background: rgba(15,15,15,0.6); border: 1px solid rgba(229,255,0,0.35); }
+.dk-bc-blue { background: rgba(15,15,15,0.6); border: 1px solid rgba(100,149,237,0.5); }
+.dk-bc-blue:hover { border-color: rgba(100,149,237,0.9); box-shadow: 0 0 20px rgba(100,149,237,0.3), 0 0 40px rgba(100,149,237,0.1); }
+.dk-bc-green { background: rgba(15,15,15,0.6); border: 1px solid rgba(0,200,83,0.5); }
+.dk-bc-green:hover { border-color: rgba(0,200,83,0.9); box-shadow: 0 0 20px rgba(0,200,83,0.3), 0 0 40px rgba(0,200,83,0.1); }
+.dk-bc-purple { background: rgba(15,15,15,0.6); border: 1px solid rgba(155,63,199,0.5); }
+.dk-bc-purple:hover { border-color: rgba(155,63,199,0.9); box-shadow: 0 0 20px rgba(155,63,199,0.3), 0 0 40px rgba(155,63,199,0.1); }
+.dk-bc-yellow { background: rgba(15,15,15,0.6); border: 1px solid rgba(229,255,0,0.5); }
+.dk-bc-yellow:hover { border-color: rgba(229,255,0,0.9); box-shadow: 0 0 20px rgba(229,255,0,0.3), 0 0 40px rgba(229,255,0,0.1); }
 
 /* Deck Profile Mockup */
 /* ===== PROFILE SHOWCASE — BOLD SPLIT LAYOUT ===== */
