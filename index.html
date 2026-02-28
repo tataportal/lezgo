@@ -6379,6 +6379,14 @@ body::after {
      FIREBASE INIT + BACKEND LOGIC
      ═══════════════════════════════════════════ -->
 <script>
+  // ── Logger condicional — silencio total en producción ──
+  const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const log = {
+    error: (...args) => isDev && log.error(...args),
+    warn:  (...args) => isDev && log.warn(...args),
+    log:   (...args) => isDev && console.log(...args)
+  };
+
   // ── Firebase Config ──
   const firebaseConfig = {
     apiKey: "AIzaSyDPUyIOfSKa1b9Cn4ExMhmAhacsOzfgu8A",
@@ -6410,7 +6418,7 @@ body::after {
           window.localStorage.removeItem('lezgoEmailForSignIn');
           window.history.replaceState(null, '', window.location.pathname);
         } catch (err) {
-          console.error('Magic link sign-in error:', err);
+          log.error('Magic link sign-in error:', err);
         }
       }
     }
@@ -6630,7 +6638,7 @@ body::after {
     if (venue) chipsHtml += '<div class="info-chip"><span>🏛️</span> ' + venue + '</div>';
 
     // Build full proto HTML
-    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'
       + '<title>' + name + ' — LEZGO Preview</title>'
       + '<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">'
       + '<style>'
@@ -6804,7 +6812,7 @@ body::after {
       snapshot.forEach(doc => {
         allEvents.push({ ...doc.data(), _id: doc.id });
       });
-    } catch (err) { console.error('loadEvents error:', err); }
+    } catch (err) { log.error('loadEvents error:', err); }
     // In demo mode, inject DEMO_EVENTS (rich data with phases) and DEMO_TICKETS events
     if (DEMO_MODE) {
       if (typeof DEMO_EVENTS !== 'undefined') {
@@ -7347,7 +7355,7 @@ body::after {
         go('eventos');
       }
     } catch (err) {
-      console.error('Google login error:', err);
+      log.error('Google login error:', err);
       if (err.code !== 'auth/popup-closed-by-user') {
         document.getElementById('auth-link-sent').textContent = 'Error: ' + err.message;
         document.getElementById('auth-link-sent').style.display = 'block';
@@ -7376,7 +7384,7 @@ body::after {
         msgEl.style.display = 'block';
       }
     } catch (err) {
-      console.error('Magic link error:', err);
+      log.error('Magic link error:', err);
       const msgEl = document.getElementById('auth-link-sent');
       if (msgEl) {
         msgEl.style.display = 'block';
@@ -7519,7 +7527,7 @@ body::after {
       pmGoStep(4);
 
     } catch (err) {
-      console.error('Purchase error:', err);
+      log.error('Purchase error:', err);
       loading.classList.remove('visible');
       btn.style.display = '';
       backBtn.style.display = '';
@@ -7587,7 +7595,7 @@ body::after {
         pmUserLoggedIn = true;
         pmGoStep(1);
       } catch (err) {
-        if (err.code !== 'auth/popup-closed-by-user') console.error(err);
+        if (err.code !== 'auth/popup-closed-by-user') log.error(err);
       }
       return;
     }
@@ -7614,7 +7622,7 @@ body::after {
           emailEl.style.borderColor = 'var(--acid)';
         }
       } catch (err) {
-        console.error('Magic link error:', err);
+        log.error('Magic link error:', err);
       }
       return;
     }
@@ -7748,7 +7756,7 @@ body::after {
 
     activePanel.innerHTML = activeHtml || '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">No tienes entradas activas.<br><button onclick="go(\'eventos\')" style="margin-top:16px;background:var(--acid);color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer">Explorar eventos</button></div>';
     if (historyPanel) historyPanel.innerHTML = historyHtml || '<div style="text-align:center;padding:40px 20px;color:var(--text-dim)">No tienes entradas pasadas.</div>';
-    } catch (err) { console.error('loadMyTickets error:', err); }
+    } catch (err) { log.error('loadMyTickets error:', err); }
   }
 
   // ── Resale / Marketplace ──
@@ -7798,7 +7806,7 @@ body::after {
         loadMarketplace();
       }, 300);
     } catch (err) {
-      console.error('Resale error:', err);
+      log.error('Resale error:', err);
       alert('Error: ' + err.message);
     }
   }
@@ -7809,7 +7817,7 @@ body::after {
     const tierEl = document.getElementById('resale-ticket-tier');
     const priceEl = document.getElementById('resale-price');
     const overlayEl = document.getElementById('resale-overlay');
-    if (!eventEl || !tierEl || !priceEl || !overlayEl) { console.error('resaleOpen: Missing DOM elements'); return; }
+    if (!eventEl || !tierEl || !priceEl || !overlayEl) { log.error('resaleOpen: Missing DOM elements'); return; }
 
     window._resaleTicketId = ticketDocId || null;
     eventEl.textContent = eventName;
@@ -7864,7 +7872,7 @@ body::after {
     });
 
     container.innerHTML = html;
-    } catch (err) { console.error('loadMarketplace error:', err); }
+    } catch (err) { log.error('loadMarketplace error:', err); }
   }
 
   async function buyResale(resaleId) {
@@ -7900,7 +7908,7 @@ body::after {
       alert('¡Entrada comprada! Ya está en "Mis Entradas".');
       loadMarketplace();
     } catch (err) {
-      console.error('buyResale error:', err);
+      log.error('buyResale error:', err);
       alert('Error al comprar: ' + err.message);
     }
   }
@@ -7934,7 +7942,7 @@ body::after {
       if (srDni) srDni.textContent = ticket.userDni || '—';
       scanResult('approved');
     } catch (err) {
-      console.error('Scan error:', err);
+      log.error('Scan error:', err);
       scanResult('invalid');
     }
   }
@@ -7995,7 +8003,7 @@ body::after {
     const statEls = document.querySelectorAll('.og-stat-number');
     if (statEls[0]) statEls[0].textContent = events.length;
     if (statEls[1]) statEls[1].textContent = totalTickets;
-    } catch (err) { console.error('loadOrganizerDashboard error:', err); }
+    } catch (err) { log.error('loadOrganizerDashboard error:', err); }
   }
 
   function createEvent() {
@@ -8396,7 +8404,7 @@ body::after {
         loadOrganizerDashboard();
       }, 1000);
     } catch (err) {
-      console.error('Save event error:', err);
+      log.error('Save event error:', err);
       alert('Error al guardar: ' + err.message);
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Guardar evento'; }
     }
@@ -8434,7 +8442,7 @@ body::after {
       // For demo: manual input
       document.getElementById('scanner-manual-input').style.display = 'block';
     } catch (err) {
-      console.error('Camera error:', err);
+      log.error('Camera error:', err);
       document.getElementById('scanner-manual-input').style.display = 'block';
     }
   }
@@ -8444,7 +8452,7 @@ body::after {
       if (scannerStream && typeof scannerStream.getTracks === 'function') {
         scannerStream.getTracks().forEach(t => t.stop());
       }
-    } catch (e) { console.error('stopScanner error:', e); }
+    } catch (e) { log.error('stopScanner error:', e); }
     scannerStream = null;
   }
 
@@ -8620,7 +8628,7 @@ body::after {
     var promBtn = document.getElementById('pf-promoter-btn');
     if (promBtn) promBtn.style.display = (userProfile?.role === 'fan') ? '' : 'none';
 
-    } catch (err) { console.error('loadProfile error:', err); }
+    } catch (err) { log.error('loadProfile error:', err); }
   }
 
   // goWithAuth removed — auth checking is handled by go() in Script 2
@@ -9180,7 +9188,7 @@ body::after {
         if (callback) callback();
       },
       function(err) {
-        console.warn('Geolocation error:', err.message);
+        log.warn('Geolocation error:', err.message);
         locVal.textContent = 'Lima, Perú';
         alert('No pudimos obtener tu ubicación. Verifica los permisos de tu navegador.');
       },
