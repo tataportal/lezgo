@@ -979,7 +979,7 @@ body::after {
 #v-fans.active,
 #v-promotores.active {
   position: fixed;
-  top: 56px; left: 0; right: 0; bottom: 0;
+  top: 64px; left: 0; right: 0; bottom: 0;
   overflow-y: auto;
   scroll-snap-type: y proximity;
   scroll-behavior: smooth;
@@ -991,7 +991,7 @@ body::after {
 #v-promotores .cf-hero,
 #v-promotores .cf-section {
   scroll-snap-align: start;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 64px);
   display: flex; flex-direction: column; justify-content: center;
 }
 #v-fans .cf-hero,
@@ -1020,7 +1020,7 @@ body::after {
 #v-fans .email-capture,
 #v-promotores .email-capture {
   scroll-snap-align: start;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 64px);
   display: flex; flex-direction: column; justify-content: center;
   align-items: center;
   text-align: center;
@@ -1032,7 +1032,7 @@ body::after {
 #v-fans .faq-section,
 #v-promotores .faq-section {
   scroll-snap-align: start;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 64px);
   display: flex; flex-direction: column; justify-content: center; align-items: center;
   max-width: none;
   border-top: 1px solid var(--border);
@@ -2438,7 +2438,7 @@ body::after {
 /* Deck scroll-snap container */
 #v-deck.active {
   position: fixed;
-  top: 56px; left: 0; right: 0; bottom: 0;
+  top: 64px; left: 0; right: 0; bottom: 0;
   overflow-y: auto;
   scroll-snap-type: y proximity;
   scroll-behavior: smooth;
@@ -2452,12 +2452,12 @@ body::after {
 #v-deck .dk-profile-section,
 #v-deck .dk-cta {
   scroll-snap-align: start;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 64px);
 }
 #v-deck .dk-stats,
 #v-deck .dk-slide-half {
   scroll-snap-align: start;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 64px);
 }
 
 /* Deck Toggle Bar */
@@ -7164,8 +7164,9 @@ body::after {
       const totalSold = ev.tickets.reduce((s,t) => s + t.sold, 0);
       const pct = totalCap > 0 ? Math.round((totalSold / totalCap) * 100) : 0;
       const tiers = ev.tickets.length;
-      const minPrice = Math.min(...ev.tickets.map(t => t.price));
-      const maxPrice = Math.max(...ev.tickets.map(t => t.price));
+      const allPrices = ev.tickets.flatMap(t => t.phases && t.phases.length ? t.phases.map(p => p.price) : [t.price]).filter(p => typeof p === 'number' && !isNaN(p));
+      const minPrice = allPrices.length ? Math.min(...allPrices) : 0;
+      const maxPrice = allPrices.length ? Math.max(...allPrices) : 0;
       const priceRange = minPrice === maxPrice ? 'S/ ' + minPrice : 'S/ ' + minPrice + ' – ' + maxPrice;
       statsBar.innerHTML = `
         <div class="ev-stat-item"><div class="ev-stat-num">${pct}%</div><div class="ev-stat-label">Vendido</div></div>
