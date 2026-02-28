@@ -4296,6 +4296,57 @@ body::after {
 .resale-cancel { width: 100%; background: transparent; color: var(--text-dim); border: none; padding: 12px; font-size: 14px; cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 6px; }
 
 /* ═══════════════════════════════════════════
+   TRANSFER OVERLAY
+   ═══════════════════════════════════════════ */
+.transfer-overlay {
+  position: fixed; inset: 0; z-index: 9001;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.transfer-overlay.open { opacity: 1; pointer-events: all; }
+.transfer-sheet {
+  width: 100%; max-width: 520px; background: #111;
+  border-radius: 28px 28px 0 0; border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+  padding: 20px 28px 40px;
+  transform: translateY(40px); transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.transfer-overlay.open .transfer-sheet { transform: translateY(0); }
+.transfer-title { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.transfer-sub { font-size: 14px; color: var(--text-mid); margin-bottom: 24px; }
+.transfer-input-section { margin-bottom: 16px; }
+.transfer-input-label { font-size: 12px; font-weight: 700; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.transfer-input-wrap {
+  display: flex; align-items: center; background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; overflow: hidden;
+}
+.transfer-input-wrap:focus-within { border-color: rgba(229,255,0,0.5); }
+.transfer-input-icon { padding: 14px 16px; font-size: 16px; color: var(--acid); background: rgba(229,255,0,0.06); border-right: 1px solid rgba(255,255,255,0.08); }
+.transfer-input {
+  flex: 1; background: none; border: none; outline: none; padding: 14px 16px;
+  font-size: 16px; font-weight: 600; color: #fff; font-family: 'Sora', sans-serif; width: 100%;
+}
+.transfer-input::placeholder { color: rgba(255,255,255,0.25); }
+.transfer-msg-label { font-size: 12px; font-weight: 700; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
+.transfer-msg-input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 12px; padding: 14px 16px; font-size: 14px; color: #fff;
+  font-family: 'Sora', sans-serif; resize: none; outline: none; min-height: 60px;
+}
+.transfer-msg-input:focus { border-color: rgba(229,255,0,0.5); }
+.transfer-msg-input::placeholder { color: rgba(255,255,255,0.25); }
+.transfer-warning {
+  display: flex; align-items: flex-start; gap: 10px; padding: 14px;
+  background: rgba(255,179,0,0.06); border: 1px solid rgba(255,179,0,0.2);
+  border-radius: 12px; margin: 20px 0; font-size: 12px; color: rgba(255,179,0,0.85); line-height: 1.5;
+}
+.transfer-warning-icon { font-size: 18px; flex-shrink: 0; }
+.transfer-btn { width: 100%; background: var(--acid); color: var(--bg); border: none; border-radius: 14px; padding: 18px; font-size: 15px; font-weight: 800; font-family: 'Sora', sans-serif; cursor: pointer; transition: transform 0.15s; }
+.transfer-btn:hover { transform: translateY(-1px); }
+.transfer-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.transfer-cancel { width: 100%; background: transparent; color: var(--text-dim); border: none; padding: 12px; font-size: 14px; cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 6px; }
+
+/* ═══════════════════════════════════════════
    SCANNER RESULT OVERLAY
    ═══════════════════════════════════════════ */
 .scan-result-overlay {
@@ -5409,7 +5460,7 @@ body::after {
           <div class="pf-stat"><strong>1</strong> reventa</div>
         </div>
       </div>
-      <button class="pf-edit-btn">Editar perfil</button>
+      <button class="pf-edit-btn" onclick="profileEdit()">Editar perfil</button>
       <button class="pf-edit-btn" id="pf-promoter-btn" onclick="contactPromoter()" style="margin-left:8px;background:rgba(229,255,0,0.1);border-color:var(--acid);color:var(--acid);display:none">🏢 Quiero ser Promotor</button>
     </div>
 
@@ -7737,7 +7788,9 @@ body::after {
     tickets.forEach(t => {
       const docId = t._id;
       const isActive = t.status === 'active';
-      if (isActive) activeCount++; else historyCount++;
+      const isTransferred = t.status === 'transferred';
+      if (isTransferred) { historyCount++; }
+      else if (isActive) { activeCount++; } else { historyCount++; }
       var priceLabel = t.price > 0 ? 'S/' + t.price : 'GRATIS';
 
       // Image: use ticket.image first, then try allEvents match, then fallback
@@ -7766,7 +7819,7 @@ body::after {
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Precio</span><span class="mt-ticket-detail-value">${priceLabel}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI</span><span class="mt-ticket-detail-value">${t.userDni || '—'}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Produce</span><span class="mt-ticket-detail-value">${t.promoter || '—'}</span></div>
-            <div class="mt-ticket-detail-row" style="border:none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isActive ? '✅ Activa' : '⏰ Usada'}</span></div>
+            <div class="mt-ticket-detail-row" style="border:none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida a ' + (t._transferredTo || '') : isActive ? '✅ Activa' : t.status === 'resale-listed' ? '💰 En reventa' : '⏰ Usada'}</span></div>
           </div>
         </div>`;
 
@@ -8514,6 +8567,33 @@ body::after {
     }
   }
 
+  // ── Profile Edit ──
+  function profileEdit() {
+    if (!currentUser) { go('auth'); return; }
+    var displayName = userProfile?.displayName || currentUser.displayName || '';
+    var email = currentUser.email || '';
+    var newName = prompt('Nombre completo:', displayName);
+    if (newName === null) return; // cancelled
+    newName = newName.trim();
+    if (!newName) { alert('El nombre no puede estar vacío.'); return; }
+    if (DEMO_MODE) {
+      if (!userProfile) userProfile = {};
+      userProfile.displayName = newName;
+      if (currentUser) currentUser.displayName = newName;
+      alert('Perfil actualizado.');
+      loadProfile();
+    } else {
+      db.collection('users').doc(currentUser.uid).set({ displayName: newName }, { merge: true })
+        .then(function() {
+          if (!userProfile) userProfile = {};
+          userProfile.displayName = newName;
+          alert('Perfil actualizado.');
+          loadProfile();
+        })
+        .catch(function(err) { alert('Error: ' + err.message); });
+    }
+  }
+
   // ── Profile ──
   async function loadProfile() {
     if (!currentUser) { go('auth'); return; }
@@ -8925,9 +9005,9 @@ body::after {
   document.addEventListener('click', function() { mtMenuClose(); });
 
   function mtTransfer(ticketId) {
-    var email = prompt('Email de la persona a quien transferir:');
-    if (!email || !email.includes('@')) return;
-    alert('Entrada transferida a ' + email + '. Le llegará una notificación.');
+    var t = DEMO_MODE ? DEMO_TICKETS.find(function(tk) { return tk._id === ticketId; }) : null;
+    if (!t && DEMO_MODE) { alert('Entrada no encontrada.'); return; }
+    transferOpen(t ? t.eventName : 'Evento', t ? (t.ticketName || 'General') : 'General', ticketId);
   }
 
   function mtDownloadReceipt(ticketId, eventName, tier, price) {
@@ -9009,6 +9089,101 @@ body::after {
     if (netEl) netEl.textContent = 'S/' + net;
   }
   /* resaleConfirm — moved to Firebase block above */
+
+  /* ═══════════════════════════════════════════
+     TRANSFER TICKET
+     ═══════════════════════════════════════════ */
+  function transferOpen(eventName, tier, ticketDocId) {
+    var eventEl = document.getElementById('transfer-event-name');
+    var tierEl = document.getElementById('transfer-ticket-tier');
+    var overlayEl = document.getElementById('transfer-overlay');
+    var emailEl = document.getElementById('transfer-email');
+    var msgEl = document.getElementById('transfer-msg');
+    if (!eventEl || !tierEl || !overlayEl) { log.error('transferOpen: Missing DOM elements'); return; }
+    window._transferTicketId = ticketDocId || null;
+    eventEl.textContent = eventName;
+    tierEl.textContent = tier;
+    if (emailEl) emailEl.value = '';
+    if (msgEl) msgEl.value = '';
+    overlayEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function() { if (emailEl) emailEl.focus(); }, 400);
+  }
+  function transferClose() {
+    document.getElementById('transfer-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function transferOverlayClick(e) {
+    if (e.target === document.getElementById('transfer-overlay')) transferClose();
+  }
+  async function transferConfirm() {
+    var emailEl = document.getElementById('transfer-email');
+    var msgEl = document.getElementById('transfer-msg');
+    var email = (emailEl ? emailEl.value : '').trim().toLowerCase();
+    var msg = (msgEl ? msgEl.value : '').trim();
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      alert('Ingresa un email válido.'); return;
+    }
+    if (currentUser && email === (currentUser.email || '').toLowerCase()) {
+      alert('No puedes transferir una entrada a ti mismo.'); return;
+    }
+    var ticketDocId = window._transferTicketId;
+    if (!ticketDocId) { alert('Error: ticket no identificado.'); return; }
+
+    var confirmMsg = '¿Confirmas transferir esta entrada a ' + email + '?\n\nEsta acción es irreversible.';
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      if (DEMO_MODE) {
+        var tk = DEMO_TICKETS.find(function(t) { return t._id === ticketDocId; });
+        if (!tk) { alert('Entrada no encontrada.'); return; }
+        tk.status = 'transferred';
+        tk._transferredTo = email;
+        tk._transferDate = new Date().toISOString();
+        tk._transferMsg = msg;
+        // Create a new ticket for the recipient (demo simulation)
+        DEMO_TICKETS.push({
+          _id: 'demo-transfer-' + Date.now(),
+          eventId: tk.eventId,
+          eventName: tk.eventName,
+          ticketName: tk.ticketName,
+          price: tk.price,
+          date: tk.date,
+          status: 'active',
+          buyerEmail: email,
+          buyerDNI: '—',
+          _transferredFrom: currentUser ? currentUser.email : 'unknown',
+          _transferMsg: msg,
+          _isReceivedTransfer: true
+        });
+      } else {
+        // Production: update Firestore
+        await db.collection('tickets').doc(ticketDocId).update({
+          status: 'transferred',
+          transferredTo: email,
+          transferDate: firebase.firestore.FieldValue.serverTimestamp(),
+          transferMsg: msg || null
+        });
+        // Create transfer record
+        await db.collection('transfers').add({
+          ticketId: ticketDocId,
+          fromUserId: currentUser.uid,
+          fromEmail: currentUser.email,
+          toEmail: email,
+          message: msg || null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      transferClose();
+      setTimeout(function() {
+        alert('¡Entrada transferida exitosamente a ' + email + '! 🎉\nLe llegará una notificación.');
+        loadMyTickets();
+      }, 300);
+    } catch (err) {
+      log.error('Transfer error:', err);
+      alert('Error al transferir: ' + err.message);
+    }
+  }
 
   /* ═══════════════════════════════════════════
      SCANNER RESULT
@@ -10666,9 +10841,44 @@ body::after {
 </div>
 
 <!-- ═══════════════════════════════════════════
+     TRANSFER OVERLAY
+     ═══════════════════════════════════════════ -->
+<div class="transfer-overlay" id="transfer-overlay" onclick="transferOverlayClick(event)">
+  <div class="transfer-sheet">
+    <div class="resale-handle"></div>
+    <div class="transfer-title">Transferir entrada 🎁</div>
+    <div class="transfer-sub">Envía tu entrada a otra persona. La transferencia es inmediata e irreversible.</div>
+    <div class="resale-ticket-preview">
+      <div class="rtp-icon">🎫</div>
+      <div class="rtp-info">
+        <h3 id="transfer-event-name">FABRICLIMA 001</h3>
+        <p id="transfer-ticket-tier">General · 16 Mayo 2026</p>
+      </div>
+    </div>
+    <div class="transfer-input-section">
+      <div class="transfer-input-label">Email del destinatario</div>
+      <div class="transfer-input-wrap">
+        <div class="transfer-input-icon">📧</div>
+        <input class="transfer-input" type="email" id="transfer-email" placeholder="amigo@email.com" autocomplete="email">
+      </div>
+    </div>
+    <div class="transfer-input-section">
+      <div class="transfer-msg-label">Mensaje (opcional)</div>
+      <textarea class="transfer-msg-input" id="transfer-msg" placeholder="Ej: ¡Nos vemos en el evento! 🎶" maxlength="200"></textarea>
+    </div>
+    <div class="transfer-warning">
+      <div class="transfer-warning-icon">⚠️</div>
+      <div>Esta acción es <strong>irreversible</strong>. La entrada se desvinculará de tu cuenta y se asociará al destinatario. Si no tiene cuenta en Lezgo, recibirá una invitación para registrarse.</div>
+    </div>
+    <button class="transfer-btn" id="transfer-confirm-btn" onclick="transferConfirm()">Transferir entrada →</button>
+    <button class="transfer-cancel" onclick="transferClose()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      SCANNER RESULT OVERLAY
      ═══════════════════════════════════════════ -->
-<div class="scan-result-overlay" id="scan-result-overlay">
+<div class="scan-result-overlay" id="scan-result-overlay"
   <div class="scan-result-bg" onclick="scanResultClose()"></div>
   <div class="scan-result-card" id="scan-result-card">
     <span class="scan-result-icon" id="scan-result-icon">✅</span>
