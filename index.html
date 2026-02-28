@@ -2447,7 +2447,7 @@ body::after {
   position: fixed;
   top: 64px; left: 0; right: 0; bottom: 0;
   overflow-y: auto;
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   z-index: 5;
   background: var(--bg);
@@ -2457,10 +2457,7 @@ body::after {
 #v-deck .dk-mission,
 #v-deck .dk-value-section,
 #v-deck .dk-profile-section,
-#v-deck .dk-cta {
-  scroll-snap-align: start;
-  min-height: calc(100vh - 64px);
-}
+#v-deck .dk-cta,
 #v-deck .dk-stats,
 #v-deck .dk-slide-half {
   scroll-snap-align: start;
