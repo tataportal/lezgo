@@ -8,6 +8,10 @@
 <title>LEZGO — Ticketing sin fraude</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.youtube.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;900&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
 <meta property="og:title" content="LEZGO — Ticketing sin fraude">
@@ -7888,7 +7892,50 @@ a[onclick]:active,
   var allEvents = [];
   var currentEventId = null;
 
+  function injectDemoData() {
+    if (typeof DEMO_EVENTS !== 'undefined') {
+      DEMO_EVENTS.forEach(ev => {
+        var existing = allEvents.findIndex(e => e._id === ev._id);
+        if (existing !== -1) {
+          allEvents[existing] = Object.assign({}, allEvents[existing], ev);
+        } else {
+          allEvents.push(ev);
+        }
+      });
+    }
+    if (typeof DEMO_TICKETS !== 'undefined') {
+      DEMO_TICKETS.forEach(t => {
+        if (!allEvents.find(e => e._id === t.eventId)) {
+          allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
+        }
+      });
+    }
+  }
+
   async function loadEvents() {
+    // In DEMO_MODE: render demo data INSTANTLY, then optionally merge Firestore in background
+    if (DEMO_MODE) {
+      injectDemoData();
+      renderAllSections();
+      // Background: try to merge Firestore data (non-blocking)
+      try {
+        const snapshot = await db.collection('events').where('status', 'in', ['published', 'sold-out']).get();
+        if (snapshot.size > 0) {
+          snapshot.forEach(doc => {
+            var data = { ...doc.data(), _id: doc.id };
+            var existing = allEvents.findIndex(e => e._id === data._id);
+            if (existing !== -1) {
+              allEvents[existing] = Object.assign({}, allEvents[existing], data);
+            } else {
+              allEvents.push(data);
+            }
+          });
+          renderAllSections(); // Re-render with merged data
+        }
+      } catch (err) { log.error('Firestore background merge:', err); }
+      return;
+    }
+    // Non-demo: load from Firestore first
     try {
       const snapshot = await db.collection('events').where('status', 'in', ['published', 'sold-out']).get();
       allEvents = [];
@@ -7896,26 +7943,6 @@ a[onclick]:active,
         allEvents.push({ ...doc.data(), _id: doc.id });
       });
     } catch (err) { log.error('loadEvents error:', err); }
-    // In demo mode, inject DEMO_EVENTS (rich data with phases) and DEMO_TICKETS events
-    if (DEMO_MODE) {
-      if (typeof DEMO_EVENTS !== 'undefined') {
-        DEMO_EVENTS.forEach(ev => {
-          var existing = allEvents.findIndex(e => e._id === ev._id);
-          if (existing !== -1) {
-            allEvents[existing] = Object.assign({}, allEvents[existing], ev);
-          } else {
-            allEvents.push(ev);
-          }
-        });
-      }
-      if (typeof DEMO_TICKETS !== 'undefined') {
-        DEMO_TICKETS.forEach(t => {
-          if (!allEvents.find(e => e._id === t.eventId)) {
-            allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
-          }
-        });
-      }
-    }
     renderAllSections();
   }
 
@@ -8019,18 +8046,25 @@ a[onclick]:active,
     var desc = feat.description || '';
     if (isSold) desc += ' SOLD OUT.';
 
-    // ── Set hero background: YouTube live set, event image, or fallback ──
+    // ── Set hero background: show image first, lazy-load YouTube after page renders ──
     if (videoWrap) {
+      var bgImg = getEventImage(feat);
+      // Always show image first (instant)
+      videoWrap.innerHTML = '<div class="hero-bg-img" style="background-image:url(' + bgImg + ');background-size:cover;background-position:center 30%;"></div>';
+      // Lazy-load YouTube iframe after 2s (non-blocking)
       if (feat.heroVideo) {
-        // heroVideo = YouTube video ID (e.g. "dQw4w9WgXcQ")
-        videoWrap.innerHTML = '<iframe src="https://www.youtube.com/embed/' + feat.heroVideo +
-          '?autoplay=1&mute=1&loop=1&playlist=' + feat.heroVideo +
-          '&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0' +
-          '" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-      } else {
-        // Fallback: event image or genre image as background
-        var bgImg = getEventImage(feat);
-        videoWrap.innerHTML = '<div class="hero-bg-img" style="background-image:url(' + bgImg + ');background-size:cover;background-position:center 30%;"></div>';
+        setTimeout(function() {
+          var iframe = document.createElement('iframe');
+          iframe.src = 'https://www.youtube.com/embed/' + feat.heroVideo +
+            '?autoplay=1&mute=1&loop=1&playlist=' + feat.heroVideo +
+            '&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
+          iframe.allow = 'autoplay; encrypted-media';
+          iframe.allowFullscreen = true;
+          iframe.style.opacity = '0';
+          iframe.style.transition = 'opacity 1s ease';
+          videoWrap.appendChild(iframe);
+          iframe.onload = function() { iframe.style.opacity = '1'; };
+        }, 2000);
       }
     }
 
