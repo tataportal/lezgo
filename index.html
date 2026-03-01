@@ -2047,6 +2047,537 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════
+   PROTO EVENT VIEW STYLES — Scoped to #v-evento
+   ═══════════════════════════════════════════ */
+
+#v-evento .hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+#v-evento .hero-bg {
+  position: absolute; inset: 0;
+  background: url('') center/cover no-repeat;
+}
+#v-evento .hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,5,5,0) 0%,
+    rgba(5,5,5,0.3) 35%,
+    rgba(5,5,5,0.92) 70%,
+    var(--bg) 100%
+  );
+}
+#v-evento .hero-content {
+  position: relative; z-index: 2;
+  padding: 0 var(--pad) 48px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+#v-evento .hero-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text-3);
+  background: none; margin-bottom: 28px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  transition: color 0.2s;
+  border: none; cursor: pointer;
+}
+#v-evento .hero-back:hover { color: var(--acid); }
+#v-evento .hero-back svg { width: 14px; height: 14px; }
+
+#v-evento .hero-title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+#v-evento .hero-sub {
+  font-size: clamp(16px, 2.5vw, 24px);
+  font-weight: 300;
+  color: var(--acid);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+#v-evento .hero-desc {
+  font-size: 15px; color: var(--text-2);
+  max-width: 520px; line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+#v-evento .hero-meta {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+#v-evento .hero-meta-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 600;
+}
+#v-evento .hero-meta-item .icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(229,255,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+#v-evento .hero-ctas {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 48px;
+}
+#v-evento .btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 32px; font-size: 14px; font-weight: 700;
+  border-radius: var(--radius-sm); transition: all 0.25s;
+  letter-spacing: -0.2px;
+  border: none; cursor: pointer;
+}
+#v-evento .btn-primary {
+  background: var(--acid); color: #000;
+}
+#v-evento .btn-primary:hover {
+  box-shadow: 0 0 50px var(--acid-glow);
+  transform: translateY(-2px);
+}
+#v-evento .btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-light);
+  color: var(--text);
+  text-decoration: none;
+}
+#v-evento .btn-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(229,255,0,0.04);
+}
+#v-evento .btn-sold {
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--red);
+}
+#v-evento .btn-sold:hover {
+  background: rgba(255,59,59,0.06);
+}
+
+/* ═══ SECTIONS — Common ═══ */
+#v-evento .section {
+  padding: 72px var(--pad);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+#v-evento .section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acid);
+  margin-bottom: 16px; opacity: 0.8;
+}
+#v-evento .section-heading {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 40px;
+}
+#v-evento .section-heading em { font-style: normal; color: var(--acid); }
+#v-evento .divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light) 20%, var(--border-light) 80%, transparent);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ═══ TICKETS — The main event ═══ */
+#v-evento .tk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+#v-evento .tk-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  cursor: pointer;
+}
+#v-evento .tk-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+#v-evento .tk-inner {
+  padding: 32px 28px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+/* Tier gradients */
+#v-evento .tk-tier-1 {
+  background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-color: rgba(15,52,96,0.5);
+}
+#v-evento .tk-tier-2 {
+  background: linear-gradient(155deg, #1a1a1a 0%, #2d1b69 50%, #5b21b6 100%);
+  border-color: rgba(91,33,182,0.4);
+}
+#v-evento .tk-tier-3 {
+  background: linear-gradient(155deg, #1a1a0a 0%, #3d3d00 50%, #656500 100%);
+  border-color: rgba(229,255,0,0.2);
+}
+#v-evento .tk-tier-4 {
+  background: linear-gradient(155deg, #1a0a0a 0%, #4a1515 50%, #7c1d1d 100%);
+  border-color: rgba(255,59,59,0.25);
+}
+#v-evento .tk-sold {
+  background: var(--surface);
+  border-color: var(--border);
+  opacity: 0.55;
+  transition: opacity 0.3s;
+}
+#v-evento .tk-card--sold { cursor: pointer; }
+#v-evento .tk-card--sold:hover .tk-sold { opacity: 0.25; }
+#v-evento .tk-card--sold:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.08); }
+
+#v-evento .tk-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: 20px;
+  background: rgba(5,5,5,0.7);
+  backdrop-filter: blur(6px);
+}
+#v-evento .tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
+#v-evento .tk-overlay-icon { font-size: 32px; margin-bottom: 12px; }
+#v-evento .tk-overlay-text {
+  font-size: 15px; font-weight: 800; color: var(--acid);
+  letter-spacing: -0.3px; margin-bottom: 4px;
+}
+#v-evento .tk-overlay-hint {
+  font-size: 11px; color: var(--text-3); font-weight: 500;
+}
+
+#v-evento .tk-name {
+  font-size: 32px; font-weight: 900;
+  letter-spacing: -1px; line-height: 1;
+  margin-bottom: 16px;
+}
+#v-evento .tk-includes {
+  font-size: 12px; color: rgba(255,255,255,0.45);
+  line-height: 1.6; margin-top: 0;
+  list-style: none;
+  padding: 0;
+}
+#v-evento .tk-includes li {
+  list-style: none;
+  padding-left: 16px;
+  position: relative;
+}
+#v-evento .tk-includes li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+}
+
+#v-evento .tk-header {
+  min-height: 110px;
+}
+
+#v-evento .tk-phases {
+  padding-top: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+#v-evento .tk-phase {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  font-size: 13px; font-weight: 600;
+}
+#v-evento .tk-phase-name { color: rgba(255,255,255,0.35); }
+#v-evento .tk-phase-price { color: rgba(255,255,255,0.35); }
+#v-evento .tk-phase--past .tk-phase-name { text-decoration: line-through; }
+#v-evento .tk-phase--past .tk-phase-price { text-decoration: line-through; }
+#v-evento .tk-phase--active .tk-phase-name { color: var(--acid); }
+#v-evento .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: 15px; }
+#v-evento .tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.2); }
+#v-evento .tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.2); }
+#v-evento .tk-phase-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); flex-shrink: 0; margin-right: 10px;
+}
+#v-evento .tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.2); }
+#v-evento .tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
+#v-evento .tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.08); }
+#v-evento .tk-phase-left { display: flex; align-items: center; }
+
+#v-evento .tk-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+#v-evento .tk-buy {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  color: #fff; font-size: 12px; font-weight: 700;
+  transition: all 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#v-evento .tk-buy:hover { background: #fff; color: #000; }
+#v-evento .tk-sold-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-3);
+}
+#v-evento .tk-sold-all {
+  font-size: 11px; color: #ff4444; font-weight: 700;
+  text-align: center; padding: 10px 0;
+  letter-spacing: 1.5px;
+}
+
+#v-evento .tk-avail {
+  margin-top: 16px;
+}
+#v-evento .tk-avail-bar {
+  height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+#v-evento .tk-avail-fill {
+  height: 100%; border-radius: 2px;
+  background: rgba(255,255,255,0.3);
+  transition: width 0.6s ease;
+}
+#v-evento .tk-avail-text {
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  margin-top: 5px; text-align: right;
+}
+
+/* ═══ MARKETPLACE BANNER ═══ */
+#v-evento .mp-banner {
+  margin-top: 24px;
+  padding: 48px 40px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+#v-evento .mp-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(229,255,0,0.04), transparent 60%);
+  pointer-events: none;
+}
+#v-evento .mp-info { position: relative; z-index: 1; }
+#v-evento .mp-title {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+#v-evento .mp-desc {
+  font-size: 14px; color: var(--text-3); line-height: 1.6;
+}
+#v-evento .mp-action { position: relative; z-index: 1; flex-shrink: 0; }
+
+/* ═══ LINEUP — Photo cards ═══ */
+#v-evento .lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+#v-evento .lineup-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  cursor: pointer;
+}
+#v-evento .lineup-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+#v-evento .lineup-card-img {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center top;
+  filter: grayscale(100%);
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.4s;
+}
+#v-evento .lineup-card:hover .lineup-card-img {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+}
+#v-evento .lineup-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, transparent 60%);
+  z-index: 1;
+}
+#v-evento .lineup-card-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px 20px;
+  z-index: 2;
+}
+#v-evento .lineup-name {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.1;
+  margin-bottom: 6px;
+}
+#v-evento .lineup-role {
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  font-weight: 500; margin-bottom: 10px;
+}
+#v-evento .lineup-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+#v-evento .lineup-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 4px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px; color: rgba(255,255,255,0.6);
+  backdrop-filter: blur(4px);
+}
+#v-evento .lineup-card--hl {
+  grid-column: span 2;
+  aspect-ratio: 4 / 3;
+}
+#v-evento .lineup-card--hl .lineup-name {
+  font-size: 36px; letter-spacing: -1px;
+}
+#v-evento .lineup-card--hl .lineup-role {
+  font-size: 14px;
+}
+#v-evento .lineup-badge {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
+  background: var(--acid); color: #000;
+  padding: 5px 12px; border-radius: 6px;
+}
+
+/* ═══ INFO — Compact list ═══ */
+#v-evento .info-list {
+  display: flex; flex-wrap: wrap; gap: 10px 16px;
+}
+#v-evento .info-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+}
+#v-evento .info-chip span { font-size: 15px; }
+#v-evento .info-prohibited {
+  margin-top: 20px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+#v-evento .info-prohibited-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-3);
+  margin-bottom: 10px;
+}
+#v-evento .info-prohibited-items {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+#v-evento .info-prohibited-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,60,60,0.06);
+  border: 1px solid rgba(255,60,60,0.15);
+  border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,120,120,0.9);
+}
+
+/* ═══ ABOUT — Description block ═══ */
+#v-evento .about-text {
+  font-size: 16px; color: var(--text-2); line-height: 1.8;
+  max-width: 700px;
+}
+#v-evento .about-text + .about-text { margin-top: 16px; }
+
+/* ═══ VENUE ═══ */
+#v-evento .venue-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: stretch;
+}
+#v-evento .venue-info {
+  display: flex; flex-direction: column; justify-content: center;
+}
+#v-evento .venue-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+#v-evento .venue-addr { font-size: 15px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; }
+#v-evento .venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#v-evento .venue-chip {
+  font-size: 11px; font-weight: 600; padding: 8px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-3);
+}
+#v-evento .venue-map {
+  min-height: 280px; border-radius: var(--radius);
+  background: var(--surface); border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ═══ TRUST ═══ */
+#v-evento .trust-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+#v-evento .trust-item {
+  text-align: center; padding: 24px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+#v-evento .trust-icon { font-size: 24px; margin-bottom: 10px; }
+#v-evento .trust-text { font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.4; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  #v-evento .hero { min-height: 85vh; }
+  #v-evento .hero-meta { gap: 12px; }
+  #v-evento .hero-meta-item { font-size: 13px; }
+  #v-evento .hero-meta-item .icon { width: 36px; height: 36px; font-size: 16px; }
+  #v-evento .section { padding: 56px 20px; }
+  #v-evento .tk-grid { grid-template-columns: 1fr 1fr; }
+  #v-evento .tk-inner { min-height: 280px; padding: 24px 20px; }
+  #v-evento .tk-name { font-size: 24px; }
+  #v-evento .tk-buy { padding: 10px 18px; font-size: 12px; }
+  #v-evento .info-list { gap: 8px 12px; }
+  #v-evento .venue-block { grid-template-columns: 1fr; }
+  #v-evento .lineup-grid { grid-template-columns: 1fr 1fr; }
+  #v-evento .lineup-card--hl { grid-column: span 2; }
+  #v-evento .lineup-card--hl .lineup-name { font-size: 28px; }
+  #v-evento .mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
+  #v-evento .mp-desc { max-width: 100%; }
+  #v-evento .trust-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  #v-evento .tk-grid { grid-template-columns: 1fr; }
+  #v-evento .lineup-grid { grid-template-columns: 1fr; }
+  #v-evento .lineup-card--hl { grid-column: span 1; aspect-ratio: 3 / 4; }
+  #v-evento .lineup-card--hl .lineup-name { font-size: 24px; }
+  #v-evento .trust-row { grid-template-columns: 1fr; }
+  #v-evento .hero-title { letter-spacing: -2px; }
+}
+
+/* ═══════════════════════════════════════════
    P2P MARKETPLACE
    ═══════════════════════════════════════════ */
 .mp {
@@ -5557,144 +6088,152 @@ body::after {
 
 
 <!-- ═══════════════════════════════════════════
-     VIEW 5: EVENTO DEMO
+     VIEW 5: EVENTO DETAIL
      ═══════════════════════════════════════════ -->
 <div id="v-evento" class="view">
-  <div class="ev-page">
 
-    <!-- ═══ HERO ═══ -->
-    <section class="ev-hero">
-      <div class="ev-hero-img" id="ev-hero-img" style="background-image:url('');"></div>
-      <div class="ev-hero-content">
-        <div class="ev-hero-back" onclick="go('eventos')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Volver a eventos
-        </div>
-        <div class="ev-hero-tags"></div>
-        <h1 class="ev-hero-title"></h1>
-        <div class="ev-hero-sub"></div>
-        <div class="ev-hero-info">
-          <div class="ev-hero-info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            <span></span>
-          </div>
-          <div class="ev-hero-info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span></span>
-          </div>
-          <div class="ev-hero-info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <span></span>
-          </div>
-        </div>
-        <div class="ev-countdown" id="ev-countdown"></div>
-        <div class="ev-hero-actions">
-          <button class="ev-hero-cta" id="ev-cta-main" onclick="document.getElementById('ev-tickets').scrollIntoView({behavior:'smooth'})">
-            Comprar entradas
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 7l10 10M17 7v10H7"/></svg>
-          </button>
-          <div style="position:relative;">
-            <button id="cal-btn" onclick="calToggle(event)" class="ev-btn-secondary">
-              📅 Agregar al calendario
-            </button>
-            <div id="cal-dropdown" style="position:fixed;z-index:99999;width:210px;background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity 0.18s,transform 0.18s;">
-              <div onclick="calAdd('google')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text-mid);transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='var(--text-mid)'">
-                <span style="font-size:16px;">🗓️</span> Google Calendar
-              </div>
-              <div onclick="calAdd('apple')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text-mid);transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='var(--text-mid)'">
-                <span style="font-size:16px;">🍎</span> Apple Calendar
-              </div>
-              <div onclick="calAdd('outlook')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;color:var(--text-mid);transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.07)';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='var(--text-mid)'">
-                <span style="font-size:16px;">📧</span> Outlook
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- ═══════════════════════════════════════════
+       HERO — Full bleed immersive
+       ═══════════════════════════════════════════ -->
+  <section id="evento-hero" class="hero" style="background-image: url('');">
+    <div class="hero-bg" id="evento-hero-bg"></div>
+    <div class="hero-content">
+      <a href="#" class="hero-back" onclick="go('eventos'); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Eventos
+      </a>
+      <h1 class="hero-title" id="evento-hero-title"></h1>
+      <div class="hero-sub" id="evento-hero-sub"></div>
+      <p class="hero-desc" id="evento-hero-desc"></p>
+      <div class="hero-meta" id="evento-hero-meta">
+        <!-- Populated: date, venue, time meta items -->
       </div>
-    </section>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" id="evento-cta-buy" onclick="document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'})">Comprar entradas</button>
+        <a class="btn btn-outline" id="evento-cal-btn" href="#" target="_blank" rel="noopener">Agregar al calendario</a>
+      </div>
+    </div>
+  </section>
 
-    <!-- ═══ QUICK STATS BAR ═══ -->
-    <div class="ev-stats-bar" id="ev-stats-bar">
+  <!-- ═══════════════════════════════════════════
+       STATS BAR
+       ═══════════════════════════════════════════ -->
+  <div id="evento-stats-bar" class="ev-stats-bar"></div>
+
+  <!-- ═══════════════════════════════════════════
+       TICKETS
+       ═══════════════════════════════════════════ -->
+  <div class="divider"></div>
+  <section class="section" id="evento-tickets">
+    <div class="section-label">Entradas</div>
+    <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
+    <div class="tk-grid" id="evento-tk-grid">
       <!-- Populated by openEvent() -->
     </div>
+    <!-- Marketplace CTA -->
+    <div class="mp-banner" id="evento-mp-banner" style="display:none;">
+      <div class="mp-info">
+        <div class="mp-title">Busca en el marketplace de reventa</div>
+        <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
+      </div>
+      <div class="mp-action">
+        <button class="btn btn-primary" onclick="go('marketplace')">Ver Marketplace →</button>
+      </div>
+    </div>
+  </section>
 
-    <!-- ═══ LINEUP ═══ -->
-    <section class="ev-section" id="ev-lineup-section">
-      <div class="ev-section-label">// Lineup</div>
-      <h2 class="ev-section-title" id="ev-lineup-title">Artistas</h2>
-      <div class="ev-lineup-grid" id="ev-lineup-grid">
+  <!-- ═══════════════════════════════════════════
+       LINEUP
+       ═══════════════════════════════════════════ -->
+  <div class="divider"></div>
+  <section class="section" id="evento-lineup-section" style="display:none;">
+    <div class="section-label">Lineup</div>
+    <h2 class="section-heading">Artistas <em>confirmados</em></h2>
+    <div class="lineup-grid" id="evento-lineup-grid">
+      <!-- Populated by openEvent() -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       EVENT INFO
+       ═══════════════════════════════════════════ -->
+  <div class="divider" id="evento-divider-info" style="display:none;"></div>
+  <section class="section" id="evento-info-section" style="display:none;">
+    <div class="section-label">Info del evento</div>
+    <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
+    <div class="info-list" id="evento-info-list">
+      <!-- Populated by openEvent() -->
+    </div>
+    <div class="info-prohibited" id="evento-prohibited" style="display:none;">
+      <div class="info-prohibited-title">No ingresan</div>
+      <div class="info-prohibited-items" id="evento-prohibited-items">
         <!-- Populated by openEvent() -->
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ═══ SOBRE EL EVENTO ═══ -->
-    <section class="ev-section" id="ev-about-section">
-      <div class="ev-section-label">// Sobre el evento</div>
-      <div class="ev-about-content">
-        <div class="ev-about-text" id="ev-about-text"></div>
-        <div class="ev-about-details" id="ev-about-details">
-          <!-- genre, age, setting, vibe chips -->
+  <!-- ═══════════════════════════════════════════
+       ABOUT
+       ═══════════════════════════════════════════ -->
+  <div class="divider" id="evento-divider-about" style="display:none;"></div>
+  <section class="section" id="evento-about-section" style="display:none;">
+    <div class="section-label">Sobre el evento</div>
+    <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
+    <div id="evento-about-content">
+      <!-- Populated by openEvent() -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       VENUE
+       ═══════════════════════════════════════════ -->
+  <div class="divider" id="evento-divider-venue" style="display:none;"></div>
+  <section class="section" id="evento-venue-section" style="display:none;">
+    <div class="venue-block">
+      <div class="venue-info">
+        <div class="section-label">Venue</div>
+        <div class="venue-name" id="evento-venue-name"></div>
+        <div class="venue-addr" id="evento-venue-addr"></div>
+        <div class="venue-chips" id="evento-venue-chips">
+          <!-- Populated by openEvent() -->
         </div>
       </div>
-    </section>
-
-    <!-- ═══ ENTRADAS ═══ -->
-    <section class="ev-tickets-section" id="ev-tickets">
-      <div class="ev-tickets-label" id="ev-tickets-label">Entradas</div>
-      <div class="ev-tickets-heading" id="ev-tickets-heading">Elige tu entrada</div>
-      <div class="ev-tickets-sub" id="ev-tickets-sub">Todas las entradas están verificadas con tu identidad. Sin reventas truchas.</div>
-
-      <div class="tk-grid" id="ev-tk-grid">
-        <!-- Populated by openEvent() -->
+      <div class="venue-map" id="evento-venue-map">
+        <!-- Populated with Google Maps iframe -->
       </div>
+    </div>
+  </section>
 
-      <!-- Sold-out marketplace CTA (hidden by default) -->
-      <div class="ev-marketplace-cta" id="ev-marketplace-cta" style="display:none;">
-        <div class="ev-mp-box">
-          <div class="ev-mp-icon">🔄</div>
-          <h3>Evento agotado — busca en reventa</h3>
-          <p>Fans verificados están revendiendo sus entradas en el marketplace de Lezgo. Precio justo, identidad verificada, transferencia segura.</p>
-          <button class="btn-acid" onclick="go('marketplace')">Ver Marketplace →</button>
-        </div>
+  <!-- ═══════════════════════════════════════════
+       TRUST
+       ═══════════════════════════════════════════ -->
+  <div class="divider"></div>
+  <section class="section">
+    <div class="trust-row">
+      <div class="trust-item">
+        <div class="trust-icon">✅</div>
+        <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
       </div>
-
-      <div class="tk-features">
-        <div class="tk-feature"><span class="tk-feature-icon">✅</span><span>Entrada vinculada a tu DNI</span></div>
-        <div class="tk-feature"><span class="tk-feature-icon">✅</span><span>Reventa segura P2P</span></div>
-        <div class="tk-feature"><span class="tk-feature-icon">✅</span><span>Verificación en puerta</span></div>
-        <div class="tk-feature"><span class="tk-feature-icon">✅</span><span>Soporte en menos de 24h</span></div>
+      <div class="trust-item">
+        <div class="trust-icon">🔄</div>
+        <div class="trust-text">Reventa segura<br>P2P</div>
       </div>
-    </section>
-
-    <!-- ═══ DETALLES + MAPA ═══ -->
-    <section class="ev-section ev-venue-section" id="ev-venue-section">
-      <div class="ev-section-label">// Venue</div>
-      <div class="ev-venue-grid">
-        <div class="ev-venue-info">
-          <h2 class="ev-section-title" id="ev-venue-name"></h2>
-          <div class="ev-venue-address" id="ev-venue-address"></div>
-          <div class="ev-venue-chips" id="ev-venue-chips"></div>
-        </div>
-        <div class="ev-venue-map" id="ev-venue-map">
-          <div style="width:100%;height:100%;background:var(--bg-raised);border-radius:16px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:14px;">📍 Mapa próximamente</div>
-        </div>
+      <div class="trust-item">
+        <div class="trust-icon">🪪</div>
+        <div class="trust-text">Verificación<br>en puerta</div>
       </div>
-    </section>
-
-    <!-- ═══ TAGS PÚBLICOS ═══ -->
-    <section class="ev-section" id="ev-tags-section">
-      <div class="ev-section-label">// Tags</div>
-      <div class="ev-tags-cloud" id="ev-tags-cloud">
-        <!-- Populated by openEvent() -->
+      <div class="trust-item">
+        <div class="trust-icon">💬</div>
+        <div class="trust-text">Soporte en<br>menos de 24h</div>
       </div>
-    </section>
-
-  </div>
+    </div>
+  </section>
 
   <div class="site-footer">
     <div class="site-footer-logo">LEZGO</div>
     <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
   </div>
+
 </div>
 
 
@@ -7241,56 +7780,88 @@ body::after {
     const isSoldOut = ev.status === 'sold-out';
     const prettify = s => s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
 
-    // ── HERO ──
-    const heroTitle = document.querySelector('#v-evento .ev-hero-title');
-    if (heroTitle) heroTitle.innerHTML = ev.name + (ev.subtitle ? '<span> — ' + ev.subtitle + '</span>' : '');
-    const heroSub = document.querySelector('#v-evento .ev-hero-sub');
-    if (heroSub) heroSub.textContent = ev.description || '';
-
-    // Info items
-    const infoItems = document.querySelectorAll('#v-evento .ev-hero-info-item span');
-    if (infoItems[0]) {
-      const dateObj = new Date(ev.date + 'T12:00:00');
-      infoItems[0].textContent = ev.dateLabel || dateObj.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-    if (infoItems[1]) infoItems[1].textContent = (ev.venue || '') + ', ' + (ev.location || '');
-    if (infoItems[2]) infoItems[2].textContent = (ev.timeStart || '21:00') + ' — ' + (ev.timeEnd || '05:00');
-
-    // Hero image
-    const heroImg = document.getElementById('ev-hero-img');
-    if (heroImg) {
+    // ══════════════════════════════════════════
+    // HERO
+    // ══════════════════════════════════════════
+    const heroBg = document.getElementById('evento-hero-bg');
+    if (heroBg) {
       const imgUrl = ev.image || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
-      heroImg.style.backgroundImage = `url('${imgUrl}')`;
+      heroBg.style.backgroundImage = `url('${imgUrl}')`;
     }
 
-    // Tags
-    const tagsContainer = document.querySelector('#v-evento .ev-hero-tags');
-    if (tagsContainer) {
-      let h = '';
-      if (isSoldOut) h += '<span class="ev-hero-tag tag-soldout">SOLD OUT</span>';
-      const genres = evTags.filter(t => ['techno','dark-techno','hard-techno','melodic-techno','house','deep-house','minimal','dnb','ambient','electronica','breaks','acid'].includes(t));
-      genres.forEach(g => h += `<span class="ev-hero-tag">${prettify(g)}</span>`);
-      const vibes = evTags.filter(t => ['underground','massive','intimate','chill','indoor','outdoor','open-air','mixed','vinyl-only','secret-location','afterhours','brunch','extended-set'].includes(t));
-      vibes.slice(0,2).forEach(v => h += `<span class="ev-hero-tag">${prettify(v)}</span>`);
-      h += '<span class="ev-hero-tag">ID Verificado</span>';
-      tagsContainer.innerHTML = h;
+    const heroTitle = document.getElementById('evento-hero-title');
+    if (heroTitle) heroTitle.textContent = ev.name || '';
+
+    const heroSub = document.getElementById('evento-hero-sub');
+    if (heroSub) heroSub.textContent = ev.subtitle || '';
+
+    const heroDesc = document.getElementById('evento-hero-desc');
+    if (heroDesc) heroDesc.textContent = ev.description || '';
+
+    // Hero meta (date, venue, time)
+    const heroMeta = document.getElementById('evento-hero-meta');
+    if (heroMeta) {
+      const dateObj = new Date(ev.date + 'T12:00:00');
+      const dateLabel = ev.dateLabel || dateObj.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      const venue = ev.venue || '';
+      const location = ev.location || '';
+      const venueLabel = venue + (location ? ', ' + location : '');
+      const timeStart = ev.timeStart || '22:00';
+      const timeEnd = ev.timeEnd || '05:00';
+      const timeLabel = timeStart + ' — ' + timeEnd;
+
+      heroMeta.innerHTML = `
+        <div class="hero-meta-item">
+          <div class="icon">📅</div>
+          <div>${dateLabel}</div>
+        </div>
+        <a class="hero-meta-item" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venueLabel)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+          <div class="icon">📍</div>
+          <div>${venueLabel}</div>
+        </a>
+        <div class="hero-meta-item">
+          <div class="icon">🕐</div>
+          <div>${timeLabel}</div>
+        </div>
+      `;
     }
 
-    // CTA
-    const ctaBtn = document.getElementById('ev-cta-main');
-    if (ctaBtn) {
-      const arrow = ' <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 7l10 10M17 7v10H7"/></svg>';
+    // Hero CTA buttons
+    const ctaBuy = document.getElementById('evento-cta-buy');
+    if (ctaBuy) {
       if (isSoldOut) {
-        ctaBtn.innerHTML = 'Ver reventa' + arrow;
-        ctaBtn.onclick = () => go('marketplace');
+        ctaBuy.textContent = 'SOLD OUT — Ver Marketplace';
+        ctaBuy.onclick = () => go('marketplace');
+        ctaBuy.classList.remove('btn-primary');
+        ctaBuy.classList.add('btn-sold');
       } else {
-        ctaBtn.innerHTML = 'Comprar entradas' + arrow;
-        ctaBtn.onclick = () => document.getElementById('ev-tickets').scrollIntoView({behavior:'smooth'});
+        ctaBuy.textContent = 'Comprar entradas';
+        ctaBuy.onclick = () => document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'});
+        ctaBuy.classList.add('btn-primary');
+        ctaBuy.classList.remove('btn-sold');
       }
     }
 
-    // ── STATS BAR ──
-    const statsBar = document.getElementById('ev-stats-bar');
+    // Google Calendar link
+    const calBtn = document.getElementById('evento-cal-btn');
+    if (calBtn) {
+      const eventTitle = ev.name + (ev.subtitle ? ' · ' + ev.subtitle : '');
+      const startDate = ev.date.replace(/-/g,'');
+      const endDate = ev.date.replace(/-/g,'');
+      const startTime = (ev.timeStart || '22:00').replace(':','00');
+      const endTime = (ev.timeEnd || '05:00').replace(':','00');
+      const location = (ev.venue || '') + (ev.location ? ', ' + ev.location : '');
+      const description = ev.description || '';
+
+      const googleCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${startDate}T${startTime}00/${endDate}T${endTime}00&location=${encodeURIComponent(location)}&details=${encodeURIComponent(description)}`;
+      calBtn.href = googleCalUrl;
+      calBtn.textContent = 'Agregar al calendario';
+    }
+
+    // ══════════════════════════════════════════
+    // STATS BAR
+    // ══════════════════════════════════════════
+    const statsBar = document.getElementById('evento-stats-bar');
     if (statsBar && ev.tickets) {
       const totalCap = ev.tickets.reduce((s,t) => s + t.capacity, 0);
       const totalSold = ev.tickets.reduce((s,t) => s + t.sold, 0);
@@ -7309,157 +7880,243 @@ body::after {
       `;
     }
 
-    // ── VISIBLE SECTIONS CONFIG ──
-    const vs = ev.visibleSections || {};
-
-    // ── LINEUP ──
-    const lineupSection = document.getElementById('ev-lineup-section');
-    const lineupGrid = document.getElementById('ev-lineup-grid');
-    if (vs.lineup === false) {
-      if (lineupSection) lineupSection.style.display = 'none';
-    } else if (lineupGrid && lineupSection && Array.isArray(ev.lineup) && ev.lineup.length > 0) {
-      lineupSection.style.display = '';
-      const lineupTitle = document.getElementById('ev-lineup-title');
-      if (lineupTitle) lineupTitle.textContent = ev.lineup.length + ' Artistas';
-      let h = '';
-      ev.lineup.forEach((artist, i) => {
-        const isHL = i === 0;
-        h += `<div class="ev-artist-card${isHL ? ' ev-headliner' : ''}">
-          <div class="ev-artist-name">${artist}</div>
-          <div class="ev-artist-role">${isHL ? 'Headliner' : (i < 3 ? 'Main' : 'Support')}</div>
-        </div>`;
-      });
-      lineupGrid.innerHTML = h;
-    } else if (lineupSection) {
-      lineupSection.style.display = 'none';
-    }
-
-    // ── ABOUT ──
-    const aboutSection = document.getElementById('ev-about-section');
-    if (vs.about === false && aboutSection) { aboutSection.style.display = 'none'; }
-    else if (aboutSection) { aboutSection.style.display = ''; }
-    const aboutText = document.getElementById('ev-about-text');
-    if (aboutText) aboutText.textContent = ev.description || '';
-    const aboutDetails = document.getElementById('ev-about-details');
-    if (aboutDetails) {
-      const meta = ev.meta || {};
-      const chips = [];
-      // Genre
-      const g = ev.genre || evTags.find(t => t.includes('techno') || t.includes('house') || t.includes('dnb')) || '';
-      if (g) chips.push({ icon: '🎵', label: 'Género', value: g });
-      // Age
-      const age = evTags.find(t => t.includes('+') || t === 'all-ages') || '';
-      if (age) chips.push({ icon: '🪪', label: 'Edad', value: prettify(age) });
-      // Setting
-      const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t)) || '';
-      if (setting) chips.push({ icon: '🏛️', label: 'Setting', value: prettify(setting) });
-      // Dress code
-      if (meta.dressCode !== undefined) chips.push({ icon: '👔', label: 'Dress Code', value: meta.dressCode ? 'Sí' : 'No' });
-      // Alcohol
-      if (meta.alcohol !== undefined) chips.push({ icon: '🍸', label: 'Alcohol', value: meta.alcohol ? 'Sí' : 'No' });
-      // Food
-      if (meta.food !== undefined) chips.push({ icon: '🍕', label: 'Food', value: meta.food ? 'Sí' : 'No' });
-      // Multi-stage
-      if (meta.multiStage) chips.push({ icon: '🔊', label: 'Stages', value: 'Multi-stage' });
-
-      aboutDetails.innerHTML = chips.map(c => `
-        <div class="ev-detail-chip">
-          <div class="ev-detail-chip-icon">${c.icon}</div>
-          <div class="ev-detail-chip-text">
-            <div class="ev-detail-chip-label">${c.label}</div>
-            <div class="ev-detail-chip-value">${c.value}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // ── TICKETS ──
-    const tkGrid = document.getElementById('ev-tk-grid');
-    const mpCta = document.getElementById('ev-marketplace-cta');
+    // ══════════════════════════════════════════
+    // TICKETS
+    // ══════════════════════════════════════════
+    const tkGrid = document.getElementById('evento-tk-grid');
+    const mpBanner = document.getElementById('evento-mp-banner');
     if (tkGrid && ev.tickets) {
-      const gradients = ['tk-purple','tk-orange','tk-acid','tk-purple','tk-orange','tk-acid'];
-      const emojis = ['🎫','👑','💎','🎉','🎟️','⚡'];
       let h = '';
       ev.tickets.forEach((t, i) => {
         const tierSold = t.sold >= t.capacity;
-        const grad = tierSold ? 'tk-dark' : gradients[i % gradients.length];
-        const emoji = emojis[i % emojis.length];
+        const tierGrad = 'tk-tier-' + ((i % 4) + 1);
         const activePhase = getActivePhase(t);
         const currentPrice = activePhase.price || t.price || 0;
-        const phaseName = activePhase.name || '';
-        const priceLabel = currentPrice === 0 ? 'GRATIS' : 'S/ ' + currentPrice;
-        const fee = currentPrice > 0 ? Math.round(currentPrice * 0.08) : 0;
-        const total = currentPrice + fee;
-        const feeText = fee > 0 ? `+ S/${fee} cargos · Total S/${total}` : 'Sin cargos adicionales';
-        const soldClass = tierSold ? ' tk-soldout' : '';
-        const tooltip = tierSold ? 'Agotado' : 'Comprar entrada →';
-        const click = tierSold ? '' : `onclick="pmOpen('${ev.name.replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)"`;
-        const phaseInfo = phaseName && !tierSold ? `<div class="tk-card-phase-name">${phaseName}</div>` : '';
-        h += `<div class="tk-card${soldClass}" ${click}>
-          <div class="tk-card-inner ${grad}">
-            <div>
-              <div class="tk-card-type">${t.name}</div>
-              ${phaseInfo}
-              <div class="tk-card-phase">${tierSold ? 'AGOTADO' : (t.sold + '/' + t.capacity + ' vendidos')}</div>
-            </div>
-            <div class="tk-card-logo">${emoji}</div>
-            <div class="tk-card-bottom">
-              <span class="tk-bottom-price">${priceLabel}</span>
-              <span class="tk-bottom-fee">${feeText}</span>
+        const avail = t.capacity - t.sold;
+        const availPct = t.capacity > 0 ? Math.round((avail / t.capacity) * 100) : 0;
+
+        let phasesHtml = '';
+        if (t.phases && Array.isArray(t.phases)) {
+          t.phases.forEach(phase => {
+            const status = phase.status || 'future';
+            const isActive = (phase.status === 'active');
+            const isPast = (phase.status === 'past');
+            const isFuture = (phase.status === 'future');
+            const phaseClass = isPast ? 'tk-phase--past' : (isActive ? 'tk-phase--active' : 'tk-phase--future');
+            phasesHtml += `
+              <div class="tk-phase ${phaseClass}">
+                <div class="tk-phase-left">
+                  <div class="tk-phase-dot"></div>
+                  <span class="tk-phase-name">${phase.name}</span>
+                </div>
+                <span class="tk-phase-price">S/ ${phase.price}</span>
+              </div>
+            `;
+          });
+        }
+
+        const onClick = tierSold ? `onclick="goMarketplace('${t.id || 'general'}')"` : `onclick="pmOpen('${ev.name.replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)"`;
+
+        h += `
+          <div class="tk-card${tierSold ? ' tk-card--sold' : ''}">
+            ${tierSold ? `
+              <div class="tk-overlay">
+                <div class="tk-overlay-icon">🔄</div>
+                <div class="tk-overlay-text">Buscar en Marketplace</div>
+                <div class="tk-overlay-hint">${t.name} · reventa verificada</div>
+              </div>
+            ` : ''}
+            <div class="tk-inner ${tierGrad}">
+              <div class="tk-header">
+                <div class="tk-name">${t.name}</div>
+                ${t.includes ? `
+                  <ul class="tk-includes">
+                    ${t.includes.map(inc => `<li>${inc}</li>`).join('')}
+                  </ul>
+                ` : ''}
+              </div>
+              <div class="tk-phases">${phasesHtml}</div>
+              <div class="tk-bottom">
+                ${tierSold ? `<div class="tk-sold-all">SOLD OUT</div>` : `<button class="tk-buy" ${onClick}>Comprar</button>`}
+              </div>
+              ${!tierSold ? `
+                <div class="tk-avail">
+                  <div class="tk-avail-bar">
+                    <div class="tk-avail-fill" style="width:${availPct}%"></div>
+                  </div>
+                  <div class="tk-avail-text">${avail}/${t.capacity} disponibles</div>
+                </div>
+              ` : ''}
             </div>
           </div>
-          <div class="tk-card-tooltip">${tooltip}</div>
-        </div>`;
+        `;
       });
       tkGrid.innerHTML = h;
 
-      // Ticket section header
-      const heading = document.getElementById('ev-tickets-heading');
-      const sub = document.getElementById('ev-tickets-sub');
-      const label = document.getElementById('ev-tickets-label');
-      if (isSoldOut) {
-        if (label) label.textContent = 'Sold Out';
-        if (heading) heading.textContent = 'Todas las entradas agotadas';
-        if (sub) sub.textContent = 'Este evento está sold out. Puedes buscar entradas en el marketplace de reventa verificada.';
-        if (mpCta) mpCta.style.display = '';
-      } else {
-        if (label) label.textContent = 'Entradas';
-        if (heading) heading.textContent = 'Elige tu entrada';
-        if (sub) sub.textContent = 'Todas las entradas están verificadas con tu identidad. Sin reventas truchas.';
-        if (mpCta) mpCta.style.display = 'none';
+      // Show marketplace banner if sold out
+      if (mpBanner) {
+        if (isSoldOut) {
+          mpBanner.style.display = 'flex';
+        } else {
+          mpBanner.style.display = 'none';
+        }
       }
     }
 
-    // ── VENUE ──
-    const venueSection = document.getElementById('ev-venue-section');
-    if (vs.venue === false && venueSection) { venueSection.style.display = 'none'; }
-    else if (venueSection) { venueSection.style.display = ''; }
-    const venueName = document.getElementById('ev-venue-name');
-    if (venueName) venueName.textContent = ev.venue || '';
-    const venueAddr = document.getElementById('ev-venue-address');
-    if (venueAddr) venueAddr.textContent = (ev.location || '') + (ev.distrito ? ' · ' + prettify(ev.distrito) : '');
-    const venueChips = document.getElementById('ev-venue-chips');
-    if (venueChips) {
+    // ══════════════════════════════════════════
+    // LINEUP
+    // ══════════════════════════════════════════
+    const lineupSection = document.getElementById('evento-lineup-section');
+    const lineupGrid = document.getElementById('evento-lineup-grid');
+    if (Array.isArray(ev.lineup) && ev.lineup.length > 0) {
+      lineupSection.style.display = '';
       let h = '';
-      const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t));
-      if (setting) h += `<div class="ev-venue-chip">${prettify(setting)}</div>`;
+      ev.lineup.forEach((artist, i) => {
+        const isHeadliner = i === 0;
+        const imageUrl = 'https://images.unsplash.com/photo-1' + ['571266028243-e4733b0f0bb0','493676304819-0d7a8d026dcf','516450360452-9312f5e86fc7','504704911898-68304a7d2571'][i % 4] + '?w=800&q=80';
+        const role = isHeadliner ? 'Headliner' : (i < 3 ? 'Main' : 'Support');
+        const roomNum = (i % 3) + 1;
+        const genres = ['Techno', 'DnB', 'House'];
+        const tags = [genres[i % genres.length], isHeadliner ? 'Berlin' : 'Local'];
+
+        h += `
+          <div class="lineup-card${isHeadliner ? ' lineup-card--hl' : ''}">
+            <div class="lineup-card-img" style="background-image:url('${imageUrl}')"></div>
+            <div class="lineup-card-overlay"></div>
+            <div class="lineup-card-content">
+              <div class="lineup-name">${artist}</div>
+              <div class="lineup-role">${role} · Room ${roomNum}</div>
+              <div class="lineup-tags">
+                ${tags.map(t => `<span class="lineup-tag">${t}</span>`).join('')}
+              </div>
+            </div>
+            ${isHeadliner ? '<div class="lineup-badge">HEADLINER</div>' : ''}
+          </div>
+        `;
+      });
+      lineupGrid.innerHTML = h;
+    } else {
+      lineupSection.style.display = 'none';
+    }
+
+    // ══════════════════════════════════════════
+    // EVENT INFO CHIPS
+    // ══════════════════════════════════════════
+    const infoSection = document.getElementById('evento-info-section');
+    const infoList = document.getElementById('evento-info-list');
+    const prohibited = document.getElementById('evento-prohibited');
+    const dividerInfo = document.getElementById('evento-divider-info');
+
+    if (infoList) {
+      let h = '';
+      // Genre
+      const genres = evTags.filter(t => ['techno','dark-techno','hard-techno','melodic-techno','house','deep-house','minimal','dnb','ambient','electronica','breaks','acid','progressive','tech-house','trance'].includes(t));
+      if (genres.length > 0) h += `<div class="info-chip"><span>🎵</span> ${genres.map(prettify).join(' / ')}</div>`;
+
+      // Age
+      const ages = evTags.filter(t => ['18+', '21+', 'all-ages'].includes(t));
+      if (ages.length > 0) h += `<div class="info-chip"><span>🪪</span> ${ages[0]}</div>`;
+
+      // Setting
+      const settings = evTags.filter(t => ['indoor', 'outdoor', 'open-air', 'mixed'].includes(t));
+      if (settings.length > 0) h += `<div class="info-chip"><span>🏛️</span> ${prettify(settings[0])}</div>`;
+
+      // Meta
       const meta = ev.meta || {};
-      if (meta.crowdSize) h += `<div class="ev-venue-chip">Capacidad: ${meta.crowdSize.toLocaleString()}</div>`;
-      if (meta.multiStage) h += `<div class="ev-venue-chip">Multi-stage</div>`;
-      h += '<div class="ev-venue-chip">Verificación en puerta</div>';
-      venueChips.innerHTML = h;
+      if (meta.alcohol) h += `<div class="info-chip"><span>🍸</span> Barra disponible</div>`;
+      if (meta.multiStage) h += `<div class="info-chip"><span>🔊</span> Multi-room</div>`;
+      if (!meta.reentry) h += `<div class="info-chip"><span>🚫</span> No reingreso</div>`;
+
+      infoList.innerHTML = h;
+
+      if (h.length > 0) {
+        infoSection.style.display = '';
+        dividerInfo.style.display = '';
+      } else {
+        infoSection.style.display = 'none';
+        dividerInfo.style.display = 'none';
+      }
     }
 
-    // ── TAGS CLOUD ──
-    const tagsSection = document.getElementById('ev-tags-section');
-    if (vs.tags === false && tagsSection) { tagsSection.style.display = 'none'; }
-    else if (tagsSection) { tagsSection.style.display = ''; }
-    const tagsCloud = document.getElementById('ev-tags-cloud');
-    if (tagsCloud) {
-      tagsCloud.innerHTML = evTags.map(t => `<div class="ev-tag-pill">${prettify(t)}</div>`).join('');
+    // Prohibited items
+    if (prohibited) {
+      const prohibitedItems = ev.prohibitedItems || ['Cámaras profesionales', 'Bebidas externas', 'Armas / objetos punzantes', 'Sustancias ilegales', 'Mascotas', 'Menores de edad'];
+      const itemsHtml = prohibitedItems.map(item => `<div class="info-prohibited-tag">🚫 ${item}</div>`).join('');
+      if (prohibitedItems.length > 0) {
+        document.getElementById('evento-prohibited-items').innerHTML = itemsHtml;
+        prohibited.style.display = 'block';
+      }
     }
 
-    // ── PURCHASE MODAL CATALOG (uses active phase price) ──
+    // ══════════════════════════════════════════
+    // ABOUT
+    // ══════════════════════════════════════════
+    const aboutSection = document.getElementById('evento-about-section');
+    const aboutContent = document.getElementById('evento-about-content');
+    const dividerAbout = document.getElementById('evento-divider-about');
+
+    if (ev.description && aboutContent) {
+      aboutContent.innerHTML = `<p class="about-text">${ev.description}</p>`;
+      if (ev.descriptionLong) {
+        aboutContent.innerHTML += `<p class="about-text">${ev.descriptionLong}</p>`;
+      }
+      aboutSection.style.display = '';
+      dividerAbout.style.display = '';
+    } else if (aboutSection) {
+      aboutSection.style.display = 'none';
+      dividerAbout.style.display = 'none';
+    }
+
+    // ══════════════════════════════════════════
+    // VENUE
+    // ══════════════════════════════════════════
+    const venueSection = document.getElementById('evento-venue-section');
+    const dividerVenue = document.getElementById('evento-divider-venue');
+
+    if (ev.venue) {
+      const venueName = document.getElementById('evento-venue-name');
+      const venueAddr = document.getElementById('evento-venue-addr');
+      const venueChips = document.getElementById('evento-venue-chips');
+      const venueMap = document.getElementById('evento-venue-map');
+
+      if (venueName) venueName.textContent = ev.venue;
+      if (venueAddr) {
+        let addr = (ev.location || '');
+        if (ev.address) addr = ev.address + (ev.location ? ', ' + ev.location : '');
+        venueAddr.innerHTML = addr;
+      }
+
+      if (venueChips) {
+        let h = '';
+        const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t));
+        if (setting) h += `<div class="venue-chip">${prettify(setting)}</div>`;
+        const meta = ev.meta || {};
+        if (meta.crowdSize) h += `<div class="venue-chip">Capacidad: ${meta.crowdSize.toLocaleString()}</div>`;
+        if (meta.multiStage) h += `<div class="venue-chip">Multi-stage</div>`;
+        h += '<div class="venue-chip">Verificación en puerta</div>';
+        venueChips.innerHTML = h;
+      }
+
+      if (venueMap) {
+        const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
+        venueMap.innerHTML = `
+          <iframe
+            src="https://maps.google.com/maps?q=${mapQuery}&t=&z=17&ie=UTF8&iwloc=&output=embed"
+            width="100%" height="100%" style="border:0; border-radius: inherit;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        `;
+      }
+
+      venueSection.style.display = '';
+      dividerVenue.style.display = '';
+    } else {
+      venueSection.style.display = 'none';
+      dividerVenue.style.display = 'none';
+    }
+
+    // ══════════════════════════════════════════
+    // PURCHASE MODAL SETUP
+    // ══════════════════════════════════════════
     if (ev.tickets) {
       pmTicketCatalog = {};
       ev.tickets.forEach(t => {
@@ -7476,6 +8133,11 @@ body::after {
     // Store event & navigate
     window._currentEvent = ev;
     go('evento');
+  }
+
+  // Helper function for marketplace navigation
+  function goMarketplace(tier) {
+    go('marketplace');
   }
 
   // ── Real Auth Functions ──
