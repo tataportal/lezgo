@@ -1757,7 +1757,7 @@ body::after {
 }
 #v-evento .hero-back {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: var(--fs-sm); font-weight: 600; color: var(--text-3);
+  font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted);
   background: none; margin-bottom: 28px;
   letter-spacing: 0.5px; text-transform: uppercase;
   transition: color 0.2s;
@@ -1876,8 +1876,10 @@ body::after {
    ═══════════════════════════════════════════ */
 #v-evento .tk-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 #v-evento .tk-card {
   position: relative;
@@ -1891,13 +1893,14 @@ body::after {
   box-shadow: 0 24px 80px rgba(0,0,0,0.6);
 }
 #v-evento .tk-inner {
-  padding: 32px 28px;
+  padding: 36px 32px;
   height: 100%;
   display: flex; flex-direction: column;
   border: 1.5px solid var(--alpha-light);
   border-radius: 0;
   position: relative;
   overflow: hidden;
+  min-height: 480px;
 }
 /* Tier gradients — easily customizable */
 #v-evento .tk-tier-1 {
@@ -1945,22 +1948,22 @@ body::after {
 #v-evento .tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
 #v-evento .tk-overlay-icon { font-size: var(--fs-2xl); margin-bottom: 12px; }
 #v-evento .tk-overlay-text {
-  font-size: var(--fs-base); font-weight: 800; color: var(--acid);
+  font-size: var(--fs-lg); font-weight: 800; color: var(--acid);
   letter-spacing: -0.3px; margin-bottom: 4px;
 }
 #v-evento .tk-overlay-hint {
-  font-size: var(--fs-xs); color: var(--text-3); font-weight: 500;
+  font-size: var(--fs-xs); color: var(--text-muted); font-weight: 500;
 }
 
 /* Card content */
 #v-evento .tk-name {
   font-size: var(--fs-2xl); font-weight: 900;
   letter-spacing: -1px; line-height: 1;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 #v-evento .tk-includes {
-  font-size: var(--fs-sm); color: rgba(255,255,255,0.45);
-  line-height: 1.6; margin-top: 0;
+  font-size: var(--fs-base); color: rgba(255,255,255,0.5);
+  line-height: 1.7; margin-top: 0;
   list-style: none;
 }
 #v-evento .tk-includes li {
@@ -1975,7 +1978,7 @@ body::after {
 }
 
 #v-evento .tk-header {
-  min-height: 110px;
+  min-height: 130px;
 }
 
 /* Phase pricing table */
@@ -1985,15 +1988,15 @@ body::after {
 }
 #v-evento .tk-phase {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0;
-  font-size: var(--fs-sm); font-weight: 600;
+  padding: 8px 0;
+  font-size: var(--fs-base); font-weight: 600;
 }
 #v-evento .tk-phase-name { color: rgba(255,255,255,0.35); }
 #v-evento .tk-phase-price { color: rgba(255,255,255,0.35); }
 #v-evento .tk-phase--past .tk-phase-name { text-decoration: line-through; }
 #v-evento .tk-phase--past .tk-phase-price { text-decoration: line-through; }
 #v-evento .tk-phase--active .tk-phase-name { color: var(--acid); }
-#v-evento .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: var(--fs-base); }
+#v-evento .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: var(--fs-lg); }
 #v-evento .tk-phase--future .tk-phase-name { color: var(--alpha-strong); }
 #v-evento .tk-phase--future .tk-phase-price { color: var(--alpha-strong); }
 #v-evento .tk-phase-dot {
@@ -2005,8 +2008,8 @@ body::after {
 #v-evento .tk-phase--future .tk-phase-dot { background: var(--alpha-light); }
 #v-evento .tk-phase-left { display: flex; align-items: center; }
 #v-evento .tk-price-simple {
-  font-size: var(--fs-xl); font-weight: 900; color: var(--text);
-  margin: 16px 0 auto; letter-spacing: -0.5px;
+  font-size: var(--fs-2xl); font-weight: 900; color: var(--text);
+  margin: 16px 0 auto; letter-spacing: -1px;
 }
 
 /* Buy / sold bottom */
@@ -2017,20 +2020,20 @@ body::after {
   display: flex; align-items: center; justify-content: space-between;
 }
 #v-evento .tk-buy {
-  padding: 10px 20px;
-  background: var(--border-light);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--alpha-medium);
-  border-radius: 0;
-  color: var(--text); font-size: var(--fs-sm); font-weight: 700;
+  padding: 14px 28px;
+  background: var(--acid);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: var(--gray-950); font-size: var(--fs-base); font-weight: 800;
   transition: all 0.2s;
   white-space: nowrap;
   cursor: pointer;
+  letter-spacing: -0.3px;
 }
-#v-evento .tk-buy:hover { background: var(--gray-50); color: var(--gray-950); }
+#v-evento .tk-buy:hover { background: var(--gray-50); color: var(--gray-950); box-shadow: 0 0 30px var(--acid-glow); transform: translateY(-1px); }
 #v-evento .tk-sold-label {
   font-size: var(--fs-xs); font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--text-3);
+  text-transform: uppercase; color: var(--text-muted);
 }
 #v-evento .tk-sold-all {
   font-size: var(--fs-xs); color: var(--red); font-weight: 700;
@@ -2064,7 +2067,7 @@ body::after {
   margin-bottom: 6px;
 }
 #v-evento .mp-desc {
-  font-size: var(--fs-base); color: var(--text-3); line-height: 1.6;
+  font-size: var(--fs-base); color: var(--text-muted); line-height: 1.6;
 }
 #v-evento .mp-action { position: relative; z-index: 1; flex-shrink: 0; }
 
@@ -2174,7 +2177,7 @@ body::after {
 }
 #v-evento .info-prohibited-title {
   font-size: var(--fs-xs); font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--text-3);
+  text-transform: uppercase; color: var(--text-muted);
   margin-bottom: 10px;
 }
 #v-evento .info-prohibited-items {
@@ -2215,7 +2218,7 @@ body::after {
 #v-evento .venue-chip {
   font-size: var(--fs-xs); font-weight: 600; padding: 8px 16px;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-pill); color: var(--text-3);
+  border-radius: var(--radius-pill); color: var(--text-muted);
 }
 #v-evento .venue-map {
   min-height: 280px; border-radius: 0;
@@ -2236,7 +2239,7 @@ body::after {
   border-radius: 0;
 }
 #v-evento .trust-icon { font-size: var(--fs-xl); margin-bottom: 10px; }
-#v-evento .trust-text { font-size: var(--fs-sm); font-weight: 600; color: var(--text-3); line-height: 1.4; }
+#v-evento .trust-text { font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted); line-height: 1.4; }
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -2247,11 +2250,11 @@ body::after {
   #v-evento .hero-meta-item { font-size: var(--fs-sm); }
   #v-evento .hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
   #v-evento .section { padding: 56px 20px; }
-  #v-evento .tk-grid { grid-template-columns: 1fr 1fr; }
-  #v-evento .tk-inner { min-height: 280px; padding: 24px 20px; }
+  #v-evento .tk-grid { gap: 16px; }
+  #v-evento .tk-inner { min-height: auto; padding: 28px 24px; }
   #v-evento .tk-name { font-size: var(--fs-xl); }
   #v-evento .tk-price { font-size: var(--fs-xl); }
-  #v-evento .tk-buy { padding: 10px 18px; font-size: var(--fs-sm); }
+  #v-evento .tk-buy { padding: 12px 24px; font-size: var(--fs-sm); }
   #v-evento .info-list { gap: 8px 12px; }
   #v-evento .venue-block { grid-template-columns: 1fr; }
   #v-evento .lineup-grid { grid-template-columns: 1fr 1fr; }
@@ -2262,7 +2265,7 @@ body::after {
   #v-evento .trust-row { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) {
-  #v-evento .tk-grid { grid-template-columns: 1fr; }
+  #v-evento .tk-grid { grid-template-columns: 1fr; gap: 12px; }
   #v-evento .lineup-grid { grid-template-columns: 1fr; }
   #v-evento .lineup-card--hl { grid-column: span 1; aspect-ratio: 3 / 4; }
   #v-evento .lineup-card--hl .lineup-name { font-size: var(--fs-xl); }
@@ -3209,7 +3212,7 @@ body::after {
   transform: translateZ(0);
 }
 .dk-phone-screen {
-  background: var(--gray-800)111; border-radius: 0;
+  background: var(--gray-800); border-radius: 0;
   padding: 16px 14px; min-height: 615px;
   position: relative; overflow: hidden;
 }
@@ -8055,23 +8058,33 @@ body::after {
       var imgBg = imgUrl ? 'background-image:url(' + imgUrl + ');background-size:cover;background-position:center' : 'background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.2em';
       var imgInner = imgUrl ? '' : '🎧';
       var discount = r.originalPrice > r.askingPrice ? Math.round((1 - r.askingPrice / r.originalPrice) * 100) : 0;
-      html += `<div class="mt-ticket" style="margin-bottom:12px">
-        <div class="mt-ticket-head" style="cursor:default">
-          <div class="mt-ticket-img" style="${imgBg}">${imgInner}</div>
-          <div class="mt-ticket-info">
-            <div class="mt-ticket-event">${r.eventName}</div>
-            <div class="mt-ticket-meta">${r.eventDateLabel || r.eventDate || ''} · ${r.ticketTier}</div>
-          </div>
+      var priceDiff = r.askingPrice < r.originalPrice ? 'below' : r.askingPrice > r.originalPrice ? 'above' : '';
+      var tagHtml = discount > 0 ? '<span class="mp-listing-tag mp-tag-below">-' + discount + '%</span>' : (r.askingPrice === r.originalPrice ? '<span class="mp-listing-tag mp-tag-face">Precio face</span>' : '');
+
+      // Parse date for prominent display
+      var dateObj = r.eventDate ? new Date(r.eventDate + 'T12:00:00') : null;
+      var dayNum = dateObj ? dateObj.getDate() : '';
+      var monthStr = dateObj ? dateObj.toLocaleDateString('es', { month: 'short' }).toUpperCase() : '';
+
+      html += `<div class="mp-listing" onclick="buyResale('${r._id}')">
+        <div class="mp-listing-date">
+          <div class="mp-listing-date-day">${dayNum}</div>
+          <div class="mp-listing-date-month">${monthStr}</div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:0 14px 14px">
-          <div>
-            <span style="font-size: var(--fs-lg);font-weight:700;color:var(--acid)">S/${r.askingPrice}</span>
-            ${r.originalPrice !== r.askingPrice ? '<span style="font-size: var(--fs-sm);color:var(--text-dim);text-decoration:line-through;margin-left:6px">S/' + r.originalPrice + '</span>' : ''}
-            ${discount > 0 ? '<span style="font-size: var(--fs-xs);color:#4ade80;margin-left:4px">-' + discount + '%</span>' : ''}
-          </div>
-          <button onclick="buyResale('${r._id}')" style="background:var(--acid);color: var(--gray-950);border:none;padding:8px 20px;border-radius: 0;font-weight:700;cursor:pointer;font-family:inherit;font-size: var(--fs-sm)">Comprar</button>
+        <div class="mp-listing-img" style="${imgBg}">${imgInner}</div>
+        <div class="mp-listing-info">
+          <div class="mp-listing-event">${r.eventName}</div>
+          <div class="mp-listing-meta">${r.eventDateLabel || r.eventDate || ''} · ${r.ticketTier}</div>
+          <div class="mp-listing-seller"><span class="verified-dot">✓</span> ${r.sellerName || 'Anónimo'} · ${r.eventVenue || ''}</div>
         </div>
-        <div style="padding:0 14px 12px;font-size: var(--fs-xs);color:var(--text-dim)">Vendedor: ${r.sellerName || 'Anónimo'} · ${r.eventVenue || ''}</div>
+        <div class="mp-listing-right">
+          <div class="mp-listing-prices">
+            ${r.originalPrice !== r.askingPrice ? '<span class="mp-listing-original">S/' + r.originalPrice + '</span>' : ''}
+            <span class="mp-listing-price ${priceDiff}">S/${r.askingPrice}</span>
+          </div>
+          ${tagHtml}
+          <button class="mp-listing-btn" onclick="event.stopPropagation();buyResale('${r._id}')">Comprar</button>
+        </div>
       </div>`;
     });
 
@@ -8217,19 +8230,28 @@ body::after {
       var evFee = evRevenue * FEE_RATE;
       var evNet = evRevenue - evFee;
 
-      html += `<div class="og-event-card" style="background:var(--bg-raised);border:1px solid var(--border);border-radius: 0;padding:16px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:start">
-          <div>
-            <div style="font-weight:600;color:var(--text)">${ev.name}</div>
-            <div style="font-size: var(--fs-sm);color:var(--text-mid)">${ev.dateLabel || ev.date} · ${ev.venue}</div>
-            <div style="font-size: var(--fs-sm);color:var(--acid);margin-top:4px">${sold} vendidas · S/ ${evRevenue.toLocaleString('es-PE')} gross</div>
-            <div style="font-size: var(--fs-sm);color:var(--text-dim);margin-top:2px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto S/ ${Math.round(evNet).toLocaleString('es-PE')}</div>
-          </div>
-          <span style="font-size: var(--fs-sm);padding:4px 10px;border-radius: 0;background:${statusStyle}">${statusLabel}</span>
+      // Calculate capacity & fill percentage
+      var totalCap = ev.tickets ? ev.tickets.reduce((s, t) => s + (t.capacity || 0), 0) : 0;
+      var fillPct = totalCap > 0 ? Math.min(100, Math.round(sold / totalCap * 100)) : 0;
+      var imgUrl = ev.image || '';
+      var cardImgStyle = imgUrl ? 'background-image:url(' + imgUrl + ');background-size:cover;background-position:center' : 'background:linear-gradient(135deg,var(--gray-700),var(--gray-600))';
+
+      html += `<div class="og-event-card">
+        <div class="og-event-img" style="${cardImgStyle}">
+          <span class="og-event-status" style="background:${statusStyle}">${statusLabel}</span>
         </div>
-        <div class="d-flex gap-2 mt-3">
+        <div class="og-event-body">
+          <div class="og-event-name">${ev.name}</div>
+          <div class="og-event-meta">${ev.dateLabel || ev.date} · ${ev.venue}</div>
+          <div class="og-event-bar"><div class="og-event-bar-fill" style="width:${fillPct}%"></div></div>
+          <div class="og-event-sell">
+            <span><strong style="color:var(--acid)">${sold}</strong> vendidas · S/ ${evRevenue.toLocaleString('es-PE')} gross</span>
+          </div>
+          <div style="font-size:var(--fs-xs);color:var(--text-dim);margin-top:4px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto <strong style="color:var(--green)">S/ ${Math.round(evNet).toLocaleString('es-PE')}</strong></div>
+        </div>
+        <div class="og-event-actions">
           <button class="og-act-btn primary" onclick="openEvent('${ev._id}')">👁 Ver</button>
-          <button class="og-act-btn primary" onclick="openEventForm('${ev._id}')" style="background:var(--acid);color: var(--gray-950)">✏️ Editar</button>
+          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick="openEventForm('${ev._id}')">✏️ Editar</button>
           <button class="og-act-btn ghost" onclick="exportEventTickets('${ev._id}')">📊 Export</button>
         </div>
       </div>`;
