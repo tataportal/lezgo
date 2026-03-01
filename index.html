@@ -370,6 +370,7 @@ body::after {
   background: var(--acid); color: var(--bg); border: none;
   padding: 16px 36px; font-size: var(--fs-base); font-weight: 700;
   letter-spacing: -0.3px; transition: all 0.2s; width: fit-content;
+  border-radius: var(--radius-btn);
 }
 .hero-cta:hover { background: var(--gray-50); box-shadow: 0 0 40px var(--acid-glow); transform: translateY(-2px); }
 .hero-sponsor {
@@ -1812,7 +1813,7 @@ body::after {
 #v-evento .btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 16px 32px; font-size: var(--fs-base); font-weight: 700;
-  border-radius: var(--radius-sm); transition: all 0.25s;
+  border-radius: var(--radius-btn); transition: all 0.25s;
   letter-spacing: -0.2px;
   border: none; cursor: pointer;
 }
@@ -3457,6 +3458,7 @@ body::after {
   padding: 22px 56px; font-weight: 900; font-size: var(--fs-lg);
   cursor: pointer; transition: all 0.2s;
   font-family: 'Sora', sans-serif; text-transform: uppercase;
+  border-radius: var(--radius-btn);
 }
 .dk-cta-btn:hover { background: var(--gray-50); box-shadow: 0 0 60px var(--acid-glow); }
 
@@ -4392,7 +4394,7 @@ body::after {
 
 /* Actions bar */
 .ef-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--alpha-light); }
-.ef-btn-save { background: var(--acid); color: var(--gray-950); border: none; border-radius: 0; padding: 14px 32px; font-size: var(--fs-base); font-weight: 800; cursor: pointer; font-family: inherit; }
+.ef-btn-save { background: var(--acid); color: var(--gray-950); border: none; border-radius: var(--radius-btn); padding: 14px 32px; font-size: var(--fs-base); font-weight: 800; cursor: pointer; font-family: inherit; }
 .ef-btn-save:hover { filter: brightness(1.1); }
 .ef-btn-cancel { background: none; border: 1px solid var(--border-light); color: var(--text-mid); border-radius: var(--radius-btn); padding: 14px 24px; font-size: var(--fs-base); font-weight: 700; cursor: pointer; font-family: inherit; }
 
@@ -4402,7 +4404,7 @@ body::after {
 .ef-preview-banner-icon { font-size: var(--fs-lg); flex-shrink: 0; }
 .ef-preview-banner-text { font-size: var(--fs-sm); color: var(--text-main); line-height: 1.5; }
 .ef-preview-banner-text a { color: var(--acid); text-decoration: underline; }
-.ef-btn-contact { background: rgba(229,255,0,0.12); color: var(--acid); border: 1px solid rgba(229,255,0,0.3); border-radius: 0; padding: 14px 32px; font-size: var(--fs-base); font-weight: 800; cursor: pointer; font-family: inherit; }
+.ef-btn-contact { background: rgba(229,255,0,0.12); color: var(--acid); border: 1px solid rgba(229,255,0,0.3); border-radius: var(--radius-btn); padding: 14px 32px; font-size: var(--fs-base); font-weight: 800; cursor: pointer; font-family: inherit; }
 .ef-btn-contact:hover { background: rgba(229,255,0,0.2); }
 
 .ef-toggle-label { display:flex; align-items:center; gap:8px; font-size: var(--fs-sm); color:var(--text-main); cursor:pointer; padding:8px 12px; border-radius: var(--radius-btn); background:var(--alpha-subtle); }
@@ -4521,7 +4523,7 @@ body::after {
 .resale-terms { display: flex; align-items: flex-start; gap: 10px; padding: 14px; background: var(--alpha-minimal); border: 1px solid var(--alpha-light); border-radius: 0; margin-bottom: 20px; cursor: pointer; }
 .resale-terms input[type="checkbox"] { margin-top: 1px; accent-color: var(--acid); cursor: pointer; }
 .resale-terms label { font-size: var(--fs-sm); color: var(--text-dim); line-height: 1.5; cursor: pointer; }
-.resale-btn { width: 100%; background: var(--acid); color: var(--bg); border: none; border-radius: 0; padding: 18px; font-size: var(--fs-base); font-weight: 800; font-family: 'Sora', sans-serif; cursor: pointer; transition: transform 0.15s; }
+.resale-btn { width: 100%; background: var(--acid); color: var(--bg); border: none; border-radius: var(--radius-btn); padding: 18px; font-size: var(--fs-base); font-weight: 800; font-family: 'Sora', sans-serif; cursor: pointer; transition: transform 0.15s; }
 .resale-btn:hover { transform: translateY(-1px); }
 .resale-cancel { width: 100%; background: transparent; color: var(--text-dim); border: none; padding: 12px; font-size: var(--fs-base); cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 6px; }
 
