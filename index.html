@@ -7883,8 +7883,7 @@ a[onclick]:active,
   //   Structured key-value for dashboards, recommendations, data mining.
   //   Keys: bpmRange, production, crowdSize, dressCode, foodDrinks, artistOrigin, multiStage, recurring, avgTicketPrice
 
-  // Events are loaded from Firestore — no local seed data
-  loadEvents();
+  // Events loaded after DEMO_EVENTS is defined (see below)
 
   // ── seedDemoData removed — demo data now served from DEMO_TICKETS/DEMO_RESALE/DEMO_EVENTS arrays above ──
 
@@ -8669,6 +8668,9 @@ a[onclick]:active,
       { id: 'box', name: 'Box', capacity: 12, sold: 8, includes: ['Box privado 6 pax','3 botellas + mixer','Backstage','Vista al Room 1'], phases: [{ name: 'Early Birds', price: 1500, quantity: 3 }, { name: 'Preventa 1', price: 1700, quantity: 3 }, { name: 'Preventa 2', price: 1900, quantity: 3 }, { name: 'Full Price', price: 2200, quantity: 3 }] }
     ] }
   ];
+
+  // ── Load events NOW (after DEMO_EVENTS is defined) ──
+  loadEvents();
 
   async function loadMyTickets() {
     if (!currentUser) { go('auth'); return; }
