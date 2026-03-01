@@ -7443,9 +7443,14 @@ body::after {
   }
 
   // ── Event page routing: redirect to standalone HTML pages ──
-  // eventPageMap removed — all events now use the SPA view (no separate HTML pages)
+  // Events in this map open in the v2 standalone template
+  var eventPageV2 = { 'mos-lima-001': true };
 
   function openEvent(eventId) {
+    if (eventPageV2[eventId]) {
+      window.location.href = 'evento-v2.html?id=' + eventId;
+      return;
+    }
     currentEventId = eventId;
     const ev = allEvents.find(e => e._id === eventId);
     if (!ev) { go('eventos'); return; }
@@ -8124,7 +8129,12 @@ body::after {
     { _id: 'demo-ev-upcoming', name: 'Room 3 Sessions', subtitle: 'Rooftop Edition', date: '2026-04-18', dateLabel: '18 Abril 2026', venue: 'Hotel B Rooftop', location: 'Barranco', distrito: 'barranco', genre: 'deep house / minimal', status: 'published', organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=500&q=80', lineup: ['Binh', 'Sonja Moonear', 'Local Support'], tickets: [
       { id: 'entrada-drink', name: 'Entrada + Drink', capacity: 200, sold: 45, includes: ['1 drink incluido', 'Acceso rooftop'], phases: [{ name: 'Early Bird', price: 40, quantity: 50 }, { name: 'Preventa', price: 50, quantity: 80 }, { name: 'Full Price', price: 60, quantity: 70 }] },
       { id: 'vip-lounge', name: 'VIP Lounge', capacity: 40, sold: 12, includes: ['Barra premium open', 'Zona exclusiva', 'Meet & Greet'], phases: [{ name: 'Early Bird', price: 90, quantity: 15 }, { name: 'Full Price', price: 120, quantity: 25 }] }
-    ] }
+    ] },
+    { _id: 'mos-lima-001', name: 'Ministry of Sound Lima', subtitle: 'The Box Experience', date: '2026-05-16', dateLabel: 'Sáb 16 Mayo', venue: 'Yvana Black', location: 'Lima', distrito: 'Miraflores', genre: 'techno / house / progressive', status: 'published', featured: true, organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80', description: 'El legado de Ministry of Sound llega a Lima. Una noche donde la calidad del sonido es ley — sound system Funktion-One, acústica calibrada, y un lineup curado por los mismos A&R de MoS London.', descriptionLong: 'Desde 1991, Ministry of Sound ha definido la cultura de club a nivel mundial. Esta edición Lima trae la filosofía del icónico venue de Elephant & Castle: la música primero, siempre. Dos rooms, zero compromisos. Room 1 para techno y progressive, Room 2 para house y disco.', timeStart: '23:00', timeEnd: '08:00', tags: ['techno','house','progressive','indoor','18+'], lineup: ['Charlotte de Witte', 'Denis Sulta', 'Peggy Gou', 'DJ Residents MoS'], meta: { crowdSize: 1500, multiStage: true, alcohol: true, reentry: false }, prohibitedItems: ['Cámaras profesionales', 'Bebidas externas', 'Armas / objetos punzantes', 'Sustancias ilegales', 'Mascotas', 'Menores de edad'], visibleSections: { lineup: true, about: true, venue: true, video: false, tags: true }, tickets: [
+      { id: 'general', name: 'General', capacity: 800, sold: 340, includes: ['Acceso a 2 rooms', 'Barra standard'], phases: [{ name: 'Early Bird', price: 75, quantity: 200 }, { name: 'Preventa 1', price: 95, quantity: 200 }, { name: 'Preventa 2', price: 115, quantity: 200 }, { name: 'Full Price', price: 135, quantity: 200 }] },
+      { id: 'vip', name: 'VIP', capacity: 250, sold: 80, includes: ['Zona exclusiva Room 1', 'Barra premium', 'Fast-lane ingreso', 'Guardarropa incluido'], phases: [{ name: 'Early Bird', price: 150, quantity: 65 }, { name: 'Preventa 1', price: 180, quantity: 65 }, { name: 'Preventa 2', price: 210, quantity: 60 }, { name: 'Full Price', price: 250, quantity: 60 }] },
+      { id: 'the-box', name: 'The Box', capacity: 80, sold: 15, includes: ['Backstage access', 'Open bar premium toda la noche', 'Meet & greet artistas', 'Merch exclusivo MoS'], phases: [{ name: 'Preventa', price: 400, quantity: 40 }, { name: 'Full Price', price: 500, quantity: 40 }] }
+    ], address: 'Av. Alfredo Benavides 790' }
   ];
 
   async function loadMyTickets() {

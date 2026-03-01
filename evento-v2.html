@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="ev-page-title">Evento — LEZGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --acid: #E5FF00;
+  --acid-glow: rgba(229,255,0,0.35);
+  --red: #FF3B3B;
+  --bg: #050505;
+  --surface: #0D0D0D;
+  --border: rgba(255,255,255,0.5);
+  --text: #F5F5F5;
+  --text-2: #A0A0A0;
+  --text-3: #666666;
+  --radius-btn: 10px;
+  --pad: clamp(20px, 5vw, 80px);
+}
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; }
+
+/* ═══════════════════════════════════════════
+   HERO — Immersive full bleed
+   ═══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,5,5,0) 0%,
+    rgba(5,5,5,0.3) 35%,
+    rgba(5,5,5,0.92) 70%,
+    var(--bg) 100%
+  );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 var(--pad) 0;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+.hero-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--text-3);
+  background: none; margin-bottom: 28px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  transition: color 0.2s;
+}
+.hero-back:hover { color: var(--acid); }
+.hero-back svg { width: 14px; height: 14px; }
+
+/* Event title block */
+.hero-title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: clamp(16px, 2.5vw, 24px);
+  font-weight: 300;
+  color: var(--acid);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-desc {
+  font-size: 15px; color: var(--text-2);
+  max-width: 520px; line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+/* Quick info row */
+.hero-meta {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 500; color: var(--text-2);
+}
+.hero-meta-item .icon {
+  width: 40px; height: 40px; border-radius: 0;
+  background: rgba(229,255,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+/* CTAs — only buttons keep rounded */
+.hero-ctas {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 48px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 32px; font-size: 14px; font-weight: 700;
+  border-radius: var(--radius-btn); transition: all 0.25s;
+  letter-spacing: -0.2px;
+}
+.btn-primary {
+  background: var(--acid); color: #000;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 50px var(--acid-glow);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text);
+}
+.btn-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(229,255,0,0.04);
+}
+.btn-sold {
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--red);
+}
+.btn-sold:hover {
+  background: rgba(255,59,59,0.06);
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS — Common
+   ═══════════════════════════════════════════ */
+.section {
+  padding: 72px var(--pad);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acid);
+  margin-bottom: 16px; opacity: 0.8;
+  text-align: center;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 40px;
+  text-align: center;
+}
+.section-heading em { font-style: normal; color: var(--acid); }
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════
+   TICKETS
+   ═══════════════════════════════════════════ */
+.tk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.tk-card {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+}
+.tk-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+}
+.tk-inner {
+  padding: 32px 28px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Tier gradients (matching index.html) ── */
+.tk-tier-1 { background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-color: rgba(15,52,96,0.5); }
+.tk-tier-2 { background: linear-gradient(155deg, #1a1a1a 0%, #2d1b69 50%, #5b21b6 100%); border-color: rgba(91,33,182,0.4); }
+.tk-tier-3 { background: linear-gradient(155deg, #1a1a0a 0%, #3d3d00 50%, #656500 100%); border-color: rgba(229,255,0,0.2); }
+.tk-tier-4 { background: linear-gradient(155deg, #1a0a0a 0%, #4a1515 50%, #7c1d1d 100%); border-color: rgba(255,59,59,0.25); }
+.tk-tier-basic { background: linear-gradient(155deg, #1a1a1a 0%, #222 50%, #2a2a2a 100%); border-color: rgba(255,255,255,0.08); }
+
+/* ── Sold out: dark, muted ── */
+.tk-sold {
+  background: linear-gradient(155deg, #0e0e0e 0%, #121212 50%, #161616 100%);
+  border-color: rgba(255,255,255,0.5);
+  opacity: 0.65;
+  transition: opacity 0.3s;
+}
+/* sold + resale available → clickable, goes to marketplace */
+.tk-card--sold { cursor: pointer; }
+.tk-card--sold:hover .tk-sold { opacity: 0.2; }
+.tk-card--sold:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+
+/* sold + NO resale → dead end, no click */
+.tk-card--dead { cursor: default; }
+.tk-card--dead .tk-sold { opacity: 0.65; }
+.tk-card--dead:hover { transform: none; box-shadow: none; }
+.tk-card--dead .tk-overlay { display: none; }
+
+/* ── Available overlay on hover ── */
+.tk-card--avail { cursor: pointer; }
+.tk-card--avail:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.12); }
+.tk-card--avail:hover .tk-inner { opacity: 0.2; }
+.tk-card--avail:hover .tk-overlay { opacity: 1; pointer-events: auto; }
+
+/* ── Overlay (both states) ── */
+.tk-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: 0;
+  background: rgba(5,5,5,0.75);
+  backdrop-filter: blur(6px);
+}
+.tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
+.tk-overlay-icon { font-size: 36px; margin-bottom: 12px; }
+.tk-overlay-text {
+  font-size: 16px; font-weight: 800; color: var(--acid);
+  letter-spacing: -0.3px; margin-bottom: 4px;
+}
+.tk-overlay-hint {
+  font-size: 11px; color: var(--text-3); font-weight: 500;
+}
+
+/* Card content */
+.tk-name {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1;
+  margin-bottom: 16px;
+}
+.tk-includes {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  line-height: 1.7; margin-top: 0;
+}
+.tk-includes li {
+  list-style: none;
+  padding-left: 16px;
+  position: relative;
+}
+.tk-includes li::before {
+  content: ''; position: absolute; left: 0; top: 8px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+}
+
+.tk-header {
+  min-height: 110px;
+}
+
+/* Phase pricing table */
+.tk-phases {
+  padding-top: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tk-phase {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  font-size: 13px; font-weight: 500;
+}
+.tk-phase-name { color: rgba(255,255,255,0.3); }
+.tk-phase-price { color: rgba(255,255,255,0.3); }
+.tk-phase--past .tk-phase-name { text-decoration: line-through; color: rgba(255,255,255,0.2); }
+.tk-phase--past .tk-phase-price { text-decoration: line-through; color: rgba(255,255,255,0.2); }
+.tk-phase--active .tk-phase-name { color: var(--acid); font-weight: 700; text-decoration: none; }
+.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: 15px; text-decoration: none; }
+.tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.15); }
+.tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.15); }
+.tk-phase-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); flex-shrink: 0; margin-right: 10px;
+}
+.tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.12); }
+.tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
+.tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.06); }
+.tk-phase-left { display: flex; align-items: center; }
+
+/* Buy / sold bottom */
+.tk-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tk-price-simple {
+  font-size: 28px; font-weight: 900; color: #fff;
+  margin: 16px 0 auto; letter-spacing: -0.5px;
+}
+.tk-buy {
+  padding: 10px 20px;
+  background: var(--acid);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: #000; font-size: 12px; font-weight: 700;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tk-buy:hover { background: #fff; color: #000; box-shadow: 0 0 30px var(--acid-glow); }
+.tk-sold-all {
+  font-size: 11px; color: var(--red); font-weight: 700;
+  text-align: center; padding: 10px 0;
+  letter-spacing: 0.5px; white-space: nowrap;
+  width: 100%;
+}
+.tk-avail { margin-top: 8px; padding: 0 16px 12px; }
+.tk-avail-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.tk-avail-fill { height: 100%; background: var(--acid); border-radius: 2px; transition: width 0.4s ease; }
+.tk-avail-text { font-size: 11px; color: var(--text-mid); margin-top: 4px; text-align: center; }
+
+/* ═══════════════════════════════════════════
+   MARKETPLACE BANNER
+   ═══════════════════════════════════════════ */
+.mp-banner {
+  margin-top: 24px;
+  padding: 48px 40px;
+  border-radius: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.mp-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(229,255,0,0.04), transparent 60%);
+  pointer-events: none;
+}
+.mp-info { position: relative; z-index: 1; }
+.mp-title {
+  font-size: 20px; font-weight: 700; letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+.mp-desc {
+  font-size: 13px; color: var(--text-3); line-height: 1.6;
+}
+.mp-action { position: relative; z-index: 1; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════
+   LINEUP — Photo cards
+   ═══════════════════════════════════════════ */
+.lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.lineup-card {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  cursor: pointer;
+}
+.lineup-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.lineup-card-img {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center top;
+  filter: grayscale(100%);
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.4s;
+}
+.lineup-card:hover .lineup-card-img {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+}
+.lineup-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, transparent 60%);
+  z-index: 1;
+}
+.lineup-card-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px 20px;
+  z-index: 2;
+}
+.lineup-name {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.3px; line-height: 1.1;
+  margin-bottom: 6px;
+}
+.lineup-role {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  font-weight: 500; margin-bottom: 10px;
+}
+.lineup-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.lineup-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 4px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-btn); color: rgba(255,255,255,0.5);
+  backdrop-filter: blur(4px);
+}
+/* Headliner — spans 2 cols */
+.lineup-card--hl {
+  grid-column: span 2;
+  aspect-ratio: 4 / 3;
+}
+.lineup-card--hl .lineup-name {
+  font-size: 32px; letter-spacing: -1px;
+}
+.lineup-card--hl .lineup-role {
+  font-size: 13px;
+}
+.lineup-badge {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  background: var(--acid); color: #000;
+  padding: 5px 12px; border-radius: var(--radius-btn);
+}
+
+/* ═══════════════════════════════════════════
+   INFO — Compact list
+   ═══════════════════════════════════════════ */
+.info-box {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.info-group-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-3);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.info-list {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.info-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 100px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
+}
+.info-chip span { font-size: 15px; }
+.info-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+.info-prohibited-items {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.info-prohibited-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,60,60,0.08);
+  border: 1px solid rgba(255,60,60,0.2);
+  border-radius: 100px;
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,100,100,0.9);
+}
+
+/* ═══════════════════════════════════════════
+   ABOUT — Description block
+   ═══════════════════════════════════════════ */
+.about-text {
+  font-size: 15px; color: var(--text-2); line-height: 1.8;
+  max-width: 700px; font-weight: 400;
+  margin-left: auto; margin-right: auto;
+}
+.about-text + .about-text { margin-top: 16px; }
+
+/* ═══════════════════════════════════════════
+   VENUE
+   ═══════════════════════════════════════════ */
+.venue-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: stretch;
+}
+.venue-info {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.venue-name { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; }
+.venue-addr { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; }
+.venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.venue-chip {
+  font-size: 11px; font-weight: 500; padding: 8px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-btn); color: var(--text-3);
+}
+.venue-map {
+  min-height: 280px; border-radius: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   TRUST
+   ═══════════════════════════════════════════ */
+.trust-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.trust-item {
+  text-align: center; padding: 24px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+.trust-icon { font-size: 24px; margin-bottom: 10px; }
+.trust-text { font-size: 12px; font-weight: 500; color: var(--text-3); line-height: 1.4; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  padding: 40px var(--pad);
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.footer-logo { font-size: 16px; font-weight: 800; letter-spacing: 5px; color: var(--acid); }
+.footer-copy { font-size: 11px; color: var(--text-3); margin-top: 6px; opacity: 0.5; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hero { min-height: 85vh; }
+  .hero-meta { gap: 12px; }
+  .hero-meta-item { font-size: 13px; }
+  .hero-meta-item .icon { width: 36px; height: 36px; font-size: 16px; }
+  .section { padding: 56px 20px; }
+  .tk-grid { grid-template-columns: 1fr 1fr; }
+  .tk-inner { min-height: 280px; padding: 24px 20px; }
+  .tk-name { font-size: 22px; }
+  .tk-buy { padding: 10px 18px; font-size: 12px; }
+  .info-list { gap: 8px 12px; }
+  .venue-block { grid-template-columns: 1fr; }
+  .lineup-grid { grid-template-columns: 1fr 1fr; }
+  .lineup-card--hl { grid-column: span 2; }
+  .lineup-card--hl .lineup-name { font-size: 26px; }
+  .mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
+  .mp-desc { max-width: 100%; }
+  .trust-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .tk-grid { grid-template-columns: 1fr; }
+  .lineup-grid { grid-template-columns: 1fr; }
+  .lineup-card--hl { grid-column: span 1; aspect-ratio: 3 / 4; }
+  .lineup-card--hl .lineup-name { font-size: 22px; }
+  .trust-row { grid-template-columns: 1fr; }
+  .hero-title { letter-spacing: -2px; }
+}
+</style>
+
+<!-- Firebase SDK (para cargar evento por ID) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg" id="ev-hero-bg"></div>
+  <div class="hero-content">
+    <a href="index.html" class="hero-back" style="text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Eventos
+    </a>
+    <h1 class="hero-title" id="ev-title"></h1>
+    <div class="hero-sub" id="ev-sub"></div>
+    <p class="hero-desc" id="ev-desc"></p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="icon">📅</div>
+        <div id="ev-date"></div>
+      </div>
+      <a class="hero-meta-item" id="ev-location-link" href="#" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="icon">📍</div>
+        <div id="ev-location"></div>
+      </a>
+      <div class="hero-meta-item">
+        <div class="icon">🕐</div>
+        <div id="ev-time"></div>
+      </div>
+    </div>
+    <div class="hero-ctas" id="ev-ctas">
+      <!-- JS fills: btn-primary (Comprar) OR btn-sold (SOLD OUT) + btn-outline (Calendario) -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TICKETS
+     ═══════════════════════════════════════════ -->
+<div class="divider"></div>
+<section class="section">
+  <div class="section-label">Entradas</div>
+  <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
+  <div class="tk-grid" id="ev-tk-grid">
+    <!-- JS genera cada card con buildTicketCard(tier) -->
+  </div>
+
+  <!-- Marketplace CTA -->
+  <div class="mp-banner" id="ev-mp-banner">
+    <div class="mp-info">
+      <div class="mp-title">Busca en el marketplace de reventa</div>
+      <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
+    </div>
+    <div class="mp-action">
+      <button class="btn btn-primary" id="ev-mp-btn">Ver Marketplace →</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     LINEUP
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="ev-divider-lineup"></div>
+<section class="section" id="ev-lineup-section">
+  <div class="section-label">Lineup</div>
+  <h2 class="section-heading">Artistas <em>confirmados</em></h2>
+  <div class="lineup-grid" id="ev-lineup-grid">
+    <!-- JS genera cada card con buildLineupCard(artist) -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     EVENT INFO
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="ev-divider-info"></div>
+<section class="section" id="ev-info-section">
+  <div class="section-label">Info del evento</div>
+  <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
+  <div class="info-box">
+    <div>
+      <div class="info-group-title">Detalles</div>
+      <div class="info-list" id="ev-info-details">
+        <!-- JS genera chips: { icon, text } -->
+      </div>
+    </div>
+    <div class="info-divider"></div>
+    <div>
+      <div class="info-group-title">No ingresan</div>
+      <div class="info-prohibited-items" id="ev-info-prohibited">
+        <!-- JS genera tags: string[] -->
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     ABOUT
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="ev-divider-about"></div>
+<section class="section" id="ev-about-section" style="text-align:center;">
+  <div class="section-label">Sobre el evento</div>
+  <h2 class="section-heading" id="ev-about-heading"></h2>
+  <div id="ev-about">
+    <!-- JS genera <p class="about-text">…</p> por cada párrafo -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     VENUE
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="ev-divider-venue"></div>
+<section class="section" id="ev-venue-section">
+  <div class="venue-block">
+    <div class="venue-info">
+      <div class="section-label" style="text-align:left;">Venue</div>
+      <div class="venue-name" id="ev-venue-name"></div>
+      <div class="venue-addr" id="ev-venue-addr"></div>
+      <div class="venue-chips" id="ev-venue-chips">
+        <!-- JS genera chips: string[] -->
+      </div>
+    </div>
+    <div class="venue-map" id="ev-venue-map">
+      <!-- JS genera link a Google Maps -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TRUST (estático — igual para todo evento)
+     ═══════════════════════════════════════════ -->
+<div class="divider"></div>
+<section class="section">
+  <div class="trust-row">
+    <div class="trust-item">
+      <div class="trust-icon">✅</div>
+      <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🔄</div>
+      <div class="trust-text">Reventa segura<br>P2P</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🪪</div>
+      <div class="trust-text">Verificación<br>en puerta</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💬</div>
+      <div class="trust-text">Soporte en<br>menos de 24h</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER (estático)
+     ═══════════════════════════════════════════ -->
+<div class="footer">
+  <div class="footer-logo">L E Z G O</div>
+  <div class="footer-copy">Tickets verificados con tu identidad.</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     TEMPLATE ENGINE
+     ═══════════════════════════════════════════
+
+     FIREBASE DATA STRUCTURE (real — matches index.html):
+     ────────────────────────────────────────────────────
+     events/{eventId} = {
+       name:            "FABRICLIMA 001",
+       subtitle:        "Grand Opening",
+       description:     "La primera noche FABRICLIMA...",
+       descriptionLong: "Inspirado en la filosofía...",     // opcional, 2do párrafo
+       image:           "https://...",                      // hero background
+       heroVideo:       "https://...",                      // opcional
+       date:            "2026-04-12",                       // YYYY-MM-DD
+       dateLabel:       "sáb 12 abril",                     // pre-formateado
+       timeStart:       "22:00",
+       timeEnd:         "10:00",
+       status:          "published" | "sold-out" | "draft",
+       featured:        false,
+       genre:           "Techno / House / DnB",
+       venue:           "Casa Paz Soldán",                  // string — solo el nombre
+       location:        "Lima",                             // ciudad
+       distrito:        "Cercado de Lima",
+       address:         "Jirón de la Unión 1039",           // opcional — calle
+
+       tags: ["techno","house","dnb","18+","indoor"],       // flat array para filtros
+
+       meta: {
+         alcohol:    true,
+         multiStage: true,
+         reentry:    false,
+         crowdSize:  1200
+       },
+
+       prohibitedItems: [                                   // opcional — tiene defaults
+         "Cámaras profesionales",
+         "Bebidas externas",
+         "Armas / objetos punzantes",
+         "Sustancias ilegales",
+         "Mascotas",
+         "Menores de edad"
+       ],
+
+       lineup: [                                            // array de strings (solo nombres)
+         "Ben Klock b2b Marcel Dettmann",
+         "Andy C",
+         "Craig Richards",
+         "Residents Lima"
+       ],
+
+       tickets: [
+         {
+           id:       "general",
+           name:     "General",
+           includes: ["Acceso a 3 rooms", "Barra standard"],
+           price:    55,                                    // precio base/activo
+           capacity: 120,
+           sold:     120,                                   // sold >= capacity = agotado
+           phases: [
+             { name: "Early Bird",  price: 55,  quantity: 30 },
+             { name: "Preventa 1",  price: 65,  quantity: 30 },
+             { name: "Preventa 2",  price: 75,  quantity: 30 },
+             { name: "Full Price",  price: 85,  quantity: 30 }
+           ]
+         },
+         ...
+       ],
+
+       visibleSections: {
+         lineup: true, about: true, venue: true, video: false, tags: true
+       },
+       organizer: "uid123",
+       createdAt: Timestamp
+     }
+
+     NOTA: resaleListings no existe en Firebase aún.
+     Se consultará marketplace collection cuando se implemente.
+     Por ahora: sold >= capacity = tk-card--sold (con marketplace link).
+     Future: query marketplace/{tierId} → count > 0 → sold, count === 0 → dead.
+
+     ═══════════════════════════════════════════ -->
+
+<script>
+
+/* ── Helpers (mirrored from index.html) ── */
+
+const prettify = s => s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+
+const defaultProhibited = [
+  'Cámaras profesionales', 'Bebidas externas',
+  'Armas / objetos punzantes', 'Sustancias ilegales',
+  'Mascotas', 'Menores de edad'
+];
+
+const fallbackImages = [
+  'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80',
+  'https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=800&q=80',
+  'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
+  'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80'
+];
+
+/**
+ * getActivePhase(ticket) — Devuelve la fase activa basada en sold vs quantity
+ * Misma lógica que index.html getActivePhase()
+ */
+function getActivePhase(t) {
+  if (!t.phases || !t.phases.length) return { price: t.price || 0, name: '' };
+  let soldSoFar = t.sold || 0;
+  for (let i = 0; i < t.phases.length; i++) {
+    const phase = t.phases[i];
+    if (soldSoFar < (phase.quantity || 0)) return phase;
+    soldSoFar -= (phase.quantity || 0);
+  }
+  return t.phases[t.phases.length - 1];
+}
+
+/**
+ * getPhaseState(ticket, phaseIndex) — Calcula si una fase es past/active/future
+ */
+function getPhaseStates(t) {
+  if (!t.phases || !t.phases.length) return [];
+  const tierSold = t.sold >= t.capacity;
+  let accum = 0;
+  return t.phases.map(phase => {
+    let state = 'future';
+    if (tierSold) {
+      state = 'past';
+    } else if (accum + (phase.quantity || 0) <= t.sold) {
+      state = 'past';
+    } else if (accum <= t.sold) {
+      state = 'active';
+    }
+    accum += phase.quantity || 0;
+    return { ...phase, state };
+  });
+}
+
+
+/**
+ * renderEvent(ev) — Llena toda la plantilla con datos de Firebase
+ * ev = { ...doc.data(), _id: doc.id }
+ */
+function renderEvent(ev) {
+
+  const isSoldOut = ev.status === 'sold-out';
+  const evTags = Array.isArray(ev.tags) ? ev.tags : [];
+  const meta = ev.meta || {};
+  const vs = ev.visibleSections || {};
+
+  // Helper: show/hide section + its divider
+  const toggleSection = (sectionId, dividerId, visible) => {
+    const sec = document.getElementById(sectionId);
+    const div = document.getElementById(dividerId);
+    if (sec) sec.style.display = visible ? '' : 'none';
+    if (div) div.style.display = visible ? '' : 'none';
+  };
+
+  // ── PAGE TITLE ──
+  document.getElementById('ev-page-title').textContent = (ev.name || '') + ' — LEZGO';
+
+  // ── HERO ──
+  const imgUrl = ev.image || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
+  document.getElementById('ev-hero-bg').style.backgroundImage = `url('${imgUrl}')`;
+  document.getElementById('ev-title').textContent = ev.name || '';
+  document.getElementById('ev-sub').textContent = ev.subtitle || '';
+  document.getElementById('ev-desc').textContent = ev.description || '';
+
+  // Date
+  const dateObj = new Date(ev.date + 'T12:00:00');
+  const dateLabel = ev.dateLabel || dateObj.toLocaleDateString('es', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  });
+  document.getElementById('ev-date').textContent = dateLabel;
+
+  // Location (con distrito)
+  let venueLabel = ev.venue || '';
+  if (ev.location) venueLabel += ', ' + ev.location;
+  if (ev.distrito) venueLabel += ' — ' + ev.distrito;
+  document.getElementById('ev-location').textContent = venueLabel;
+  document.getElementById('ev-location-link').href =
+    'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venueLabel);
+
+  // Time
+  document.getElementById('ev-time').textContent =
+    (ev.timeStart || '22:00') + ' — ' + (ev.timeEnd || '05:00');
+
+  // ── HERO CTAs ──
+  const ctaBox = document.getElementById('ev-ctas');
+  const calendarUrl = buildCalendarUrl(ev);
+
+  if (isSoldOut) {
+    ctaBox.innerHTML = `
+      <button class="btn btn-sold" onclick="goMarketplace('all')">SOLD OUT — Ver Marketplace</button>
+      <a class="btn btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
+    `;
+  } else {
+    ctaBox.innerHTML = `
+      <button class="btn btn-primary" onclick="document.getElementById('ev-tk-grid').scrollIntoView({behavior:'smooth'})">Comprar entradas</button>
+      <a class="btn btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
+    `;
+  }
+
+  // ── TICKETS ──
+  const tkGrid = document.getElementById('ev-tk-grid');
+  if (ev.tickets && ev.tickets.length > 0) {
+    tkGrid.innerHTML = ev.tickets.map((t, i) => buildTicketCard(t, ev.name, i)).join('');
+  }
+
+  // Marketplace banner: show if event is sold out
+  document.getElementById('ev-mp-banner').style.display = isSoldOut ? '' : 'none';
+
+  // ── LINEUP ──
+  const hasLineup = Array.isArray(ev.lineup) && ev.lineup.length > 0;
+  const showLineup = hasLineup && vs.lineup !== false;
+  toggleSection('ev-lineup-section', 'ev-divider-lineup', showLineup);
+  if (hasLineup) {
+    document.getElementById('ev-lineup-grid').innerHTML =
+      ev.lineup.map((name, i) => buildLineupCard(name, i)).join('');
+  }
+
+  // ── INFO DETAILS ──
+  const detailsList = document.getElementById('ev-info-details');
+  let infoHtml = '';
+
+  // Genre from tags
+  const genreTags = evTags.filter(t =>
+    ['techno','dark-techno','hard-techno','melodic-techno','house','deep-house',
+     'minimal','dnb','ambient','electronica','breaks','acid','progressive',
+     'tech-house','trance'].includes(t)
+  );
+  if (genreTags.length > 0) infoHtml += `<div class="info-chip"><span>🎵</span> ${genreTags.map(prettify).join(' / ')}</div>`;
+
+  // Age from tags
+  const ageTags = evTags.filter(t => ['18+','21+','all-ages'].includes(t));
+  if (ageTags.length > 0) infoHtml += `<div class="info-chip"><span>🪪</span> ${ageTags[0]}</div>`;
+
+  // Setting from tags
+  const settingTags = evTags.filter(t => ['indoor','outdoor','open-air','mixed'].includes(t));
+  if (settingTags.length > 0) infoHtml += `<div class="info-chip"><span>🏛️</span> ${prettify(settingTags[0])}</div>`;
+
+  // Meta flags
+  if (meta.alcohol) infoHtml += `<div class="info-chip"><span>🍸</span> Barra disponible</div>`;
+  if (meta.multiStage) infoHtml += `<div class="info-chip"><span>🔊</span> Multi-room</div>`;
+  if (!meta.reentry) infoHtml += `<div class="info-chip"><span>🚫</span> No reingreso</div>`;
+
+  detailsList.innerHTML = infoHtml;
+
+  // Show/hide info section based on tags visibility + content
+  const showTags = vs.tags !== false && infoHtml.length > 0;
+  toggleSection('ev-info-section', 'ev-divider-info', showTags);
+
+  // Prohibited items
+  const prohibitedItems = ev.prohibitedItems || defaultProhibited;
+  document.getElementById('ev-info-prohibited').innerHTML =
+    prohibitedItems.map(p => `<div class="info-prohibited-tag">🚫 ${p}</div>`).join('');
+
+  // ── ABOUT ──
+  const showAbout = vs.about !== false && (ev.description || ev.descriptionLong);
+  toggleSection('ev-about-section', 'ev-divider-about', showAbout);
+  if (showAbout) {
+    document.getElementById('ev-about-heading').innerHTML = ev.name || '';
+    const aboutContainer = document.getElementById('ev-about');
+    let aboutHtml = '';
+    if (ev.description) aboutHtml += `<p class="about-text">${ev.description}</p>`;
+    if (ev.descriptionLong) aboutHtml += `<p class="about-text">${ev.descriptionLong}</p>`;
+    aboutContainer.innerHTML = aboutHtml;
+  }
+
+  // ── VENUE ──
+  const showVenue = vs.venue !== false && ev.venue;
+  toggleSection('ev-venue-section', 'ev-divider-venue', showVenue);
+  if (showVenue) {
+    document.getElementById('ev-venue-name').textContent = ev.venue || '';
+    let addrHtml = ev.address || '';
+    if (ev.location) addrHtml += (addrHtml ? ', ' : '') + ev.location;
+    document.getElementById('ev-venue-addr').innerHTML = addrHtml;
+
+    // Venue chips (setting + capacity + multi-stage + verificación)
+    const venueChips = document.getElementById('ev-venue-chips');
+    let chipsHtml = '';
+    const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t));
+    if (setting) chipsHtml += `<div class="venue-chip">${prettify(setting)}</div>`;
+    if (meta.crowdSize) chipsHtml += `<div class="venue-chip">Capacidad: ${meta.crowdSize.toLocaleString()}</div>`;
+    if (meta.multiStage) chipsHtml += `<div class="venue-chip">Multi-stage</div>`;
+    chipsHtml += '<div class="venue-chip">Verificación en puerta</div>';
+    venueChips.innerHTML = chipsHtml;
+
+    // Venue map — clickable link (matches index.html)
+    const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
+    const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + mapQuery;
+    document.getElementById('ev-venue-map').innerHTML = `
+      <a href="${mapsUrl}" target="_blank" rel="noopener"
+         style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;border-radius:inherit;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:background 0.2s;"
+         onmouseover="this.style.background='rgba(229,255,0,0.05)'" onmouseout="this.style.background='var(--surface)'">
+        <div style="font-size:48px;">📍</div>
+        <div style="color:#fff;font-size:15px;font-weight:700;">Ver ubicación en Google Maps</div>
+        <div style="color:var(--text-mid);font-size:13px;">${ev.venue || ''}${ev.location ? ', ' + ev.location : ''}</div>
+      </a>
+    `;
+  }
+
+  // ── PURCHASE MODAL SETUP ──
+  // Prepara catálogo para pmOpen / pmQtyChange
+  if (ev.tickets && typeof pmTicketCatalog !== 'undefined') {
+    pmTicketCatalog = {};
+    ev.tickets.forEach(t => {
+      const activePhase = getActivePhase(t);
+      const currentPrice = activePhase.price || t.price || 0;
+      const phaseName = activePhase.name ? ' (' + activePhase.name + ')' : '';
+      pmTicketCatalog[t.id] = { name: t.name + phaseName, price: currentPrice, priceLabel: currentPrice === 0 ? 'GRATIS' : 'S/' + currentPrice, capacity: t.capacity, sold: t.sold };
+    });
+    pmTicketQty = {};
+    ev.tickets.forEach(t => pmTicketQty[t.id] = 0);
+    if (typeof pmBuildTicketList === 'function') pmBuildTicketList();
+  }
+
+  // Store for other functions
+  window._currentEvent = ev;
+}
+
+
+/**
+ * buildTicketCard(t, eventName, index) — Genera HTML de un ticket card
+ *
+ * Lógica de 3 estados:
+ *   t.sold < t.capacity  → available (tk-card--avail)
+ *   t.sold >= t.capacity  → sold out  (tk-card--sold → marketplace)
+ *   Future: resaleListings === 0 → dead (tk-card--dead → sin link)
+ */
+function buildTicketCard(t, eventName, index) {
+  const tierSold = t.sold >= t.capacity;
+  // TODO: cuando exista marketplace collection, consultar resaleListings
+  // por ahora todos los sold van a marketplace (tk-card--sold)
+  const hasResale = tierSold; // cambiar a: tierSold && resaleCount > 0
+  const tierSlug = (t.id || t.name.toLowerCase().replace(/\s+/g, '-'));
+  const hasPhases = t.phases && Array.isArray(t.phases) && t.phases.length > 0;
+  const activePhase = getActivePhase(t);
+  const currentPrice = activePhase.price || t.price || 0;
+
+  // Card class + onclick
+  let cardClass = 'tk-card';
+  let onclick = '';
+  if (!tierSold) {
+    cardClass += ' tk-card--avail';
+    onclick = ` onclick="pmOpen('${(eventName||'').replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)"`;
+  } else if (hasResale) {
+    cardClass += ' tk-card--sold';
+    onclick = ` onclick="goMarketplace('${tierSlug}')"`;
+  } else {
+    cardClass += ' tk-card--dead';
+  }
+
+  const tierGrad = hasPhases ? 'tk-tier-' + ((index % 4) + 1) : 'tk-tier-basic';
+  const innerClass = tierSold ? 'tk-inner tk-sold' : `tk-inner ${tierGrad}`;
+
+  // Overlay
+  let overlay = '';
+  if (!tierSold) {
+    overlay = `
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🎫</div>
+        <div class="tk-overlay-text">Comprar entrada</div>
+        <div class="tk-overlay-hint">${t.name} · ${activePhase.name || 'Full Price'}</div>
+      </div>`;
+  } else if (hasResale) {
+    overlay = `
+      <div class="tk-overlay">
+        <div class="tk-overlay-icon">🔄</div>
+        <div class="tk-overlay-text">Buscar en Marketplace</div>
+        <div class="tk-overlay-hint">${t.name} · reventa verificada</div>
+      </div>`;
+  }
+
+  // Includes
+  const includes = (t.includes || []).map(i => `<li>${i}</li>`).join('');
+
+  // Phases with calculated states
+  const phasesWithState = getPhaseStates(t);
+  const phasesHtml = phasesWithState.map(p => `
+    <div class="tk-phase tk-phase--${p.state}">
+      <div class="tk-phase-left">
+        <div class="tk-phase-dot"></div>
+        <span class="tk-phase-name">${p.name}</span>
+      </div>
+      <span class="tk-phase-price">S/ ${p.price.toLocaleString()}</span>
+    </div>`).join('');
+
+  // Bottom + buy button with purchase handler
+  let bottom = '';
+  if (!tierSold) {
+    bottom = `<button class="tk-buy" onclick="event.stopPropagation();pmOpen('${(eventName||'').replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)">Comprar</button>`;
+  } else if (hasResale) {
+    bottom = `<div class="tk-sold-all">SOLD OUT — Ver en Marketplace</div>`;
+  } else {
+    bottom = `<div class="tk-sold-all">SOLD OUT</div>`;
+  }
+
+  // Availability bar (only for available tickets)
+  let availHtml = '';
+  if (!tierSold) {
+    const avail = t.capacity - t.sold;
+    const availPct = t.capacity > 0 ? Math.round((avail / t.capacity) * 100) : 0;
+    availHtml = `
+      <div class="tk-avail">
+        <div class="tk-avail-bar"><div class="tk-avail-fill" style="width:${availPct}%"></div></div>
+        <div class="tk-avail-text">${avail}/${t.capacity} disponibles</div>
+      </div>`;
+  }
+
+  return `
+    <div class="${cardClass}"${onclick}>
+      ${overlay}
+      <div class="${innerClass}">
+        <div class="tk-header">
+          <div class="tk-name">${t.name}</div>
+          ${includes ? `<ul class="tk-includes">${includes}</ul>` : ''}
+        </div>
+        ${phasesHtml ? `<div class="tk-phases">${phasesHtml}</div>` : `
+          <div class="tk-price-simple">S/ ${currentPrice.toLocaleString()}</div>
+        `}
+        <div class="tk-bottom">${bottom}</div>
+        ${availHtml}
+      </div>
+    </div>`;
+}
+
+
+/**
+ * buildLineupCard(name, index) — Genera HTML de una card del lineup
+ * Firebase solo guarda nombres (string[]), el resto se infiere
+ */
+function buildLineupCard(name, index) {
+  const isHeadliner = index === 0;
+  const hlClass = isHeadliner ? ' lineup-card--hl' : '';
+  const imageUrl = fallbackImages[index % fallbackImages.length];
+  const role = isHeadliner ? 'Headliner' : (index < 3 ? 'Main' : 'Support');
+  const roomNum = (index % 3) + 1;
+  const genres = ['Techno', 'DnB', 'House'];
+  const tags = [genres[index % genres.length], isHeadliner ? 'Berlin' : 'Local'];
+
+  return `
+    <div class="lineup-card${hlClass}">
+      <div class="lineup-card-img" style="background-image:url('${imageUrl}')"></div>
+      <div class="lineup-card-overlay"></div>
+      <div class="lineup-card-content">
+        <div class="lineup-name">${name}</div>
+        <div class="lineup-role">${role} · Room ${roomNum}</div>
+        <div class="lineup-tags">
+          ${tags.map(t => `<span class="lineup-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+      ${isHeadliner ? '<div class="lineup-badge">HEADLINER</div>' : ''}
+    </div>`;
+}
+
+
+/**
+ * buildCalendarUrl(ev) — Google Calendar "Add event" URL
+ */
+function buildCalendarUrl(ev) {
+  const startDate = (ev.date || '').replace(/-/g, '');
+  const startTime = (ev.timeStart || '22:00').replace(':', '') + '00';
+  const endTime = (ev.timeEnd || '05:00').replace(':', '') + '00';
+  const eventTitle = ev.name + (ev.subtitle ? ' · ' + ev.subtitle : '');
+  const location = (ev.venue || '') + (ev.location ? ', ' + ev.location : '');
+
+  return `https://www.google.com/calendar/render?action=TEMPLATE` +
+    `&text=${encodeURIComponent(eventTitle)}` +
+    `&dates=${startDate}T${startTime}/${startDate}T${endTime}` +
+    `&location=${encodeURIComponent(location)}` +
+    `&details=${encodeURIComponent(ev.description || '')}`;
+}
+
+
+/**
+ * goMarketplace(tier) — Navega al marketplace filtrado por tier
+ */
+function goMarketplace(tier) {
+  // TODO: reemplazar con navegación real — go('marketplace', { tier })
+  alert('→ Marketplace · filtro: ' + tier);
+}
+
+/**
+ * Purchase Modal placeholders — en index.html estas funciones
+ * están definidas en el módulo de compra.
+ * Aquí son stubs para que el template funcione standalone.
+ */
+var pmTicketCatalog = {};
+var pmTicketQty = {};
+
+function pmOpen(eventName) {
+  // TODO: abrir modal de compra — go('purchase', { event: eventName })
+  console.log('pmOpen:', eventName);
+}
+
+function pmQtyChange(ticketId, delta) {
+  // TODO: actualizar cantidad en modal de compra
+  console.log('pmQtyChange:', ticketId, delta);
+}
+
+function pmBuildTicketList() {
+  // TODO: construir lista de tickets en modal de compra
+  console.log('pmBuildTicketList');
+}
+
+
+/* ═══════════════════════════════════════════
+   INIT: Load event from URL param or Firebase
+   ═══════════════════════════════════════════ */
+
+// Demo events (fallback when Firebase is unavailable)
+const DEMO_EVENTS_V2 = {
+  'mos-lima-001': {
+    _id: 'mos-lima-001',
+    name: 'Ministry of Sound Lima',
+    subtitle: 'The Box Experience',
+    date: '2026-05-16',
+    dateLabel: 'Sáb 16 Mayo',
+    venue: 'Yvana Black',
+    location: 'Lima',
+    distrito: 'Miraflores',
+    address: 'Av. Alfredo Benavides 790',
+    genre: 'techno / house / progressive',
+    status: 'published',
+    featured: true,
+    image: 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80',
+    description: 'El legado de Ministry of Sound llega a Lima. Una noche donde la calidad del sonido es ley — sound system Funktion-One, acústica calibrada, y un lineup curado por los mismos A&R de MoS London.',
+    descriptionLong: 'Desde 1991, Ministry of Sound ha definido la cultura de club a nivel mundial. Esta edición Lima trae la filosofía del icónico venue de Elephant & Castle: la música primero, siempre. Dos rooms, zero compromisos. Room 1 para techno y progressive, Room 2 para house y disco.',
+    timeStart: '23:00',
+    timeEnd: '08:00',
+    tags: ['techno','house','progressive','indoor','18+'],
+    lineup: ['Charlotte de Witte', 'Denis Sulta', 'Peggy Gou', 'DJ Residents MoS'],
+    meta: { crowdSize: 1500, multiStage: true, alcohol: true, reentry: false },
+    prohibitedItems: ['Cámaras profesionales', 'Bebidas externas', 'Armas / objetos punzantes', 'Sustancias ilegales', 'Mascotas', 'Menores de edad'],
+    visibleSections: { lineup: true, about: true, venue: true, video: false, tags: true },
+    tickets: [
+      { id: 'general', name: 'General', capacity: 800, sold: 340, includes: ['Acceso a 2 rooms', 'Barra standard'], phases: [{ name: 'Early Bird', price: 75, quantity: 200 }, { name: 'Preventa 1', price: 95, quantity: 200 }, { name: 'Preventa 2', price: 115, quantity: 200 }, { name: 'Full Price', price: 135, quantity: 200 }] },
+      { id: 'vip', name: 'VIP', capacity: 250, sold: 80, includes: ['Zona exclusiva Room 1', 'Barra premium', 'Fast-lane ingreso', 'Guardarropa incluido'], phases: [{ name: 'Early Bird', price: 150, quantity: 65 }, { name: 'Preventa 1', price: 180, quantity: 65 }, { name: 'Preventa 2', price: 210, quantity: 60 }, { name: 'Full Price', price: 250, quantity: 60 }] },
+      { id: 'the-box', name: 'The Box', capacity: 80, sold: 15, includes: ['Backstage access', 'Open bar premium toda la noche', 'Meet & greet artistas', 'Merch exclusivo MoS'], phases: [{ name: 'Preventa', price: 400, quantity: 40 }, { name: 'Full Price', price: 500, quantity: 40 }] }
+    ]
+  }
+};
+
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get('id');
+  if (!eventId) { console.warn('No event ID in URL'); return; }
+
+  // 1. Try demo data first
+  if (DEMO_EVENTS_V2[eventId]) {
+    renderEvent(DEMO_EVENTS_V2[eventId]);
+    return;
+  }
+
+  // 2. Try Firebase
+  try {
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPUyIOfSKa1b9Cn4ExMhmAhacsOzfgu8A",
+      authDomain: "lezgo-ticketingapp.firebaseapp.com",
+      projectId: "lezgo-ticketingapp",
+      storageBucket: "lezgo-ticketingapp.firebasestorage.app",
+      messagingSenderId: "218719712607",
+      appId: "1:218719712607:web:2c9bd08b0f177f7d8932ea"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const doc = await db.collection('events').doc(eventId).get();
+    if (doc.exists) {
+      renderEvent({ ...doc.data(), _id: doc.id });
+    } else {
+      console.error('Event not found:', eventId);
+    }
+  } catch (err) {
+    console.error('Failed to load event:', err);
+  }
+})();
+</script>
+
+</body>
+</html>
