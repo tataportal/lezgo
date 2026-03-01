@@ -7766,22 +7766,16 @@ body::after {
 
       if (venueMap) {
         const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
+        const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + mapQuery;
         venueMap.innerHTML = `
-          <iframe
-            src="https://www.openstreetmap.org/export/embed.html?bbox=-77.04,-12.07,-77.02,-12.05&layer=mapnik&marker=-12.06,-77.03"
-            width="100%" height="100%" style="border:0; border-radius: inherit;" allowfullscreen="" loading="lazy"></iframe>
+          <a href="${mapsUrl}" target="_blank" rel="noopener"
+             style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;border-radius:inherit;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:background 0.2s;"
+             onmouseover="this.style.background='rgba(229,255,0,0.05)'" onmouseout="this.style.background='var(--surface)'">
+            <div style="font-size:48px;">📍</div>
+            <div style="color:#fff;font-size:15px;font-weight:700;">Ver ubicación en Google Maps</div>
+            <div style="color:var(--text-mid);font-size:13px;">${ev.venue || ''}${ev.location ? ', ' + ev.location : ''}</div>
+          </a>
         `;
-        // Geocode via Nominatim for accurate positioning
-        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + mapQuery + '&limit=1')
-          .then(r => r.json())
-          .then(data => {
-            if (data && data[0]) {
-              const lat = parseFloat(data[0].lat);
-              const lon = parseFloat(data[0].lon);
-              const d = 0.005;
-              venueMap.innerHTML = '<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=' + (lon-d) + ',' + (lat-d) + ',' + (lon+d) + ',' + (lat+d) + '&layer=mapnik&marker=' + lat + ',' + lon + '" width="100%" height="100%" style="border:0;border-radius:inherit;" allowfullscreen loading="lazy"></iframe>';
-            }
-          }).catch(function(){});
       }
 
       venueSection.style.display = '';
