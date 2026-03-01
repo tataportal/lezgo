@@ -1867,6 +1867,10 @@ body::after {
   background: linear-gradient(155deg, #1a0a0a 0%, #4a1515 50%, #7c1d1d 100%);
   border-color: rgba(255,59,59,0.25);
 }
+#v-evento .tk-tier-basic {
+  background: linear-gradient(155deg, #1a1a1a 0%, #222 50%, #2a2a2a 100%);
+  border-color: rgba(255,255,255,0.08);
+}
 #v-evento .tk-sold {
   background: var(--surface);
   border-color: var(--border);
@@ -1951,6 +1955,10 @@ body::after {
 #v-evento .tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
 #v-evento .tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.08); }
 #v-evento .tk-phase-left { display: flex; align-items: center; }
+#v-evento .tk-price-simple {
+  font-size: 28px; font-weight: 900; color: #fff;
+  margin: 16px 0 auto; letter-spacing: -0.5px;
+}
 
 /* Buy / sold bottom */
 #v-evento .tk-bottom {
@@ -7533,7 +7541,8 @@ body::after {
       let h = '';
       ev.tickets.forEach((t, i) => {
         const tierSold = t.sold >= t.capacity;
-        const tierGrad = 'tk-tier-' + ((i % 4) + 1);
+        const hasPhases = t.phases && Array.isArray(t.phases) && t.phases.length > 0;
+        const tierGrad = hasPhases ? 'tk-tier-' + ((i % 4) + 1) : 'tk-tier-basic';
         const activePhase = getActivePhase(t);
         const currentPrice = activePhase.price || t.price || 0;
         const avail = t.capacity - t.sold;
@@ -7584,7 +7593,9 @@ body::after {
                   </ul>
                 ` : ''}
               </div>
-              <div class="tk-phases">${phasesHtml}</div>
+              ${phasesHtml ? `<div class="tk-phases">${phasesHtml}</div>` : `
+                <div class="tk-price-simple">S/ ${currentPrice.toLocaleString()}</div>
+              `}
               <div class="tk-bottom">
                 ${tierSold ? `<div class="tk-sold-all">SOLD OUT</div>` : `<button class="tk-buy" ${onClick}>Comprar</button>`}
               </div>
