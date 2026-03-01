@@ -4296,6 +4296,39 @@ body::after {
 .resale-cancel { width: 100%; background: transparent; color: var(--text-dim); border: none; padding: 12px; font-size: 14px; cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 6px; }
 
 /* ═══════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════ */
+.lz-toast-container {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 99999; display: flex; flex-direction: column-reverse; gap: 8px;
+  pointer-events: none; max-width: 480px; width: calc(100% - 32px);
+}
+.lz-toast {
+  background: #1a1a1a; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px; padding: 14px 20px; color: #fff;
+  font-size: 14px; font-weight: 600; font-family: 'Sora', sans-serif;
+  line-height: 1.4; box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  display: flex; align-items: center; gap: 12px;
+  pointer-events: all; animation: toastIn 0.35s cubic-bezier(0.22,1,0.36,1);
+  backdrop-filter: blur(12px);
+}
+.lz-toast.toast-out { animation: toastOut 0.3s ease forwards; }
+.lz-toast.toast-success { border-color: rgba(229,255,0,0.3); }
+.lz-toast.toast-success .lz-toast-icon { color: var(--acid); }
+.lz-toast.toast-error { border-color: rgba(255,60,60,0.3); }
+.lz-toast.toast-error .lz-toast-icon { color: #ff3c3c; }
+.lz-toast.toast-warning { border-color: rgba(255,179,0,0.3); }
+.lz-toast.toast-warning .lz-toast-icon { color: #ffb300; }
+.lz-toast.toast-info { border-color: rgba(100,149,237,0.3); }
+.lz-toast.toast-info .lz-toast-icon { color: #6495ed; }
+.lz-toast-icon { font-size: 20px; flex-shrink: 0; }
+.lz-toast-msg { flex: 1; }
+.lz-toast-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; padding: 0 0 0 8px; font-family: 'Sora',sans-serif; }
+.lz-toast-close:hover { color: #fff; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes toastOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(20px) scale(0.9); } }
+
+/* ═══════════════════════════════════════════
    TRANSFER OVERLAY
    ═══════════════════════════════════════════ */
 .transfer-overlay {
@@ -6530,6 +6563,20 @@ body::after {
   var DEMO_UID = 'demo-user-001';
   var demoRole = 'fan';
 
+  // ── Toast Notification System ──
+  function toast(message, type, duration) {
+    type = type || 'info';
+    duration = duration || 3500;
+    var icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    var container = document.getElementById('lz-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'lz-toast toast-' + type;
+    t.innerHTML = '<span class="lz-toast-icon">' + (icons[type] || 'ℹ️') + '</span><span class="lz-toast-msg">' + message + '</span><button class="lz-toast-close" onclick="this.parentElement.classList.add(\'toast-out\');setTimeout(function(){this.remove()}.bind(this.parentElement),300)">✕</button>';
+    container.appendChild(t);
+    setTimeout(function() { if (t.parentElement) { t.classList.add('toast-out'); setTimeout(function() { t.remove(); }, 300); } }, duration);
+  }
+
   function demoApplyAuth() {
     currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
     userProfile = { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: demoRole, dni: '72345678' };
@@ -6679,7 +6726,7 @@ body::after {
       window.open('mailto:hola@lezgo.fans?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body), '_blank');
     } else {
       var msg = '¿Quieres publicar tu evento en Lezgo?\n\nEscríbenos a: hola@lezgo.fans\n\nTe contactaremos para verificar tu cuenta y darte acceso de promotor.';
-      alert(msg);
+      toast(msg, 'success');
       window.open('mailto:hola@lezgo.fans?subject=Quiero ser promotor en Lezgo&body=Hola! Me interesa publicar eventos en Lezgo.', '_blank');
     }
   }
@@ -7183,25 +7230,9 @@ body::after {
   }
 
   // ── Event page routing: redirect to standalone HTML pages ──
-  var eventPageMap = {
-    'fabriclima-001': 'evento-proto.html',
-    'bodysonic-lima': 'bodysonic.html',
-    'hessle-audio-lima': 'hessle-audio.html',
-    'drumcode-night-lima': 'drumcode-night.html',
-    'room3-sessions-lima': 'room3-sessions.html',
-    'dekmantel-lima': 'dekmantel.html',
-    'exit-through-warehouse': 'exit-warehouse.html',
-    'concrete-lima': 'concrete-lima.html',
-    'whp-lima': 'whp-lima.html',
-    'sunday-papers-lima': 'sunday-papers.html'
-  };
+  // eventPageMap removed — all events now use the SPA view (no separate HTML pages)
 
   function openEvent(eventId) {
-    // If we have a standalone page for this event, navigate to it (skip in demo mode — stay in SPA)
-    if (!DEMO_MODE && eventPageMap[eventId]) {
-      window.location.href = eventPageMap[eventId];
-      return;
-    }
     currentEventId = eventId;
     const ev = allEvents.find(e => e._id === eventId);
     if (!ev) { go('evento'); return; }
@@ -7551,7 +7582,7 @@ body::after {
         loading.classList.remove('visible');
         btn.style.display = '';
         backBtn.style.display = '';
-        alert('Selecciona al menos una entrada.');
+        toast('Selecciona al menos una entrada.', 'warning');
         return;
       }
 
@@ -7633,7 +7664,7 @@ body::after {
       loading.classList.remove('visible');
       btn.style.display = '';
       backBtn.style.display = '';
-      alert('Error al procesar: ' + err.message);
+      toast('Error al procesar: ' + err.message, 'error');
     }
   }
 
@@ -7866,19 +7897,19 @@ body::after {
   // ── Resale / Marketplace ──
   async function resaleConfirm() {
     const cb = document.getElementById('resale-terms-cb');
-    if (!cb || !cb.checked) { alert('Debes aceptar los términos para continuar.'); return; }
+    if (!cb || !cb.checked) { toast('Debes aceptar los términos para continuar.', 'warning'); return; }
     if (!currentUser) { go('auth'); return; }
 
     const priceEl = document.getElementById('resale-price');
     const eventNameEl = document.getElementById('resale-event-name');
     const tierEl = document.getElementById('resale-ticket-tier');
-    if (!priceEl || !eventNameEl || !tierEl) { alert('Error: datos de reventa no cargados.'); return; }
+    if (!priceEl || !eventNameEl || !tierEl) { toast('Error: datos de reventa no cargados.', 'error'); return; }
 
     const price = parseFloat(priceEl.value) || 0;
     const ticketDocId = window._resaleTicketId;
     const eventName = eventNameEl.textContent.trim();
     const tier = tierEl.textContent.trim();
-    if (!eventName || !tier || price <= 0) { alert('Datos incompletos. Intenta de nuevo.'); return; }
+    if (!eventName || !tier || price <= 0) { toast('Datos incompletos. Intenta de nuevo.', 'warning'); return; }
 
     try {
       if (DEMO_MODE) {
@@ -7905,13 +7936,13 @@ body::after {
       }
       resaleClose();
       setTimeout(() => {
-        alert('¡Entrada publicada en el marketplace! Te notificaremos cuando alguien la compre.');
+        toast('¡Entrada publicada en el marketplace! Te notificaremos cuando alguien la compre.', 'success');
         go('marketplace');
         loadMarketplace();
       }, 300);
     } catch (err) {
       log.error('Resale error:', err);
-      alert('Error: ' + err.message);
+      toast('Error: ' + err.message, 'error');
     }
   }
 
@@ -7985,7 +8016,7 @@ body::after {
       if (DEMO_MODE) {
         // Find in DEMO_RESALE, mark sold, add ticket to DEMO_TICKETS
         var idx = DEMO_RESALE.findIndex(r => r._id === resaleId);
-        if (idx === -1) { alert('Esta entrada ya no está disponible.'); return; }
+        if (idx === -1) { toast('Esta entrada ya no está disponible.', 'error'); return; }
         var r = DEMO_RESALE[idx];
         DEMO_RESALE[idx].status = 'sold';
         DEMO_TICKETS.push({
@@ -7997,7 +8028,7 @@ body::after {
         });
       } else {
         const resaleDoc = await db.collection('resale').doc(resaleId).get();
-        if (!resaleDoc.exists) { alert('Esta entrada ya no está disponible.'); return; }
+        if (!resaleDoc.exists) { toast('Esta entrada ya no está disponible.', 'error'); return; }
         const r = resaleDoc.data();
         if (r.ticketId) {
           await db.collection('tickets').doc(r.ticketId).update({
@@ -8009,11 +8040,11 @@ body::after {
         }
         await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
       }
-      alert('¡Entrada comprada! Ya está en "Mis Entradas".');
+      toast('¡Entrada comprada! Ya está en "Mis Entradas".', 'success');
       loadMarketplace();
     } catch (err) {
       log.error('buyResale error:', err);
-      alert('Error al comprar: ' + err.message);
+      toast('Error al comprar: ' + err.message, 'error');
     }
   }
 
@@ -8225,11 +8256,11 @@ body::after {
       if (DEMO_MODE) {
         // Find event in DEMO_EVENTS or allEvents
         var ev = DEMO_EVENTS.find(e => e._id === eventId) || allEvents.find(e => e._id === eventId);
-        if (!ev) { alert('Evento no encontrado'); go('organizer'); return; }
+        if (!ev) { toast('Evento no encontrado.', 'error'); go('organizer'); return; }
         efPopulateForm(ev);
       } else {
         db.collection('events').doc(eventId).get().then(doc => {
-          if (!doc.exists) { alert('Evento no encontrado'); go('organizer'); return; }
+          if (!doc.exists) { toast('Evento no encontrado.', 'error'); go('organizer'); return; }
           efPopulateForm(doc.data());
         });
       }
@@ -8412,9 +8443,9 @@ body::after {
     const date = (document.getElementById('ef-date')?.value || '').trim();
     const venue = (document.getElementById('ef-venue')?.value || '').trim();
 
-    if (!name) { alert('El nombre del evento es obligatorio'); return; }
-    if (!date) { alert('La fecha del evento es obligatoria'); return; }
-    if (!venue) { alert('El venue es obligatorio'); return; }
+    if (!name) { toast('El nombre del evento es obligatorio.', 'warning'); return; }
+    if (!date) { toast('La fecha del evento es obligatoria.', 'warning'); return; }
+    if (!venue) { toast('El venue es obligatorio.', 'warning'); return; }
 
     // Build tickets array from tiers
     const tickets = efTiers.map((tier, i) => {
@@ -8509,7 +8540,7 @@ body::after {
       }, 1000);
     } catch (err) {
       log.error('Save event error:', err);
-      alert('Error al guardar: ' + err.message);
+      toast('Error al guardar: ' + err.message, 'error');
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Guardar evento'; }
     }
   }
@@ -8575,22 +8606,22 @@ body::after {
     var newName = prompt('Nombre completo:', displayName);
     if (newName === null) return; // cancelled
     newName = newName.trim();
-    if (!newName) { alert('El nombre no puede estar vacío.'); return; }
+    if (!newName) { toast('El nombre no puede estar vacío.', 'warning'); return; }
     if (DEMO_MODE) {
       if (!userProfile) userProfile = {};
       userProfile.displayName = newName;
       if (currentUser) currentUser.displayName = newName;
-      alert('Perfil actualizado.');
+      toast('Perfil actualizado.', 'success');
       loadProfile();
     } else {
       db.collection('users').doc(currentUser.uid).set({ displayName: newName }, { merge: true })
         .then(function() {
           if (!userProfile) userProfile = {};
           userProfile.displayName = newName;
-          alert('Perfil actualizado.');
+          toast('Perfil actualizado.', 'success');
           loadProfile();
         })
-        .catch(function(err) { alert('Error: ' + err.message); });
+        .catch(function(err) { toast('Error: ' + err.message, 'error'); });
     }
   }
 
@@ -8806,7 +8837,7 @@ body::after {
     }).catch(() => {
       btn.textContent = 'Unirme';
       btn.disabled = false;
-      alert('Error al enviar. Intenta de nuevo.');
+      toast('Error al enviar. Intenta de nuevo.', 'error');
     });
   }
 
@@ -8832,7 +8863,7 @@ body::after {
     }).catch(() => {
       form.style.opacity = '1';
       form.style.pointerEvents = 'auto';
-      alert('Error al enviar. Intenta de nuevo.');
+      toast('Error al enviar. Intenta de nuevo.', 'error');
     });
   }
 
@@ -8858,7 +8889,7 @@ body::after {
     }).catch(() => {
       bar.style.opacity = '1';
       bar.style.pointerEvents = 'auto';
-      alert('Error al enviar. Intenta de nuevo.');
+      toast('Error al enviar. Intenta de nuevo.', 'error');
     });
   }
 
@@ -9006,7 +9037,7 @@ body::after {
 
   function mtTransfer(ticketId) {
     var t = DEMO_MODE ? DEMO_TICKETS.find(function(tk) { return tk._id === ticketId; }) : null;
-    if (!t && DEMO_MODE) { alert('Entrada no encontrada.'); return; }
+    if (!t && DEMO_MODE) { toast('Entrada no encontrada.', 'error'); return; }
     transferOpen(t ? t.eventName : 'Evento', t ? (t.ticketName || 'General') : 'General', ticketId);
   }
 
@@ -9122,13 +9153,13 @@ body::after {
     var email = (emailEl ? emailEl.value : '').trim().toLowerCase();
     var msg = (msgEl ? msgEl.value : '').trim();
     if (!email || !email.includes('@') || !email.includes('.')) {
-      alert('Ingresa un email válido.'); return;
+      toast('Ingresa un email válido.', 'warning'); return;
     }
     if (currentUser && email === (currentUser.email || '').toLowerCase()) {
-      alert('No puedes transferir una entrada a ti mismo.'); return;
+      toast('No puedes transferir una entrada a ti mismo.', 'warning'); return;
     }
     var ticketDocId = window._transferTicketId;
-    if (!ticketDocId) { alert('Error: ticket no identificado.'); return; }
+    if (!ticketDocId) { toast('Error: ticket no identificado.', 'error'); return; }
 
     var confirmMsg = '¿Confirmas transferir esta entrada a ' + email + '?\n\nEsta acción es irreversible.';
     if (!confirm(confirmMsg)) return;
@@ -9136,7 +9167,7 @@ body::after {
     try {
       if (DEMO_MODE) {
         var tk = DEMO_TICKETS.find(function(t) { return t._id === ticketDocId; });
-        if (!tk) { alert('Entrada no encontrada.'); return; }
+        if (!tk) { toast('Entrada no encontrada.', 'error'); return; }
         tk.status = 'transferred';
         tk._transferredTo = email;
         tk._transferDate = new Date().toISOString();
@@ -9176,12 +9207,12 @@ body::after {
       }
       transferClose();
       setTimeout(function() {
-        alert('¡Entrada transferida exitosamente a ' + email + '! 🎉\nLe llegará una notificación.');
+        toast('¡Entrada transferida exitosamente a ' + email + '! Le llegará una notificación.', 'success');
         loadMyTickets();
       }, 300);
     } catch (err) {
       log.error('Transfer error:', err);
-      alert('Error al transferir: ' + err.message);
+      toast('Error al transferir: ' + err.message, 'error');
     }
   }
 
@@ -9395,7 +9426,7 @@ body::after {
 
   function requestUserLocation(callback) {
     if (!navigator.geolocation) {
-      alert('Tu navegador no soporta geolocalización.');
+      toast('Tu navegador no soporta geolocalización.', 'warning');
       return;
     }
     var locVal = document.getElementById('loc-value');
@@ -9416,7 +9447,7 @@ body::after {
       function(err) {
         log.warn('Geolocation error:', err.message);
         locVal.textContent = 'Lima, Perú';
-        alert('No pudimos obtener tu ubicación. Verifica los permisos de tu navegador.');
+        toast('No pudimos obtener tu ubicación. Verifica los permisos.', 'warning');
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
     );
@@ -10598,7 +10629,7 @@ body::after {
       </div>
     </div>
     <div class="og-section">
-      <div class="og-section-title">Mis eventos <a onclick="alert('Ver todos próximamente')">Ver todos →</a></div>
+      <div class="og-section-title">Mis eventos <a onclick="toast('Próximamente.', 'info')">Ver todos →</a></div>
       <div class="og-events" id="og-events-list">
         <div id="og-events-empty" style="text-align:center;padding:40px 20px;color:var(--text-mid);font-size:13px;">
           Tus eventos aparecerán acá. <button class="og-btn-new" onclick="createEvent()" style="margin-top:12px;">+ Crear evento</button>
@@ -11122,6 +11153,8 @@ body::after {
     </div>
   </div>
 </div>
+
+<div class="lz-toast-container" id="lz-toast-container"></div>
 
 </body>
 </html>
