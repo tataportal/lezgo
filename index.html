@@ -1671,35 +1671,13 @@ body::after {
    EVENT DEMO PAGE
    ═══════════════════════════════════════════ */
 
-/* Stats Bar */
-.ev-stats-bar {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1px; background: var(--border); border-bottom: 1px solid var(--border);
-}
-.ev-stat-item {
-  background: var(--bg); padding: 24px 28px; text-align: center;
-}
-.ev-stat-num {
-  font-size: 24px; font-weight: 800; color: var(--acid); letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-.ev-stat-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--text-dim); margin-top: 4px;
-}
-
-/* Mobile responsive for stats bar */
-@media (max-width: 768px) {
-  .ev-stats-bar { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
-  .ev-stats-bar { grid-template-columns: 1fr 1fr; }
-}
-
 /* ═══════════════════════════════════════════
-   PROTO EVENT VIEW STYLES — Scoped to #v-evento
+   EVENTO VIEW — Proto CSS (scoped under #v-evento)
    ═══════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════
+   HERO — Immersive full bleed
+   ═══════════════════════════════════════════ */
 #v-evento .hero {
   position: relative;
   min-height: 100vh;
@@ -1710,7 +1688,7 @@ body::after {
 }
 #v-evento .hero-bg {
   position: absolute; inset: 0;
-  background: url('') center/cover no-repeat;
+  background: url('https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80') center/cover no-repeat;
 }
 #v-evento .hero-bg::after {
   content: ''; position: absolute; inset: 0;
@@ -1723,7 +1701,7 @@ body::after {
 }
 #v-evento .hero-content {
   position: relative; z-index: 2;
-  padding: 0 var(--pad) 48px;
+  padding: 0 var(--pad) 0;
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
@@ -1739,6 +1717,7 @@ body::after {
 #v-evento .hero-back:hover { color: var(--acid); }
 #v-evento .hero-back svg { width: 14px; height: 14px; }
 
+/* Event title block */
 #v-evento .hero-title {
   font-size: clamp(48px, 8vw, 96px);
   font-weight: 900;
@@ -1760,6 +1739,7 @@ body::after {
   margin-bottom: 32px;
 }
 
+/* Quick info row */
 #v-evento .hero-meta {
   display: flex; gap: 24px; flex-wrap: wrap;
   margin-bottom: 36px;
@@ -1775,6 +1755,7 @@ body::after {
   font-size: 18px;
 }
 
+/* CTAs */
 #v-evento .hero-ctas {
   display: flex; gap: 12px; flex-wrap: wrap;
   padding-bottom: 48px;
@@ -1813,7 +1794,9 @@ body::after {
   background: rgba(255,59,59,0.06);
 }
 
-/* ═══ SECTIONS — Common ═══ */
+/* ═══════════════════════════════════════════
+   SECTIONS — Common
+   ═══════════════════════════════════════════ */
 #v-evento .section {
   padding: 72px var(--pad);
   max-width: 1440px;
@@ -1839,7 +1822,9 @@ body::after {
   margin: 0 auto;
 }
 
-/* ═══ TICKETS — The main event ═══ */
+/* ═══════════════════════════════════════════
+   TICKETS — The main event
+   ═══════════════════════════════════════════ */
 #v-evento .tk-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1851,7 +1836,6 @@ body::after {
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
-  cursor: pointer;
 }
 #v-evento .tk-card:hover {
   transform: translateY(-8px);
@@ -1866,7 +1850,7 @@ body::after {
   position: relative;
   overflow: hidden;
 }
-/* Tier gradients */
+/* Tier gradients — easily customizable */
 #v-evento .tk-tier-1 {
   background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   border-color: rgba(15,52,96,0.5);
@@ -1893,6 +1877,7 @@ body::after {
 #v-evento .tk-card--sold:hover .tk-sold { opacity: 0.25; }
 #v-evento .tk-card--sold:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.08); }
 
+/* Sold overlay on hover */
 #v-evento .tk-overlay {
   position: absolute; inset: 0; z-index: 5;
   display: flex; flex-direction: column;
@@ -1914,6 +1899,7 @@ body::after {
   font-size: 11px; color: var(--text-3); font-weight: 500;
 }
 
+/* Card content */
 #v-evento .tk-name {
   font-size: 32px; font-weight: 900;
   letter-spacing: -1px; line-height: 1;
@@ -1923,7 +1909,6 @@ body::after {
   font-size: 12px; color: rgba(255,255,255,0.45);
   line-height: 1.6; margin-top: 0;
   list-style: none;
-  padding: 0;
 }
 #v-evento .tk-includes li {
   list-style: none;
@@ -1940,6 +1925,7 @@ body::after {
   min-height: 110px;
 }
 
+/* Phase pricing table */
 #v-evento .tk-phases {
   padding-top: 20px;
   display: flex; flex-direction: column; gap: 6px;
@@ -1966,6 +1952,7 @@ body::after {
 #v-evento .tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.08); }
 #v-evento .tk-phase-left { display: flex; align-items: center; }
 
+/* Buy / sold bottom */
 #v-evento .tk-bottom {
   margin-top: auto;
   padding-top: 12px;
@@ -1994,6 +1981,7 @@ body::after {
   letter-spacing: 1.5px;
 }
 
+/* Availability bar */
 #v-evento .tk-avail {
   margin-top: 16px;
 }
@@ -2012,7 +2000,9 @@ body::after {
   margin-top: 5px; text-align: right;
 }
 
-/* ═══ MARKETPLACE BANNER ═══ */
+/* ═══════════════════════════════════════════
+   MARKETPLACE BANNER
+   ═══════════════════════════════════════════ */
 #v-evento .mp-banner {
   margin-top: 24px;
   padding: 48px 40px;
@@ -2039,7 +2029,9 @@ body::after {
 }
 #v-evento .mp-action { position: relative; z-index: 1; flex-shrink: 0; }
 
-/* ═══ LINEUP — Photo cards ═══ */
+/* ═══════════════════════════════════════════
+   LINEUP — Photo cards (RA / Boiler Room style)
+   ═══════════════════════════════════════════ */
 #v-evento .lineup-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2100,6 +2092,7 @@ body::after {
   border-radius: 6px; color: rgba(255,255,255,0.6);
   backdrop-filter: blur(4px);
 }
+/* Headliner — spans 2 cols, bigger card */
 #v-evento .lineup-card--hl {
   grid-column: span 2;
   aspect-ratio: 4 / 3;
@@ -2117,7 +2110,9 @@ body::after {
   padding: 5px 12px; border-radius: 6px;
 }
 
-/* ═══ INFO — Compact list ═══ */
+/* ═══════════════════════════════════════════
+   INFO — Compact list
+   ═══════════════════════════════════════════ */
 #v-evento .info-list {
   display: flex; flex-wrap: wrap; gap: 10px 16px;
 }
@@ -2156,14 +2151,18 @@ body::after {
   color: rgba(255,120,120,0.9);
 }
 
-/* ═══ ABOUT — Description block ═══ */
+/* ═══════════════════════════════════════════
+   ABOUT — Description block
+   ═══════════════════════════════════════════ */
 #v-evento .about-text {
   font-size: 16px; color: var(--text-2); line-height: 1.8;
   max-width: 700px;
 }
 #v-evento .about-text + .about-text { margin-top: 16px; }
 
-/* ═══ VENUE ═══ */
+/* ═══════════════════════════════════════════
+   VENUE
+   ═══════════════════════════════════════════ */
 #v-evento .venue-block {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 32px; align-items: stretch;
@@ -2185,7 +2184,9 @@ body::after {
   overflow: hidden;
 }
 
-/* ═══ TRUST ═══ */
+/* ═══════════════════════════════════════════
+   TRUST
+   ═══════════════════════════════════════════ */
 #v-evento .trust-row {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
 }
@@ -2198,7 +2199,9 @@ body::after {
 #v-evento .trust-icon { font-size: 24px; margin-bottom: 10px; }
 #v-evento .trust-text { font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.4; }
 
-/* ═══ RESPONSIVE ═══ */
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
   #v-evento .hero { min-height: 85vh; }
   #v-evento .hero-meta { gap: 12px; }
@@ -2208,6 +2211,7 @@ body::after {
   #v-evento .tk-grid { grid-template-columns: 1fr 1fr; }
   #v-evento .tk-inner { min-height: 280px; padding: 24px 20px; }
   #v-evento .tk-name { font-size: 24px; }
+  #v-evento .tk-price { font-size: 28px; }
   #v-evento .tk-buy { padding: 10px 18px; font-size: 12px; }
   #v-evento .info-list { gap: 8px 12px; }
   #v-evento .venue-block { grid-template-columns: 1fr; }
@@ -5742,147 +5746,156 @@ body::after {
      ═══════════════════════════════════════════ -->
 <div id="v-evento" class="view">
 
-  <!-- ═══════════════════════════════════════════
-       HERO — Full bleed immersive
-       ═══════════════════════════════════════════ -->
-  <section id="evento-hero" class="hero" style="background-image: url('');">
-    <div class="hero-bg" id="evento-hero-bg"></div>
-    <div class="hero-content">
-      <a href="#" class="hero-back" onclick="go('eventos'); return false;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Eventos
-      </a>
-      <h1 class="hero-title" id="evento-hero-title"></h1>
-      <div class="hero-sub" id="evento-hero-sub"></div>
-      <p class="hero-desc" id="evento-hero-desc"></p>
-      <div class="hero-meta" id="evento-hero-meta">
-        <!-- Populated: date, venue, time meta items -->
-      </div>
-      <div class="hero-ctas">
-        <button class="btn btn-primary" id="evento-cta-buy" onclick="document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'})">Comprar entradas</button>
-        <a class="btn btn-outline" id="evento-cal-btn" href="#" target="_blank" rel="noopener">Agregar al calendario</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       STATS BAR
-       ═══════════════════════════════════════════ -->
-  <div id="evento-stats-bar" class="ev-stats-bar"></div>
-
-  <!-- ═══════════════════════════════════════════
-       TICKETS
-       ═══════════════════════════════════════════ -->
-  <div class="divider"></div>
-  <section class="section" id="evento-tickets">
-    <div class="section-label">Entradas</div>
-    <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
-    <div class="tk-grid" id="evento-tk-grid">
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg" id="evento-hero-bg"></div>
+  <div class="hero-content">
+    <a href="#" class="hero-back" onclick="go('eventos'); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Eventos
+    </a>
+    <h1 class="hero-title" id="evento-hero-title"></h1>
+    <div class="hero-sub" id="evento-hero-sub"></div>
+    <p class="hero-desc" id="evento-hero-desc"></p>
+    <div class="hero-meta" id="evento-hero-meta">
       <!-- Populated by openEvent() -->
     </div>
-    <!-- Marketplace CTA -->
-    <div class="mp-banner" id="evento-mp-banner" style="display:none;">
-      <div class="mp-info">
-        <div class="mp-title">Busca en el marketplace de reventa</div>
-        <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
-      </div>
-      <div class="mp-action">
-        <button class="btn btn-primary" onclick="go('marketplace')">Ver Marketplace →</button>
-      </div>
+    <div class="hero-ctas">
+      <button class="btn btn-primary" id="evento-cta-buy" onclick="document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'})">Comprar entradas</button>
+      <a class="btn btn-outline" id="evento-cal-btn" href="#" target="_blank" rel="noopener">Agregar al calendario</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ═══════════════════════════════════════════
-       LINEUP
-       ═══════════════════════════════════════════ -->
-  <div class="divider"></div>
-  <section class="section" id="evento-lineup-section" style="display:none;">
-    <div class="section-label">Lineup</div>
-    <h2 class="section-heading">Artistas <em>confirmados</em></h2>
-    <div class="lineup-grid" id="evento-lineup-grid">
+
+<!-- ═══════════════════════════════════════════
+     TICKETS
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-tickets"></div>
+<section class="section" id="evento-tickets">
+  <div class="section-label">Entradas</div>
+  <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
+
+  <div class="tk-grid" id="evento-tk-grid">
+    <!-- Populated by openEvent() -->
+  </div>
+
+  <!-- Marketplace CTA -->
+  <div class="mp-banner" id="evento-mp-banner" style="display:none;">
+    <div class="mp-info">
+      <div class="mp-title">Busca en el marketplace de reventa</div>
+      <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
+    </div>
+    <div class="mp-action">
+      <button class="btn btn-primary" onclick="go('marketplace')">Ver Marketplace →</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     LINEUP
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-lineup" style="display:none;"></div>
+<section class="section" id="evento-lineup-section" style="display:none;">
+  <div class="section-label">Lineup</div>
+  <h2 class="section-heading">Artistas <em>confirmados</em></h2>
+  <div class="lineup-grid" id="evento-lineup-grid">
+    <!-- Populated by openEvent() -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     EVENT INFO
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-info" style="display:none;"></div>
+<section class="section" id="evento-info-section" style="display:none;">
+  <div class="section-label">Info del evento</div>
+  <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
+
+  <div class="info-list" id="evento-info-list">
+    <!-- Populated by openEvent() -->
+  </div>
+
+  <div class="info-prohibited" id="evento-prohibited" style="display:none;">
+    <div class="info-prohibited-title">No ingresan</div>
+    <div class="info-prohibited-items" id="evento-prohibited-items">
       <!-- Populated by openEvent() -->
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ═══════════════════════════════════════════
-       EVENT INFO
-       ═══════════════════════════════════════════ -->
-  <div class="divider" id="evento-divider-info" style="display:none;"></div>
-  <section class="section" id="evento-info-section" style="display:none;">
-    <div class="section-label">Info del evento</div>
-    <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
-    <div class="info-list" id="evento-info-list">
-      <!-- Populated by openEvent() -->
-    </div>
-    <div class="info-prohibited" id="evento-prohibited" style="display:none;">
-      <div class="info-prohibited-title">No ingresan</div>
-      <div class="info-prohibited-items" id="evento-prohibited-items">
+
+<!-- ═══════════════════════════════════════════
+     ABOUT
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-about" style="display:none;"></div>
+<section class="section" id="evento-about-section" style="display:none;">
+  <div class="section-label">Sobre el evento</div>
+  <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
+  <div id="evento-about-content">
+    <!-- Populated by openEvent() -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     VENUE
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-venue" style="display:none;"></div>
+<section class="section" id="evento-venue-section" style="display:none;">
+  <div class="venue-block">
+    <div class="venue-info">
+      <div class="section-label">Venue</div>
+      <div class="venue-name" id="evento-venue-name"></div>
+      <div class="venue-addr" id="evento-venue-addr"></div>
+      <div class="venue-chips" id="evento-venue-chips">
         <!-- Populated by openEvent() -->
       </div>
     </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       ABOUT
-       ═══════════════════════════════════════════ -->
-  <div class="divider" id="evento-divider-about" style="display:none;"></div>
-  <section class="section" id="evento-about-section" style="display:none;">
-    <div class="section-label">Sobre el evento</div>
-    <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
-    <div id="evento-about-content">
-      <!-- Populated by openEvent() -->
+    <div class="venue-map" id="evento-venue-map">
+      <!-- Populated with Google Maps iframe -->
     </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       VENUE
-       ═══════════════════════════════════════════ -->
-  <div class="divider" id="evento-divider-venue" style="display:none;"></div>
-  <section class="section" id="evento-venue-section" style="display:none;">
-    <div class="venue-block">
-      <div class="venue-info">
-        <div class="section-label">Venue</div>
-        <div class="venue-name" id="evento-venue-name"></div>
-        <div class="venue-addr" id="evento-venue-addr"></div>
-        <div class="venue-chips" id="evento-venue-chips">
-          <!-- Populated by openEvent() -->
-        </div>
-      </div>
-      <div class="venue-map" id="evento-venue-map">
-        <!-- Populated with Google Maps iframe -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════
-       TRUST
-       ═══════════════════════════════════════════ -->
-  <div class="divider"></div>
-  <section class="section">
-    <div class="trust-row">
-      <div class="trust-item">
-        <div class="trust-icon">✅</div>
-        <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">🔄</div>
-        <div class="trust-text">Reventa segura<br>P2P</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">🪪</div>
-        <div class="trust-text">Verificación<br>en puerta</div>
-      </div>
-      <div class="trust-item">
-        <div class="trust-icon">💬</div>
-        <div class="trust-text">Soporte en<br>menos de 24h</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="site-footer">
-    <div class="site-footer-logo">LEZGO</div>
-    <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
   </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TRUST
+     ═══════════════════════════════════════════ -->
+<div class="divider" id="evento-divider-trust"></div>
+<section class="section">
+  <div class="trust-row">
+    <div class="trust-item">
+      <div class="trust-icon">✅</div>
+      <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🔄</div>
+      <div class="trust-text">Reventa segura<br>P2P</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🪪</div>
+      <div class="trust-text">Verificación<br>en puerta</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💬</div>
+      <div class="trust-text">Soporte en<br>menos de 24h</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
+<div class="site-footer">
+  <div class="site-footer-logo">LEZGO</div>
+  <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
+</div>
 
 </div>
 
@@ -7095,7 +7108,7 @@ body::after {
       var mapQuery = encodeURIComponent((venue + ' ' + location).trim());
       html += '<div class="divider"></div><section class="section"><div class="venue-block"><div class="venue-info"><div class="section-label">Venue</div><div class="venue-name">' + venue + '</div>';
       if (location) html += '<div class="venue-addr">' + location + '</div>';
-      html += '</div><div class="venue-map"><iframe src="https://maps.google.com/maps?q=' + mapQuery + '&t=&z=17&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;border-radius:inherit;" allowfullscreen loading="lazy"></iframe></div></div></section>';
+      html += '</div><div class="venue-map"><iframe src="https://www.google.com/maps?q=' + mapQuery + '&t=&z=17&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;border-radius:inherit;" allowfullscreen loading="lazy"></iframe></div></div></section>';
     }
 
     // Trust
@@ -7512,28 +7525,6 @@ body::after {
     }
 
     // ══════════════════════════════════════════
-    // STATS BAR
-    // ══════════════════════════════════════════
-    const statsBar = document.getElementById('evento-stats-bar');
-    if (statsBar && ev.tickets) {
-      const totalCap = ev.tickets.reduce((s,t) => s + t.capacity, 0);
-      const totalSold = ev.tickets.reduce((s,t) => s + t.sold, 0);
-      const pct = totalCap > 0 ? Math.round((totalSold / totalCap) * 100) : 0;
-      const tiers = ev.tickets.length;
-      const allPrices = ev.tickets.flatMap(t => t.phases && t.phases.length ? t.phases.map(p => p.price) : [t.price]).filter(p => typeof p === 'number' && !isNaN(p));
-      const minPrice = allPrices.length ? Math.min(...allPrices) : 0;
-      const maxPrice = allPrices.length ? Math.max(...allPrices) : 0;
-      const priceRange = minPrice === maxPrice ? 'S/ ' + minPrice : 'S/ ' + minPrice + ' – ' + maxPrice;
-      statsBar.innerHTML = `
-        <div class="ev-stat-item"><div class="ev-stat-num">${pct}%</div><div class="ev-stat-label">Vendido</div></div>
-        <div class="ev-stat-item"><div class="ev-stat-num">${totalSold}/${totalCap}</div><div class="ev-stat-label">Entradas</div></div>
-        <div class="ev-stat-item"><div class="ev-stat-num">${tiers}</div><div class="ev-stat-label">Categorías</div></div>
-        <div class="ev-stat-item"><div class="ev-stat-num">${priceRange}</div><div class="ev-stat-label">Rango de precio</div></div>
-        <div class="ev-stat-item"><div class="ev-stat-num">${ev.lineup ? ev.lineup.length : 0}</div><div class="ev-stat-label">Artistas</div></div>
-      `;
-    }
-
-    // ══════════════════════════════════════════
     // TICKETS
     // ══════════════════════════════════════════
     const tkGrid = document.getElementById('evento-tk-grid');
@@ -7613,11 +7604,7 @@ body::after {
 
       // Show marketplace banner if sold out
       if (mpBanner) {
-        if (isSoldOut) {
-          mpBanner.style.display = 'flex';
-        } else {
-          mpBanner.style.display = 'none';
-        }
+        mpBanner.style.display = isSoldOut ? 'flex' : 'none';
       }
     }
 
@@ -7626,12 +7613,20 @@ body::after {
     // ══════════════════════════════════════════
     const lineupSection = document.getElementById('evento-lineup-section');
     const lineupGrid = document.getElementById('evento-lineup-grid');
+    const dividerLineup = document.getElementById('evento-divider-lineup');
+
     if (Array.isArray(ev.lineup) && ev.lineup.length > 0) {
-      lineupSection.style.display = '';
       let h = '';
+      const unsplashUrls = [
+        'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80',
+        'https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=800&q=80',
+        'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
+        'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80'
+      ];
+
       ev.lineup.forEach((artist, i) => {
         const isHeadliner = i === 0;
-        const imageUrl = 'https://images.unsplash.com/photo-1' + ['571266028243-e4733b0f0bb0','493676304819-0d7a8d026dcf','516450360452-9312f5e86fc7','504704911898-68304a7d2571'][i % 4] + '?w=800&q=80';
+        const imageUrl = unsplashUrls[i % unsplashUrls.length];
         const role = isHeadliner ? 'Headliner' : (i < 3 ? 'Main' : 'Support');
         const roomNum = (i % 3) + 1;
         const genres = ['Techno', 'DnB', 'House'];
@@ -7653,8 +7648,11 @@ body::after {
         `;
       });
       lineupGrid.innerHTML = h;
+      lineupSection.style.display = '';
+      if (dividerLineup) dividerLineup.style.display = '';
     } else {
       lineupSection.style.display = 'none';
+      if (dividerLineup) dividerLineup.style.display = 'none';
     }
 
     // ══════════════════════════════════════════
@@ -7689,10 +7687,10 @@ body::after {
 
       if (h.length > 0) {
         infoSection.style.display = '';
-        dividerInfo.style.display = '';
+        if (dividerInfo) dividerInfo.style.display = '';
       } else {
         infoSection.style.display = 'none';
-        dividerInfo.style.display = 'none';
+        if (dividerInfo) dividerInfo.style.display = 'none';
       }
     }
 
@@ -7719,10 +7717,10 @@ body::after {
         aboutContent.innerHTML += `<p class="about-text">${ev.descriptionLong}</p>`;
       }
       aboutSection.style.display = '';
-      dividerAbout.style.display = '';
+      if (dividerAbout) dividerAbout.style.display = '';
     } else if (aboutSection) {
       aboutSection.style.display = 'none';
-      dividerAbout.style.display = 'none';
+      if (dividerAbout) dividerAbout.style.display = 'none';
     }
 
     // ══════════════════════════════════════════
@@ -7759,17 +7757,17 @@ body::after {
         const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
         venueMap.innerHTML = `
           <iframe
-            src="https://maps.google.com/maps?q=${mapQuery}&t=&z=17&ie=UTF8&iwloc=&output=embed"
+            src="https://maps.google.com/maps?q=${mapQuery}&output=embed"
             width="100%" height="100%" style="border:0; border-radius: inherit;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
         `;
       }
 
       venueSection.style.display = '';
-      dividerVenue.style.display = '';
+      if (dividerVenue) dividerVenue.style.display = '';
     } else {
       venueSection.style.display = 'none';
-      dividerVenue.style.display = 'none';
+      if (dividerVenue) dividerVenue.style.display = 'none';
     }
 
     // ══════════════════════════════════════════
