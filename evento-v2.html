@@ -182,11 +182,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
    TICKETS
    ═══════════════════════════════════════════ */
 .tk-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  justify-content: center;
   gap: 0;
   max-width: 1100px;
   margin: 0 auto;
+  flex-wrap: wrap;
 }
 .tk-card {
   position: relative;
@@ -194,6 +195,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  width: 260px;
+  flex-shrink: 0;
 }
 .tk-card:hover {
   transform: translateY(-8px);
@@ -207,6 +210,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border-radius: 0;
   position: relative;
   overflow: hidden;
+  min-height: 420px;
 }
 
 /* ── Tier strokes (border-only, no solid fill) ── */
@@ -284,7 +288,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 .tk-header {
-  min-height: 110px;
+  min-height: 140px;
+}
+.tk-includes {
+  max-height: 80px;
+  overflow: hidden;
 }
 
 /* Phase pricing table */
@@ -566,8 +574,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .hero-meta-item { font-size: 13px; }
   .hero-meta-item .icon { width: 36px; height: 36px; font-size: 16px; }
   .section { padding: 56px 20px; }
-  .tk-grid { grid-template-columns: 1fr 1fr; }
-  .tk-inner { min-height: 280px; padding: 24px 20px; }
+  .tk-card { width: 48%; }
+  .tk-inner { min-height: 340px; padding: 24px 20px; }
   .tk-name { font-size: 22px; }
   .tk-buy { padding: 10px 18px; font-size: 12px; }
   .info-list { gap: 8px 12px; }
@@ -579,7 +587,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .trust-row { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 480px) {
-  .tk-grid { grid-template-columns: 1fr; }
+  .tk-card { width: 100%; }
   .lineup-grid { grid-template-columns: 1fr; }
   .lineup-card--hl .lineup-name { font-size: 22px; }
   .trust-row { grid-template-columns: 1fr; }
