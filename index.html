@@ -7442,18 +7442,17 @@ body::after {
     if (currentEvView === 'list') renderDateList();
   }
 
-  // ── Event page routing: redirect to standalone HTML pages ──
-  // Events in this map open in the v2 standalone template
-  var eventPageV2 = { 'mos-lima-001': true };
-
+  // ── Event page routing: ALL events → evento-v2.html ──
   function openEvent(eventId) {
-    if (eventPageV2[eventId]) {
+    const ev = allEvents.find(e => e._id === eventId);
+    if (ev) {
+      // Pasar data del evento via sessionStorage para que v2 no necesite re-fetch
+      try { sessionStorage.setItem('lezgo_event', JSON.stringify(ev)); } catch(e) {}
       window.location.href = 'evento-v2.html?id=' + eventId;
       return;
     }
-    currentEventId = eventId;
-    const ev = allEvents.find(e => e._id === eventId);
-    if (!ev) { go('eventos'); return; }
+    // Fallback: si no se encuentra, ir a eventos
+    go('eventos'); return;
 
     const evTags = Array.isArray(ev.tags) ? ev.tags : [];
     const isSoldOut = ev.status === 'sold-out';
