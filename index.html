@@ -7559,8 +7559,8 @@ a[onclick]:active,
   // ── Logger condicional — silencio total en producción ──
   const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   const log = {
-    error: (...args) => isDev && log.error(...args),
-    warn:  (...args) => isDev && log.warn(...args),
+    error: (...args) => isDev && console.error(...args),
+    warn:  (...args) => isDev && console.warn(...args),
     log:   (...args) => isDev && console.log(...args)
   };
 
@@ -8454,7 +8454,6 @@ a[onclick]:active,
       }
     }
 
-    const btn = document.getElementById('pm-verify-btn');
     btn.disabled = true;
     btn.textContent = '🔍 Verificando...';
     setTimeout(() => {
@@ -8703,7 +8702,7 @@ a[onclick]:active,
 
       const card = `
         <div class="mt-ticket ${isUsed ? 'used' : ''}">
-          <div class="mt-ticket-head" onclick="mtToggleTicket(\'${escHtml(docId)}\')">
+          <div class="mt-ticket-head" onclick="mtToggleTicket('${escHtml(docId)}')">
             <div class="mt-ticket-img" style="${imgStyle}">${imgContent}</div>
             <div class="mt-ticket-info">
               <div class="mt-ticket-event">${escHtml(t.eventName)}</div>
@@ -8712,26 +8711,26 @@ a[onclick]:active,
                 ${statusBadgeHtml}
               </div>
             </div>
-            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle(\'${escHtml(docId)}\',event)">⋮</div>
+            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle('${escHtml(docId)}',event)">⋮</div>
           </div>
           <div class="mt-ticket-expand d-none" id="${escHtml(docId)}-expand">
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Venue</span><span class="mt-ticket-detail-value">${escHtml(t.eventVenue || '')}${t.eventLocation ? ', ' + escHtml(t.eventLocation) : ''}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Horario</span><span class="mt-ticket-detail-value">${t.eventTimeStart || ''} – ${t.eventTimeEnd || ''}</span></div>
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Tipo de entrada</span><span class="mt-ticket-detail-value">${escHtml(t.ticketName || \'General\')}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Tipo de entrada</span><span class="mt-ticket-detail-value">${escHtml(t.ticketName || 'General')}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Precio</span><span class="mt-ticket-detail-value">${priceLabel}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI vinculado</span><span class="mt-ticket-detail-value">${maskedDni}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Verificación</span><span class="mt-ticket-detail-value" style="color: var(--green);">Verificado con Lezgo ✓</span></div>
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Productor</span><span class="mt-ticket-detail-value">${escHtml(t.promoter || \'—\')}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Productor</span><span class="mt-ticket-detail-value">${escHtml(t.promoter || '—')}</span></div>
             <div class="mt-ticket-detail-row border-none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida' : isUsed ? '✓ Usada' : isResale ? '💰 En reventa' : '✓ Activa'}</span></div>
           </div>
         </div>`;
 
       // Menu floats in body, positioned by JS
       menusHtml += `<div class="mt-ticket-menu" id="${escHtml(docId)}-menu">
-        ${isActive && t._canUpgrade ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent('' + t.eventId + '')">⬆️ Mejorar tier</div>' : ''}
+        ${isActive && t._canUpgrade ? `<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent('${escHtml(t.eventId)}')">⬆️ Mejorar tier</div>` : ''}
         ${isActive && !t._canUpgrade ? '<div class="mt-ticket-menu-item" style="opacity:0.35;cursor:default;pointer-events:none">⬆️ Mejorar tier — ya tienes el mejor</div>' : ''}
-        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer('' + docId + '')">🔄 Transferir entrada</div>' : ''}
-        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen('' + t.eventName + '','' + t.ticketName + '',' + (t.price || 50) + ','' + docId + '')">💰 Publicar en reventa</div>' : ''}
+        ${isActive ? `<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer('${escHtml(docId)}')">🔄 Transferir entrada</div>` : ''}
+        ${isActive ? `<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen('${escHtml(t.eventName)}','${escHtml(t.ticketName || '')}',${t.price || 50},'${escHtml(docId)}')">💰 Publicar en reventa</div>` : ''}
         <div class="mt-ticket-menu-item" onclick="mtMenuClose();mtDownloadReceipt('${docId}','${t.eventName}','${t.ticketName || 'General'}','${priceLabel}')">📄 Descargar comprobante</div>
         <div class="mt-ticket-menu-item danger" onclick="mtMenuClose();mtReport('${docId}')">⚠️ Reportar un problema</div>
       </div>`;
@@ -8776,7 +8775,7 @@ a[onclick]:active,
       '<div style="font-size:3em;margin-bottom:16px;">🎫</div>' +
       '<div style="font-size:var(--fs-lg);font-weight:700;margin-bottom:8px;color:var(--text);">No tienes entradas próximas</div>' +
       '<div style="font-size:var(--fs-sm);margin-bottom:24px;">Explora los eventos disponibles y asegura tu lugar.</div>' +
-      '<button onclick="go('eventos')" style="background:var(--acid);color:var(--gray-950);border:none;padding:12px 28px;border-radius:var(--radius-btn);font-weight:700;cursor:pointer;font-family:Sora,sans-serif">Explorar eventos</button>' +
+      '<button onclick="go(\'eventos\')" style="background:var(--acid);color:var(--gray-950);border:none;padding:12px 28px;border-radius:var(--radius-btn);font-weight:700;cursor:pointer;font-family:Sora,sans-serif">Explorar eventos</button>' +
       '</div>';
     
     var emptyStateHistory = '<div style="text-align:center;padding:60px 24px;color:var(--text-dim);">' +
@@ -8890,7 +8889,7 @@ a[onclick]:active,
       var dayNum = dateObj ? dateObj.getDate() : '';
       var monthStr = dateObj ? dateObj.toLocaleDateString('es', { month: 'short' }).toUpperCase() : '';
 
-      html += `<div class="mp-listing" onclick="buyResale(\'${escHtml(r._id)}\')">
+      html += `<div class="mp-listing" onclick="buyResale('${escHtml(r._id)}')">
         <div class="mp-listing-date">
           <div class="mp-listing-date-day">${dayNum}</div>
           <div class="mp-listing-date-month">${monthStr}</div>
@@ -9122,9 +9121,9 @@ a[onclick]:active,
           <div style="font-size:var(--fs-xs);color:var(--text-dim);margin-top:4px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto <strong style="color:var(--green)">S/ ${Math.round(evNet).toLocaleString('es-PE')}</strong></div>
         </div>
         <div class="og-event-actions">
-          <button class="og-act-btn primary" onclick=\"openEvent('${escHtml(ev._id)}'\" >👁 Ver</button>
-          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick=\"openEventForm('${escHtml(ev._id)}'\"  >✏️ Editar</button>
-          <button class="og-act-btn ghost" onclick=\"exportEventTickets('${escHtml(ev._id)}'\" >📊 Export</button>
+          <button class="og-act-btn primary" onclick="openEvent('${escHtml(ev._id)}')">👁 Ver</button>
+          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick="openEventForm('${escHtml(ev._id)}')">✏️ Editar</button>
+          <button class="og-act-btn ghost" onclick="exportEventTickets('${escHtml(ev._id)}')">📊 Export</button>
         </div>
       </div>`;
     }
@@ -9172,42 +9171,6 @@ a[onclick]:active,
 
     if (elSoldSub) elSoldSub.textContent = events.length + ' evento' + (events.length !== 1 ? 's' : '');
     if (elGrossSub) elGrossSub.textContent = 'todas las ventas';
-    } catch (err) { log.error('loadOrganizerDashboard error:', err); }
-  }
-          <div class="og-event-meta">${escHtml(ev.dateLabel || ev.date)} · ${escHtml(ev.venue)}</div>
-          <div class="og-event-bar"><div class="og-event-bar-fill" style="width:${fillPct}%"></div></div>
-          <div class="og-event-sell">
-            <span><strong style="color:var(--acid)">${sold}</strong> vendidas · S/ ${evRevenue.toLocaleString('es-PE')} gross</span>
-          </div>
-          <div style="font-size:var(--fs-xs);color:var(--text-dim);margin-top:4px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto <strong style="color:var(--green)">S/ ${Math.round(evNet).toLocaleString('es-PE')}</strong></div>
-        </div>
-        <div class="og-event-actions">
-          <button class="og-act-btn primary" onclick=\"openEvent('${escHtml(ev._id)}'\" >👁 Ver</button>
-          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick=\"openEventForm('${escHtml(ev._id)}'\"  >✏️ Editar</button>
-          <button class="og-act-btn ghost" onclick=\"exportEventTickets('${escHtml(ev._id)}'\" >📊 Export</button>
-        </div>
-      </div>`;
-    }
-
-    if (container) container.innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-dim)">No tienes eventos creados.</div>';
-
-    // Update top-level stats
-    var totalFee = totalGross * FEE_RATE;
-    var totalNet = totalGross - totalFee;
-
-    var elSold = document.getElementById('og-stat-sold');
-    var elGross = document.getElementById('og-stat-gross');
-    var elFee = document.getElementById('og-stat-fee');
-    var elNet = document.getElementById('og-stat-net');
-    var elSoldSub = document.getElementById('og-stat-sold-sub');
-    var elGrossSub = document.getElementById('og-stat-gross-sub');
-
-    if (elSold) elSold.textContent = totalSold.toLocaleString('es-PE');
-    if (elSoldSub) elSoldSub.textContent = events.length + ' eventos';
-    if (elGross) elGross.textContent = 'S/ ' + totalGross.toLocaleString('es-PE');
-    if (elGrossSub) elGrossSub.textContent = 'todas las ventas';
-    if (elFee) elFee.textContent = 'S/ ' + Math.round(totalFee).toLocaleString('es-PE');
-    if (elNet) elNet.textContent = 'S/ ' + Math.round(totalNet).toLocaleString('es-PE');
     } catch (err) { log.error('loadOrganizerDashboard error:', err); }
   }
 
@@ -11475,7 +11438,7 @@ a[onclick]:active,
         tid === id ? sum : sum + q, 0);
       if (ticket.sold + totalSelected + 1 >= ticket.capacity) {
         // At capacity, don't allow increase
-        const plusBtn = document.querySelector('[onclick="pmQtyChange(\'  + id + '\', 1)"]');
+        const plusBtn = document.getElementById('pm-plus-' + id);
         if (plusBtn) {
           plusBtn.disabled = true;
           plusBtn.title = 'AGOTADO';
@@ -11489,7 +11452,7 @@ a[onclick]:active,
     document.getElementById('pm-minus-' + id).disabled = pmTicketQty[id] === 0;
 
     // Check and update plus button state
-    const plusBtn = document.querySelector('[onclick="pmQtyChange(\'  + id + '\', 1)"]');
+    const plusBtn = document.getElementById('pm-plus-' + id);
     if (plusBtn && ticket) {
       const totalSelected = Object.entries(pmTicketQty).reduce((sum, [tid, q]) =>
         tid === id ? sum + pmTicketQty[id] : sum + q, 0);
