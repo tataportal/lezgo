@@ -341,10 +341,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   letter-spacing: 0.5px; white-space: nowrap;
   width: 100%;
 }
-.tk-avail { margin-top: 8px; padding: 0 16px 12px; }
-.tk-avail-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-.tk-avail-fill { height: 100%; background: var(--acid); border-radius: 2px; transition: width 0.4s ease; }
-.tk-avail-text { font-size: 11px; color: var(--text-mid); margin-top: 4px; text-align: center; }
+/* availability bar removed */
 
 /* ═══════════════════════════════════════════
    MARKETPLACE BANNER
@@ -1158,17 +1155,7 @@ function buildTicketCard(t, eventName, index) {
     bottom = `<div class="tk-sold-all">SOLD OUT</div>`;
   }
 
-  // Availability bar (only for available tickets)
   let availHtml = '';
-  if (!tierSold) {
-    const avail = t.capacity - t.sold;
-    const availPct = t.capacity > 0 ? Math.round((avail / t.capacity) * 100) : 0;
-    availHtml = `
-      <div class="tk-avail">
-        <div class="tk-avail-bar"><div class="tk-avail-fill" style="width:${availPct}%"></div></div>
-        <div class="tk-avail-text">${avail}/${t.capacity} disponibles</div>
-      </div>`;
-  }
 
   return `
     <div class="${cardClass}"${onclick}>
