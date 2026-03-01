@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEZGO Design System v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --acid: #E5FF00;
+  --acid-dim: rgba(229,255,0,0.15);
+  --acid-glow: rgba(229,255,0,0.25);
+  --acid-muted: rgba(229,255,0,0.08);
+  --red: #FF4D4D;
+  --green: #00FF85;
+  --pink: #FF00FF;
+  --cyan: #00FFFF;
+  --gray-950: #050505;
+  --gray-900: #0A0A0A;
+  --gray-850: #0f0f0f;
+  --gray-800: #111111;
+  --gray-750: #161616;
+  --gray-700: #1A1A1A;
+  --gray-600: #222222;
+  --gray-500: #333333;
+  --gray-400: #555555;
+  --gray-300: #888888;
+  --gray-200: #aaaaaa;
+  --gray-100: #cccccc;
+  --gray-50: #f0f0f0;
+  --bg: var(--gray-900);
+  --bg-raised: var(--gray-800);
+  --bg-hover: var(--gray-750);
+  --border: rgba(255,255,255,0.08);
+  --border-light: rgba(255,255,255,0.12);
+  --border-mid: rgba(255,255,255,0.18);
+  --text: var(--gray-50);
+  --text-mid: #c8c8c8;
+  --text-dim: var(--gray-300);
+  --text-muted: var(--gray-400);
+  --alpha-minimal: rgba(255,255,255,0.02);
+  --alpha-subtle: rgba(255,255,255,0.05);
+  --alpha-light: rgba(255,255,255,0.08);
+  --alpha-medium: rgba(255,255,255,0.15);
+  --alpha-strong: rgba(255,255,255,0.25);
+  --alpha-heavy: rgba(255,255,255,0.5);
+  --tier-1: rgba(59,130,246,0.5);
+  --tier-2: rgba(139,92,246,0.5);
+  --tier-3: rgba(229,255,0,0.35);
+  --tier-4: rgba(255,59,59,0.4);
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-3xl: 48px;
+  --fs-4xl: 72px;
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-btn: 8px;
+  --radius-full: 50%;
+  --radius-pill: 100px;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
+  --sp-6: 24px; --sp-8: 32px; --sp-10: 40px; --sp-12: 48px; --sp-16: 64px; --sp-20: 80px;
+  --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600;
+  --fw-bold: 700; --fw-extrabold: 800; --fw-black: 900;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding: 48px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 48px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+h1 span { color: var(--acid); }
+.subtitle { color: var(--text-dim); font-size: 15px; margin-bottom: 64px; }
+.version { color: var(--acid); font-size: 13px; font-weight: 700; background: var(--acid-muted); padding: 4px 12px; display: inline-block; margin-bottom: 8px; }
+h2 {
+  font-weight: 700; margin-bottom: 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-mid);
+  color: var(--acid); text-transform: uppercase; letter-spacing: 2px; font-size: 13px;
+}
+.section { margin-bottom: 64px; }
+.rule-box {
+  background: var(--acid-muted); border-left: 3px solid var(--acid);
+  padding: 16px 20px; margin-bottom: 24px; font-size: 13px; color: var(--text-mid);
+}
+.rule-box strong { color: var(--acid); }
+
+/* Swatches */
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.swatch { overflow: hidden; border: 1px solid var(--border-light); background: var(--gray-850); }
+.swatch-color { height: 80px; position: relative; }
+.swatch-color .hex {
+  position: absolute; bottom: 6px; right: 8px; font-size: 10px; font-weight: 600;
+  background: rgba(0,0,0,0.6); padding: 2px 6px; color: #fff; font-family: 'SF Mono', monospace;
+}
+.swatch-info { padding: 10px 12px; }
+.swatch-name { font-size: 13px; font-weight: 600; }
+.swatch-var { font-size: 11px; color: var(--text-muted); font-family: 'SF Mono', monospace; }
+
+/* Gray strip */
+.gray-strip { display: flex; overflow: hidden; border: 1px solid var(--border-light); height: 80px; }
+.gray-cell {
+  flex: 1; display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 6px; font-size: 9px; font-weight: 600; transition: flex 0.2s; cursor: default;
+}
+.gray-cell:hover { flex: 2; }
+.gray-cell .label { font-family: 'SF Mono', monospace; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+/* Alpha strip */
+.alpha-strip {
+  display: flex; overflow: hidden; border: 1px solid var(--border-light); height: 60px;
+  background: repeating-conic-gradient(var(--gray-600) 0% 25%, var(--gray-800) 0% 50%) 50% / 16px 16px;
+}
+.alpha-cell { flex: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-size: 9px; font-weight: 600; }
+.alpha-cell .label { font-family: 'SF Mono', monospace; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+/* Borders */
+.border-samples { display: flex; gap: 16px; flex-wrap: wrap; }
+.border-sample { width: 160px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-family: 'SF Mono', monospace; color: var(--text-dim); }
+
+/* Tiers */
+.tier-grid { display: flex; gap: 12px; }
+.tier-card {
+  flex: 1; height: 80px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; font-size: 13px; font-weight: 600; border: 2px solid; background: rgba(0,0,0,0.3);
+}
+.tier-card .tier-label { font-size: 11px; font-family: 'SF Mono', monospace; color: var(--text-dim); margin-top: 4px; }
+
+/* Font size scale */
+.fs-scale { display: flex; flex-direction: column; gap: 8px; }
+.fs-row {
+  display: flex; align-items: baseline; gap: 16px; padding: 12px 16px;
+  background: var(--gray-850); border: 1px solid var(--border);
+}
+.fs-token { width: 80px; font-size: 11px; font-family: 'SF Mono', monospace; color: var(--acid); flex-shrink: 0; }
+.fs-px { width: 50px; font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+.fs-preview { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fs-jump { font-size: 10px; color: var(--green); font-family: 'SF Mono', monospace; width: 50px; flex-shrink: 0; }
+
+/* Radius */
+.radius-grid { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-end; }
+.radius-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.radius-box { width: 64px; height: 64px; background: var(--acid); transition: transform 0.2s; }
+.radius-box:hover { transform: scale(1.1); }
+.radius-label { font-size: 11px; font-family: 'SF Mono', monospace; color: var(--text-dim); text-align: center; }
+.radius-px { font-size: 10px; color: var(--text-muted); }
+
+/* Spacing */
+.sp-scale { display: flex; flex-direction: column; gap: 6px; }
+.sp-row { display: flex; align-items: center; gap: 12px; }
+.sp-token { width: 60px; font-size: 11px; font-family: 'SF Mono', monospace; color: var(--acid); text-align: right; flex-shrink: 0; }
+.sp-bar {
+  height: 24px; background: linear-gradient(90deg, var(--acid), var(--acid-glow));
+  display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+  font-size: 10px; font-weight: 600; color: var(--gray-950); min-width: 30px;
+}
+
+/* Font weight */
+.fw-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.fw-item { padding: 16px 24px; background: var(--gray-850); border: 1px solid var(--border); text-align: center; min-width: 120px; }
+.fw-sample { font-size: 28px; margin-bottom: 4px; }
+.fw-label { font-size: 11px; color: var(--text-dim); font-family: 'SF Mono', monospace; }
+
+/* Utilities */
+.util-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.util-item { padding: 10px 14px; background: var(--gray-850); border: 1px solid var(--border); font-size: 12px; font-family: 'SF Mono', monospace; }
+.util-item .class-name { color: var(--acid); }
+.util-item .class-desc { color: var(--text-dim); font-size: 11px; margin-top: 2px; font-family: 'Sora', sans-serif; }
+
+/* Component samples */
+.comp-grid { display: flex; gap: 24px; flex-wrap: wrap; }
+.comp-card { background: var(--gray-850); border: 1px solid var(--border); padding: 24px; min-width: 280px; flex: 1; }
+.comp-card h3 { font-size: 13px; color: var(--acid); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.comp-card .items { display: flex; flex-direction: column; gap: 12px; }
+</style>
+</head>
+<body>
+
+<div class="version">v2.0 — Sharp Edition</div>
+<h1>LEZGO <span>Design System</span></h1>
+<p class="subtitle">Variables, colores, tipografia, espaciado y componentes. Todo sharp, solo botones redondeados.</p>
+
+<!-- ═══════════ DESIGN RULES ═══════════ -->
+<div class="section">
+  <h2>Reglas de Diseno</h2>
+  <div class="rule-box">
+    <strong>Border-radius:</strong> Solo los botones tienen esquinas redondeadas (8px). Cards, containers, inputs, imagenes y todo lo demas es sharp (0px). Excepciones: avatares (50%), badges/pills (100px), progress bars (4px).
+  </div>
+  <div class="rule-box">
+    <strong>Font-sizes:</strong> 8 tokens con saltos de ~30%. Cada tamano es visualmente distinguible del anterior. No hay tamanos intermedios.
+  </div>
+  <div class="rule-box">
+    <strong>Colores:</strong> Nunca hardcodear hex. Siempre usar var(--token). Para blanco usar var(--text), para negro usar var(--gray-950).
+  </div>
+</div>
+
+<!-- ═══════════ BRAND ═══════════ -->
+<div class="section">
+  <h2>Brand</h2>
+  <div class="color-grid">
+    <div class="swatch"><div class="swatch-color" style="background:var(--acid)"><span class="hex">#E5FF00</span></div><div class="swatch-info"><div class="swatch-name">Acid</div><div class="swatch-var">--acid</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--acid-dim)"><span class="hex">rgba 0.15</span></div><div class="swatch-info"><div class="swatch-name">Acid Dim</div><div class="swatch-var">--acid-dim</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--acid-glow)"><span class="hex">rgba 0.25</span></div><div class="swatch-info"><div class="swatch-name">Acid Glow</div><div class="swatch-var">--acid-glow</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--acid-muted)"><span class="hex">rgba 0.08</span></div><div class="swatch-info"><div class="swatch-name">Acid Muted</div><div class="swatch-var">--acid-muted</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════ STATUS ═══════════ -->
+<div class="section">
+  <h2>Status</h2>
+  <div class="color-grid">
+    <div class="swatch"><div class="swatch-color" style="background:var(--red)"><span class="hex">#FF4D4D</span></div><div class="swatch-info"><div class="swatch-name">Red</div><div class="swatch-var">--red</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--green)"><span class="hex">#00FF85</span></div><div class="swatch-info"><div class="swatch-name">Green</div><div class="swatch-var">--green</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--pink)"><span class="hex">#FF00FF</span></div><div class="swatch-info"><div class="swatch-name">Pink</div><div class="swatch-var">--pink</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--cyan)"><span class="hex">#00FFFF</span></div><div class="swatch-info"><div class="swatch-name">Cyan</div><div class="swatch-var">--cyan</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════ MEDAL ═══════════ -->
+<div class="section">
+  <h2>Medal / Rank</h2>
+  <div class="color-grid">
+    <div class="swatch"><div class="swatch-color" style="background:var(--gold)"><span class="hex">#FFD700</span></div><div class="swatch-info"><div class="swatch-name">Gold</div><div class="swatch-var">--gold</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--silver)"><span class="hex">#C0C0C0</span></div><div class="swatch-info"><div class="swatch-name">Silver</div><div class="swatch-var">--silver</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--bronze)"><span class="hex">#CD7F32</span></div><div class="swatch-info"><div class="swatch-name">Bronze</div><div class="swatch-var">--bronze</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════ GRAY SCALE ═══════════ -->
+<div class="section">
+  <h2>Gray Scale</h2>
+  <div class="gray-strip">
+    <div class="gray-cell" style="background:var(--gray-950);color:#fff"><span class="label">950</span></div>
+    <div class="gray-cell" style="background:var(--gray-900);color:#fff"><span class="label">900</span></div>
+    <div class="gray-cell" style="background:var(--gray-850);color:#fff"><span class="label">850</span></div>
+    <div class="gray-cell" style="background:var(--gray-800);color:#fff"><span class="label">800</span></div>
+    <div class="gray-cell" style="background:var(--gray-750);color:#fff"><span class="label">750</span></div>
+    <div class="gray-cell" style="background:var(--gray-700);color:#fff"><span class="label">700</span></div>
+    <div class="gray-cell" style="background:var(--gray-600);color:#fff"><span class="label">600</span></div>
+    <div class="gray-cell" style="background:var(--gray-500);color:#fff"><span class="label">500</span></div>
+    <div class="gray-cell" style="background:var(--gray-400);color:#fff"><span class="label">400</span></div>
+    <div class="gray-cell" style="background:var(--gray-300);color:#000"><span class="label">300</span></div>
+    <div class="gray-cell" style="background:var(--gray-200);color:#000"><span class="label">200</span></div>
+    <div class="gray-cell" style="background:var(--gray-100);color:#000"><span class="label">100</span></div>
+    <div class="gray-cell" style="background:var(--gray-50);color:#000"><span class="label">50</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ SEMANTIC ═══════════ -->
+<div class="section">
+  <h2>Semantic Aliases</h2>
+  <div class="color-grid">
+    <div class="swatch"><div class="swatch-color" style="background:var(--bg)"><span class="hex">gray-900</span></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-var">--bg</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--bg-raised)"><span class="hex">gray-800</span></div><div class="swatch-info"><div class="swatch-name">BG Raised</div><div class="swatch-var">--bg-raised</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--bg-hover)"><span class="hex">gray-750</span></div><div class="swatch-info"><div class="swatch-name">BG Hover</div><div class="swatch-var">--bg-hover</div></div></div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:var(--gray-950)"><span class="hex" style="color:var(--text)">#f0f0f0</span></div>
+      <div class="swatch-info">
+        <div class="swatch-name" style="display:flex;gap:8px"><span style="color:var(--text)">Text</span><span style="color:var(--text-mid)">Mid</span><span style="color:var(--text-dim)">Dim</span><span style="color:var(--text-muted)">Muted</span></div>
+        <div class="swatch-var">--text / --text-mid / --text-dim / --text-muted</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ALPHA ═══════════ -->
+<div class="section">
+  <h2>Alpha Scale</h2>
+  <div class="alpha-strip">
+    <div class="alpha-cell" style="background:var(--alpha-minimal)"><span class="label">minimal</span></div>
+    <div class="alpha-cell" style="background:var(--alpha-subtle)"><span class="label">subtle</span></div>
+    <div class="alpha-cell" style="background:var(--alpha-light)"><span class="label">light</span></div>
+    <div class="alpha-cell" style="background:var(--alpha-medium)"><span class="label">medium</span></div>
+    <div class="alpha-cell" style="background:var(--alpha-strong)"><span class="label">strong</span></div>
+    <div class="alpha-cell" style="background:var(--alpha-heavy)"><span class="label">heavy</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ BORDERS ═══════════ -->
+<div class="section">
+  <h2>Borders</h2>
+  <div class="border-samples">
+    <div class="border-sample" style="border:2px solid var(--border)">--border<br>0.08</div>
+    <div class="border-sample" style="border:2px solid var(--border-light)">--border-light<br>0.12</div>
+    <div class="border-sample" style="border:2px solid var(--border-mid)">--border-mid<br>0.18</div>
+  </div>
+</div>
+
+<!-- ═══════════ TIERS ═══════════ -->
+<div class="section">
+  <h2>Tier Colors</h2>
+  <div class="tier-grid">
+    <div class="tier-card" style="border-color:var(--tier-1);color:rgb(59,130,246)">GA 10pm<span class="tier-label">--tier-1</span></div>
+    <div class="tier-card" style="border-color:var(--tier-2);color:rgb(139,92,246)">GA All Night<span class="tier-label">--tier-2</span></div>
+    <div class="tier-card" style="border-color:var(--tier-3);color:var(--acid)">Supervip<span class="tier-label">--tier-3</span></div>
+    <div class="tier-card" style="border-color:var(--tier-4);color:rgb(255,59,59)">Box<span class="tier-label">--tier-4</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ FONT SIZES ═══════════ -->
+<div class="section">
+  <h2>Font Size Scale (8 tokens, ~30% jumps)</h2>
+  <div class="fs-scale">
+    <div class="fs-row"><span class="fs-token">--fs-xs</span><span class="fs-px">11px</span><span class="fs-jump"></span><span class="fs-preview" style="font-size:11px">Badges, micro-copy, timestamps</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-sm</span><span class="fs-px">13px</span><span class="fs-jump">+18%</span><span class="fs-preview" style="font-size:13px">Labels, captions, metadata</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-base</span><span class="fs-px">15px</span><span class="fs-jump">+15%</span><span class="fs-preview" style="font-size:15px">Body text, descriptions, paragraphs</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-lg</span><span class="fs-px">18px</span><span class="fs-jump">+20%</span><span class="fs-preview" style="font-size:18px">Subtitulos, card headers</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-xl</span><span class="fs-px">24px</span><span class="fs-jump">+33%</span><span class="fs-preview" style="font-size:24px">Titulos de seccion</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-2xl</span><span class="fs-px">32px</span><span class="fs-jump">+33%</span><span class="fs-preview" style="font-size:32px">Headers principales</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-3xl</span><span class="fs-px">48px</span><span class="fs-jump">+50%</span><span class="fs-preview" style="font-size:48px">Hero text</span></div>
+    <div class="fs-row"><span class="fs-token">--fs-4xl</span><span class="fs-px">72px</span><span class="fs-jump">+50%</span><span class="fs-preview" style="font-size:72px">Display</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ FONT WEIGHTS ═══════════ -->
+<div class="section">
+  <h2>Font Weights</h2>
+  <div class="fw-grid">
+    <div class="fw-item"><div class="fw-sample" style="font-weight:400">Aa</div><div class="fw-label">regular 400</div></div>
+    <div class="fw-item"><div class="fw-sample" style="font-weight:500">Aa</div><div class="fw-label">medium 500</div></div>
+    <div class="fw-item"><div class="fw-sample" style="font-weight:600">Aa</div><div class="fw-label">semibold 600</div></div>
+    <div class="fw-item"><div class="fw-sample" style="font-weight:700">Aa</div><div class="fw-label">bold 700</div></div>
+    <div class="fw-item"><div class="fw-sample" style="font-weight:800">Aa</div><div class="fw-label">extrabold 800</div></div>
+    <div class="fw-item"><div class="fw-sample" style="font-weight:900">Aa</div><div class="fw-label">black 900</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ BORDER RADIUS ═══════════ -->
+<div class="section">
+  <h2>Border Radius (5 tokens)</h2>
+  <div class="rule-box">
+    <strong>none (0):</strong> Cards, containers, inputs, imagenes, modals, dropdowns — TODO sharp por defecto.<br>
+    <strong>sm (4px):</strong> Progress bars, barras de carga.<br>
+    <strong>btn (8px):</strong> Botones solamente.<br>
+    <strong>full (50%):</strong> Avatares, dots, iconos circulares.<br>
+    <strong>pill (100px):</strong> Badges, tags, status pills.
+  </div>
+  <div class="radius-grid">
+    <div class="radius-item">
+      <div class="radius-box" style="border-radius:0"></div>
+      <div class="radius-label">none<br><span class="radius-px">0 — default</span></div>
+    </div>
+    <div class="radius-item">
+      <div class="radius-box" style="border-radius:4px"></div>
+      <div class="radius-label">sm<br><span class="radius-px">4px</span></div>
+    </div>
+    <div class="radius-item">
+      <div class="radius-box" style="border-radius:8px"></div>
+      <div class="radius-label">btn<br><span class="radius-px">8px</span></div>
+    </div>
+    <div class="radius-item">
+      <div class="radius-box" style="border-radius:50%"></div>
+      <div class="radius-label">full<br><span class="radius-px">50%</span></div>
+    </div>
+    <div class="radius-item">
+      <div class="radius-box" style="border-radius:100px; width:120px; height:48px;"></div>
+      <div class="radius-label">pill<br><span class="radius-px">100px</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SPACING ═══════════ -->
+<div class="section">
+  <h2>Spacing Scale</h2>
+  <div class="sp-scale">
+    <div class="sp-row"><span class="sp-token">--sp-1</span><div class="sp-bar" style="width:42px">4</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-2</span><div class="sp-bar" style="width:54px">8</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-3</span><div class="sp-bar" style="width:66px">12</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-4</span><div class="sp-bar" style="width:78px">16</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-5</span><div class="sp-bar" style="width:90px">20</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-6</span><div class="sp-bar" style="width:102px">24</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-8</span><div class="sp-bar" style="width:126px">32</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-10</span><div class="sp-bar" style="width:150px">40</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-12</span><div class="sp-bar" style="width:174px">48</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-16</span><div class="sp-bar" style="width:222px">64</div></div>
+    <div class="sp-row"><span class="sp-token">--sp-20</span><div class="sp-bar" style="width:270px">80</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ SAMPLE COMPONENTS ═══════════ -->
+<div class="section">
+  <h2>Componentes</h2>
+  <div class="comp-grid">
+    <!-- Buttons -->
+    <div class="comp-card">
+      <h3>Botones (radius-btn: 8px)</h3>
+      <div class="items">
+        <button style="background:var(--acid);color:var(--gray-950);border:none;padding:14px 32px;border-radius:var(--radius-btn);font-weight:700;font-size:var(--fs-base);font-family:inherit;cursor:pointer;">
+          Comprar entradas
+        </button>
+        <button style="background:transparent;color:var(--text);border:1px solid var(--border-mid);padding:14px 32px;border-radius:var(--radius-btn);font-weight:600;font-size:var(--fs-base);font-family:inherit;cursor:pointer;">
+          Agregar al calendario
+        </button>
+        <button style="background:var(--gray-700);color:var(--text);border:none;padding:10px 20px;border-radius:var(--radius-btn);font-weight:600;font-size:var(--fs-sm);font-family:inherit;cursor:pointer;">
+          Ver detalle
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards (sharp) -->
+    <div class="comp-card">
+      <h3>Cards (radius: 0)</h3>
+      <div class="items">
+        <div style="background:var(--gray-800);border:1px solid var(--border);padding:20px;">
+          <div style="font-weight:700;margin-bottom:4px;">Evento card</div>
+          <div style="font-size:var(--fs-sm);color:var(--text-dim)">Esquinas sharp, sin redondeado</div>
+        </div>
+        <div style="background:var(--gray-800);border:1px solid var(--border);padding:16px;display:flex;gap:12px;align-items:center;">
+          <div style="width:40px;height:40px;background:var(--acid);border-radius:var(--radius-full);flex-shrink:0;"></div>
+          <div>
+            <div style="font-weight:600;font-size:var(--fs-sm)">Profile card</div>
+            <div style="font-size:var(--fs-xs);color:var(--text-muted)">Avatar redondo, card sharp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badges & Pills -->
+    <div class="comp-card">
+      <h3>Badges (radius-pill: 100px)</h3>
+      <div class="items" style="flex-direction:row;flex-wrap:wrap;">
+        <span style="background:var(--red);color:#fff;font-size:var(--fs-xs);font-weight:800;padding:4px 12px;border-radius:var(--radius-pill);text-transform:uppercase;letter-spacing:1px;">SOLD OUT</span>
+        <span style="background:var(--acid);color:var(--gray-950);font-size:var(--fs-xs);font-weight:800;padding:4px 12px;border-radius:var(--radius-pill);">Early Birds</span>
+        <span style="background:var(--acid-dim);color:var(--acid);font-size:var(--fs-sm);font-weight:600;padding:6px 16px;border-radius:var(--radius-pill);border:1px solid var(--acid-glow);">Verificado</span>
+        <span style="background:var(--green);color:var(--gray-950);font-size:var(--fs-xs);font-weight:700;padding:4px 12px;border-radius:var(--radius-pill);">Activo</span>
+      </div>
+    </div>
+
+    <!-- Inputs (sharp) -->
+    <div class="comp-card">
+      <h3>Inputs (radius: 0)</h3>
+      <div class="items">
+        <input type="text" placeholder="Email o DNI" style="background:var(--gray-800);border:1px solid var(--border-mid);padding:12px 16px;color:var(--text);font-family:inherit;font-size:var(--fs-base);width:100%;outline:none;">
+        <input type="text" placeholder="Buscar evento..." style="background:var(--gray-800);border:1px solid var(--border);padding:10px 16px;color:var(--text);font-family:inherit;font-size:var(--fs-sm);width:100%;outline:none;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:48px 0;color:var(--text-muted);font-size:var(--fs-sm);">
+  LEZGO Design System v2.0 — Sharp Edition
+</div>
+
+</body>
+</html>
