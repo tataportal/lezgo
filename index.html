@@ -2035,24 +2035,6 @@ body::after {
   letter-spacing: 1.5px;
 }
 
-/* Availability bar */
-#v-evento .tk-avail {
-  margin-top: 16px;
-}
-#v-evento .tk-avail-bar {
-  height: 3px; border-radius: 2px;
-  background: var(--alpha-light);
-  overflow: hidden;
-}
-#v-evento .tk-avail-fill {
-  height: 100%; border-radius: 2px;
-  background: rgba(255,255,255,0.3);
-  transition: width 0.6s ease;
-}
-#v-evento .tk-avail-text {
-  font-size: 10px; color: rgba(255,255,255,0.3);
-  margin-top: 5px; text-align: right;
-}
 
 /* ═══════════════════════════════════════════
    MARKETPLACE BANNER
@@ -6988,199 +6970,78 @@ body::after {
   }
 
   function previewEvent() {
+    // Build the same eventData object as efSaveEvent, then open evento-v2.html via sessionStorage
     var name = (document.getElementById('ef-name')?.value || '').trim() || 'Mi Evento';
-    var subtitle = (document.getElementById('ef-subtitle')?.value || '').trim();
     var date = (document.getElementById('ef-date')?.value || '').trim();
-    var timeStart = (document.getElementById('ef-time-start')?.value || '').trim() || '22:00';
-    var timeEnd = (document.getElementById('ef-time-end')?.value || '').trim() || '05:00';
     var venue = (document.getElementById('ef-venue')?.value || '').trim() || 'Venue';
-    var location = (document.getElementById('ef-location')?.value || '').trim();
-    var genre = (document.getElementById('ef-genre')?.value || '').trim();
-    var description = (document.getElementById('ef-description')?.value || '').trim();
-    var imageUrl = (document.getElementById('ef-image')?.value || '').trim() || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
 
-    // Format date
-    var dateFormatted = '';
+    // Build tickets array from tiers (mirrors efSaveEvent logic)
+    var tickets = efTiers.map(function(tier, i) {
+      var totalCapacity = tier.phases.reduce(function(s, p) { return s + (parseInt(p.quantity) || 0); }, 0);
+      var activePhase = tier.phases[0] || { price: 0 };
+      return {
+        id: tier.name.toLowerCase().replace(/[^a-z0-9]/g, '-') || ('tier-' + i),
+        name: tier.name || ('Tier ' + (i + 1)),
+        includes: tier.includes || [],
+        price: activePhase.price,
+        priceLabel: activePhase.price === 0 ? 'GRATIS' : 'S/ ' + activePhase.price,
+        capacity: totalCapacity,
+        sold: tier.sold || 0,
+        phases: tier.phases.map(function(p) { return { name: p.name, price: p.price || 0, quantity: p.quantity || 0, releaseDate: p.releaseDate || '' }; })
+      };
+    });
+
+    var dateLabel = '';
     if (date) {
-      var d = new Date(date + 'T12:00:00');
-      var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-      var meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-      dateFormatted = dias[d.getDay()] + ' ' + d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+      var dateObj = new Date(date + 'T12:00:00');
+      dateLabel = dateObj.toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'long' });
     }
 
-    // Build ticket cards
-    var tierGradients = ['tk-tier-1','tk-tier-2','tk-tier-3','tk-tier-4'];
-    var ticketsHtml = '';
-    if (efTiers && efTiers.length > 0) {
-      efTiers.forEach(function(t, ti) {
-        var phasesHtml = '';
-        if (t.phases) t.phases.forEach(function(p, pi) {
-          var cls = pi === 0 ? 'tk-phase--active' : 'tk-phase--future';
-          phasesHtml += '<div class="tk-phase ' + cls + '"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">' + (p.name || 'Fase ' + (pi+1)) + '</span></div><span class="tk-phase-price">S/ ' + (p.price || 0) + '</span></div>';
-        });
-        var totalQty = 0;
-        if (t.phases) t.phases.forEach(function(p) { totalQty += parseInt(p.quantity) || 0; });
-        ticketsHtml += '<div class="tk-card"><div class="tk-inner ' + tierGradients[ti % 4] + '"><div class="tk-header"><div class="tk-name">' + (t.name || 'Tier ' + (ti+1)) + '</div></div><div class="tk-phases">' + phasesHtml + '</div><div class="tk-bottom"><button class="tk-buy">Comprar →</button></div></div></div>';
-      });
-    } else {
-      ticketsHtml = '<div class="tk-card"><div class="tk-inner tk-tier-1"><div class="tk-header"><div class="tk-name">General</div></div><div class="tk-phases"><div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa</span></div><span class="tk-phase-price">S/ —</span></div></div><div class="tk-bottom"><button class="tk-buy">Comprar →</button></div></div></div>';
-    }
+    var ageVal = document.getElementById('ef-meta-age')?.value || 'all-ages';
 
-    // Build lineup cards
-    var lineupHtml = '';
-    if (efLineup && efLineup.length > 0) {
-      efLineup.forEach(function(artist, i) {
-        var isHl = i === 0 ? ' lineup-card--hl' : '';
-        lineupHtml += '<div class="lineup-card' + isHl + '"><div class="lineup-card-img" style="background:var(--surface-2);"></div><div class="lineup-card-overlay"></div><div class="lineup-card-content"><div class="lineup-name">' + artist + '</div><div class="lineup-role">' + (i === 0 ? 'Headliner' : 'Artista') + '</div></div></div>';
-      });
-    }
+    var eventData = {
+      _id: 'preview',
+      name: name,
+      subtitle: (document.getElementById('ef-subtitle')?.value || '').trim(),
+      date: date,
+      dateLabel: dateLabel,
+      timeStart: document.getElementById('ef-time-start')?.value || '22:00',
+      timeEnd: document.getElementById('ef-time-end')?.value || '05:00',
+      venue: venue,
+      distrito: document.getElementById('ef-distrito')?.value || '',
+      location: (document.getElementById('ef-location')?.value || '').trim() || 'Lima',
+      address: (document.getElementById('ef-address')?.value || '').trim(),
+      image: (document.getElementById('ef-image')?.value || '').trim(),
+      heroVideo: (document.getElementById('ef-video')?.value || '').trim(),
+      description: (document.getElementById('ef-description')?.value || '').trim(),
+      descriptionLong: (document.getElementById('ef-description-long')?.value || '').trim(),
+      genre: (document.getElementById('ef-genre')?.value || '').trim() || 'Electrónica',
+      lineup: efLineup.filter(function(a) { return a.trim(); }),
+      tickets: tickets,
+      tags: efTags.filter(function(t) { return t.trim(); }),
+      prohibitedItems: efProhibited.filter(function(p) { return p.trim(); }),
+      meta: {
+        crowdSize: parseInt(document.getElementById('ef-meta-crowd')?.value) || 0,
+        multiStage: !!document.getElementById('ef-meta-multistage')?.checked,
+        alcohol: !!document.getElementById('ef-meta-alcohol')?.checked,
+        reentry: !!document.getElementById('ef-meta-reentry')?.checked,
+        outdoor: !!document.getElementById('ef-meta-outdoor')?.checked,
+        ageRestriction: ageVal
+      },
+      status: document.getElementById('ef-status')?.value || 'draft',
+      featured: false,
+      visibleSections: {
+        lineup: document.getElementById('ef-show-lineup')?.checked !== false,
+        about: document.getElementById('ef-show-about')?.checked !== false,
+        venue: document.getElementById('ef-show-venue')?.checked !== false,
+        video: document.getElementById('ef-show-video')?.checked !== false,
+        tags: document.getElementById('ef-show-tags')?.checked !== false
+      }
+    };
 
-    // Genre chips
-    var chipsHtml = '';
-    if (genre) chipsHtml += '<div class="info-chip"><span>🎵</span> ' + genre + '</div>';
-    chipsHtml += '<div class="info-chip"><span>🪪</span> 18+</div>';
-    if (venue) chipsHtml += '<div class="info-chip"><span>🏛️</span> ' + venue + '</div>';
-
-    // Build full proto HTML
-    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'
-      + '<title>' + name + ' — LEZGO Preview</title>'
-      + '<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">'
-      + '<style>'
-      + '*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }'
-      + ':root { --acid:#E5FF00; --acid-dim:rgba(229,255,0,0.12); --acid-glow:rgba(229,255,0,0.35); --red:var(--red); --green:var(--green); --bg:var(--gray-950); --surface:var(--gray-850); --surface-2:var(--gray-750); --surface-3:var(--gray-700); --border:var(--alpha-light); --border-light:var(--alpha-medium); --text:#F5F5F5; --text-2:#BBBBBB; --text-3:var(--gray-300); --radius:16px; --radius-sm:10px; --pad:clamp(20px,5vw,80px); }'
-      + 'body { font-family:"Sora",sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; }'
-      + 'a { color:inherit; text-decoration:none; } button { font-family:inherit; cursor:pointer; border:none; }'
-      + '.preview-bar { position:fixed; top:0; left:0; right:0; z-index:999; background:rgba(229,255,0,0.12); border-bottom:1px solid rgba(229,255,0,0.3); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(12px); }'
-      + '.preview-bar-text { font-size:13px; font-weight:700; color:var(--acid); }'
-      + '.preview-bar-text span { font-weight:400; color:var(--text-2); margin-left:8px; }'
-      + '.preview-bar a { font-size:12px; color:var(--acid); text-decoration:underline; font-weight:600; }'
-      + '.hero { position:relative; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; justify-content:flex-end; }'
-      + '.hero-bg { position:absolute; inset:0; background:url(\'' + imageUrl.replace(/'/g, "\\'") + '\') center/cover no-repeat; }'
-      + '.hero-bg::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(5,5,5,0) 0%,rgba(5,5,5,0.3) 35%,rgba(5,5,5,0.92) 70%,var(--bg) 100%); }'
-      + '.hero-content { position:relative; z-index:2; padding:0 var(--pad) 0; max-width:1440px; width:100%; margin:0 auto; }'
-      + '.hero-title { font-size:clamp(48px,8vw,96px); font-weight:900; letter-spacing:-3px; line-height:0.9; margin-bottom:8px; }'
-      + '.hero-sub { font-size:clamp(16px,2.5vw,24px); font-weight: 400; color:var(--acid); letter-spacing:2px; text-transform:uppercase; margin-bottom:24px; }'
-      + '.hero-desc { font-size:15px; color:var(--text-2); max-width:520px; line-height:1.7; margin-bottom:32px; }'
-      + '.hero-meta { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:36px; }'
-      + '.hero-meta-item { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; }'
-      + '.hero-meta-item .icon { width:40px; height:40px; border-radius:12px; background:rgba(229,255,0,0.08); display:flex; align-items:center; justify-content:center; font-size:18px; }'
-      + '.hero-ctas { display:flex; gap:12px; flex-wrap:wrap; padding-bottom:48px; }'
-      + '.btn { display:inline-flex; align-items:center; gap:8px; padding:16px 32px; font-size:14px; font-weight:700; border-radius:var(--radius-sm); transition:all 0.25s; letter-spacing:-0.2px; }'
-      + '.btn-primary { background:var(--acid); color:#000; }'
-      + '.btn-primary:hover { box-shadow:0 0 50px var(--acid-glow); transform:translateY(-2px); }'
-      + '.section { padding:72px var(--pad); max-width:1440px; margin:0 auto; }'
-      + '.section-label { font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--acid); margin-bottom:16px; opacity:0.8; }'
-      + '.section-heading { font-size:clamp(28px,4vw,44px); font-weight:800; letter-spacing:-1.5px; line-height:1.1; margin-bottom:40px; }'
-      + '.section-heading em { font-style:normal; color:var(--acid); }'
-      + '.divider { height:1px; background:linear-gradient(90deg,transparent,var(--border-light) 20%,var(--border-light) 80%,transparent); max-width:1440px; margin:0 auto; }'
-      + '.tk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }'
-      + '.tk-card { position:relative; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s; }'
-      + '.tk-card:hover { transform:translateY(-8px); box-shadow:0 24px 80px rgba(0,0,0,0.6); }'
-      + '.tk-inner { padding:32px 28px; height:100%; display:flex; flex-direction:column; border:1.5px solid var(--alpha-light); border-radius:20px; position:relative; overflow:hidden; }'
-      + '.tk-tier-1 { background:linear-gradient(155deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); border-color:rgba(15,52,96,0.5); }'
-      + '.tk-tier-2 { background:linear-gradient(155deg,var(--gray-700) 0%,#2d1b69 50%,#5b21b6 100%); border-color:rgba(91,33,182,0.4); }'
-      + '.tk-tier-3 { background:linear-gradient(155deg,#1a1a0a 0%,#3d3d00 50%,#656500 100%); border-color:rgba(229,255,0,0.2); }'
-      + '.tk-tier-4 { background:linear-gradient(155deg,#1a0a0a 0%,#4a1515 50%,#7c1d1d 100%); border-color:rgba(255,59,59,0.25); }'
-      + '.tk-header { min-height:60px; }'
-      + '.tk-name { font-size:32px; font-weight:900; letter-spacing:-1px; line-height:1; margin-bottom:16px; }'
-      + '.tk-phases { padding-top:20px; display:flex; flex-direction:column; gap:6px; }'
-      + '.tk-phase { display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:13px; font-weight:600; }'
-      + '.tk-phase-name { color:rgba(255,255,255,0.35); } .tk-phase-price { color:rgba(255,255,255,0.35); }'
-      + '.tk-phase--active .tk-phase-name { color:var(--acid); } .tk-phase--active .tk-phase-price { color:var(--acid); font-weight:800; font-size:15px; }'
-      + '.tk-phase--future .tk-phase-name { color:var(--alpha-strong); } .tk-phase--future .tk-phase-price { color:var(--alpha-strong); }'
-      + '.tk-phase-dot { width:6px; height:6px; border-radius:50%; background:var(--border-light); flex-shrink:0; margin-right:10px; }'
-      + '.tk-phase--active .tk-phase-dot { background:var(--acid); box-shadow:0 0 8px var(--acid-glow); }'
-      + '.tk-phase--future .tk-phase-dot { background:var(--alpha-light); }'
-      + '.tk-phase-left { display:flex; align-items:center; }'
-      + '.tk-bottom { margin-top:auto; padding-top:12px; border-top:1px solid var(--alpha-light); display:flex; align-items:center; justify-content:space-between; }'
-      + '.tk-buy { padding:10px 20px; background:var(--border-light); backdrop-filter:blur(8px); border:1px solid var(--alpha-medium); border-radius:var(--radius-sm); color:#fff; font-size:12px; font-weight:700; transition:all 0.2s; white-space:nowrap; }'
-      + '.tk-buy:hover { background:#fff; color:#000; }'
-      + '.lineup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }'
-      + '.lineup-card { position:relative; border-radius:16px; overflow:hidden; aspect-ratio:3/4; background:var(--surface); border:1px solid var(--border); transition:transform 0.35s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s; cursor:pointer; }'
-      + '.lineup-card:hover { transform:translateY(-6px); box-shadow:0 20px 60px rgba(0,0,0,0.5); }'
-      + '.lineup-card-img { position:absolute; inset:0; background-size:cover; background-position:center top; }'
-      + '.lineup-card-overlay { position:absolute; inset:0; background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 40%,transparent 60%); z-index:1; }'
-      + '.lineup-card-content { position:absolute; bottom:0; left:0; right:0; padding:24px 20px; z-index:2; }'
-      + '.lineup-name { font-size:22px; font-weight:800; letter-spacing:-0.5px; line-height:1.1; margin-bottom:6px; }'
-      + '.lineup-role { font-size:12px; color:rgba(255,255,255,0.55); font-weight:500; }'
-      + '.lineup-card--hl { grid-column:span 2; aspect-ratio:4/3; }'
-      + '.lineup-card--hl .lineup-name { font-size:36px; letter-spacing:-1px; }'
-      + '.info-list { display:flex; flex-wrap:wrap; gap:10px 16px; }'
-      + '.info-chip { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:var(--surface); border:1px solid var(--border); border-radius:100px; font-size:13px; font-weight: 500; }'
-      + '.about-text { font-size:16px; color:var(--text-2); line-height:1.8; max-width:700px; }'
-      + '.venue-block { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:stretch; }'
-      + '.venue-info { display:flex; flex-direction:column; justify-content:center; }'
-      + '.venue-name { font-size:26px; font-weight:800; letter-spacing:-0.5px; margin-bottom:8px; }'
-      + '.venue-addr { font-size:15px; color:var(--text-2); line-height:1.6; margin-bottom:20px; }'
-      + '.venue-map { min-height:280px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--border); overflow:hidden; }'
-      + '.trust-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }'
-      + '.trust-item { text-align:center; padding:24px 12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); }'
-      + '.trust-icon { font-size:24px; margin-bottom:10px; } .trust-text { font-size:12px; font-weight:600; color:var(--text-3); line-height:1.4; }'
-      + '.footer { padding:40px var(--pad); text-align:center; border-top:1px solid var(--border); }'
-      + '.footer-logo { font-size:16px; font-weight: 800; letter-spacing:5px; color:var(--text-3); }'
-      + '.footer-copy { font-size:11px; color:var(--text-3); margin-top:6px; opacity:0.6; }'
-      + '@media (max-width:768px) { .hero { min-height:85vh; } .section { padding:56px 20px; } .tk-grid { grid-template-columns:1fr 1fr; } .tk-name { font-size:24px; } .venue-block { grid-template-columns:1fr; } .lineup-grid { grid-template-columns:1fr 1fr; } .lineup-card--hl { grid-column:span 2; } .trust-row { grid-template-columns:1fr 1fr; } }'
-      + '@media (max-width:480px) { .tk-grid { grid-template-columns:1fr; } .lineup-grid { grid-template-columns:1fr; } .lineup-card--hl { grid-column:span 1; aspect-ratio:3/4; } .trust-row { grid-template-columns:1fr; } }'
-      + '</style></head><body>';
-
-    // Preview bar
-    html += '<div class="preview-bar"><div class="preview-bar-text">👁 PREVIEW<span>Así se verá tu evento en Lezgo</span></div><a href="mailto:hola@lezgo.fans?subject=Quiero publicar: ' + encodeURIComponent(name) + '">¿Listo? Publícalo →</a></div>';
-
-    // Hero
-    html += '<section class="hero"><div class="hero-bg"></div><div class="hero-content" style="padding-top:60px;">';
-    html += '<h1 class="hero-title">' + name.toUpperCase() + '</h1>';
-    if (subtitle) html += '<div class="hero-sub">' + subtitle + '</div>';
-    if (description) html += '<p class="hero-desc">' + description + '</p>';
-    html += '<div class="hero-meta">';
-    if (dateFormatted) html += '<div class="hero-meta-item"><div class="icon">📅</div><div>' + dateFormatted + '</div></div>';
-    if (venue || location) html += '<div class="hero-meta-item"><div class="icon">📍</div><div>' + (venue + (location ? ', ' + location : '')) + '</div></div>';
-    html += '<div class="hero-meta-item"><div class="icon">🕐</div><div>' + timeStart + ' — ' + timeEnd + '</div></div>';
-    html += '</div>';
-    html += '<div class="hero-ctas"><button class="btn btn-primary">Comprar entrada →</button></div>';
-    html += '</div></section>';
-
-    // Tickets
-    html += '<div class="divider"></div><section class="section"><div class="section-label">Entradas</div><h2 class="section-heading">Elige tu <em>experiencia</em></h2><div class="tk-grid">' + ticketsHtml + '</div></section>';
-
-    // Lineup
-    if (lineupHtml) {
-      html += '<div class="divider"></div><section class="section"><div class="section-label">Lineup</div><h2 class="section-heading">Artistas <em>confirmados</em></h2><div class="lineup-grid">' + lineupHtml + '</div></section>';
-    }
-
-    // Info
-    if (chipsHtml) {
-      html += '<div class="divider"></div><section class="section"><div class="section-label">Info del evento</div><h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2><div class="info-list">' + chipsHtml + '</div></section>';
-    }
-
-    // About
-    if (description) {
-      html += '<div class="divider"></div><section class="section"><div class="section-label">Sobre el evento</div><h2 class="section-heading">' + name + '</h2><p class="about-text">' + description + '</p></section>';
-    }
-
-    // Venue
-    if (venue) {
-      var mapQuery = encodeURIComponent((venue + ' ' + location).trim());
-      html += '<div class="divider"></div><section class="section"><div class="venue-block"><div class="venue-info"><div class="section-label">Venue</div><div class="venue-name">' + venue + '</div>';
-      if (location) html += '<div class="venue-addr">' + location + '</div>';
-      html += '</div><div class="venue-map"><iframe src="https://www.google.com/maps?q=' + mapQuery + '&t=&z=17&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;border-radius:inherit;" allowfullscreen loading="lazy"></iframe></div></div></section>';
-    }
-
-    // Trust
-    html += '<div class="divider"></div><section class="section"><div class="trust-row">';
-    html += '<div class="trust-item"><div class="trust-icon">✅</div><div class="trust-text">Entrada vinculada<br>a tu ID</div></div>';
-    html += '<div class="trust-item"><div class="trust-icon">🔄</div><div class="trust-text">Reventa segura<br>P2P</div></div>';
-    html += '<div class="trust-item"><div class="trust-icon">🪪</div><div class="trust-text">Verificación<br>en puerta</div></div>';
-    html += '<div class="trust-item"><div class="trust-icon">💬</div><div class="trust-text">Soporte en<br>menos de 24h</div></div>';
-    html += '</div></section>';
-
-    // Footer
-    html += '<div class="footer"><div class="footer-logo">L E Z G O</div><div class="footer-copy">Tickets verificados con tu identidad.</div></div>';
-    html += '</body></html>';
-
-    // Open preview in new tab
-    var blob = new Blob([html], { type: 'text/html' });
-    var url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
+    // Store in sessionStorage and open evento-v2.html (same flow as openEvent)
+    try { sessionStorage.setItem('lezgo_event', JSON.stringify(eventData)); } catch(e) {}
+    window.open('evento-v2.html?id=preview&mode=preview', '_blank');
   }
 
   // ── Seed Events (run once) ──
@@ -7498,364 +7359,12 @@ body::after {
       return;
     }
     // Fallback: si no se encuentra, ir a eventos
-    go('eventos'); return;
-
-    const evTags = Array.isArray(ev.tags) ? ev.tags : [];
-    const isSoldOut = ev.status === 'sold-out';
-    const prettify = s => s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
-
-    // ══════════════════════════════════════════
-    // HERO
-    // ══════════════════════════════════════════
-    const heroBg = document.getElementById('evento-hero-bg');
-    if (heroBg) {
-      const imgUrl = ev.image || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
-      heroBg.style.backgroundImage = `url('${imgUrl}')`;
-    }
-
-    const heroTitle = document.getElementById('evento-hero-title');
-    if (heroTitle) heroTitle.textContent = ev.name || '';
-
-    const heroSub = document.getElementById('evento-hero-sub');
-    if (heroSub) heroSub.textContent = ev.subtitle || '';
-
-    const heroDesc = document.getElementById('evento-hero-desc');
-    if (heroDesc) heroDesc.textContent = ev.description || '';
-
-    // Hero meta (date, venue, time)
-    const heroMeta = document.getElementById('evento-hero-meta');
-    if (heroMeta) {
-      const dateObj = new Date(ev.date + 'T12:00:00');
-      const dateLabel = ev.dateLabel || dateObj.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-      const venue = ev.venue || '';
-      const location = ev.location || '';
-      const venueLabel = venue + (location ? ', ' + location : '');
-      const timeStart = ev.timeStart || '22:00';
-      const timeEnd = ev.timeEnd || '05:00';
-      const timeLabel = timeStart + ' — ' + timeEnd;
-
-      heroMeta.innerHTML = `
-        <div class="hero-meta-item">
-          <div class="icon">📅</div>
-          <div>${dateLabel}</div>
-        </div>
-        <a class="hero-meta-item" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venueLabel)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
-          <div class="icon">📍</div>
-          <div>${venueLabel}</div>
-        </a>
-        <div class="hero-meta-item">
-          <div class="icon">🕐</div>
-          <div>${timeLabel}</div>
-        </div>
-      `;
-    }
-
-    // Hero CTA buttons
-    const ctaBuy = document.getElementById('evento-cta-buy');
-    if (ctaBuy) {
-      if (isSoldOut) {
-        ctaBuy.textContent = 'SOLD OUT — Ver Marketplace';
-        ctaBuy.onclick = () => go('marketplace');
-        ctaBuy.classList.remove('btn-primary');
-        ctaBuy.classList.add('btn-sold');
-      } else {
-        ctaBuy.textContent = 'Comprar entradas';
-        ctaBuy.onclick = () => document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'});
-        ctaBuy.classList.add('btn-primary');
-        ctaBuy.classList.remove('btn-sold');
-      }
-    }
-
-    // Google Calendar link
-    const calBtn = document.getElementById('evento-cal-btn');
-    if (calBtn) {
-      const eventTitle = ev.name + (ev.subtitle ? ' · ' + ev.subtitle : '');
-      const startDate = ev.date.replace(/-/g,'');
-      const endDate = ev.date.replace(/-/g,'');
-      const startTime = (ev.timeStart || '22:00').replace(':','00');
-      const endTime = (ev.timeEnd || '05:00').replace(':','00');
-      const location = (ev.venue || '') + (ev.location ? ', ' + ev.location : '');
-      const description = ev.description || '';
-
-      const googleCalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${startDate}T${startTime}00/${endDate}T${endTime}00&location=${encodeURIComponent(location)}&details=${encodeURIComponent(description)}`;
-      calBtn.href = googleCalUrl;
-      calBtn.textContent = 'Agregar al calendario';
-    }
-
-    // ══════════════════════════════════════════
-    // TICKETS
-    // ══════════════════════════════════════════
-    const tkGrid = document.getElementById('evento-tk-grid');
-    const mpBanner = document.getElementById('evento-mp-banner');
-    if (tkGrid && ev.tickets) {
-      let h = '';
-      ev.tickets.forEach((t, i) => {
-        const tierSold = t.sold >= t.capacity;
-        const hasPhases = t.phases && Array.isArray(t.phases) && t.phases.length > 0;
-        const tierGrad = hasPhases ? 'tk-tier-' + ((i % 4) + 1) : 'tk-tier-basic';
-        const activePhase = getActivePhase(t);
-        const currentPrice = activePhase.price || t.price || 0;
-        const avail = t.capacity - t.sold;
-        const availPct = t.capacity > 0 ? Math.round((avail / t.capacity) * 100) : 0;
-
-        let phasesHtml = '';
-        if (t.phases && Array.isArray(t.phases)) {
-          let accum = 0;
-          t.phases.forEach(phase => {
-            let cls = 'tk-phase--future';
-            if (t.sold >= t.capacity) {
-              cls = 'tk-phase--past'; // all sold
-            } else if (accum + phase.quantity <= t.sold) {
-              cls = 'tk-phase--past';
-            } else if (accum <= t.sold) {
-              cls = 'tk-phase--active';
-            }
-            accum += phase.quantity;
-            phasesHtml += `
-              <div class="tk-phase ${cls}">
-                <div class="tk-phase-left">
-                  <div class="tk-phase-dot"></div>
-                  <span class="tk-phase-name">${phase.name}</span>
-                </div>
-                <span class="tk-phase-price">S/ ${phase.price.toLocaleString()}</span>
-              </div>
-            `;
-          });
-        }
-
-        const onClick = tierSold ? `onclick="goMarketplace('${t.id || 'general'}')"` : `onclick="pmOpen('${ev.name.replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)"`;
-
-        h += `
-          <div class="tk-card${tierSold ? ' tk-card--sold' : ''}">
-            ${tierSold ? `
-              <div class="tk-overlay">
-                <div class="tk-overlay-icon">🔄</div>
-                <div class="tk-overlay-text">Buscar en Marketplace</div>
-                <div class="tk-overlay-hint">${t.name} · reventa verificada</div>
-              </div>
-            ` : ''}
-            <div class="tk-inner ${tierSold ? 'tk-sold' : tierGrad}">
-              <div class="tk-header">
-                <div class="tk-name">${t.name}</div>
-                ${t.includes ? `
-                  <ul class="tk-includes">
-                    ${t.includes.map(inc => `<li>${inc}</li>`).join('')}
-                  </ul>
-                ` : ''}
-              </div>
-              ${phasesHtml ? `<div class="tk-phases">${phasesHtml}</div>` : `
-                <div class="tk-price-simple">S/ ${currentPrice.toLocaleString()}</div>
-              `}
-              <div class="tk-bottom">
-                ${tierSold ? `<div class="tk-sold-all">SOLD OUT</div>` : `<button class="tk-buy" ${onClick}>Comprar</button>`}
-              </div>
-              ${!tierSold ? `
-                <div class="tk-avail">
-                  <div class="tk-avail-bar">
-                    <div class="tk-avail-fill" style="width:${availPct}%"></div>
-                  </div>
-                  <div class="tk-avail-text">${avail}/${t.capacity} disponibles</div>
-                </div>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      });
-      tkGrid.innerHTML = h;
-
-      // Show marketplace banner if sold out
-      if (mpBanner) {
-        mpBanner.style.display = isSoldOut ? 'flex' : 'none';
-      }
-    }
-
-    // ══════════════════════════════════════════
-    // LINEUP
-    // ══════════════════════════════════════════
-    const lineupSection = document.getElementById('evento-lineup-section');
-    const lineupGrid = document.getElementById('evento-lineup-grid');
-    const dividerLineup = document.getElementById('evento-divider-lineup');
-
-    if (Array.isArray(ev.lineup) && ev.lineup.length > 0) {
-      let h = '';
-      const unsplashUrls = [
-        'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80',
-        'https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=800&q=80',
-        'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
-        'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80'
-      ];
-
-      ev.lineup.forEach((artist, i) => {
-        const isHeadliner = i === 0;
-        const imageUrl = unsplashUrls[i % unsplashUrls.length];
-        const role = isHeadliner ? 'Headliner' : (i < 3 ? 'Main' : 'Support');
-        const roomNum = (i % 3) + 1;
-        const genres = ['Techno', 'DnB', 'House'];
-        const tags = [genres[i % genres.length], isHeadliner ? 'Berlin' : 'Local'];
-
-        h += `
-          <div class="lineup-card${isHeadliner ? ' lineup-card--hl' : ''}">
-            <div class="lineup-card-img" style="background-image:url('${imageUrl}')"></div>
-            <div class="lineup-card-overlay"></div>
-            <div class="lineup-card-content">
-              <div class="lineup-name">${artist}</div>
-              <div class="lineup-role">${role} · Room ${roomNum}</div>
-              <div class="lineup-tags">
-                ${tags.map(t => `<span class="lineup-tag">${t}</span>`).join('')}
-              </div>
-            </div>
-            ${isHeadliner ? '<div class="lineup-badge">HEADLINER</div>' : ''}
-          </div>
-        `;
-      });
-      lineupGrid.innerHTML = h;
-      lineupSection.style.display = '';
-      if (dividerLineup) dividerLineup.style.display = '';
-    } else {
-      lineupSection.style.display = 'none';
-      if (dividerLineup) dividerLineup.style.display = 'none';
-    }
-
-    // ══════════════════════════════════════════
-    // EVENT INFO CHIPS
-    // ══════════════════════════════════════════
-    const infoSection = document.getElementById('evento-info-section');
-    const infoList = document.getElementById('evento-info-list');
-    const prohibited = document.getElementById('evento-prohibited');
-    const dividerInfo = document.getElementById('evento-divider-info');
-
-    if (infoList) {
-      let h = '';
-      // Genre
-      const genres = evTags.filter(t => ['techno','dark-techno','hard-techno','melodic-techno','house','deep-house','minimal','dnb','ambient','electronica','breaks','acid','progressive','tech-house','trance'].includes(t));
-      if (genres.length > 0) h += `<div class="info-chip"><span>🎵</span> ${genres.map(prettify).join(' / ')}</div>`;
-
-      // Age
-      const ages = evTags.filter(t => ['18+', '21+', 'all-ages'].includes(t));
-      if (ages.length > 0) h += `<div class="info-chip"><span>🪪</span> ${ages[0]}</div>`;
-
-      // Setting
-      const settings = evTags.filter(t => ['indoor', 'outdoor', 'open-air', 'mixed'].includes(t));
-      if (settings.length > 0) h += `<div class="info-chip"><span>🏛️</span> ${prettify(settings[0])}</div>`;
-
-      // Meta
-      const meta = ev.meta || {};
-      if (meta.alcohol) h += `<div class="info-chip"><span>🍸</span> Barra disponible</div>`;
-      if (meta.multiStage) h += `<div class="info-chip"><span>🔊</span> Multi-room</div>`;
-      if (!meta.reentry) h += `<div class="info-chip"><span>🚫</span> No reingreso</div>`;
-
-      infoList.innerHTML = h;
-
-      if (h.length > 0) {
-        infoSection.style.display = '';
-        if (dividerInfo) dividerInfo.style.display = '';
-      } else {
-        infoSection.style.display = 'none';
-        if (dividerInfo) dividerInfo.style.display = 'none';
-      }
-    }
-
-    // Prohibited items
-    if (prohibited) {
-      const prohibitedItems = ev.prohibitedItems || ['Cámaras profesionales', 'Bebidas externas', 'Armas / objetos punzantes', 'Sustancias ilegales', 'Mascotas', 'Menores de edad'];
-      const itemsHtml = prohibitedItems.map(item => `<div class="info-prohibited-tag">🚫 ${item}</div>`).join('');
-      if (prohibitedItems.length > 0) {
-        document.getElementById('evento-prohibited-items').innerHTML = itemsHtml;
-        prohibited.style.display = 'block';
-      }
-    }
-
-    // ══════════════════════════════════════════
-    // ABOUT
-    // ══════════════════════════════════════════
-    const aboutSection = document.getElementById('evento-about-section');
-    const aboutContent = document.getElementById('evento-about-content');
-    const dividerAbout = document.getElementById('evento-divider-about');
-
-    if (ev.description && aboutContent) {
-      aboutContent.innerHTML = `<p class="about-text">${ev.description}</p>`;
-      if (ev.descriptionLong) {
-        aboutContent.innerHTML += `<p class="about-text">${ev.descriptionLong}</p>`;
-      }
-      aboutSection.style.display = '';
-      if (dividerAbout) dividerAbout.style.display = '';
-    } else if (aboutSection) {
-      aboutSection.style.display = 'none';
-      if (dividerAbout) dividerAbout.style.display = 'none';
-    }
-
-    // ══════════════════════════════════════════
-    // VENUE
-    // ══════════════════════════════════════════
-    const venueSection = document.getElementById('evento-venue-section');
-    const dividerVenue = document.getElementById('evento-divider-venue');
-
-    if (ev.venue) {
-      const venueName = document.getElementById('evento-venue-name');
-      const venueAddr = document.getElementById('evento-venue-addr');
-      const venueChips = document.getElementById('evento-venue-chips');
-      const venueMap = document.getElementById('evento-venue-map');
-
-      if (venueName) venueName.textContent = ev.venue;
-      if (venueAddr) {
-        let addr = (ev.location || '');
-        if (ev.address) addr = ev.address + (ev.location ? ', ' + ev.location : '');
-        venueAddr.innerHTML = addr;
-      }
-
-      if (venueChips) {
-        let h = '';
-        const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t));
-        if (setting) h += `<div class="venue-chip">${prettify(setting)}</div>`;
-        const meta = ev.meta || {};
-        if (meta.crowdSize) h += `<div class="venue-chip">Capacidad: ${meta.crowdSize.toLocaleString()}</div>`;
-        if (meta.multiStage) h += `<div class="venue-chip">Multi-stage</div>`;
-        h += '<div class="venue-chip">Verificación en puerta</div>';
-        venueChips.innerHTML = h;
-      }
-
-      if (venueMap) {
-        const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
-        const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + mapQuery;
-        venueMap.innerHTML = `
-          <a href="${mapsUrl}" target="_blank" rel="noopener"
-             style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;border-radius:inherit;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:background 0.2s;"
-             onmouseover="this.style.background='rgba(229,255,0,0.05)'" onmouseout="this.style.background='var(--surface)'">
-            <div style="font-size:48px;">📍</div>
-            <div style="color:#fff;font-size:15px;font-weight:700;">Ver ubicación en Google Maps</div>
-            <div style="color:var(--text-mid);font-size:13px;">${ev.venue || ''}${ev.location ? ', ' + ev.location : ''}</div>
-          </a>
-        `;
-      }
-
-      venueSection.style.display = '';
-      if (dividerVenue) dividerVenue.style.display = '';
-    } else {
-      venueSection.style.display = 'none';
-      if (dividerVenue) dividerVenue.style.display = 'none';
-    }
-
-    // ══════════════════════════════════════════
-    // PURCHASE MODAL SETUP
-    // ══════════════════════════════════════════
-    if (ev.tickets) {
-      pmTicketCatalog = {};
-      ev.tickets.forEach(t => {
-        var activePhase = getActivePhase(t);
-        var currentPrice = activePhase.price || t.price || 0;
-        var phaseName = activePhase.name ? ' (' + activePhase.name + ')' : '';
-        pmTicketCatalog[t.id] = { name: t.name + phaseName, price: currentPrice, priceLabel: currentPrice === 0 ? 'GRATIS' : 'S/' + currentPrice, capacity: t.capacity, sold: t.sold };
-      });
-      pmTicketQty = {};
-      ev.tickets.forEach(t => pmTicketQty[t.id] = 0);
-      pmBuildTicketList();
-    }
-
-    // Store event & navigate
-    window._currentEvent = ev;
-    // Show evento view (use _skipOpenEvent to avoid infinite loop)
-    go('evento', { _skipOpenEvent: true, _eventId: eventId });
+    go('eventos');
   }
+
+  // [DEAD CODE REMOVED: Old inline event renderer - all events now use evento-v2.html]
+  // (Removed ~350 lines of legacy openEvent inline rendering code)
+
 
   // Helper function for marketplace navigation
   function goMarketplace(tier) {
@@ -8624,14 +8133,46 @@ body::after {
   var efEditingId = null; // null = new event, string = editing existing
   var efTiers = [];       // array of tier objects
   var efLineup = [];      // array of artist name strings
+  var efTags = [];        // array of tag strings
+  var efProhibited = [];  // array of prohibited item strings
+
+  // ── Tags management ──
+  function efRenderTags() {
+    var container = document.getElementById('ef-tags-list');
+    if (!container) return;
+    container.innerHTML = efTags.map(function(tag, i) {
+      return '<div class="ef-lineup-row" style="margin-bottom:6px">' +
+        '<input class="ef-input" type="text" value="' + (tag || '').replace(/"/g, '&quot;') + '" onchange="efTags[' + i + ']=this.value" placeholder="ej: techno, lima, festival">' +
+        '<button class="ef-remove-btn" onclick="efTags.splice(' + i + ',1);efRenderTags()">✕</button></div>';
+    }).join('');
+  }
+  function efAddTag() { efTags.push(''); efRenderTags(); var inputs = document.querySelectorAll('#ef-tags-list input'); if (inputs.length) inputs[inputs.length-1].focus(); }
+
+  // ── Prohibited items management ──
+  function efRenderProhibited() {
+    var container = document.getElementById('ef-prohibited-list');
+    if (!container) return;
+    container.innerHTML = efProhibited.map(function(item, i) {
+      return '<div class="ef-lineup-row" style="margin-bottom:6px">' +
+        '<input class="ef-input" type="text" value="' + (item || '').replace(/"/g, '&quot;') + '" onchange="efProhibited[' + i + ']=this.value" placeholder="ej: Coolers, Bebidas en vidrio">' +
+        '<button class="ef-remove-btn" onclick="efProhibited.splice(' + i + ',1);efRenderProhibited()">✕</button></div>';
+    }).join('');
+  }
+  function efAddProhibited() { efProhibited.push(''); efRenderProhibited(); var inputs = document.querySelectorAll('#ef-prohibited-list input'); if (inputs.length) inputs[inputs.length-1].focus(); }
+  function efLoadDefaultProhibited() {
+    efProhibited = ['Coolers', 'Bebidas en vidrio', 'Cámaras profesionales', 'Armas / objetos punzantes', 'Sustancias ilegales', 'Mascotas', 'Menores de edad'];
+    efRenderProhibited();
+  }
 
   function openEventForm(eventId) {
     efEditingId = eventId || null;
     efTiers = [];
     efLineup = [];
+    efTags = [];
+    efProhibited = [];
 
     // Reset all fields
-    const fields = ['ef-name','ef-subtitle','ef-genre','ef-description','ef-date','ef-time-start','ef-time-end','ef-venue','ef-location','ef-image','ef-video'];
+    const fields = ['ef-name','ef-subtitle','ef-genre','ef-description','ef-description-long','ef-date','ef-time-start','ef-time-end','ef-venue','ef-location','ef-address','ef-image','ef-video','ef-meta-crowd'];
     fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     const statusEl = document.getElementById('ef-status');
     if (statusEl) statusEl.value = 'draft';
@@ -8679,6 +8220,30 @@ body::after {
         setVal('ef-image', ev.image);
         setVal('ef-video', ev.heroVideo);
         setVal('ef-status', ev.status);
+        setVal('ef-description-long', ev.descriptionLong);
+        setVal('ef-address', ev.address);
+        setVal('ef-meta-crowd', ev.meta && ev.meta.crowdSize ? ev.meta.crowdSize : '');
+
+        // Load meta toggles
+        var meta = ev.meta || {};
+        var metaAge = document.getElementById('ef-meta-age');
+        if (metaAge) metaAge.value = meta.ageRestriction || (meta.allAges === false ? '18+' : 'all-ages');
+        var metaMulti = document.getElementById('ef-meta-multistage');
+        if (metaMulti) metaMulti.checked = !!meta.multiStage;
+        var metaAlcohol = document.getElementById('ef-meta-alcohol');
+        if (metaAlcohol) metaAlcohol.checked = meta.alcohol !== false;
+        var metaReentry = document.getElementById('ef-meta-reentry');
+        if (metaReentry) metaReentry.checked = !!meta.reentry;
+        var metaOutdoor = document.getElementById('ef-meta-outdoor');
+        if (metaOutdoor) metaOutdoor.checked = !!meta.outdoor;
+
+        // Load tags
+        efTags = Array.isArray(ev.tags) ? [...ev.tags] : [];
+        efRenderTags();
+
+        // Load prohibited items
+        efProhibited = Array.isArray(ev.prohibitedItems) ? [...ev.prohibitedItems] : [];
+        efRenderProhibited();
 
         // Load lineup
         efLineup = Array.isArray(ev.lineup) ? [...ev.lineup] : [];
@@ -8754,6 +8319,17 @@ body::after {
       }];
       efRenderTiers();
       efRenderLineup();
+      efRenderTags();
+      efRenderProhibited();
+      // Reset meta checkboxes
+      var metaIds = ['ef-meta-multistage','ef-meta-outdoor'];
+      metaIds.forEach(function(id) { var el = document.getElementById(id); if (el) el.checked = false; });
+      var metaChecked = ['ef-meta-alcohol'];
+      metaChecked.forEach(function(id) { var el = document.getElementById(id); if (el) el.checked = true; });
+      var metaAge = document.getElementById('ef-meta-age');
+      if (metaAge) metaAge.value = 'all-ages';
+      var metaReentry = document.getElementById('ef-meta-reentry');
+      if (metaReentry) metaReentry.checked = false;
       // Hide changelog for new events
       const clSection = document.getElementById('ef-changelog-section');
       if (clSection) clSection.style.display = 'none';
@@ -8941,6 +8517,8 @@ body::after {
     const dateObj = new Date(date + 'T12:00:00');
     const dateLabel = dateObj.toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'long' });
 
+    const ageVal = document.getElementById('ef-meta-age')?.value || 'all-ages';
+
     const eventData = {
       name: name,
       subtitle: (document.getElementById('ef-subtitle')?.value || '').trim(),
@@ -8951,12 +8529,24 @@ body::after {
       venue: venue,
       distrito: document.getElementById('ef-distrito')?.value || '',
       location: (document.getElementById('ef-location')?.value || '').trim() || 'Lima',
+      address: (document.getElementById('ef-address')?.value || '').trim(),
       image: (document.getElementById('ef-image')?.value || '').trim(),
       heroVideo: (document.getElementById('ef-video')?.value || '').trim(),
       description: (document.getElementById('ef-description')?.value || '').trim(),
+      descriptionLong: (document.getElementById('ef-description-long')?.value || '').trim(),
       genre: (document.getElementById('ef-genre')?.value || '').trim() || 'Electrónica',
       lineup: efLineup.filter(a => a.trim()),
       tickets: tickets,
+      tags: efTags.filter(t => t.trim()),
+      prohibitedItems: efProhibited.filter(p => p.trim()),
+      meta: {
+        crowdSize: parseInt(document.getElementById('ef-meta-crowd')?.value) || 0,
+        multiStage: !!document.getElementById('ef-meta-multistage')?.checked,
+        alcohol: !!document.getElementById('ef-meta-alcohol')?.checked,
+        reentry: !!document.getElementById('ef-meta-reentry')?.checked,
+        outdoor: !!document.getElementById('ef-meta-outdoor')?.checked,
+        ageRestriction: ageVal
+      },
       status: document.getElementById('ef-status')?.value || 'draft',
       featured: false,
       organizer: currentUser.uid,
@@ -10555,7 +10145,7 @@ body::after {
       html += `<div class="pm-ticket-row" id="pm-opt-${id}">
         <div style="flex:1">
           <div class="pm-ticket-name">${t.name}</div>
-          <div class="pm-ticket-sub">${t.capacity ? t.capacity + ' disponibles' : ''}</div>
+          <div class="pm-ticket-sub">${t.includes && t.includes.length ? t.includes[0] : ''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:16px">
           <div class="pm-ticket-price" style="font-size:16px;${t.price === 0 ? 'color:var(--acid)' : ''}">${priceDisplay}</div>
@@ -11193,8 +10783,12 @@ body::after {
         </div>
       </div>
       <div class="ef-field full">
-        <label class="ef-label">Descripción *</label>
-        <textarea class="ef-textarea" id="ef-description" placeholder="Describe tu evento..."></textarea>
+        <label class="ef-label">Descripción corta *</label>
+        <textarea class="ef-textarea" id="ef-description" placeholder="1-2 líneas para la tarjeta del evento..." rows="2"></textarea>
+      </div>
+      <div class="ef-field full">
+        <label class="ef-label">Descripción larga (About)</label>
+        <textarea class="ef-textarea" id="ef-description-long" placeholder="Texto completo para la sección 'Sobre el evento' en la página..." rows="4"></textarea>
       </div>
     </div>
 
@@ -11240,6 +10834,10 @@ body::after {
         <label class="ef-label">Ubicación (display)</label>
         <input class="ef-input" type="text" id="ef-location" placeholder="ej: Callao, Lima">
       </div>
+      <div class="ef-field full">
+        <label class="ef-label">Dirección completa</label>
+        <input class="ef-input" type="text" id="ef-address" placeholder="ej: Av. Argentina s/n, Callao">
+      </div>
     </div>
 
     <!-- C. Media -->
@@ -11266,7 +10864,52 @@ body::after {
       <button class="ef-add-btn" onclick="efAddArtist()">+ Agregar artista</button>
     </div>
 
-    <!-- E. Tickets -->
+    <!-- E. Tags -->
+    <div class="ef-section">
+      <div class="ef-section-title">Tags</div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 12px">Etiquetas que aparecen al final de la página del evento.</p>
+      <div id="ef-tags-list"></div>
+      <button class="ef-add-btn" onclick="efAddTag()">+ Agregar tag</button>
+    </div>
+
+    <!-- F. Info del evento (Meta) -->
+    <div class="ef-section">
+      <div class="ef-section-title">Info del evento</div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 12px">Estos datos se muestran como chips informativos en la página del evento.</p>
+      <div class="ef-row">
+        <div class="ef-field">
+          <label class="ef-label">Capacidad total (personas)</label>
+          <input class="ef-input" type="number" id="ef-meta-crowd" placeholder="ej: 1500">
+        </div>
+        <div class="ef-field">
+          <label class="ef-label">Edad mínima</label>
+          <select class="ef-select" id="ef-meta-age">
+            <option value="all-ages">Todas las edades</option>
+            <option value="18+">18+</option>
+            <option value="21+">21+</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px">
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-meta-multistage"> Multi-room / Multi-stage</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-meta-alcohol" checked> Barra disponible</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-meta-reentry"> Reingreso permitido</label>
+        <label class="ef-toggle-label"><input type="checkbox" id="ef-meta-outdoor"> Outdoor / Al aire libre</label>
+      </div>
+    </div>
+
+    <!-- G. Artículos prohibidos -->
+    <div class="ef-section">
+      <div class="ef-section-title">No ingresan</div>
+      <p style="font-size:12px; color:var(--text-dim); margin:0 0 12px">Artículos prohibidos que se muestran en la página del evento.</p>
+      <div id="ef-prohibited-list"></div>
+      <button class="ef-add-btn" onclick="efAddProhibited()">+ Agregar artículo</button>
+      <div style="margin-top:8px">
+        <button class="ef-add-btn" style="font-size:11px; opacity:0.7" onclick="efLoadDefaultProhibited()">Cargar lista predeterminada</button>
+      </div>
+    </div>
+
+    <!-- H. Tickets -->
     <div class="ef-section">
       <div class="ef-section-title">Tickets</div>
       <div id="ef-tiers-list">
