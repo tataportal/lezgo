@@ -1,3 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="LEZGO — Ticketing sin fraude. Compra entradas verificadas con DNI para los mejores eventos de música electrónica en Lima.">
+<title>LEZGO — Ticketing sin fraude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎫</text></svg>">
+<meta property="og:title" content="LEZGO — Ticketing sin fraude">
+<meta property="og:description" content="Compra entradas verificadas con DNI para los mejores eventos de música electrónica en Lima. Cero fraude, cero reventas truchas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lezgo.fans">
+<meta property="og:image" content="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&q=80">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 /* ═══════════════════════════════════════════
    RESET & VARIABLES — Paleta unificada
@@ -100,6 +118,15 @@
   --gold: #FFD700;
   --silver: #C0C0C0;
   --bronze: #CD7F32;
+
+  /* ── Z-index scale ── */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-max: 9999;
 }
 
 body {
@@ -131,7 +158,7 @@ body::before {
   inset: 0;
   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
-  z-index: 9999;
+  z-index: var(--z-max);
 }
 /* scanlines */
 body::after {
@@ -140,7 +167,7 @@ body::after {
   inset: 0;
   background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px);
   pointer-events: none;
-  z-index: 9998;
+  z-index: calc(var(--z-max) - 1);
 }
 
 /* ═══════════════════════════════════════════
@@ -174,7 +201,7 @@ body::after {
 .main-nav {
   position: sticky;
   top: 0;
-  z-index: 500;
+  z-index: var(--z-sticky);
   background: rgba(10,10,10,0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
@@ -400,7 +427,7 @@ body::after {
   display: flex; flex-direction: column; justify-content: center;
   padding: 0 20px;
   border-right: 1px solid var(--border);
-  cursor: pointer; transition: background 0.15s;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .search-field:hover { background: var(--bg-hover); }
 .search-field-label {
@@ -413,10 +440,13 @@ body::after {
 .search-btn {
   background: var(--acid); color: var(--bg); border: none;
   padding: 0 32px; font-size: var(--fs-base); font-weight: 700;
-  transition: background 0.15s;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex; align-items: center; gap: 8px; white-space: nowrap;
 }
-.search-btn:hover { background: var(--gray-50); }
+.search-btn:hover {
+  background: var(--gray-50);
+  box-shadow: 0 0 30px rgba(229, 255, 0, 0.2);
+}
 
 /* Autocomplete dropdown */
 .search-ac-dropdown {
@@ -692,10 +722,13 @@ body::after {
   aspect-ratio: 1 / 1;
   overflow: hidden; cursor: pointer;
   border: 1px solid var(--border);
-  transition: border-color 0.2s, transform 0.3s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.promo-card:hover { transform: translateY(-4px); }
-.promo-card:hover { border-color: rgba(229,255,0,0.3); }
+.promo-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(229,255,0,0.3);
+  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.3);
+}
 .promo-card-img {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
@@ -745,12 +778,12 @@ body::after {
   background: var(--bg-raised);
   border: 1px solid var(--border);
   overflow: hidden; cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ev-card:hover {
   border-color: rgba(229,255,0,0.25);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.15), 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 .ev-card-img { position: relative; height: 200px; overflow: hidden; }
 .ev-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
@@ -911,20 +944,26 @@ body::after {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; padding: 13px 20px;
   background: var(--alpha-minimal); border: 1px solid var(--alpha-medium);
-  border-radius: 0; cursor: pointer; transition: all 0.2s;
+  border-radius: 0; cursor: pointer; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   max-width: 640px; margin: 0 auto 40px;
 }
-.std-teaser:hover { background: rgba(229,255,0,0.05); border-color: rgba(229,255,0,0.3); }
+.std-teaser:hover {
+  background: rgba(229,255,0,0.05);
+  border-color: rgba(229,255,0,0.3);
+  transform: translateX(6px);
+}
 .std-teaser-left { display: flex; align-items: center; gap: 12px; }
 .std-teaser-icon {
   font-size: var(--fs-lg); width: 40px; height: 40px; border-radius: 0;
   background: rgba(229,255,0,0.1); display: flex; align-items: center;
   justify-content: center; flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.std-teaser:hover .std-teaser-icon { background: rgba(229,255,0,0.2); }
 .std-teaser-text { font-size: var(--fs-base); font-weight: 400; color: var(--text-mid); line-height: 1.4; }
 .std-teaser-text strong { color: var(--text); display: block; font-size: var(--fs-base); }
-.std-teaser-arrow { font-size: var(--fs-base); color: var(--acid); flex-shrink: 0; transition: transform 0.2s; }
-.std-teaser:hover .std-teaser-arrow { transform: translateX(4px); }
+.std-teaser-arrow { font-size: var(--fs-base); color: var(--acid); flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.std-teaser:hover .std-teaser-arrow { transform: translateX(8px); }
 
 /* Compromisos section */
 .cf-compromisos {
@@ -934,14 +973,20 @@ body::after {
 .cf-compromiso {
   padding: 24px 24px; background: var(--bg-raised);
   border: 1px solid var(--alpha-light); border-radius: 0;
-  transition: border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex; flex-direction: column;
 }
-.cf-compromiso:hover { border-color: rgba(229,255,0,0.25); }
+.cf-compromiso:hover {
+  border-color: rgba(229,255,0,0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.3);
+}
 .cf-compromiso-num {
   font-size: var(--fs-xs); font-weight: 800; letter-spacing: 2px;
   color: var(--acid); margin-bottom: 12px; opacity: 0.7;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.cf-compromiso:hover .cf-compromiso-num { opacity: 1; text-shadow: 0 0 15px rgba(229, 255, 0, 0.3); }
 .cf-compromiso h4 {
   font-size: var(--fs-base); font-weight: 800; margin-bottom: 8px; letter-spacing: -0.2px;
 }
@@ -1121,9 +1166,13 @@ body::after {
 .pp-mech-card {
   background: var(--bg-raised); border: 1px solid var(--border);
   border-radius: 0; padding: 36px 28px;
-  transition: border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.pp-mech-card:hover { border-color: rgba(229,255,0,0.3); }
+.pp-mech-card:hover {
+  border-color: rgba(229,255,0,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.3);
+}
 .pp-mech-tag {
   display: inline-block; border: 1px solid var(--acid); color: var(--acid);
   padding: 4px 12px; font-size: var(--fs-xs); font-weight: 700;
@@ -1309,16 +1358,28 @@ body::after {
 .btn-acid {
   background: var(--acid); color: var(--bg); border: none;
   padding: 18px 36px; font-size: var(--fs-base); font-weight: 700;
-  letter-spacing: 0.5px; transition: all 0.15s;
+  letter-spacing: 0.5px; transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
 }
-.btn-acid:hover { background: var(--gray-50); box-shadow: 0 0 30px var(--acid-glow); }
+.btn-acid:hover {
+  background: var(--gray-50);
+  box-shadow: 0 0 40px rgba(229, 255, 0, 0.3);
+  transform: translateY(-2px);
+}
+.btn-acid:active { transform: scale(0.97); }
 .btn-border {
   background: transparent; color: var(--text);
   border: 2px solid var(--alpha-strong);
   padding: 16px 36px; font-size: var(--fs-base); font-weight: 600;
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
 }
-.btn-border:hover { border-color: var(--acid); color: var(--acid); }
+.btn-border:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  transform: translateY(-2px);
+}
+.btn-border:active { transform: scale(0.97); }
 
 /* Fake vs Real Tickets */
 .cf-tickets { position: relative; perspective: 1000px; max-width: 480px; }
@@ -3735,6 +3796,202 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════
+   MOBILE RESPONSIVE REFINEMENTS (320px-480px)
+   ═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  /* === BUTTON TAP TARGETS === */
+  /* Ensure all buttons and interactive elements are at least 44x44px (WCAG 2.5 Level AAA) */
+  button { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+  /* Navigation buttons */
+  .nav-cat { min-height: 44px; }
+  .cal-nav, .cal-clear { min-width: 44px; min-height: 44px; }
+
+  /* View toggle buttons */
+  .view-toggle-btn { min-height: 40px; min-width: 44px; padding: 8px 12px; }
+
+  /* Close buttons */
+  .pm-close { width: 44px; height: 44px; }
+
+  /* Quantity buttons */
+  .pm-qty-btn { width: 40px; height: 40px; }
+
+  /* === PURCHASE MODAL MOBILE === */
+  .pm-sheet { max-width: 100%; border-radius: 20px 20px 0 0; max-height: 95vh; }
+  .pm-header { padding: 16px 20px 14px; }
+  .pm-header-title { font-size: var(--fs-base); }
+  .pm-body { padding: 20px 16px; }
+  .pm-cta { padding: 16px; min-height: 44px; font-size: var(--fs-base); margin-top: 16px; }
+  .pm-cta-secondary { padding: 12px; min-height: 44px; font-size: var(--fs-base); margin-top: 8px; }
+
+  /* Ticket rows - improve readability */
+  .pm-ticket-row { padding: 12px 16px; gap: 12px; }
+  .pm-ticket-name { font-size: var(--fs-base); }
+  .pm-ticket-price { font-size: var(--fs-lg); }
+
+  /* Steps indicator - reduce clutter on small screens */
+  .pm-steps { gap: 6px; margin-bottom: 20px; }
+  .pm-step-dot { width: 28px; height: 28px; font-size: var(--fs-xs); }
+
+  /* === NAVIGATION MOBILE IMPROVEMENTS === */
+  .main-nav-inner { padding: 0 12px; height: 56px; }
+  .nav-logo { font-size: var(--fs-lg); }
+  .nav-categories { gap: 0; }
+  .nav-cat { padding: 0 10px; font-size: 12px; height: 56px; }
+  .nav-right { gap: 12px; }
+  .nav-avatar { width: 30px; height: 30px; font-size: var(--fs-xs); }
+  .nav-username { display: none; }
+
+  /* === EVENT CARDS === */
+  .ev-card-img { height: 160px; }
+  .ev-card-name { font-size: var(--fs-base); line-height: 1.3; }
+  .ev-card-body { padding: 16px; }
+  .ev-card-footer { gap: 8px; }
+
+  /* === SEARCH BAR === */
+  .search-field { padding: 12px 16px; font-size: var(--fs-base); }
+  .search-btn { padding: 12px 16px; min-height: 44px; }
+
+  /* === FORMS & INPUTS === */
+  .pm-input { padding: 12px 16px; font-size: 16px; min-height: 44px; }
+  .email-capture-input { padding: 14px 16px; font-size: 16px; min-height: 44px; }
+  .email-capture-btn { padding: 14px 20px; min-height: 44px; font-size: var(--fs-base); }
+
+  /* === SCANNER VIEW MOBILE === */
+  #scanner-event-select { min-height: 44px; font-size: 16px; }
+  #scanner-dni-input { min-height: 44px; font-size: 16px; padding: 12px 16px; }
+
+  /* Scanning result cards */
+  .scan-result-card { padding: 16px; margin-top: 12px; }
+  .scan-result-status { font-size: var(--fs-base); }
+  .scan-result-detail { font-size: var(--fs-sm); margin-bottom: 12px; }
+  .scan-next-btn { min-height: 44px; }
+
+  /* === PROFILE & TICKETS === */
+  .pf-header { gap: 16px; }
+  .pf-avatar { width: 80px; height: 80px; font-size: var(--fs-xl); }
+  .pf-ticket-row { grid-template-columns: 1fr; padding: 12px 16px; }
+  .pf-ticket-img { width: 60px; height: 60px; }
+
+  /* === GENERAL TEXT SIZES FOR READABILITY === */
+  /* Body text minimum 16px on mobile to avoid zoom-on-focus */
+  input, textarea, select { font-size: 16px; }
+
+  /* Modal text improvements */
+  .pm-verify-title { font-size: var(--fs-lg); }
+  .pm-verify-sub { font-size: var(--fs-base); line-height: 1.6; }
+
+  /* === HORIZONTAL SCROLL PREVENTION === */
+  body { overflow-x: hidden; }
+  .main-nav-inner { box-sizing: border-box; }
+  .search-section, .content, .footer { box-sizing: border-box; }
+
+  /* === SPACING OPTIMIZATION === */
+  .util-bar-inner { height: 28px; padding: 0 16px; }
+  .event-details { gap: 12px; }
+
+  /* Reduce line heights for compactness on tiny screens */
+  .ev-card-date { margin-bottom: 4px; }
+  .ev-card-venue { margin-bottom: 12px; font-size: var(--fs-sm); }
+
+  /* === DECK / PROMOTERS MOBILE === */
+  .pp-mechanics-grid { gap: 12px; }
+  .pp-mech-card { padding: 20px 16px; }
+  .pp-dash-row { gap: 12px; }
+  .pp-dash-stat { padding: 16px 12px; }
+  .pp-dash-num { font-size: var(--fs-xl); }
+  .pp-dash-label { font-size: 10px; }
+
+  /* === DECK VALUE CARDS === */
+  .dk-value-card { padding: 20px 16px; }
+  .dk-benefit-card { padding: 20px 16px; }
+
+  /* === MARKETPLACE === */
+  .mp-listing { padding: 16px; }
+
+  /* === STICKY ELEMENTS === */
+  .main-nav { position: sticky; top: 0; z-index: 500; }
+
+  /* === DROPDOWN POSITIONING === */
+  #cal-dropdown { max-width: calc(100vw - 32px); left: 16px; right: 16px; }
+
+  /* === MODAL TEXT SIZE FIX === */
+  /* Prevent iOS zooming on input focus by using 16px base */
+  .pm-input::placeholder { font-size: 16px; }
+
+  /* === STEP PANELS === */
+  .pm-panel { width: 100%; }
+
+  /* === SECURITY NOTE === */
+  .pm-security-note { font-size: var(--fs-sm); padding: 10px 14px; gap: 6px; }
+  .pm-security-note svg { width: 18px; height: 18px; }
+
+  /* === PAYMENT SUMMARY === */
+  .pm-pay-summary { padding: 16px; }
+  .pm-pay-row { font-size: var(--fs-sm); margin-bottom: 8px; }
+  .pm-pay-row.total { font-size: var(--fs-base); margin-top: 8px; padding-top: 8px; }
+
+  /* === CARD OPTIONS === */
+  .pm-card-opt { padding: 10px 12px; font-size: var(--fs-xs); min-height: 40px; }
+
+  /* === CONFIRMATION SCREEN === */
+  .pm-confirm-icon { font-size: var(--fs-3xl); margin-bottom: 12px; }
+  .pm-confirm-title { font-size: var(--fs-lg); margin-bottom: 6px; }
+  .pm-confirm-sub { font-size: var(--fs-sm); margin-bottom: 20px; }
+  .pm-ticket-card-preview { padding: 20px; }
+  .pm-ticket-card-event { font-size: 11px; margin-bottom: 2px; }
+  .pm-ticket-card-name { font-size: var(--fs-base); margin-bottom: 12px; }
+  .pm-ticket-card-details { margin-bottom: 12px; gap: 12px; }
+  .pm-ticket-card-detail { font-size: var(--fs-xs); }
+  .pm-ticket-card-detail strong { font-size: var(--fs-sm); margin-bottom: 1px; }
+  .pm-ticket-qr { font-size: var(--fs-2xl); }
+
+  /* === FAQs === */
+  .faq-question { padding: 16px 0; gap: 12px; }
+  .faq-toggle { width: 24px; height: 24px; }
+  .faq-q-text { font-size: var(--fs-sm); }
+
+  /* === FEE BREAKDOWN === */
+  .pm-fee-row { font-size: var(--fs-sm); }
+  .pm-fee-breakdown { margin: 6px 0 8px; padding: 10px 12px; gap: 4px; }
+  .pm-fee-line { font-size: var(--fs-xs); }
+}
+
+/* ═══════════════════════════════════════════
+   EXTRA SMALL PHONES (< 380px)
+   ═══════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .main-nav-inner { padding: 0 8px; }
+  .nav-cat { padding: 0 6px; font-size: 11px; }
+  .hero-content, .search-section, .content, .footer { padding-left: 12px; padding-right: 12px; }
+  .hero h1 { font-size: var(--fs-xl); }
+  .events-grid { gap: 12px; }
+  .pm-header { padding: 12px 16px 12px; }
+  .pm-body { padding: 16px 12px; }
+  .search-section { margin: -24px auto 0; }
+  .cf-hero { padding: 48px 12px; }
+  .cf-section { padding: 40px 12px; }
+  .pf { padding: 32px 12px; }
+  .sc { padding: 32px 12px 48px; }
+  .mp { padding: 32px 12px 40px; }
+  .ev-hero-content { padding: 32px 12px 24px; }
+  .ev-tickets-section { padding: 32px 12px 40px; }
+  .event-details { font-size: var(--fs-sm); }
+
+  /* Further reduce text for tight fit */
+  .nav-logo { font-size: var(--fs-base); }
+  .ev-card-name { font-size: var(--fs-sm); }
+  .pm-verify-title { font-size: var(--fs-base); }
+  .pm-verify-sub { font-size: var(--fs-sm); }
+
+  /* Input fields stay at 16px for iOS zoom prevention */
+  .pm-input { margin-bottom: 10px; }
+  .email-capture-form { gap: 8px; flex-direction: column; }
+  .email-capture-input { width: 100%; }
+  .email-capture-btn { width: 100%; }
+}
+
+/* ═══════════════════════════════════════════
    PURCHASE MODAL
    ═══════════════════════════════════════════ */
 .pm-overlay {
@@ -3940,8 +4197,10 @@ body::after {
 .pm-card-opt .pm-card-icon { font-size: var(--fs-lg); display: block; margin-bottom: 4px; }
 
 /* Step 4: Confirmation */
-.pm-confirm-icon { font-size: var(--fs-4xl); text-align: center; margin-bottom: 16px; animation: pm-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); }
+.pm-confirm-icon { font-size: var(--fs-4xl); text-align: center; margin-bottom: 16px; animation: pm-celebrate 0.8s cubic-bezier(0.175,0.885,0.32,1.275); }
 @keyframes pm-pop { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes pm-celebrate { 0% { transform: scale(0) rotate(-20deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+@keyframes pmSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .pm-confirm-title { font-size: var(--fs-xl); font-weight: 900; text-align: center; margin-bottom: 8px; }
 .pm-confirm-sub { font-size: var(--fs-base); color: var(--text-mid); text-align: center; margin-bottom: 28px; line-height: 1.6; }
 .pm-ticket-card-preview {
@@ -4009,6 +4268,176 @@ body::after {
   .pm-body { padding: 20px 20px; }
   .pm-header { padding: 16px 20px 14px; }
   .pm-confirm-title { font-size: var(--fs-lg); }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE TOUCH & ACCESSIBILITY OPTIMIZATIONS
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus (iOS specific) */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  /* Ensure sufficient spacing between touch targets */
+  a, button, [role="button"], input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Improve link tap area for navigation links */
+  .nav-cat {
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  /* Card interactions should be easily tappable */
+  .ev-card {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Improve form input spacing on mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    min-height: 44px;
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+  }
+
+  /* Prevent horizontal scrolling on mobile */
+  body {
+    overflow-x: hidden;
+    width: 100vw;
+    max-width: 100%;
+  }
+
+  /* Ensure modals fit on screen */
+  .pm-sheet {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Improve button touch feedback */
+  button:active,
+  a:active {
+    opacity: 0.7;
+  }
+
+  /* Prevent text selection on interactive elements */
+  button, [role="button"], a[onclick] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Ensure readable text in modal dialogs */
+  .pm-panel {
+    font-size: 16px;
+  }
+
+  /* Optimize dropdown visibility */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
+  }
+
+  /* Ensure anchor links are tappable */
+  a {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px;
+    display: inline-block;
+  }
+
+  /* Prevent iOS double-tap zoom on buttons */
+  button {
+    touch-action: manipulation;
+  }
+
+  /* Improve focus visibility on mobile */
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid var(--acid);
+    outline-offset: 2px;
+  }
+
+  /* Ensure modal content is visible on small screens */
+  .pm-body {
+    max-height: calc(95vh - 120px);
+    overflow-y: auto;
+  }
+
+  /* Optimize event card images for mobile */
+  .ev-card-img {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Make scanner inputs larger on mobile */
+  #scanner-dni-input,
+  #scanner-event-select {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  /* Ensure sufficient spacing for form errors */
+  .form-error,
+  .input-error {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   LANDSCAPE MOBILE OPTIMIZATIONS
+   ═══════════════════════════════════════════ */
+@media (max-width: 900px) and (max-height: 600px) {
+  /* Landscape orientation on smaller devices */
+  .hero { min-height: 300px; height: 60vh; }
+  .main-nav-inner { height: 52px; padding: 0 16px; }
+  .nav-cat { height: 52px; padding: 0 8px; }
+
+  /* Reduce padding for landscape */
+  .content { padding-top: 24px; padding-bottom: 24px; }
+  .cf-section { padding: 32px 24px; }
+  .pf { padding: 32px 24px; }
+
+  /* Compress modals for landscape */
+  .pm-sheet { max-height: 90vh; }
+  .pm-body { max-height: calc(90vh - 100px); }
+}
+
+/* ═══════════════════════════════════════════
+   LANDSCAPE SMALL PHONE (< 480px width)
+   ═══════════════════════════════════════════ */
+@media (max-width: 480px) and (max-height: 500px) {
+  body { font-size: 14px; }
+  .main-nav-inner { height: 48px; }
+  .hero { height: 50vh; min-height: 200px; }
+  .hero h1 { font-size: var(--fs-lg); }
+  .nav-cat { height: 48px; font-size: 11px; padding: 0 6px; }
+  .pm-sheet { max-height: 85vh; }
+  .pm-body { max-height: calc(85vh - 90px); padding: 16px 12px; }
+  .pm-header { padding: 12px 16px 10px; }
+  .cf-section { padding: 24px 16px; }
+  .util-bar { display: none; }
 }
 
 /* ═══════════════════════════════════════════
@@ -4144,26 +4573,48 @@ body::after {
 
 /* Ticket cards — compact collapsed, detailed expanded */
 .mt-ticket {
-  background: var(--alpha-minimal); border: 1px solid var(--alpha-light);
-  border-radius: 0; margin-bottom: 12px;
-  transition: border-color 0.2s; position: relative;
+  background: var(--alpha-minimal); border: 2px dashed var(--alpha-light);
+  border-radius: 0; margin-bottom: 16px;
+  transition: all 0.2s; position: relative; overflow: hidden;
 }
-.mt-ticket:hover { border-color: rgba(229,255,0,0.15); }
+.mt-ticket:hover { border-color: rgba(229,255,0,0.25); background: var(--alpha-subtle); }
+.mt-ticket.used { opacity: 0.6; }
 .mt-ticket-head {
   display: flex; align-items: center; gap: 0; cursor: pointer; padding: 0;
 }
 .mt-ticket-img {
-  width: 80px; height: 80px; flex-shrink: 0; border-radius: 0; margin: 10px; margin-right: 0;
-  background-size: cover; background-position: center;
+  width: 100px; height: 100px; flex-shrink: 0; border-radius: 0; margin: 0;
+  background-size: cover; background-position: center; position: relative;
 }
-.mt-ticket-info { flex: 1; padding: 12px 14px; min-width: 0; }
-.mt-ticket-event { font-size: var(--fs-base); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mt-ticket-meta { font-size: var(--fs-sm); color: var(--text-dim); margin-top: 2px; }
+.mt-ticket-img::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+.mt-ticket-info { flex: 1; padding: 14px 16px; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; }
+.mt-ticket-event { font-size: var(--fs-lg); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-ticket-meta { font-size: var(--fs-sm); color: var(--text-dim); margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.mt-ticket-status-badge {
+  display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 700;
+  padding: 4px 10px; border-radius: var(--radius-pill); width: fit-content;
+}
+.mt-ticket-status-active {
+  background: rgba(0,255,133,0.15); color: var(--green);
+}
+.mt-ticket-status-used {
+  background: rgba(128,128,128,0.15); color: var(--gray-300);
+}
+.mt-ticket-status-transferred {
+  background: rgba(0,255,255,0.15); color: var(--cyan);
+}
+.mt-ticket-status-resale {
+  background: rgba(229,255,0,0.15); color: var(--acid);
+}
 /* 3-dot menu */
 .mt-ticket-dots {
-  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; margin-right: 8px; border-radius: 0;
-  color: var(--text-dim); font-size: var(--fs-lg); letter-spacing: 2px;
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; margin-right: 8px; margin-left: auto; border-radius: 0;
+  color: var(--text-dim); font-size: var(--fs-lg); letter-spacing: 2px; transition: all 0.2s;
 }
 .mt-ticket-dots:hover { background: var(--alpha-light); color: var(--text); }
 .mt-ticket-menu {
@@ -4259,12 +4710,37 @@ body::after {
 }
 .og-btn-new:hover { transform: translateY(-1px); }
 
+/* Quick actions bar */
+.og-quick-actions {
+  display: flex; gap: 12px; padding: 16px 32px 0;
+  border-bottom: 1px solid var(--alpha-light); margin-bottom: 8px;
+  overflow-x: auto;
+}
+.og-quick-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(229,255,0,0.08); border: 1px solid rgba(229,255,0,0.15);
+  border-radius: var(--radius-pill); padding: 10px 16px; font-size: var(--fs-sm); font-weight: 700;
+  color: var(--text); font-family: 'Sora', sans-serif; cursor: pointer;
+  transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0;
+}
+.og-quick-btn:hover {
+  background: rgba(229,255,0,0.15); border-color: rgba(229,255,0,0.3);
+  transform: translateY(-2px);
+}
+.og-quick-icon { font-size: var(--fs-base); }
+
 /* Metric cards */
 .og-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 32px; }
 .og-metric {
   background: var(--alpha-minimal); border: 1px solid var(--alpha-light);
-  border-radius: 0; padding: 20px;
+  border-radius: 0; padding: 20px; transition: all 0.3s ease; position: relative;
 }
+.og-metric::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; background: var(--acid); transform: scaleX(0); transition: transform 0.4s ease;
+}
+.og-metric:hover { border-color: rgba(229,255,0,0.25); background: rgba(229,255,0,0.03); }
+.og-metric:hover::after { transform: scaleX(1); }
 .og-metric-label { font-size: var(--fs-sm); color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
 .og-metric-value { font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
 .og-metric-value.acid { color: var(--acid); }
@@ -4304,6 +4780,23 @@ body::after {
 .og-act-btn.primary { background: var(--acid); color: var(--bg); }
 .og-act-btn.ghost { background: var(--alpha-light); color: var(--text-mid); }
 .og-act-btn.ghost:hover { background: var(--alpha-medium); color: var(--text); }
+
+/* Enhanced progress tracking */
+.og-event-progress { margin-bottom: 8px; }
+.og-event-bar { height: 6px; background: var(--alpha-light); border-radius: var(--radius-sm); margin-bottom: 6px; overflow: hidden; }
+.og-event-bar-fill { height: 100%; border-radius: var(--radius-sm); transition: width 0.3s ease, background 0.2s ease; }
+.og-event-progress-info { display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-dim); }
+.og-progress-pct { font-weight: 700; color: var(--text); }
+.og-capacity-label { font-weight: 600; }
+
+/* Enhanced empty state */
+.og-empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 20px; text-align: center; color: var(--text-dim);
+}
+.og-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.6; }
+.og-empty-title { font-size: var(--fs-lg); font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.og-empty-text { font-size: var(--fs-base); margin-bottom: 8px; }
 
 /* Attendee table */
 .og-table { width: 100%; border-collapse: collapse; }
@@ -4660,6 +5153,8 @@ body::after {
   .og-section { padding: 0 16px 24px; }
   .og-header { padding: 24px 16px 16px; }
   .og-metrics { padding: 16px; }
+  .og-quick-actions { padding: 12px 16px 0; gap: 10px; }
+  .og-quick-btn { padding: 8px 14px; font-size: var(--fs-xs); }
   .mt-header { padding: 24px 16px 0; }
   .mt-filter-tabs { padding: 16px 16px 0; }
   .mt-panel { padding: 16px; }
@@ -4670,6 +5165,8 @@ body::after {
 }
 @media (max-width: 480px) {
   .og-metrics { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .og-quick-btn span:last-child { display: none; }
+  .og-quick-btn { padding: 8px 12px; }
   .mt-ticket-head { flex-direction: row; }
   .mt-ticket-img { width: 64px; height: 64px; margin: 8px; margin-right: 0; }
   .mt-ticket-event { font-size: var(--fs-sm); }
@@ -4680,7 +5177,7 @@ body::after {
   .nav-user { position: relative; }
   .nav-dropdown {
     position: fixed; top: 72px; right: 16px;
-    width: 230px; background: var(--gray-700);
+    width: 260px; background: var(--gray-700);
     border: 1px solid var(--alpha-medium); border-radius: 0;
     padding: 8px; z-index: 99999;
     opacity: 0; pointer-events: none; transform: translateY(-8px);
@@ -4691,8 +5188,8 @@ body::after {
   .nd-item {
     display: flex; align-items: center; gap: 10px;
     padding: 10px 12px; border-radius: 0; cursor: pointer;
-    font-size: var(--fs-base); color: var(--text-mid); transition: background 0.15s, color 0.15s;
-    user-select: none;
+    font-size: var(--fs-sm); color: var(--text-mid); transition: background 0.15s, color 0.15s;
+    user-select: none; white-space: nowrap;
   }
   .nd-item:hover { background: rgba(255,255,255,0.07); color: var(--text); }
   .nd-icon { width: 22px; text-align: center; font-size: var(--fs-base); flex-shrink: 0; }
@@ -4796,6 +5293,207 @@ body::after {
 .divider-h { flex: 1; height: 1px; background: var(--border); }
 .badge-xs { font-size: var(--fs-xs); font-weight: var(--fw-extrabold); padding: 3px 7px; border-radius: var(--radius-sm); }
 
+/* ═══════════════════════════════════════════
+   ANIMATION ENHANCEMENTS
+   ═══════════════════════════════════════════ */
+
+/* View Transitions */
+.view.active {
+  animation: viewFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button Active States */
+button:active,
+a[onclick]:active,
+[role="button"]:active {
+  transform: scale(0.98);
+}
+
+.btn-acid:active,
+.btn-border:active {
+  transform: scale(0.97);
+}
+
+/* Button Transitions */
+.btn-acid,
+.btn-border {
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-acid:hover {
+  filter: brightness(1.05);
+}
+
+.btn-border:hover {
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Event Card Enhancements */
+.ev-card {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ev-card:hover {
+  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.15), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Navigation Scroll Effect */
+.main-nav {
+  transition: all 0.3s ease;
+}
+
+.main-nav.scrolled {
+  background: rgba(10, 10, 10, 0.98);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(25px);
+}
+
+/* Active Navigation Item Glow */
+.nav-cat.active {
+  text-shadow: 0 0 15px rgba(229, 255, 0, 0.3);
+  transition: text-shadow 0.3s ease;
+}
+
+/* Acid Green Glow Effects on Key Elements */
+.ev-card-badge,
+.badge-hot,
+.badge-preventa {
+  box-shadow: 0 0 20px rgba(229, 255, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.ev-card:hover .ev-card-badge,
+.ev-card:hover .badge-hot,
+.ev-card:hover .badge-preventa {
+  box-shadow: 0 0 30px rgba(229, 255, 0, 0.35);
+}
+
+/* Section Headings Scroll Animation */
+.section-title,
+.section-head {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section-title.fade-in,
+.section-head.fade-in {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card Scroll Animation */
+.ev-card.scroll-visible,
+.promo-card.scroll-visible,
+.pp-mech-card.scroll-visible,
+.std-teaser.scroll-visible {
+  animation: cardFadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cardFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger Animation for Multiple Cards */
+.ev-card:nth-child(1).scroll-visible { animation-delay: 0.05s; }
+.ev-card:nth-child(2).scroll-visible { animation-delay: 0.1s; }
+.ev-card:nth-child(3).scroll-visible { animation-delay: 0.15s; }
+.ev-card:nth-child(4).scroll-visible { animation-delay: 0.2s; }
+.ev-card:nth-child(5).scroll-visible { animation-delay: 0.25s; }
+.ev-card:nth-child(6).scroll-visible { animation-delay: 0.3s; }
+
+/* Skeleton Loading Animation */
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Loading State Pulse */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Counter Animation */
+@keyframes countUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.counter-animate {
+  animation: countUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced Motion Respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4841,8 +5539,8 @@ body::after {
             </div>
           </div>
           <!-- Demo mode: role switch -->
-          <div class="nd-item nd-logged-in" id="nd-role-switch" onclick="demoToggleRole()" class="d-none">
-            <span class="nd-icon" id="nd-role-icon">👑</span> <span id="nd-role-label">Cambiar a Promotor</span>
+          <div class="nd-item nd-logged-in d-none" id="nd-role-switch" onclick="demoToggleRole()">
+            <span class="nd-icon" id="nd-role-icon">👑</span> <span id="nd-role-label" style="white-space:nowrap">Modo</span>
             <div style="margin-left:auto;display:flex;gap:4px;align-items:center;">
               <span id="nd-role-fan" style="font-size: var(--fs-xs);font-weight:800;padding:3px 7px;border-radius: 0;background:var(--acid);color: var(--gray-950);">FAN</span>
               <span id="nd-role-promoter" style="font-size: var(--fs-xs);font-weight:800;padding:3px 7px;border-radius: 0;background:rgba(255,255,255,0.08);color:var(--text-dim);">PRO</span>
@@ -4945,7 +5643,7 @@ body::after {
       </div>
       <div class="search-field search-field-main" style="border-right:none;position:relative;">
         <div class="search-field-label">Buscar</div>
-        <input class="search-field-value" id="search-text-input" type="text" placeholder="Artista, evento o venue..." autocomplete="off" oninput="searchAutocomplete(this.value)" onkeydown="searchKeydown(event)" style="background:transparent;border:none;outline:none;color:var(--text);font-size: var(--fs-base);width:100%;font-family:inherit;">
+        <input class="search-field-value" id="search-text-input" type="text" placeholder="Artista, evento o venue..." autocomplete="off" aria-label="Buscar eventos" oninput="searchAutocomplete(this.value)" onkeydown="searchKeydown(event)" style="background:transparent;border:none;outline:none;color:var(--text);font-size: var(--fs-base);width:100%;font-family:inherit;">
         <div class="search-ac-dropdown" id="search-ac-dropdown"></div>
       </div>
       <button class="search-btn" onclick="doSearch()">Buscar</button>
@@ -5064,7 +5762,7 @@ body::after {
     <h3>Estamos construyendo<br><span class="text-acid">algo distinto.</span></h3>
     <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
     <div class="email-capture-form" id="email-form">
-      <input class="email-capture-input" type="email" id="email-input" placeholder="tu@correo.com">
+      <input class="email-capture-input" type="email" id="email-input" placeholder="tu@correo.com" aria-label="Correo para notificaciones">
       <button class="email-capture-btn" onclick="submitEmail()">Unirme</button>
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
@@ -5355,7 +6053,7 @@ body::after {
     <h3>Estamos construyendo<br><span class="text-acid">algo distinto.</span></h3>
     <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
     <div class="email-capture-form" id="email-form-asist">
-      <input class="email-capture-input" type="email" id="email-input-asist" placeholder="tu@correo.com">
+      <input class="email-capture-input" type="email" id="email-input-asist" placeholder="tu@correo.com" aria-label="Correo para asistencia">
       <button class="email-capture-btn" onclick="asistSubmitEmail()">Unirme</button>
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
@@ -5438,7 +6136,7 @@ body::after {
     <h2 class="cf-section-title">Configura todo<br><span class="text-acid">desde el inicio.</span></h2>
     <p class="cf-section-text">El contrato inicial de tus boletos define las reglas del juego: cantidades, precios, límites y más.</p>
     <div class="dk-how-grid" style="margin-top:48px;">
-      <div class="dk-how-card" onclick="openEventForm()" class="cursor-pointer">
+      <div class="dk-how-card cursor-pointer" onclick="openEventForm()">
         <div class="dk-how-inner dk-grad-1">
           <div class="dk-how-num">01</div>
           <div class="dk-how-logo">📋</div>
@@ -5671,7 +6369,7 @@ body::after {
     <h3>Estamos construyendo<br><span class="text-acid">algo distinto.</span></h3>
     <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
     <div class="email-capture-form" id="pp-email-bar">
-      <input class="email-capture-input" type="email" id="pp-email-input" placeholder="tu@productora.com">
+      <input class="email-capture-input" type="email" id="pp-email-input" placeholder="tu@productora.com" aria-label="Correo de productora">
       <button class="email-capture-btn" onclick="ppSubmitEmail()">Unirme</button>
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
@@ -5904,7 +6602,7 @@ body::after {
   </div>
 
   <!-- Marketplace CTA -->
-  <div class="mp-banner" id="evento-mp-banner" class="d-none">
+  <div class="mp-banner d-none" id="evento-mp-banner">
     <div class="mp-info">
       <div class="mp-title">Busca en el marketplace de reventa</div>
       <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
@@ -5919,8 +6617,8 @@ body::after {
 <!-- ═══════════════════════════════════════════
      LINEUP
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-lineup" class="d-none"></div>
-<section class="section" id="evento-lineup-section" class="d-none">
+<div class="divider d-none" id="evento-divider-lineup"></div>
+<section class="section d-none" id="evento-lineup-section">
   <div class="section-label">Lineup</div>
   <h2 class="section-heading">Artistas <em>confirmados</em></h2>
   <div class="lineup-grid" id="evento-lineup-grid">
@@ -5932,8 +6630,8 @@ body::after {
 <!-- ═══════════════════════════════════════════
      EVENT INFO
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-info" class="d-none"></div>
-<section class="section" id="evento-info-section" class="d-none">
+<div class="divider d-none" id="evento-divider-info"></div>
+<section class="section d-none" id="evento-info-section">
   <div class="section-label">Info del evento</div>
   <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
 
@@ -5941,7 +6639,7 @@ body::after {
     <!-- Populated by openEvent() -->
   </div>
 
-  <div class="info-prohibited" id="evento-prohibited" class="d-none">
+  <div class="info-prohibited d-none" id="evento-prohibited">
     <div class="info-prohibited-title">No ingresan</div>
     <div class="info-prohibited-items" id="evento-prohibited-items">
       <!-- Populated by openEvent() -->
@@ -5953,8 +6651,8 @@ body::after {
 <!-- ═══════════════════════════════════════════
      ABOUT
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-about" class="d-none"></div>
-<section class="section" id="evento-about-section" class="d-none">
+<div class="divider d-none" id="evento-divider-about"></div>
+<section class="section d-none" id="evento-about-section">
   <div class="section-label">Sobre el evento</div>
   <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
   <div id="evento-about-content">
@@ -5966,8 +6664,8 @@ body::after {
 <!-- ═══════════════════════════════════════════
      VENUE
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-venue" class="d-none"></div>
-<section class="section" id="evento-venue-section" class="d-none">
+<div class="divider d-none" id="evento-divider-venue"></div>
+<section class="section d-none" id="evento-venue-section">
   <div class="venue-block">
     <div class="venue-info">
       <div class="section-label">Venue</div>
@@ -6039,17 +6737,39 @@ body::after {
     <!-- Functional Scanner Tool (for organizers/staff) -->
     <div id="scanner-tool" style="background:var(--bg-raised);border:1px solid var(--border);border-radius: 0;padding:24px;margin:0 20px 32px">
       <div style="font-size: var(--fs-sm);letter-spacing:2px;color:var(--acid);margin-bottom:8px;font-weight:600">HERRAMIENTA DE VERIFICACIÓN</div>
-      <div style="font-weight:600;color:var(--text);margin-bottom:16px">Ingresa el ID de la entrada para verificar</div>
+
+      <!-- Event selector -->
+      <div style="margin-bottom:16px">
+        <label style="font-size:var(--fs-sm);color:var(--text-dim);display:block;margin-bottom:6px">Evento activo</label>
+        <select id="scanner-event-select" onchange="scannerSelectEvent()" style="width:100%;padding:12px 16px;border-radius:0;border:1px solid var(--border);background:var(--bg-inset);color:var(--text);font-family:inherit;font-size:var(--fs-base);appearance:none;-webkit-appearance:none;cursor:pointer">
+          <option value="">— Selecciona un evento —</option>
+        </select>
+      </div>
+
+      <!-- Check-in counter -->
+      <div id="scanner-counter" style="display:none;background:var(--bg-inset);border:1px solid var(--border);padding:16px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:var(--fs-sm);color:var(--text-dim);margin-bottom:4px">Check-ins</div>
+            <div style="font-size:var(--fs-2xl);font-weight:900;letter-spacing:-1px"><span id="scanner-checkin-count" style="color:var(--acid)">0</span><span style="color:var(--text-dim);font-weight:400"> / <span id="scanner-total-sold">0</span></span></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:var(--fs-sm);color:var(--text-dim);margin-bottom:4px">Porcentaje</div>
+            <div style="font-size:var(--fs-2xl);font-weight:900;color:var(--green)" id="scanner-checkin-pct">0%</div>
+          </div>
+        </div>
+        <div style="height:4px;background:var(--bg-raised);margin-top:12px;overflow:hidden">
+          <div id="scanner-checkin-bar" style="height:100%;background:var(--acid);width:0%;transition:width 0.5s ease"></div>
+        </div>
+      </div>
+
+      <!-- DNI input -->
+      <div style="font-weight:600;color:var(--text);margin-bottom:12px">Ingresa el DNI del asistente</div>
       <div style="display:flex;gap:8px;margin-bottom:16px">
-        <input id="scanner-manual-input" type="text" placeholder="ID de entrada (ej: abc123xyz)" style="flex:1;padding:12px 16px;border-radius: 0;border:1px solid var(--border);background:var(--bg-inset);color:var(--text);font-family:inherit;font-size: var(--fs-base)" />
-        <button onclick="manualScan()" style="background:var(--acid);color: var(--gray-950);border:none;padding:12px 20px;border-radius: 0;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Verificar →</button>
+        <input id="scanner-dni-input" type="text" inputmode="numeric" placeholder="DNI (ej: 73XXXXXX)" maxlength="8" aria-label="Escaner DNI - Ingresa número de DNI" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,8)" style="flex:1;padding:12px 16px;border-radius:0;border:1px solid var(--border);background:var(--bg-inset);color:var(--text);font-family:inherit;font-size:var(--fs-base);letter-spacing:1px" onkeydown="if(event.key==='Enter')manualScanDni()" />
+        <button onclick="manualScanDni()" style="background:var(--acid);color:var(--gray-950);border:none;padding:12px 20px;border-radius:0;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Verificar →</button>
       </div>
-      <div id="scanner-result" style="display:none;padding:16px;border-radius: 0;margin-top:8px"></div>
-      <div class="d-flex gap-2 mt-3">
-        <button onclick="startScanner()" style="background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius: 0;cursor:pointer;font-family:inherit;font-size: var(--fs-sm)">📷 Activar cámara</button>
-        <button onclick="stopScanner()" style="background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:10px 16px;border-radius: 0;cursor:pointer;font-family:inherit;font-size: var(--fs-sm)">⏹ Detener</button>
-      </div>
-      <video id="scanner-video" style="display:none;width:100%;border-radius: 0;margin-top:12px" autoplay playsinline></video>
+      <div id="scanner-result" style="display:none;padding:16px;border-radius:0;margin-top:8px"></div>
     </div>
 
     <!-- Scanner main -->
@@ -6828,9 +7548,9 @@ body::after {
 <!-- ═══════════════════════════════════════════
      FIREBASE SDK
      ═══════════════════════════════════════════ -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js" defer></script>
 
 <!-- ═══════════════════════════════════════════
      FIREBASE INIT + BACKEND LOGIC
@@ -6886,6 +7606,19 @@ body::after {
   var DEMO_UID = 'demo-user-001';
   var demoRole = 'fan';
 
+  // ── HTML Escaping Helper ──
+  function escHtml(str) {
+    if (!str) return '';
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return String(str).replace(/[&<>"']/g, char => map[char]);
+  }
+
   // ── Toast Notification System ──
   function toast(message, type, duration) {
     type = type || 'info';
@@ -6930,12 +7663,12 @@ body::after {
       if (fanBadge) { fanBadge.style.background = 'var(--acid)'; fanBadge.style.color = '#000'; }
       if (proBadge) { proBadge.style.background = 'rgba(255,255,255,0.08)'; proBadge.style.color = 'var(--text-dim)'; }
       if (icon) icon.textContent = '👑';
-      if (label) label.textContent = 'Cambiar a Promotor';
+      if (label) label.textContent = 'Modo';
     } else {
       if (proBadge) { proBadge.style.background = 'var(--acid)'; proBadge.style.color = '#000'; }
       if (fanBadge) { fanBadge.style.background = 'rgba(255,255,255,0.08)'; fanBadge.style.color = 'var(--text-dim)'; }
       if (icon) icon.textContent = '🎧';
-      if (label) label.textContent = 'Cambiar a Fan';
+      if (label) label.textContent = 'Modo';
     }
   }
 
@@ -7255,7 +7988,7 @@ body::after {
     var badge = isSold ? '<div class="ev-card-badge badge-hot">Sold Out</div>' :
                 ev.featured ? '<div class="ev-card-badge badge-nuevo">Destacado</div>' : '';
     var tags = Array.isArray(ev.tags) ? ev.tags : [];
-    return '<div class="ev-card" onclick="openEvent(\'' + ev._id + '\')" class="cursor-pointer" ' +
+    return '<div class="ev-card cursor-pointer" onclick="openEvent(\'' + ev._id + '\')" ' +
       'data-distrito="' + (ev.distrito || '') + '" data-date="' + ev.date + '" ' +
       'data-name="' + ev.name.toLowerCase() + '" data-genre="' + (ev.genre || '').toLowerCase() + '" ' +
       'data-tags="' + tags.join(',') + '">' +
@@ -7338,7 +8071,7 @@ body::after {
       var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
       var dateStr = d.getDate() + ' ' + months[d.getMonth()];
       var sub = dateStr + ' · ' + ev.venue + ', ' + ev.location + ' — ' + price;
-      return '<div class="promo-card" onclick="openEvent(\'' + ev._id + '\')" class="cursor-pointer">' +
+      return '<div class="promo-card cursor-pointer" onclick="openEvent(\'' + ev._id + '\')">' +
         '<div class="promo-card-img" style="background-image:url(\'' + img + '\');"></div>' +
         '<div class="promo-card-overlay"></div>' +
         '<div class="promo-card-body">' +
@@ -7542,6 +8275,26 @@ body::after {
   }
 
   function authLogout() {
+    // Reset authentication state
+    pmUserLoggedIn = false;
+    pmUserDniVerified = false;
+    pmVerifiedDni = '';
+    pmVerifiedName = '';
+    currentUser = null;
+    userProfile = null;
+
+    // Close any open modals
+    const overlay = document.getElementById('pm-overlay');
+    if (overlay && overlay.classList.contains('pm-open')) {
+      pmClose();
+    }
+
+    // Close nav drawer if open
+    const navDrawer = document.getElementById('nav-drawer');
+    if (navDrawer && navDrawer.classList.contains('open')) {
+      navDrawer.classList.remove('open');
+    }
+
     auth.signOut().then(() => {
       go('eventos');
     });
@@ -7557,6 +8310,10 @@ body::after {
     const loading = document.getElementById('pm-loading');
     const btn = document.getElementById('pm-pay-btn');
     const backBtn = btn.nextElementSibling;
+
+    // Disable button immediately to prevent double-clicks
+    btn.disabled = true;
+
     loading.classList.add('visible');
     btn.style.display = 'none';
     backBtn.style.display = 'none';
@@ -7628,7 +8385,13 @@ body::after {
       backBtn.style.display = '';
 
       // Show confirmation
-      const confirmedParts = selectedTickets.map(([id,q]) => q + '× ' + (pmTicketCatalog[id]?.name || id).replace('👑 ',''));
+      let totalPrice = 0;
+      const confirmedParts = selectedTickets.map(([id,q]) => {
+        const price = pmTicketCatalog[id]?.price || 0;
+        const lineTotal = q * price;
+        totalPrice += lineTotal;
+        return q + '× ' + (pmTicketCatalog[id]?.name || id).replace('👑 ','') + ' — S/' + lineTotal;
+      });
       const confirmTicketName = document.getElementById('pm-confirm-ticket-name');
       if (confirmTicketName) confirmTicketName.textContent = confirmedParts.join(' + ') || 'Entrada';
       const confirmDni = document.getElementById('pm-confirm-dni');
@@ -7644,12 +8407,16 @@ body::after {
       }
       const confirmVenue = document.getElementById('pm-confirm-venue');
       if (confirmVenue) confirmVenue.innerHTML = '<strong>' + (cev.venue || '') + '</strong>' + (cev.location || '');
+      // Display total paid
+      const confirmTotal = document.getElementById('pm-confirm-total');
+      if (confirmTotal) confirmTotal.textContent = 'S/' + totalPrice;
       pmGoStep(4);
 
     } catch (err) {
       log.error('Purchase error:', err);
       loading.classList.remove('visible');
       btn.style.display = '';
+      btn.disabled = false;
       backBtn.style.display = '';
       toast('Error al procesar: ' + err.message, 'error');
     }
@@ -7659,15 +8426,21 @@ body::after {
   var pmVerifiedName = '';
 
   async function pmVerifyDni() {
+    const btn = document.getElementById('pm-verify-btn');
+    // Disable button immediately to prevent double-clicks
+    btn.disabled = true;
+
     const dni = document.getElementById('pm-dni-input').value.trim();
     const name = document.getElementById('pm-name-input').value.trim();
     if (!/^\d{8}$/.test(dni) || !name) {
+      toast('Ingresa un DNI válido (8 dígitos) y tu nombre completo', 'warning');
       document.getElementById('pm-dni-input').style.borderColor = '#ff4d4d';
       document.getElementById('pm-name-input').style.borderColor = name ? 'rgba(229,255,0,0.5)' : '#ff4d4d';
       setTimeout(() => {
         document.getElementById('pm-dni-input').style.borderColor = '';
         document.getElementById('pm-name-input').style.borderColor = '';
       }, 1800);
+      btn.disabled = false;
       return;
     }
     pmVerifiedDni = dni;
@@ -7867,7 +8640,6 @@ body::after {
   async function loadMyTickets() {
     if (!currentUser) { go('auth'); return; }
     try {
-    // In demo mode, use local data (Firestore rules block unauthenticated queries)
     var tickets;
     if (DEMO_MODE) {
       tickets = DEMO_TICKETS.slice();
@@ -7896,9 +8668,13 @@ body::after {
     tickets.forEach(t => {
       const docId = t._id;
       const isActive = t.status === 'active';
+      const isUsed = t.status === 'used';
       const isTransferred = t.status === 'transferred';
-      if (isTransferred) { historyCount++; }
-      else if (isActive) { activeCount++; } else { historyCount++; }
+      const isResale = t.status === 'resale-listed';
+      
+      if (isTransferred || isUsed || isResale) { historyCount++; }
+      else if (isActive) { activeCount++; }
+      
       var priceLabel = t.price > 0 ? 'S/' + t.price : 'GRATIS';
 
       // Image: use ticket.image first, then try allEvents match, then fallback
@@ -7909,34 +8685,53 @@ body::after {
       }
       var imgStyle = imgUrl ? 'background-image:url(' + imgUrl + ')' : 'background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-size:1.2em';
       var imgContent = imgUrl ? '' : '🎧';
+      
+      // Mask DNI: show only first 2 and last 2 digits
+      var maskedDni = t.userDni ? t.userDni.substring(0, 2) + '****' + t.userDni.substring(t.userDni.length - 2) : '—';
+      
+      // Status badge HTML
+      var statusBadgeHtml = '';
+      if (isActive) {
+        statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-active"><span style="font-size: 10px;">●</span> Activa</span>';
+      } else if (isUsed) {
+        statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-used"><span style="font-size: 10px;">●</span> Usada</span>';
+      } else if (isTransferred) {
+        statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-transferred"><span style="font-size: 10px;">●</span> Transferida</span>';
+      } else if (isResale) {
+        statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-resale"><span style="font-size: 10px;">●</span> En reventa</span>';
+      }
 
       const card = `
-        <div class="mt-ticket">
-          <div class="mt-ticket-head" onclick="mtToggleTicket('${docId}')">
+        <div class="mt-ticket ${isUsed ? 'used' : ''}">
+          <div class="mt-ticket-head" onclick="mtToggleTicket(\'${escHtml(docId)}\')">
             <div class="mt-ticket-img" style="${imgStyle}">${imgContent}</div>
             <div class="mt-ticket-info">
-              <div class="mt-ticket-event">${t.eventName}</div>
-              <div class="mt-ticket-meta">${t.eventDateLabel || t.eventDate || ''} · ${t.ticketName || 'General'}</div>
+              <div class="mt-ticket-event">${escHtml(t.eventName)}</div>
+              <div class="mt-ticket-meta">
+                <div>${escHtml(t.eventDateLabel || t.eventDate || '')} · ${escHtml(t.ticketName || 'General')}</div>
+                ${statusBadgeHtml}
+              </div>
             </div>
-            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle('${docId}',event)">⋮</div>
+            <div class="mt-ticket-dots" onclick="event.stopPropagation();mtMenuToggle(\'${escHtml(docId)}\',event)">⋮</div>
           </div>
-          <div class="mt-ticket-expand" id="${docId}-expand" class="d-none">
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Venue</span><span class="mt-ticket-detail-value">${t.eventVenue || ''}${t.eventLocation ? ', ' + t.eventLocation : ''}</span></div>
+          <div class="mt-ticket-expand d-none" id="${escHtml(docId)}-expand">
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Venue</span><span class="mt-ticket-detail-value">${escHtml(t.eventVenue || '')}${t.eventLocation ? ', ' + escHtml(t.eventLocation) : ''}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Horario</span><span class="mt-ticket-detail-value">${t.eventTimeStart || ''} – ${t.eventTimeEnd || ''}</span></div>
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Tipo</span><span class="mt-ticket-detail-value">${t.ticketName || 'General'}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Tipo de entrada</span><span class="mt-ticket-detail-value">${escHtml(t.ticketName || \'General\')}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Precio</span><span class="mt-ticket-detail-value">${priceLabel}</span></div>
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI</span><span class="mt-ticket-detail-value">${t.userDni || '—'}</span></div>
-            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Produce</span><span class="mt-ticket-detail-value">${t.promoter || '—'}</span></div>
-            <div class="mt-ticket-detail-row border-none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida a ' + (t._transferredTo || '') : isActive ? '✅ Activa' : t.status === 'resale-listed' ? '💰 En reventa' : '⏰ Usada'}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI vinculado</span><span class="mt-ticket-detail-value">${maskedDni}</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Verificación</span><span class="mt-ticket-detail-value" style="color: var(--green);">Verificado con Lezgo ✓</span></div>
+            <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Productor</span><span class="mt-ticket-detail-value">${escHtml(t.promoter || \'—\')}</span></div>
+            <div class="mt-ticket-detail-row border-none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida' : isUsed ? '✓ Usada' : isResale ? '💰 En reventa' : '✓ Activa'}</span></div>
           </div>
         </div>`;
 
       // Menu floats in body, positioned by JS
-      menusHtml += `<div class="mt-ticket-menu" id="${docId}-menu">
-        ${isActive && t._canUpgrade ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent(\'' + t.eventId + '\')">⬆️ Mejorar tier</div>' : ''}
+      menusHtml += `<div class="mt-ticket-menu" id="${escHtml(docId)}-menu">
+        ${isActive && t._canUpgrade ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();openEvent('' + t.eventId + '')">⬆️ Mejorar tier</div>' : ''}
         ${isActive && !t._canUpgrade ? '<div class="mt-ticket-menu-item" style="opacity:0.35;cursor:default;pointer-events:none">⬆️ Mejorar tier — ya tienes el mejor</div>' : ''}
-        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer(\'' + docId + '\')">🔄 Transferir entrada</div>' : ''}
-        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen(\'' + t.eventName + '\',\'' + t.ticketName + '\',' + (t.price || 50) + ',\'' + docId + '\')">💰 Publicar en reventa</div>' : ''}
+        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();mtTransfer('' + docId + '')">🔄 Transferir entrada</div>' : ''}
+        ${isActive ? '<div class="mt-ticket-menu-item" onclick="mtMenuClose();resaleOpen('' + t.eventName + '','' + t.ticketName + '',' + (t.price || 50) + ','' + docId + '')">💰 Publicar en reventa</div>' : ''}
         <div class="mt-ticket-menu-item" onclick="mtMenuClose();mtDownloadReceipt('${docId}','${t.eventName}','${t.ticketName || 'General'}','${priceLabel}')">📄 Descargar comprobante</div>
         <div class="mt-ticket-menu-item danger" onclick="mtMenuClose();mtReport('${docId}')">⚠️ Reportar un problema</div>
       </div>`;
@@ -7949,6 +8744,16 @@ body::after {
     var menuContainer = document.getElementById('mt-menus-container');
     if (!menuContainer) { menuContainer = document.createElement('div'); menuContainer.id = 'mt-menus-container'; document.body.appendChild(menuContainer); }
     menuContainer.innerHTML = menusHtml;
+
+    // Update header subtitle
+    var headerSub = document.getElementById('mt-header-subtitle');
+    if (headerSub) {
+      if (activeCount > 0) {
+        headerSub.textContent = activeCount + ' entrada' + (activeCount !== 1 ? 's' : '') + ' activa' + (activeCount !== 1 ? 's' : '') + ' · DNI verificado ✓';
+      } else {
+        headerSub.textContent = 'Aún no tienes entradas. ¡Explora eventos!';
+      }
+    }
 
     // Update tab badge counts
     var cProx = document.getElementById('mt-count-proximas');
@@ -7966,8 +8771,22 @@ body::after {
       }
     }
 
-    activePanel.innerHTML = activeHtml || '<div class="empty-state-dim">No tienes entradas activas.<br><button onclick="go(\'eventos\')" style="margin-top:16px;background:var(--acid);color: var(--gray-950);border:none;padding:10px 24px;border-radius: 0;font-weight:600;cursor:pointer">Explorar eventos</button></div>';
-    if (historyPanel) historyPanel.innerHTML = historyHtml || '<div class="empty-state-dim">No tienes entradas pasadas.</div>';
+    // Render empty states with better messaging
+    var emptyStateActive = '<div style="text-align:center;padding:60px 24px;color:var(--text-dim);">' +
+      '<div style="font-size:3em;margin-bottom:16px;">🎫</div>' +
+      '<div style="font-size:var(--fs-lg);font-weight:700;margin-bottom:8px;color:var(--text);">No tienes entradas próximas</div>' +
+      '<div style="font-size:var(--fs-sm);margin-bottom:24px;">Explora los eventos disponibles y asegura tu lugar.</div>' +
+      '<button onclick="go('eventos')" style="background:var(--acid);color:var(--gray-950);border:none;padding:12px 28px;border-radius:var(--radius-btn);font-weight:700;cursor:pointer;font-family:Sora,sans-serif">Explorar eventos</button>' +
+      '</div>';
+    
+    var emptyStateHistory = '<div style="text-align:center;padding:60px 24px;color:var(--text-dim);">' +
+      '<div style="font-size:3em;margin-bottom:16px;">📊</div>' +
+      '<div style="font-size:var(--fs-lg);font-weight:700;margin-bottom:8px;color:var(--text);">Tu historial aparecerá aquí</div>' +
+      '<div style="font-size:var(--fs-sm);">Tus entradas usadas y transferidas se mostrarán en este panel.</div>' +
+      '</div>';
+
+    activePanel.innerHTML = activeHtml || emptyStateActive;
+    if (historyPanel) historyPanel.innerHTML = historyHtml || emptyStateHistory;
     } catch (err) { log.error('loadMyTickets error:', err); }
   }
 
@@ -8071,16 +8890,16 @@ body::after {
       var dayNum = dateObj ? dateObj.getDate() : '';
       var monthStr = dateObj ? dateObj.toLocaleDateString('es', { month: 'short' }).toUpperCase() : '';
 
-      html += `<div class="mp-listing" onclick="buyResale('${r._id}')">
+      html += `<div class="mp-listing" onclick="buyResale(\'${escHtml(r._id)}\')">
         <div class="mp-listing-date">
           <div class="mp-listing-date-day">${dayNum}</div>
           <div class="mp-listing-date-month">${monthStr}</div>
         </div>
         <div class="mp-listing-img" style="${imgBg}">${imgInner}</div>
         <div class="mp-listing-info">
-          <div class="mp-listing-event">${r.eventName}</div>
-          <div class="mp-listing-meta">${r.eventDateLabel || r.eventDate || ''} · ${r.ticketTier}</div>
-          <div class="mp-listing-seller"><span class="verified-dot">✓</span> ${r.sellerName || 'Anónimo'} · ${r.eventVenue || ''}</div>
+          <div class="mp-listing-event">${escHtml(r.eventName)}</div>
+          <div class="mp-listing-meta">${escHtml(r.eventDateLabel || r.eventDate || '')} · ${escHtml(r.ticketTier)}</div>
+          <div class="mp-listing-seller"><span class="verified-dot">✓</span> ${escHtml(r.sellerName || 'Anónimo')} · ${escHtml(r.eventVenue || '')}</div>
         </div>
         <div class="mp-listing-right">
           <div class="mp-listing-prices">
@@ -8136,40 +8955,78 @@ body::after {
   }
 
   // ── Scanner ──
-  async function scanVerifyTicket(ticketId) {
-    if (!ticketId) { scanResult('invalid'); return; }
+  var scannerSelectedEventId = null;
+
+  async function scanVerifyByDni(dni) {
+    if (!dni || dni.length !== 8) { scanResult('invalid'); return; }
+    if (!scannerSelectedEventId) { toast('Selecciona un evento primero', 'error'); return; }
     try {
-      var ticket;
+      var ticket = null;
       if (DEMO_MODE) {
-        // Search in DEMO_TICKETS
-        var tk = DEMO_TICKETS.find(t => t._id === ticketId);
-        if (!tk) { scanResult('invalid'); return; }
-        if (tk.status === 'used') { scanResult('used'); return; }
-        if (tk.status !== 'active') { scanResult('denied'); return; }
-        tk.status = 'used';
-        ticket = tk;
+        const matching = DEMO_TICKETS.filter(t => t.userDni === dni && t.eventId === scannerSelectedEventId && t.status === 'active');
+        if (matching.length > 0) {
+          ticket = matching[0];
+          ticket.status = 'used';
+          scanResult('approved');
+          if (typeof loadScannerCounter === 'function') loadScannerCounter();
+        } else {
+          const usedTickets = DEMO_TICKETS.filter(t => t.userDni === dni && t.eventId === scannerSelectedEventId && t.status === 'used');
+          if (usedTickets.length > 0) {
+            scanResult('used');
+          } else {
+            scanResult('invalid');
+          }
+        }
       } else {
-        const doc = await db.collection('tickets').doc(ticketId).get();
-        if (!doc.exists) { scanResult('invalid'); return; }
-        ticket = doc.data();
-        if (ticket.status === 'used') { scanResult('used'); return; }
-        if (ticket.status !== 'active') { scanResult('denied'); return; }
-        await db.collection('tickets').doc(ticketId).update({ status: 'used', usedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        const query = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'active');
+        const snapshot = await query.get();
+        if (snapshot.size > 0) {
+          ticket = snapshot.docs[0];
+          await ticket.ref.update({ status: 'used', usedAt: firebase.firestore.FieldValue.serverTimestamp() });
+          scanResult('approved');
+          if (typeof loadScannerCounter === 'function') loadScannerCounter();
+        } else {
+          const usedQuery = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'used');
+          const usedSnapshot = await usedQuery.get();
+          if (usedSnapshot.size > 0) {
+            scanResult('used');
+          } else {
+            scanResult('invalid');
+          }
+        }
       }
-      const srName = document.getElementById('scan-result-name');
-      const srType = document.getElementById('sr-ticket');
-      const srDni = document.getElementById('sr-dni');
-      if (srName) srName.textContent = ticket.userName || ticket.eventName || 'Asistente';
-      if (srType) srType.textContent = ticket.ticketName;
-      if (srDni) srDni.textContent = ticket.userDni || '—';
-      scanResult('approved');
+      await loadScannerCounter();
     } catch (err) {
-      log.error('Scan error:', err);
+      log.error('scanVerifyByDni error:', err);
       scanResult('invalid');
     }
   }
 
   // ── Organizer Dashboard ──
+  // Animate counter from 0 to value with easing
+  function animateCounter(el, value, duration = 800) {
+    if (!el) return;
+    const startVal = 0;
+    const startTime = performance.now();
+    const easeOutQuad = (t) => 1 - (1 - t) * (1 - t);
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutQuad(progress);
+      const current = Math.round(startVal + (value - startVal) * eased);
+
+      if (typeof value === 'string' && value.startsWith('S/')) {
+        el.textContent = 'S/ ' + current.toLocaleString('es-PE');
+      } else {
+        el.textContent = current.toLocaleString('es-PE');
+      }
+
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
   async function loadOrganizerDashboard() {
     if (!currentUser) { go('auth'); return; }
     try {
@@ -8238,6 +9095,10 @@ body::after {
       // Calculate capacity & fill percentage
       var totalCap = ev.tickets ? ev.tickets.reduce((s, t) => s + (t.capacity || 0), 0) : 0;
       var fillPct = totalCap > 0 ? Math.min(100, Math.round(sold / totalCap * 100)) : 0;
+
+      // Determine progress bar color based on fill percentage
+      var barColor = fillPct >= 70 ? 'var(--green)' : (fillPct >= 40 ? '#ffa500' : 'var(--red)');
+
       var imgUrl = ev.image || '';
       var cardImgStyle = imgUrl ? 'background-image:url(' + imgUrl + ');background-size:cover;background-position:center' : 'background:linear-gradient(135deg,var(--gray-700),var(--gray-600))';
 
@@ -8246,8 +9107,74 @@ body::after {
           <span class="og-event-status" style="background:${statusStyle}">${statusLabel}</span>
         </div>
         <div class="og-event-body">
-          <div class="og-event-name">${ev.name}</div>
-          <div class="og-event-meta">${ev.dateLabel || ev.date} · ${ev.venue}</div>
+          <div class="og-event-name">${escHtml(ev.name)}</div>
+          <div class="og-event-meta">${escHtml(ev.dateLabel || ev.date)} · ${escHtml(ev.venue)}</div>
+          <div class="og-event-progress">
+            <div class="og-event-bar"><div class="og-event-bar-fill" style="width:${fillPct}%;background:${barColor}"></div></div>
+            <div class="og-event-progress-info">
+              <span class="og-progress-pct">${fillPct}%</span>
+              <span class="og-capacity-label">${sold}/${totalCap}</span>
+            </div>
+          </div>
+          <div class="og-event-sell">
+            <span><strong style="color:var(--acid)">${sold}</strong> vendidas · S/ ${evRevenue.toLocaleString('es-PE')} gross</span>
+          </div>
+          <div style="font-size:var(--fs-xs);color:var(--text-dim);margin-top:4px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto <strong style="color:var(--green)">S/ ${Math.round(evNet).toLocaleString('es-PE')}</strong></div>
+        </div>
+        <div class="og-event-actions">
+          <button class="og-act-btn primary" onclick=\"openEvent('${escHtml(ev._id)}'\" >👁 Ver</button>
+          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick=\"openEventForm('${escHtml(ev._id)}'\"  >✏️ Editar</button>
+          <button class="og-act-btn ghost" onclick=\"exportEventTickets('${escHtml(ev._id)}'\" >📊 Export</button>
+        </div>
+      </div>`;
+    }
+
+    // Enhanced empty state
+    if (!events.length) {
+      html = `<div class="og-empty-state">
+        <div class="og-empty-icon">🎫</div>
+        <div class="og-empty-title">Crea tu primer evento</div>
+        <div class="og-empty-text">Empieza a vender entradas y gestiona tus eventos aquí</div>
+        <button class="og-btn-new" onclick="createEvent()" style="margin-top:16px;">+ Crear evento</button>
+      </div>`;
+    }
+
+    if (container) container.innerHTML = html;
+
+    // Update top-level stats with animation
+    var totalFee = totalGross * FEE_RATE;
+    var totalNet = totalGross - totalFee;
+
+    var elSold = document.getElementById('og-stat-sold');
+    var elGross = document.getElementById('og-stat-gross');
+    var elFee = document.getElementById('og-stat-fee');
+    var elNet = document.getElementById('og-stat-net');
+    var elSoldSub = document.getElementById('og-stat-sold-sub');
+    var elGrossSub = document.getElementById('og-stat-gross-sub');
+
+    // Animate counters
+    if (elSold) {
+      elSold.textContent = '0';
+      setTimeout(() => animateCounter(elSold, totalSold, 600), 100);
+    }
+    if (elGross) {
+      elGross.textContent = 'S/ 0';
+      setTimeout(() => animateCounter(elGross, totalGross, 600), 150);
+    }
+    if (elFee) {
+      elFee.textContent = 'S/ 0';
+      setTimeout(() => animateCounter(elFee, totalFee, 600), 200);
+    }
+    if (elNet) {
+      elNet.textContent = 'S/ 0';
+      setTimeout(() => animateCounter(elNet, totalNet, 600), 250);
+    }
+
+    if (elSoldSub) elSoldSub.textContent = events.length + ' evento' + (events.length !== 1 ? 's' : '');
+    if (elGrossSub) elGrossSub.textContent = 'todas las ventas';
+    } catch (err) { log.error('loadOrganizerDashboard error:', err); }
+  }
+          <div class="og-event-meta">${escHtml(ev.dateLabel || ev.date)} · ${escHtml(ev.venue)}</div>
           <div class="og-event-bar"><div class="og-event-bar-fill" style="width:${fillPct}%"></div></div>
           <div class="og-event-sell">
             <span><strong style="color:var(--acid)">${sold}</strong> vendidas · S/ ${evRevenue.toLocaleString('es-PE')} gross</span>
@@ -8255,9 +9182,9 @@ body::after {
           <div style="font-size:var(--fs-xs);color:var(--text-dim);margin-top:4px">Fee S/ ${Math.round(evFee).toLocaleString('es-PE')} · Neto <strong style="color:var(--green)">S/ ${Math.round(evNet).toLocaleString('es-PE')}</strong></div>
         </div>
         <div class="og-event-actions">
-          <button class="og-act-btn primary" onclick="openEvent('${ev._id}')">👁 Ver</button>
-          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick="openEventForm('${ev._id}')">✏️ Editar</button>
-          <button class="og-act-btn ghost" onclick="exportEventTickets('${ev._id}')">📊 Export</button>
+          <button class="og-act-btn primary" onclick=\"openEvent('${escHtml(ev._id)}'\" >👁 Ver</button>
+          <button class="og-act-btn primary" style="background:var(--acid);color:var(--gray-950)" onclick=\"openEventForm('${escHtml(ev._id)}'\"  >✏️ Editar</button>
+          <button class="og-act-btn ghost" onclick=\"exportEventTickets('${escHtml(ev._id)}'\" >📊 Export</button>
         </div>
       </div>`;
     }
@@ -8829,38 +9756,145 @@ body::after {
     a.click(); URL.revokeObjectURL(url);
   }
 
-  // ── QR Scanner with Camera ──
-  var scannerStream = null;
-
-  async function startScanner() {
-    const video = document.getElementById('scanner-video');
-    if (!video) return;
+  // Export all events data
+  async function exportAllEvents() {
+    if (!currentUser) { go('auth'); return; }
     try {
-      scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      video.srcObject = scannerStream;
-      video.play();
-      // For demo: manual input
-      document.getElementById('scanner-manual-input').style.display = 'block';
-    } catch (err) {
-      log.error('Camera error:', err);
-      document.getElementById('scanner-manual-input').style.display = 'block';
-    }
-  }
-
-  function stopScanner() {
-    try {
-      if (scannerStream && typeof scannerStream.getTracks === 'function') {
-        scannerStream.getTracks().forEach(t => t.stop());
+      var events;
+      if (DEMO_MODE) {
+        events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
+      } else {
+        const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+        events = [];
+        snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
       }
-    } catch (e) { log.error('stopScanner error:', e); }
-    scannerStream = null;
+
+      var csv = 'Evento,Fecha,Lugar,Entradas Vendidas,Revenue Gross,Fee LEZGO,Revenue Neto\n';
+      const FEE_RATE = 0.08;
+
+      function calcEventRevenue(ev) {
+        if (!ev.tickets || !ev.tickets.length) return 0;
+        let revenue = 0;
+        for (const tier of ev.tickets) {
+          if (!tier.phases || !tier.phases.length) {
+            revenue += (tier.sold || 0) * (tier.price || 0);
+            continue;
+          }
+          let remaining = tier.sold || 0;
+          for (const phase of tier.phases) {
+            const qty = phase.quantity || 0;
+            const sold = Math.min(remaining, qty);
+            revenue += sold * (phase.price || 0);
+            remaining -= sold;
+            if (remaining <= 0) break;
+          }
+        }
+        return revenue;
+      }
+
+      for (const ev of events) {
+        var sold = 0;
+        if (ev.tickets) {
+          sold = ev.tickets.reduce((s, t) => s + (t.sold || 0), 0);
+        } else if (DEMO_MODE) {
+          sold = DEMO_TICKETS.filter(t => t.eventId === ev._id).length;
+        } else {
+          const ticketSnap = await db.collection('tickets').where('eventId', '==', ev._id).get();
+          sold = ticketSnap.size;
+        }
+
+        var evRevenue = calcEventRevenue(ev);
+        var evFee = evRevenue * FEE_RATE;
+        var evNet = evRevenue - evFee;
+
+        csv += '"' + (ev.name || '') + '","' + (ev.date || '') + '","' + (ev.venue || '') + '",' +
+               sold + ',' + Math.round(evRevenue) + ',' + Math.round(evFee) + ',' + Math.round(evNet) + '\n';
+      }
+
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'events-export-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click(); URL.revokeObjectURL(url);
+      toast('Datos exportados correctamente', 'success');
+    } catch (err) {
+      log.error('Export error:', err);
+      toast('Error al exportar datos', 'error');
+    }
   }
 
-  function manualScan() {
-    const input = document.getElementById('scan-ticket-id');
-    if (input && input.value.trim()) {
-      scanVerifyTicket(input.value.trim());
+  // ── Scanner Event Selection & Check-in Counter ──
+  async function scannerSelectEvent() {
+    const select = document.getElementById('scanner-event-select');
+    scannerSelectedEventId = select.value;
+    const counter = document.getElementById('scanner-counter');
+    if (scannerSelectedEventId) {
+      counter.style.display = 'block';
+      loadScannerCounter();
+    } else {
+      counter.style.display = 'none';
     }
+  }
+
+  async function loadScannerCounter() {
+    if (!scannerSelectedEventId) return;
+    try {
+      var totalSold = 0, totalUsed = 0;
+      if (DEMO_MODE) {
+        const tickets = DEMO_TICKETS.filter(t => t.eventId === scannerSelectedEventId);
+        totalSold = tickets.length;
+        totalUsed = tickets.filter(t => t.status === 'used').length;
+      } else {
+        const snapshot = await db.collection('tickets').where('eventId', '==', scannerSelectedEventId).get();
+        totalSold = snapshot.size;
+        totalUsed = 0;
+        snapshot.forEach(doc => { if (doc.data().status === 'used') totalUsed++; });
+      }
+      const checkinCount = document.getElementById('scanner-checkin-count');
+      const totalSoldEl = document.getElementById('scanner-total-sold');
+      const checkinPct = document.getElementById('scanner-checkin-pct');
+      const checkinBar = document.getElementById('scanner-checkin-bar');
+      if (checkinCount) checkinCount.textContent = totalUsed;
+      if (totalSoldEl) totalSoldEl.textContent = totalSold;
+      const pct = totalSold > 0 ? Math.round((totalUsed / totalSold) * 100) : 0;
+      if (checkinPct) checkinPct.textContent = pct + '%';
+      if (checkinBar) checkinBar.style.width = pct + '%';
+    } catch (err) {
+      log.error('loadScannerCounter error:', err);
+    }
+  }
+
+  async function populateScannerEvents() {
+    const select = document.getElementById('scanner-event-select');
+    if (!select || !currentUser) return;
+    try {
+      var events = [];
+      if (DEMO_MODE) {
+        events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
+      } else {
+        const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+        snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
+      }
+      select.innerHTML = '<option value="">— Selecciona un evento —</option>';
+      events.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e._id;
+        opt.textContent = e.name || e._id;
+        select.appendChild(opt);
+      });
+    } catch (err) {
+      log.error('populateScannerEvents error:', err);
+    }
+  }
+
+  // ── Note: QR Scanner with Camera removed in favor of DNI-based lookup ──
+
+  function manualScanDni() {
+    const input = document.getElementById('scanner-dni-input');
+    const dni = input.value.trim();
+    if (!dni) { toast('Ingresa un DNI', 'error'); return; }
+    if (dni.length !== 8) { toast('El DNI debe tener 8 dígitos', 'error'); return; }
+    scanVerifyByDni(dni);
   }
 
   // ── Profile Edit ──
@@ -9163,12 +10197,14 @@ body::after {
     // Protected views require auth
     const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner'];
     if (protectedViews.includes(view) && !currentUser) {
+      toast('Inicia sesión para acceder a esta sección', 'warning');
       go('auth');
       return;
     }
     // Promoter-only views
     const promoterViews = ['scanner', 'organizer'];
     if (promoterViews.includes(view) && userProfile?.role !== 'promoter') {
+      toast('Esta sección es solo para organizadores', 'warning');
       go('eventos');
       return;
     }
@@ -9209,6 +10245,7 @@ body::after {
     if (view === 'marketplace' && typeof loadMarketplace === 'function') loadMarketplace();
     if (view === 'organizer' && typeof loadOrganizerDashboard === 'function') loadOrganizerDashboard();
     if (view === 'perfil' && typeof loadProfile === 'function') loadProfile();
+    if (view === 'scanner' && typeof populateScannerEvents === 'function') populateScannerEvents();
   }
 
   // ── Hash Router: handle back/forward + page load ──
@@ -9217,6 +10254,11 @@ body::after {
     const view = state.view || (location.hash.replace('#','').split('/')[0] || 'eventos');
     if (view === 'evento' && state.eventId) {
       currentEventId = state.eventId;
+    }
+    // Close purchase modal if open
+    const pmOverlay = document.getElementById('pm-overlay');
+    if (pmOverlay && pmOverlay.classList.contains('pm-open')) {
+      pmClose();
     }
     go(view, { _fromPop: true });
   });
@@ -10330,41 +11372,132 @@ body::after {
   var pmSelectedPay = 'card';
 
   // Ticket quantities & pricing (overwritten by Firebase openEvent when dynamic)
-  var pmTicketCatalog = {
-    ga:  { name: 'GA All Night', price: 0, priceLabel: 'GRATIS (Demo)' },
-    vip: { name: '👑 VIP',            price: 0, priceLabel: 'GRATIS (Demo)' }
-  };
-  var pmTicketQty = { ga: 0, vip: 0 };
+  var pmTicketCatalog = {};
+  var pmTicketQty = {};
 
   function pmBuildTicketList() {
     const container = document.getElementById('pm-ticket-list-container');
     if (!container) return;
-    let html = '';
-    for (const [id, t] of Object.entries(pmTicketCatalog)) {
-      pmTicketQty[id] = pmTicketQty[id] || 0;
-      const priceDisplay = t.priceLabel || (t.price === 0 ? 'GRATIS' : 'S/' + t.price);
-      html += `<div class="pm-ticket-row" id="pm-opt-${id}">
-        <div class="flex-1">
-          <div class="pm-ticket-name">${t.name}</div>
-          <div class="pm-ticket-sub">${t.includes && t.includes.length ? t.includes[0] : ''}</div>
-        </div>
-        <div class="d-flex items-center gap-4">
-          <div class="pm-ticket-price" style="font-size: var(--fs-base);${t.price === 0 ? 'color:var(--acid)' : ''}">${priceDisplay}</div>
-          <div class="pm-qty-row">
-            <button class="pm-qty-btn" id="pm-minus-${id}" onclick="pmQtyChange('${id}',-1)" disabled>−</button>
-            <span class="pm-qty-num" id="pm-qty-${id}">0</span>
-            <button class="pm-qty-btn" id="pm-plus-${id}" onclick="pmQtyChange('${id}',1)">+</button>
-          </div>
-        </div>
-      </div>`;
+
+    const ev = window._currentEvent;
+    if (!ev || !ev.tickets || ev.tickets.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;">No hay entradas disponibles</div>';
+      return;
     }
+
+    // Rebuild catalog from event tickets
+    pmTicketCatalog = {};
+    pmTicketQty = {};
+
+    let html = '';
+    for (const ticket of ev.tickets) {
+      const id = ticket.id;
+
+      // Get current active phase (find the phase where cumulative sold < phase quantity)
+      let cumulativeSold = 0;
+      let activePhase = null;
+      let activePhasePrice = 0;
+
+      if (ticket.phases && ticket.phases.length > 0) {
+        for (const phase of ticket.phases) {
+          if (cumulativeSold + phase.quantity > ticket.sold) {
+            activePhase = phase;
+            activePhasePrice = phase.price;
+            break;
+          }
+          cumulativeSold += phase.quantity;
+        }
+        // If all phases sold out, use last phase
+        if (!activePhase) {
+          activePhase = ticket.phases[ticket.phases.length - 1];
+          activePhasePrice = activePhase.price;
+        }
+      }
+
+      // Build catalog entry
+      pmTicketCatalog[id] = {
+        name: ticket.name,
+        price: activePhasePrice,
+        includes: ticket.includes || []
+      };
+      pmTicketQty[id] = 0;
+
+      // Determine if sold out
+      const isSoldOut = ticket.sold >= ticket.capacity;
+      const availability = isSoldOut ? 0 : (ticket.capacity - ticket.sold);
+
+      // Build phase label
+      const phaseLabel = activePhase ? activePhase.name : 'Agotado';
+
+      // Build includes list
+      const includesList = (ticket.includes || []).slice(0, 2).join(' · ');
+
+      // Build HTML row
+      if (isSoldOut) {
+        html += `<div class="pm-ticket-row soldout" id="pm-opt-${id}">
+          <div class="flex-1">
+            <div class="pm-ticket-name">${ticket.name}</div>
+            <div class="pm-ticket-sub">${phaseLabel} — Agotado</div>
+          </div>
+          <div class="pm-ticket-price" style="color:rgba(255,255,255,0.3);font-size: var(--fs-base)">AGOTADO</div>
+        </div>`;
+      } else {
+        html += `<div class="pm-ticket-row" id="pm-opt-${id}">
+          <div class="flex-1">
+            <div class="pm-ticket-name">${ticket.name}</div>
+            <div class="pm-ticket-sub">${phaseLabel}${includesList ? ' · ' + includesList : ''}</div>
+            <div style="font-size: var(--fs-xs);color: var(--text-dim);margin-top: 4px;">${availability} / ${ticket.capacity} disponibles</div>
+          </div>
+          <div class="d-flex items-center gap-4">
+            <div class="pm-ticket-price" style="font-size: var(--fs-base);${activePhasePrice === 0 ? 'color:var(--acid)' : ''}">S/${activePhasePrice}</div>
+            <div class="pm-qty-row">
+              <button class="pm-qty-btn" id="pm-minus-${id}" onclick="pmQtyChange('${id}',-1)" disabled>−</button>
+              <span class="pm-qty-num" id="pm-qty-${id}">0</span>
+              <button class="pm-qty-btn" id="pm-plus-${id}" onclick="pmQtyChange('${id}',1)">+</button>
+            </div>
+          </div>
+        </div>`;
+      }
+    }
+
     container.innerHTML = html;
   }
 
   function pmQtyChange(id, delta) {
-    pmTicketQty[id] = Math.max(0, Math.min(6, (pmTicketQty[id] || 0) + delta));
+    const ev = window._currentEvent;
+    const ticket = ev && ev.tickets ? ev.tickets.find(t => t.id === id) : null;
+
+    let newQty = (pmTicketQty[id] || 0) + delta;
+
+    // Check if incrementing (delta > 0) and if we would exceed capacity
+    if (delta > 0 && ticket) {
+      const totalSelected = Object.entries(pmTicketQty).reduce((sum, [tid, q]) =>
+        tid === id ? sum : sum + q, 0);
+      if (ticket.sold + totalSelected + 1 >= ticket.capacity) {
+        // At capacity, don't allow increase
+        const plusBtn = document.querySelector('[onclick="pmQtyChange(\'  + id + '\', 1)"]');
+        if (plusBtn) {
+          plusBtn.disabled = true;
+          plusBtn.title = 'AGOTADO';
+        }
+        return;
+      }
+    }
+
+    pmTicketQty[id] = Math.max(0, Math.min(6, newQty));
     document.getElementById('pm-qty-' + id).textContent = pmTicketQty[id];
     document.getElementById('pm-minus-' + id).disabled = pmTicketQty[id] === 0;
+
+    // Check and update plus button state
+    const plusBtn = document.querySelector('[onclick="pmQtyChange(\'  + id + '\', 1)"]');
+    if (plusBtn && ticket) {
+      const totalSelected = Object.entries(pmTicketQty).reduce((sum, [tid, q]) =>
+        tid === id ? sum + pmTicketQty[id] : sum + q, 0);
+      plusBtn.disabled = ticket.sold + totalSelected >= ticket.capacity;
+      if (plusBtn.disabled) plusBtn.title = 'AGOTADO';
+      else plusBtn.title = '';
+    }
+
     pmUpdateQtyUI();
   }
 
@@ -10413,19 +11546,23 @@ body::after {
       totalQty += qty;
       html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>S/${lineTotal}</span></div>`;
     }
-    const fee = totalQty * 10;
-    const total = subtotal + fee;
-    document.getElementById('pm-pay-items').innerHTML = html;
-    document.getElementById('pm-pay-fee').textContent = 'S/' + fee;
-    document.getElementById('pm-pay-total').textContent = 'S/' + total;
+    // Percentage-based fees: 3.3% + 2.1% + 2.9% = 8.3% total
+    const platformFeeRate = 0.033;   // 3.3% platform fee
+    const verificationFeeRate = 0.021; // 2.1% identity verification
+    const processingFeeRate = 0.029;   // 2.9% payment processing
+    const totalFeeRate = platformFeeRate + verificationFeeRate + processingFeeRate; // 8.3%
+    const totalFee = Math.round(subtotal * totalFeeRate * 100) / 100;
+    const total = subtotal + totalFee;
 
-    // Calculate real percentages over the pre-fee subtotal
+    document.getElementById('pm-pay-items').innerHTML = html;
+    document.getElementById('pm-pay-fee').textContent = 'S/' + totalFee.toFixed(2);
+    document.getElementById('pm-pay-total').textContent = 'S/' + total.toFixed(2);
+
+    // Display fee breakdown with actual percentages
     if (subtotal > 0) {
-      const pct = (n) => (n / subtotal * 100).toFixed(1) + '%';
-      // Split: Lezgo 4/10, Verificación 3/10, Procesamiento 3/10
-      document.getElementById('pm-fee-plataforma').textContent    = pct(fee * 0.4);
-      document.getElementById('pm-fee-verificacion').textContent  = pct(fee * 0.3);
-      document.getElementById('pm-fee-procesamiento').textContent = pct(fee * 0.3);
+      document.getElementById('pm-fee-plataforma').textContent    = (platformFeeRate * 100).toFixed(1) + '%';
+      document.getElementById('pm-fee-verificacion').textContent  = (verificationFeeRate * 100).toFixed(1) + '%';
+      document.getElementById('pm-fee-procesamiento').textContent = (processingFeeRate * 100).toFixed(1) + '%';
     }
     // Reset desglose to closed
     document.getElementById('pm-fee-breakdown').classList.remove('visible');
@@ -10445,8 +11582,11 @@ body::after {
 
   function pmOpen(eventLabel) {
     if (eventLabel) document.getElementById('pm-event-label').textContent = eventLabel;
+
+    // Dynamically build ticket list from current event
+    pmBuildTicketList();
+
     // Reset quantities each time modal opens (unless pre-seeded by card click)
-    pmTicketQty = {};
     for (const id of Object.keys(pmTicketCatalog)) {
       pmTicketQty[id] = 0;
       const qEl = document.getElementById('pm-qty-' + id);
@@ -10455,11 +11595,10 @@ body::after {
       if (mEl) mEl.disabled = true;
     }
     pmUpdateQtyUI();
-    // Route based on auth state
-    if (pmUserLoggedIn && pmUserDniVerified) {
-      pmGoStep(3);
-    } else if (pmUserLoggedIn) {
-      pmGoStep(2);
+
+    // Always show step 1 (ticket selection) first
+    if (pmUserLoggedIn) {
+      pmGoStep(1);
     } else {
       pmGoStep(0);
     }
@@ -10470,6 +11609,37 @@ body::after {
   function pmClose() {
     document.getElementById('pm-overlay').classList.remove('pm-open');
     document.body.style.overflow = '';
+
+    // Reset state when closing modal
+    pmTicketQty = {};
+    pmVerifiedDni = '';
+    pmVerifiedName = '';
+    pmUserDniVerified = false;
+
+    // Reset all quantity displays to 0
+    for (const id of Object.keys(pmTicketCatalog)) {
+      const qEl = document.getElementById('pm-qty-' + id);
+      const mEl = document.getElementById('pm-minus-' + id);
+      if (qEl) qEl.textContent = '0';
+      if (mEl) mEl.disabled = true;
+    }
+
+    // Disable "Continuar" button
+    const continueBtn = document.getElementById('pm-step1-continue');
+    if (continueBtn) {
+      continueBtn.disabled = true;
+      continueBtn.style.opacity = '0.4';
+    }
+
+    // Reset verify button
+    const verifyBtn = document.getElementById('pm-verify-btn');
+    if (verifyBtn) {
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = 'Verificar y continuar →';
+    }
+
+    // Reset step back to 0 (login)
+    pmGoStep(0);
   }
 
   function pmOverlayClick(e) {
@@ -10480,6 +11650,15 @@ body::after {
     document.querySelectorAll('.pm-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('pm-panel-' + step).classList.add('active');
     pmCurrentStep = step;
+
+    // Add smooth slide transition
+    const panel = document.getElementById('pm-panel-' + step);
+    if (panel) {
+      panel.style.animation = 'none';
+      setTimeout(() => {
+        panel.style.animation = 'pmSlideIn 0.3s ease-out';
+      }, 10);
+    }
 
     // Show/hide steps bar (hidden on step 0)
     const bar = document.getElementById('pm-steps-bar');
@@ -10502,6 +11681,20 @@ body::after {
 
     const titles = { 0: 'Comprar entrada', 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: 'Pago', 4: '¡Listo!' };
     document.getElementById('pm-step-title').textContent = titles[step] || '';
+
+    // Auto-fill DNI and name on step 2 if user is logged in
+    if (step === 2) {
+      setTimeout(() => {
+        const dniInput = document.getElementById('pm-dni-input');
+        const nameInput = document.getElementById('pm-name-input');
+        if (userProfile && userProfile.dni && dniInput && !dniInput.value) {
+          dniInput.value = userProfile.dni;
+        }
+        if (userProfile && userProfile.displayName && nameInput && !nameInput.value) {
+          nameInput.value = userProfile.displayName;
+        }
+      }, 100);
+    }
 
     if (step === 3) {
       pmBuildPaySummary();
@@ -10712,6 +11905,133 @@ body::after {
     }
   }
 
+  /* ═══════════════════════════════════════════
+     ANIMATION & INTERACTION ENHANCEMENTS
+     ═══════════════════════════════════════════ */
+
+  // Scroll-triggered animations using IntersectionObserver
+  function initScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('scroll-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Observe section headings
+    document.querySelectorAll('.section-head, .section-title, .faq-section-heading').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Observe event cards
+    document.querySelectorAll('.ev-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Observe promo cards
+    document.querySelectorAll('.promo-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Observe feature cards and teasers
+    document.querySelectorAll('.pp-mech-card, .std-teaser').forEach(el => {
+      observer.observe(el);
+    });
+  }
+
+  // Navigation scroll effect
+  function initNavScrollEffect() {
+    const nav = document.querySelector('.main-nav');
+    if (!nav) return;
+
+    let lastScrollY = 0;
+    const scrollThreshold = 10;
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+
+      if (scrollY > scrollThreshold && !nav.classList.contains('scrolled')) {
+        nav.classList.add('scrolled');
+      } else if (scrollY <= scrollThreshold && nav.classList.contains('scrolled')) {
+        nav.classList.remove('scrolled');
+      }
+
+      lastScrollY = scrollY;
+    }, { passive: true });
+  }
+
+  // Counter animation for numbers
+  function animateCounter(element, target, duration = 1000) {
+    const start = 0;
+    const startTime = performance.now();
+
+    const updateCounter = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const currentValue = Math.floor(start + (target - start) * progress);
+
+      element.textContent = currentValue.toLocaleString();
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      }
+    };
+
+    element.classList.add('counter-animate');
+    requestAnimationFrame(updateCounter);
+  }
+
+  // Initialize all animations on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    initScrollAnimations();
+    initNavScrollEffect();
+  });
+
+  // Re-initialize scroll animations when view changes
+  const originalGo = window.go;
+  window.go = function(view, opts) {
+    originalGo.call(this, view, opts);
+
+    // Wait for DOM to settle, then reinitialize animations
+    setTimeout(() => {
+      initScrollAnimations();
+    }, 100);
+  };
+
+  // Enhanced button interactions
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('button, [role="button"], a[onclick]');
+    if (target) {
+      // Add subtle click ripple effect (already handled by CSS :active)
+      target.style.pointerEvents = 'none';
+      setTimeout(() => {
+        target.style.pointerEvents = '';
+      }, 150);
+    }
+  });
+
+  // Counter animation helper for stats
+  window.animateCounterOnView = function(selector, target) {
+    const el = document.querySelector(selector);
+    if (el) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animateCounter(el, target);
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      observer.observe(el);
+    }
+  };
+
 </script>
 
 <!-- ═══════════════════════════════════════════
@@ -10735,7 +12055,7 @@ body::after {
           <div class="auth-title">Bienvenido de vuelta 👋</div>
           <div class="auth-sub">Entra con tu email. Acceso rápido, sin complicaciones.</div>
           <label class="auth-label">Email</label>
-          <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com">
+          <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com" aria-label="Correo electrónico">
           <button class="auth-btn" onclick="authSendLink()">Entrar con email →</button>
           <div class="auth-divider">o continúa con</div>
           <button class="auth-btn-ghost" onclick="authGoogleLogin()">
@@ -10757,11 +12077,11 @@ body::after {
             <div class="auth-title">Crea tu cuenta 🚀</div>
             <div class="auth-sub">Necesitas email y DNI. En 2 minutos estás dentro.</div>
             <label class="auth-label">Nombre completo</label>
-            <input class="auth-input" type="text" id="reg-name" placeholder="Mario Leder">
+            <input class="auth-input" type="text" id="reg-name" placeholder="Mario Leder" aria-label="Nombre completo">
             <label class="auth-label">Email</label>
-            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com">
+            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com" aria-label="Correo electrónico">
             <label class="auth-label">Teléfono (opcional)</label>
-            <input class="auth-input" type="tel" id="reg-phone" placeholder="+51 999 000 000">
+            <input class="auth-input" type="tel" id="reg-phone" placeholder="+51 999 000 000" aria-label="Teléfono">
             <button class="auth-btn" onclick="authRegStep(2)">Continuar →</button>
           </div>
           <!-- REG STEP 2: DNI -->
@@ -10769,14 +12089,14 @@ body::after {
             <div class="auth-title">Verifica tu identidad 🪪</div>
             <div class="auth-sub">Tu DNI vincula tus entradas a ti. Protegemos tu compra y eliminamos la reventa trucha.</div>
             <label class="auth-label">Número de DNI</label>
-            <input class="auth-input" type="text" id="reg-dni" placeholder="73XXXXXX" maxlength="8">
+            <input class="auth-input" type="text" id="reg-dni" placeholder="73XXXXXX" maxlength="8" aria-label="DNI">
             <label class="auth-label">Fecha de nacimiento</label>
-            <input class="auth-input" type="text" id="reg-dob" placeholder="DD/MM/AAAA" maxlength="10">
+            <input class="auth-input" type="text" id="reg-dob" placeholder="DD/MM/AAAA" maxlength="10" aria-label="Fecha de nacimiento">
             <div class="pm-security-note" style="margin-top:0; margin-bottom:0;">
               🔒 Tu DNI solo se usa para verificar tu identidad. No almacenamos datos sensibles.
             </div>
             <button class="auth-btn" style="margin-top:16px" onclick="authRegStep(3)">Verificar DNI →</button>
-            <button class="auth-btn-ghost" onclick="authRegStep(1)" class="mt-0">← Volver</button>
+            <button class="auth-btn-ghost mt-0" onclick="authRegStep(1)">← Volver</button>
           </div>
           <!-- REG STEP 3: Photo + Success -->
           <div class="auth-step" id="auth-reg-3">
@@ -10789,7 +12109,7 @@ body::after {
               </div>
               <div id="auth-photo-actions">
                 <button class="auth-btn" onclick="authFinishRegister()">Tomar foto y registrarme →</button>
-                <button class="auth-btn-ghost" onclick="authRegStep(2)" class="mt-0">← Volver</button>
+                <button class="auth-btn-ghost mt-0" onclick="authRegStep(2)">← Volver</button>
               </div>
               <div id="auth-loading-reg" style="display:none; text-align:center; padding:20px 0;">
                 <div class="pm-spinner" style="margin:0 auto 12px;"></div>
@@ -10821,7 +12141,7 @@ body::after {
     <div class="mt-header">
       <div class="mt-header-left">
         <h1>Mis Entradas</h1>
-        <p>3 entradas activas · DNI verificado ✓</p>
+        <p id="mt-header-subtitle" style="color: var(--text-dim);">Cargando tus entradas...</p>
       </div>
       <div class="mt-header-right" style="display:flex;align-items:center;gap:10px;">
         <button class="notif-bell" onclick="notifOpen()">🔔<span class="notif-badge">3</span></button>
@@ -10835,15 +12155,11 @@ body::after {
     </div>
     <!-- PRÓXIMAS -->
     <div class="mt-panel active" id="mt-proximas">
-      <div id="mt-proximas-empty" style="text-align:center;padding:40px 20px;color:var(--text-mid);font-size: var(--fs-sm);">
-        No tienes entradas próximas. <a href="#" onclick="go('eventos');return false;" class="text-acid">Explora eventos →</a>
-      </div>
+      <!-- Tickets rendered here by loadMyTickets() -->
     </div>
     <!-- PASADAS -->
     <div class="mt-panel" id="mt-pasadas">
-      <div id="mt-pasadas-empty" style="text-align:center;padding:40px 20px;color:var(--text-mid);font-size: var(--fs-sm);">
-        Tu historial de eventos aparecerá acá.
-      </div>
+      <!-- Tickets rendered here by loadMyTickets() -->
     </div>
     <!-- EN REVENTA -->
     <div class="mt-panel" id="mt-reventas">
@@ -10869,6 +12185,20 @@ body::after {
           <p id="og-welcome">Cargando...</p>
         </div>
         <button class="og-btn-new" onclick="createEvent()">+ Nuevo Evento</button>
+      </div>
+      <div class="og-quick-actions">
+        <button class="og-quick-btn" onclick="createEvent()">
+          <span class="og-quick-icon">➕</span>
+          <span>Crear evento</span>
+        </button>
+        <button class="og-quick-btn" onclick="go('scanner')">
+          <span class="og-quick-icon">📱</span>
+          <span>Abrir scanner</span>
+        </button>
+        <button class="og-quick-btn" onclick="exportAllEvents()">
+          <span class="og-quick-icon">📊</span>
+          <span>Exportar todo</span>
+        </button>
       </div>
     </div>
     <div class="og-metrics">
@@ -10924,7 +12254,7 @@ body::after {
         </div>
       </div>
     </div>
-    <div class="og-section" id="og-attendees-section" class="d-none">
+    <div class="og-section d-none" id="og-attendees-section">
       <div class="og-section-title" id="og-attendees-title">Asistentes <a onclick="document.getElementById('og-attendees-section').style.display='none'">Cerrar ×</a></div>
       <div class="og-table-wrap">
         <div class="og-table-head">
@@ -11134,7 +12464,7 @@ body::after {
     </div>
 
     <!-- Changelog (visible when editing) -->
-    <div class="ef-section" id="ef-changelog-section" class="d-none">
+    <div class="ef-section d-none" id="ef-changelog-section">
       <h3 class="ef-section-title">Log de cambios</h3>
       <div id="ef-changelog-list" style="font-size: var(--fs-sm); color:var(--text-dim); line-height:1.8"></div>
     </div>
@@ -11390,7 +12720,7 @@ body::after {
         <div class="pm-verify-icon">🪪</div>
         <div class="pm-verify-title">Verifica tu identidad</div>
         <div class="pm-verify-sub">Tu entrada quedará vinculada a tu DNI. Así protegemos tu compra y eliminamos las reventas truchas.</div>
-        <input class="pm-input" type="text" id="pm-dni-input" placeholder="DNI (ej: 73XXXXXX)" maxlength="10" oninput="pmFormatDni(this)">
+        <input class="pm-input" type="text" id="pm-dni-input" placeholder="DNI (ej: 73XXXXXX)" maxlength="8" oninput="pmFormatDni(this)">
         <input class="pm-input" type="text" id="pm-name-input" placeholder="Nombres y apellidos (como en tu DNI)">
         <div class="pm-security-note">
           🔒 Tu DNI se usa solo para verificar tu identidad. No almacenamos datos sensibles.
@@ -11452,10 +12782,10 @@ body::after {
           </div>
         </div>
         <div id="pm-pay-card-fields">
-          <input class="pm-input" type="text" placeholder="Número de tarjeta" maxlength="19" inputmode="numeric" autocomplete="cc-number" oninput="pmFormatCard(this)">
+          <input class="pm-input" type="text" placeholder="Número de tarjeta" maxlength="19" inputmode="numeric" autocomplete="cc-number" aria-label="Número de tarjeta de crédito" oninput="pmFormatCard(this)">
           <div style="display:flex;gap:10px">
-            <input class="pm-input" type="text" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp" class="flex-1" oninput="pmFormatExp(this)">
-            <input class="pm-input" type="password" placeholder="CVV" maxlength="3" inputmode="numeric" autocomplete="cc-csc" style="flex:1;letter-spacing:0.2em">
+            <input class="pm-input flex-1" type="text" placeholder="MM/AA" maxlength="5" inputmode="numeric" autocomplete="cc-exp" aria-label="Fecha de expiración" oninput="pmFormatExp(this)">
+            <input class="pm-input" type="password" placeholder="CVV" maxlength="3" inputmode="numeric" autocomplete="cc-csc" aria-label="Código CVV" style="flex:1;letter-spacing:0.2em">
           </div>
         </div>
         <div id="pm-pay-yape-fields" class="d-none">
@@ -11467,6 +12797,11 @@ body::after {
         <div class="pm-loading" id="pm-loading">
           <div class="pm-spinner"></div>
           <div class="pm-loading-text">Procesando pago seguro...</div>
+        </div>
+        <!-- Secure Payment Badge -->
+        <div style="text-align:center;margin-bottom:16px;font-size: var(--fs-sm);color: var(--green);display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span style="font-size:14px;">🔒</span>
+          <span>Pago 100% seguro y encriptado</span>
         </div>
         <button class="pm-cta" id="pm-pay-btn" onclick="pmPay()">Pagar ahora 🔒</button>
         <button class="pm-cta-secondary" onclick="pmGoStep(2)">← Volver</button>
@@ -11488,7 +12823,8 @@ body::after {
           <div class="pm-ticket-qr" style="text-align:center">🪪</div>
           <div class="pm-ticket-verified">✅ Verificado con Lezgo</div>
         </div>
-        <button class="pm-cta" onclick="pmClose()" style="margin-top:24px">Ver mis entradas →</button>
+        <div style="text-align:center;margin-top:16px;padding:16px;border-top:1px solid rgba(255,255,255,0.1);font-weight:600;color:var(--text-mid);">Total pagado: <span id="pm-confirm-total">S/0</span></div>
+        <button class="pm-cta" onclick="pmClose();go('mis-entradas')" style="margin-top:24px">Ver mis entradas →</button>
       </div>
 
     </div>

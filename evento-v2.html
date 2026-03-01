@@ -138,9 +138,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .hero-bg::after {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(180deg,
-    rgba(5,5,5,0) 0%,
-    rgba(5,5,5,0.3) 35%,
-    rgba(5,5,5,0.92) 70%,
+    rgba(5,5,5,0.1) 0%,
+    rgba(5,5,5,0.4) 30%,
+    rgba(5,5,5,0.95) 70%,
     var(--bg) 100%
   );
 }
@@ -483,8 +483,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
   aspect-ratio: 3 / 4;
   background: var(--surface);
   border: 1px solid var(--border);
-  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s, border-color 0.2s;
   cursor: pointer;
+}
+.lineup-card:hover {
+  border-color: var(--acid-muted);
 }
 .lineup-card:hover {
   transform: translateY(-6px);
@@ -568,12 +571,17 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .info-chip {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.15);
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: var(--radius-pill);
   font-size: var(--fs-sm); font-weight: var(--fw-medium);
-  color: var(--text-dim);
+  color: var(--text-mid);
+  transition: all 0.2s ease;
+}
+.info-chip:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--acid-muted);
 }
 .info-chip span { font-size: var(--fs-base); }
 .info-divider {
@@ -585,23 +593,29 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .info-prohibited-tag {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px;
-  background: rgba(255,60,60,0.08);
-  border: 1px solid rgba(255,60,60,0.2);
+  padding: 8px 14px;
+  background: rgba(255,60,60,0.1);
+  border: 1px solid rgba(255,60,60,0.25);
   border-radius: var(--radius-pill);
   font-size: var(--fs-xs); font-weight: var(--fw-medium);
-  color: rgba(255,100,100,0.9);
+  color: rgba(255,120,120,0.95);
+  transition: all 0.2s ease;
+}
+.info-prohibited-tag:hover {
+  background: rgba(255,60,60,0.15);
+  border-color: rgba(255,60,60,0.4);
 }
 
 /* ═══════════════════════════════════════════
    ABOUT — Description block
    ═══════════════════════════════════════════ */
 .about-text {
-  font-size: var(--fs-base); color: var(--text-dim); line-height: 1.8;
-  max-width: 700px; font-weight: var(--fw-regular);
+  font-size: var(--fs-base); color: var(--text-dim); line-height: 1.9;
+  max-width: 750px; font-weight: var(--fw-regular);
   margin-left: auto; margin-right: auto;
+  letter-spacing: 0.3px;
 }
-.about-text + .about-text { margin-top: 16px; }
+.about-text + .about-text { margin-top: 20px; }
 
 /* ═══════════════════════════════════════════
    VENUE
@@ -613,8 +627,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .venue-info {
   display: flex; flex-direction: column; justify-content: center;
 }
-.venue-name { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -0.3px; margin-bottom: 8px; }
-.venue-addr { font-size: var(--fs-sm); color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+.venue-name { font-size: clamp(22px, 5vw, 28px); font-weight: var(--fw-bold); letter-spacing: -0.3px; margin-bottom: 12px; }
+.venue-addr { font-size: var(--fs-sm); color: var(--text-dim); line-height: 1.7; margin-bottom: 24px; letter-spacing: 0.2px; }
 .venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .venue-chip {
   font-size: var(--fs-xs); font-weight: var(--fw-medium); padding: 8px 16px;
@@ -634,13 +648,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
 }
 .trust-item {
-  text-align: center; padding: 24px 12px;
+  text-align: center; padding: 28px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0;
+  transition: all 0.2s ease;
 }
-.trust-icon { font-size: var(--fs-xl); margin-bottom: 10px; }
-.trust-text { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--text-muted); line-height: 1.4; }
+.trust-item:hover {
+  border-color: var(--acid-muted);
+  background: rgba(229,255,0,0.02);
+}
+.trust-icon { font-size: var(--fs-2xl); margin-bottom: 12px; }
+.trust-text { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--text-muted); line-height: 1.5; }
 
 /* ═══════════════════════════════════════════
    FOOTER
@@ -654,6 +673,52 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .footer-copy { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; opacity: 0.5; }
 
 /* ═══════════════════════════════════════════
+   STICKY MOBILE CTA
+   ═══════════════════════════════════════════ */
+.sticky-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.95) 50%, var(--bg) 100%);
+  padding: 16px 16px 24px;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+}
+.sticky-cta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.sticky-cta-price {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  font-weight: var(--fw-medium);
+}
+.sticky-cta-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--acid);
+  color: #000;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+.sticky-cta-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* ═══════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -662,10 +727,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .hero-meta-item { font-size: var(--fs-sm); }
   .hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
   .section { padding: 56px 20px; }
-  .tk-card { width: 48%; }
-  .tk-inner { min-height: 340px; padding: 24px 20px; }
+  .tk-grid { max-width: 100%; }
+  .tk-card { width: calc(50% - 4px); }
+  .tk-inner { min-height: 360px; padding: 24px 20px; }
   .tk-name { font-size: var(--fs-xl); }
-  .tk-buy { padding: 10px 18px; font-size: var(--fs-xs); }
+  .tk-buy { padding: 10px 16px; font-size: var(--fs-xs); }
+  .tk-phase { font-size: 12px; }
   .info-list { gap: 8px 12px; }
   .venue-block { grid-template-columns: 1fr; }
   .lineup-grid { grid-template-columns: 1fr 1fr; }
@@ -673,13 +740,29 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
   .mp-desc { max-width: 100%; }
   .trust-row { grid-template-columns: 1fr 1fr; }
+  .trust-item { padding: 20px 12px; }
 }
 @media (max-width: 480px) {
+  .tk-grid { gap: 8px; }
   .tk-card { width: 100%; }
+  .tk-inner { min-height: 320px; padding: 20px 18px; }
+  .tk-name { font-size: var(--fs-lg); }
+  .tk-phase { font-size: 11px; padding: 4px 0; }
+  .tk-buy { padding: 9px 14px; font-size: 11px; }
   .lineup-grid { grid-template-columns: 1fr; }
   .lineup-card--hl .lineup-name { font-size: var(--fs-xl); }
   .trust-row { grid-template-columns: 1fr; }
+  .trust-item { padding: 16px 10px; }
+  .trust-icon { font-size: var(--fs-lg); margin-bottom: 8px; }
+  .trust-text { font-size: 11px; }
   .hero-title { letter-spacing: -2px; }
+  .section { padding: 48px 16px; }
+  .section-label { margin-bottom: 12px; }
+  .section-heading { margin-bottom: 28px; font-size: clamp(22px, 5vw, 32px); }
+  .hero-ctas { gap: 10px; padding-bottom: 32px; }
+  .btn { padding: 14px 24px; font-size: 13px; }
+  .sticky-cta { display: flex; }
+  body { padding-bottom: 88px; }
 }
 </style>
 
@@ -843,6 +926,19 @@ button { font-family: inherit; cursor: pointer; border: none; }
     </div>
   </div>
 </section>
+
+
+<!-- ═══════════════════════════════════════════
+     STICKY MOBILE CTA
+     ═══════════════════════════════════════════ -->
+<div class="sticky-cta" id="sticky-cta">
+  <div class="sticky-cta-content">
+    <div class="sticky-cta-price" id="sticky-cta-price">Desde S/ 0</div>
+    <button class="sticky-cta-btn" id="sticky-cta-btn" onclick="document.getElementById('ev-tk-grid').scrollIntoView({behavior:'smooth'})">
+      Comprar entradas
+    </button>
+  </div>
+</div>
 
 
 <!-- ═══════════════════════════════════════════
@@ -1194,6 +1290,18 @@ function renderEvent(ev) {
 
   // Store for other functions
   window._currentEvent = ev;
+
+  // ── Update sticky mobile CTA with lowest price ──
+  if (ev.tickets && ev.tickets.length > 0 && !isSoldOut) {
+    const lowestPrice = Math.min(...ev.tickets.map(t => {
+      const activePhase = getActivePhase(t);
+      return activePhase.price || t.price || 0;
+    }));
+    const priceLabel = lowestPrice === 0 ? 'GRATIS' : 'Desde S/ ' + lowestPrice.toLocaleString();
+    document.getElementById('sticky-cta-price').textContent = priceLabel;
+  } else if (isSoldOut) {
+    document.getElementById('sticky-cta').style.display = 'none';
+  }
 }
 
 

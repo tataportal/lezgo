@@ -9,21 +9,15 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --acid: #E5FF00;
-  --acid-dim: rgba(229,255,0,0.12);
   --acid-glow: rgba(229,255,0,0.35);
   --red: #FF3B3B;
-  --green: #00FF85;
   --bg: #050505;
   --surface: #0D0D0D;
-  --surface-2: #141414;
-  --surface-3: #1A1A1A;
-  --border: rgba(255,255,255,0.06);
-  --border-light: rgba(255,255,255,0.1);
+  --border: rgba(255,255,255,0.5);
   --text: #F5F5F5;
-  --text-2: #BBBBBB;
-  --text-3: #777777;
-  --radius: 16px;
-  --radius-sm: 10px;
+  --text-2: #A0A0A0;
+  --text-3: #666666;
+  --radius-btn: 10px;
   --pad: clamp(20px, 5vw, 80px);
 }
 body {
@@ -106,16 +100,16 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .hero-meta-item {
   display: flex; align-items: center; gap: 10px;
-  font-size: 15px; font-weight: 600;
+  font-size: 14px; font-weight: 500; color: var(--text-2);
 }
 .hero-meta-item .icon {
-  width: 40px; height: 40px; border-radius: 12px;
+  width: 40px; height: 40px; border-radius: 0;
   background: rgba(229,255,0,0.08);
   display: flex; align-items: center; justify-content: center;
   font-size: 18px;
 }
 
-/* CTAs */
+/* CTAs — only buttons keep rounded */
 .hero-ctas {
   display: flex; gap: 12px; flex-wrap: wrap;
   padding-bottom: 48px;
@@ -123,7 +117,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 16px 32px; font-size: 14px; font-weight: 700;
-  border-radius: var(--radius-sm); transition: all 0.25s;
+  border-radius: var(--radius-btn); transition: all 0.25s;
   letter-spacing: -0.2px;
 }
 .btn-primary {
@@ -135,7 +129,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .btn-outline {
   background: transparent;
-  border: 1.5px solid var(--border-light);
+  border: 1.5px solid var(--border);
   color: var(--text);
 }
 .btn-outline:hover {
@@ -164,6 +158,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-size: 11px; font-weight: 700; letter-spacing: 3px;
   text-transform: uppercase; color: var(--acid);
   margin-bottom: 16px; opacity: 0.8;
+  text-align: center;
 }
 .section-heading {
   font-size: clamp(28px, 4vw, 44px);
@@ -171,26 +166,27 @@ button { font-family: inherit; cursor: pointer; border: none; }
   letter-spacing: -1.5px;
   line-height: 1.1;
   margin-bottom: 40px;
+  text-align: center;
 }
 .section-heading em { font-style: normal; color: var(--acid); }
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-light) 20%, var(--border-light) 80%, transparent);
+  background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
   max-width: 1440px;
   margin: 0 auto;
 }
 
 /* ═══════════════════════════════════════════
-   TICKETS — The main event
+   TICKETS
    ═══════════════════════════════════════════ */
 .tk-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 0;
 }
 .tk-card {
   position: relative;
-  border-radius: 20px;
+  border-radius: 0;
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
@@ -203,39 +199,44 @@ button { font-family: inherit; cursor: pointer; border: none; }
   padding: 32px 28px;
   height: 100%;
   display: flex; flex-direction: column;
-  border: 1.5px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 0;
   position: relative;
   overflow: hidden;
 }
-/* Tier gradients — easily customizable */
-.tk-tier-1 {
-  background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  border-color: rgba(15,52,96,0.5);
+
+/* ── Available ticket: acid border, lighter bg ── */
+.tk-available {
+  background: linear-gradient(155deg, #111311 0%, #151a15 50%, #191f19 100%);
+  border-color: var(--acid);
+  border-width: 1.5px;
 }
-.tk-tier-2 {
-  background: linear-gradient(155deg, #1a1a1a 0%, #2d1b69 50%, #5b21b6 100%);
-  border-color: rgba(91,33,182,0.4);
-}
-.tk-tier-3 {
-  background: linear-gradient(155deg, #1a1a0a 0%, #3d3d00 50%, #656500 100%);
-  border-color: rgba(229,255,0,0.2);
-}
-.tk-tier-4 {
-  background: linear-gradient(155deg, #1a0a0a 0%, #4a1515 50%, #7c1d1d 100%);
-  border-color: rgba(255,59,59,0.25);
-}
+
+/* ── Sold out: dark, muted ── */
 .tk-sold {
-  background: var(--surface);
-  border-color: var(--border);
-  opacity: 0.55;
+  background: linear-gradient(155deg, #0e0e0e 0%, #121212 50%, #161616 100%);
+  border-color: rgba(255,255,255,0.5);
+  opacity: 0.65;
   transition: opacity 0.3s;
 }
+/* sold + resale available → clickable, goes to marketplace */
 .tk-card--sold { cursor: pointer; }
-.tk-card--sold:hover .tk-sold { opacity: 0.25; }
-.tk-card--sold:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.08); }
+.tk-card--sold:hover .tk-sold { opacity: 0.2; }
+.tk-card--sold:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
 
-/* Sold overlay on hover */
+/* sold + NO resale → dead end, no click */
+.tk-card--dead { cursor: default; }
+.tk-card--dead .tk-sold { opacity: 0.65; }
+.tk-card--dead:hover { transform: none; box-shadow: none; }
+.tk-card--dead .tk-overlay { display: none; }
+
+/* ── Available overlay on hover ── */
+.tk-card--avail { cursor: pointer; }
+.tk-card--avail:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.12); }
+.tk-card--avail:hover .tk-available { opacity: 0.2; }
+.tk-card--avail:hover .tk-overlay { opacity: 1; pointer-events: auto; }
+
+/* ── Overlay (both states) ── */
 .tk-overlay {
   position: absolute; inset: 0; z-index: 5;
   display: flex; flex-direction: column;
@@ -243,14 +244,14 @@ button { font-family: inherit; cursor: pointer; border: none; }
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-  border-radius: 20px;
-  background: rgba(5,5,5,0.7);
+  border-radius: 0;
+  background: rgba(5,5,5,0.75);
   backdrop-filter: blur(6px);
 }
 .tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
-.tk-overlay-icon { font-size: 32px; margin-bottom: 12px; }
+.tk-overlay-icon { font-size: 36px; margin-bottom: 12px; }
 .tk-overlay-text {
-  font-size: 15px; font-weight: 800; color: var(--acid);
+  font-size: 16px; font-weight: 800; color: var(--acid);
   letter-spacing: -0.3px; margin-bottom: 4px;
 }
 .tk-overlay-hint {
@@ -259,13 +260,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* Card content */
 .tk-name {
-  font-size: 32px; font-weight: 900;
-  letter-spacing: -1px; line-height: 1;
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1;
   margin-bottom: 16px;
 }
 .tk-includes {
-  font-size: 12px; color: rgba(255,255,255,0.45);
-  line-height: 1.6; margin-top: 0;
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  line-height: 1.7; margin-top: 0;
 }
 .tk-includes li {
   list-style: none;
@@ -273,9 +274,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   position: relative;
 }
 .tk-includes li::before {
-  content: ''; position: absolute; left: 0; top: 7px;
+  content: ''; position: absolute; left: 0; top: 8px;
   width: 4px; height: 4px; border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.2);
 }
 
 .tk-header {
@@ -290,23 +291,23 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .tk-phase {
   display: flex; justify-content: space-between; align-items: center;
   padding: 6px 0;
-  font-size: 13px; font-weight: 600;
+  font-size: 13px; font-weight: 500;
 }
-.tk-phase-name { color: rgba(255,255,255,0.35); }
-.tk-phase-price { color: rgba(255,255,255,0.35); }
-.tk-phase--past .tk-phase-name { text-decoration: line-through; }
-.tk-phase--past .tk-phase-price { text-decoration: line-through; }
-.tk-phase--active .tk-phase-name { color: var(--acid); }
-.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: 15px; }
-.tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.2); }
-.tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.2); }
+.tk-phase-name { color: rgba(255,255,255,0.3); }
+.tk-phase-price { color: rgba(255,255,255,0.3); }
+.tk-phase--past .tk-phase-name { text-decoration: line-through; color: rgba(255,255,255,0.2); }
+.tk-phase--past .tk-phase-price { text-decoration: line-through; color: rgba(255,255,255,0.2); }
+.tk-phase--active .tk-phase-name { color: var(--acid); font-weight: 700; text-decoration: none; }
+.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: 15px; text-decoration: none; }
+.tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.15); }
+.tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.15); }
 .tk-phase-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.12); flex-shrink: 0; margin-right: 10px;
+  background: rgba(255,255,255,0.08); flex-shrink: 0; margin-right: 10px;
 }
-.tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.2); }
+.tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.12); }
 .tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
-.tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.08); }
+.tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.06); }
 .tk-phase-left { display: flex; align-items: center; }
 
 /* Buy / sold bottom */
@@ -318,43 +319,21 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .tk-buy {
   padding: 10px 20px;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-sm);
-  color: #fff; font-size: 12px; font-weight: 700;
+  background: var(--acid);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: #000; font-size: 12px; font-weight: 700;
   transition: all 0.2s;
   white-space: nowrap;
 }
-.tk-buy:hover { background: #fff; color: #000; }
-.tk-sold-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--text-3);
-}
+.tk-buy:hover { background: #fff; color: #000; box-shadow: 0 0 30px var(--acid-glow); }
 .tk-sold-all {
-  font-size: 11px; color: #ff4444; font-weight: 700;
+  font-size: 11px; color: var(--red); font-weight: 700;
   text-align: center; padding: 10px 0;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.5px; white-space: nowrap;
+  width: 100%;
 }
 
-/* Availability bar */
-.tk-avail {
-  margin-top: 16px;
-}
-.tk-avail-bar {
-  height: 3px; border-radius: 2px;
-  background: rgba(255,255,255,0.08);
-  overflow: hidden;
-}
-.tk-avail-fill {
-  height: 100%; border-radius: 2px;
-  background: rgba(255,255,255,0.3);
-  transition: width 0.6s ease;
-}
-.tk-avail-text {
-  font-size: 10px; color: rgba(255,255,255,0.3);
-  margin-top: 5px; text-align: right;
-}
 
 /* ═══════════════════════════════════════════
    MARKETPLACE BANNER
@@ -362,9 +341,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .mp-banner {
   margin-top: 24px;
   padding: 48px 40px;
-  border-radius: 24px;
+  border-radius: 0;
   background: var(--surface);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   gap: 32px;
   position: relative;
@@ -377,16 +356,16 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .mp-info { position: relative; z-index: 1; }
 .mp-title {
-  font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  font-size: 20px; font-weight: 700; letter-spacing: -0.3px;
   margin-bottom: 6px;
 }
 .mp-desc {
-  font-size: 14px; color: var(--text-3); line-height: 1.6;
+  font-size: 13px; color: var(--text-3); line-height: 1.6;
 }
 .mp-action { position: relative; z-index: 1; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════
-   LINEUP — Photo cards (RA / Boiler Room style)
+   LINEUP — Photo cards
    ═══════════════════════════════════════════ */
 .lineup-grid {
   display: grid;
@@ -395,7 +374,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .lineup-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: var(--surface);
@@ -429,70 +408,74 @@ button { font-family: inherit; cursor: pointer; border: none; }
   z-index: 2;
 }
 .lineup-name {
-  font-size: 22px; font-weight: 800;
-  letter-spacing: -0.5px; line-height: 1.1;
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.3px; line-height: 1.1;
   margin-bottom: 6px;
 }
 .lineup-role {
-  font-size: 12px; color: rgba(255,255,255,0.55);
+  font-size: 12px; color: rgba(255,255,255,0.5);
   font-weight: 500; margin-bottom: 10px;
 }
 .lineup-tags {
   display: flex; gap: 6px; flex-wrap: wrap;
 }
 .lineup-tag {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
   text-transform: uppercase; padding: 4px 10px;
   background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 6px; color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-btn); color: rgba(255,255,255,0.5);
   backdrop-filter: blur(4px);
 }
-/* Headliner — spans 2 cols, bigger card */
+/* Headliner — spans 2 cols */
 .lineup-card--hl {
   grid-column: span 2;
   aspect-ratio: 4 / 3;
 }
 .lineup-card--hl .lineup-name {
-  font-size: 36px; letter-spacing: -1px;
+  font-size: 32px; letter-spacing: -1px;
 }
 .lineup-card--hl .lineup-role {
-  font-size: 14px;
+  font-size: 13px;
 }
 .lineup-badge {
   position: absolute; top: 16px; right: 16px; z-index: 3;
-  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
   background: var(--acid); color: #000;
-  padding: 5px 12px; border-radius: 6px;
+  padding: 5px 12px; border-radius: var(--radius-btn);
 }
 
 /* ═══════════════════════════════════════════
    INFO — Compact list
    ═══════════════════════════════════════════ */
+.info-box {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.info-group-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-3);
+  margin-bottom: 10px;
+  text-align: center;
+}
 .info-list {
-  display: flex; flex-wrap: wrap; gap: 10px 16px;
+  display: flex; flex-wrap: wrap; gap: 8px;
 }
 .info-chip {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 100px;
-  font-size: 13px; font-weight: 600;
-  color: var(--text-1);
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
 }
 .info-chip span { font-size: 15px; }
-.info-prohibited {
-  margin-top: 20px;
-  padding: 20px 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-.info-prohibited-title {
-  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--text-3);
-  margin-bottom: 10px;
+.info-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
 }
 .info-prohibited-items {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -500,19 +483,19 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .info-prohibited-tag {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px;
-  background: rgba(255,60,60,0.06);
-  border: 1px solid rgba(255,60,60,0.15);
+  background: rgba(255,60,60,0.08);
+  border: 1px solid rgba(255,60,60,0.2);
   border-radius: 100px;
-  font-size: 12px; font-weight: 600;
-  color: rgba(255,120,120,0.9);
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,100,100,0.9);
 }
 
 /* ═══════════════════════════════════════════
    ABOUT — Description block
    ═══════════════════════════════════════════ */
 .about-text {
-  font-size: 16px; color: var(--text-2); line-height: 1.8;
-  max-width: 700px;
+  font-size: 15px; color: var(--text-2); line-height: 1.8;
+  max-width: 700px; font-weight: 400;
 }
 .about-text + .about-text { margin-top: 16px; }
 
@@ -526,16 +509,16 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .venue-info {
   display: flex; flex-direction: column; justify-content: center;
 }
-.venue-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
-.venue-addr { font-size: 15px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; }
+.venue-name { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; }
+.venue-addr { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 20px; }
 .venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .venue-chip {
-  font-size: 11px; font-weight: 600; padding: 8px 16px;
+  font-size: 11px; font-weight: 500; padding: 8px 16px;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-3);
+  border-radius: var(--radius-btn); color: var(--text-3);
 }
 .venue-map {
-  min-height: 280px; border-radius: var(--radius);
+  min-height: 280px; border-radius: 0;
   background: var(--surface); border: 1px solid var(--border);
   overflow: hidden;
 }
@@ -550,10 +533,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
   text-align: center; padding: 24px 12px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
 }
 .trust-icon { font-size: 24px; margin-bottom: 10px; }
-.trust-text { font-size: 12px; font-weight: 600; color: var(--text-3); line-height: 1.4; }
+.trust-text { font-size: 12px; font-weight: 500; color: var(--text-3); line-height: 1.4; }
 
 /* ═══════════════════════════════════════════
    FOOTER
@@ -563,8 +546,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   text-align: center;
   border-top: 1px solid var(--border);
 }
-.footer-logo { font-size: 16px; font-weight: 900; letter-spacing: 5px; color: var(--text-3); }
-.footer-copy { font-size: 11px; color: var(--text-3); margin-top: 6px; opacity: 0.6; }
+.footer-logo { font-size: 16px; font-weight: 800; letter-spacing: 5px; color: var(--acid); }
+.footer-copy { font-size: 11px; color: var(--text-3); margin-top: 6px; opacity: 0.5; }
 
 /* ═══════════════════════════════════════════
    RESPONSIVE
@@ -577,14 +560,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .section { padding: 56px 20px; }
   .tk-grid { grid-template-columns: 1fr 1fr; }
   .tk-inner { min-height: 280px; padding: 24px 20px; }
-  .tk-name { font-size: 24px; }
-  .tk-price { font-size: 28px; }
+  .tk-name { font-size: 22px; }
   .tk-buy { padding: 10px 18px; font-size: 12px; }
   .info-list { gap: 8px 12px; }
   .venue-block { grid-template-columns: 1fr; }
   .lineup-grid { grid-template-columns: 1fr 1fr; }
   .lineup-card--hl { grid-column: span 2; }
-  .lineup-card--hl .lineup-name { font-size: 28px; }
+  .lineup-card--hl .lineup-name { font-size: 26px; }
   .mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
   .mp-desc { max-width: 100%; }
   .trust-row { grid-template-columns: 1fr 1fr; }
@@ -593,7 +575,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .tk-grid { grid-template-columns: 1fr; }
   .lineup-grid { grid-template-columns: 1fr; }
   .lineup-card--hl { grid-column: span 1; aspect-ratio: 3 / 4; }
-  .lineup-card--hl .lineup-name { font-size: 24px; }
+  .lineup-card--hl .lineup-name { font-size: 22px; }
   .trust-row { grid-template-columns: 1fr; }
   .hero-title { letter-spacing: -2px; }
 }
@@ -610,10 +592,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
     <a href="index.html" class="hero-back" style="text-decoration:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Eventos
-    </a><!-- back link -->
+    </a>
     <h1 class="hero-title">FABRICLIMA 001</h1>
     <div class="hero-sub">Grand Opening</div>
-    <p class="hero-desc">La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos. No fotos, no VIP, no ego.</p>
+    <p class="hero-desc">La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos.</p>
     <div class="hero-meta">
       <div class="hero-meta-item">
         <div class="icon">📅</div>
@@ -646,14 +628,14 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
   <div class="tk-grid">
 
-    <!-- General -->
-    <div class="tk-card tk-card--sold" onclick="goMarketplace('general')">
+    <!-- General — DISPONIBLE (Full Price activa) -->
+    <div class="tk-card tk-card--avail">
       <div class="tk-overlay">
-        <div class="tk-overlay-icon">🔄</div>
-        <div class="tk-overlay-text">Buscar en Marketplace</div>
-        <div class="tk-overlay-hint">General · reventa verificada</div>
+        <div class="tk-overlay-icon">🎫</div>
+        <div class="tk-overlay-text">Comprar entrada</div>
+        <div class="tk-overlay-hint">General · Full Price</div>
       </div>
-      <div class="tk-inner tk-sold">
+      <div class="tk-inner tk-available">
         <div class="tk-header">
           <div class="tk-name">General</div>
           <ul class="tk-includes">
@@ -665,15 +647,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
           <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Early Bird</span></div><span class="tk-phase-price">S/ 55</span></div>
           <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 1</span></div><span class="tk-phase-price">S/ 65</span></div>
           <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Preventa 2</span></div><span class="tk-phase-price">S/ 75</span></div>
-          <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 85</span></div>
+          <div class="tk-phase tk-phase--active"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 85</span></div>
         </div>
         <div class="tk-bottom">
-          <div class="tk-sold-all">SOLD OUT</div>
+          <button class="tk-buy">Comprar</button>
         </div>
       </div>
     </div>
 
-    <!-- VIP -->
+    <!-- VIP — SOLD OUT -->
     <div class="tk-card tk-card--sold" onclick="goMarketplace('vip')">
       <div class="tk-overlay">
         <div class="tk-overlay-icon">🔄</div>
@@ -696,12 +678,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
           <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 150</span></div>
         </div>
         <div class="tk-bottom">
-          <div class="tk-sold-all">SOLD OUT</div>
+          <div class="tk-sold-all">SOLD OUT — Ver en Marketplace</div>
         </div>
       </div>
     </div>
 
-    <!-- Super VIP -->
+    <!-- Super VIP — SOLD OUT -->
     <div class="tk-card tk-card--sold" onclick="goMarketplace('super-vip')">
       <div class="tk-overlay">
         <div class="tk-overlay-icon">🔄</div>
@@ -724,18 +706,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
           <div class="tk-phase tk-phase--past"><div class="tk-phase-left"><div class="tk-phase-dot"></div><span class="tk-phase-name">Full Price</span></div><span class="tk-phase-price">S/ 300</span></div>
         </div>
         <div class="tk-bottom">
-          <div class="tk-sold-all">SOLD OUT</div>
+          <div class="tk-sold-all">SOLD OUT — Ver en Marketplace</div>
         </div>
       </div>
     </div>
 
-    <!-- Box -->
-    <div class="tk-card tk-card--sold" onclick="goMarketplace('box')">
-      <div class="tk-overlay">
-        <div class="tk-overlay-icon">🔄</div>
-        <div class="tk-overlay-text">Buscar en Marketplace</div>
-        <div class="tk-overlay-hint">Box · reventa verificada</div>
-      </div>
+    <!-- Box — SOLD OUT, sin resale disponible -->
+    <div class="tk-card tk-card--dead">
       <div class="tk-inner tk-sold">
         <div class="tk-header">
           <div class="tk-name">Box</div>
@@ -778,7 +755,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <div class="section-label">Lineup</div>
   <h2 class="section-heading">Artistas <em>confirmados</em></h2>
   <div class="lineup-grid">
-    <!-- Headliner — spans 2 cols -->
+    <!-- Headliner -->
     <div class="lineup-card">
       <div class="lineup-card-img" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=800&q=80')"></div>
       <div class="lineup-card-overlay"></div>
@@ -827,24 +804,29 @@ button { font-family: inherit; cursor: pointer; border: none; }
   <div class="section-label">Info del evento</div>
   <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
 
-  <div class="info-list">
-    <div class="info-chip"><span>🎵</span> Techno / House / DnB</div>
-    <div class="info-chip"><span>🪪</span> 18+</div>
-    <div class="info-chip"><span>🏛️</span> Indoor · 3 rooms</div>
-    <div class="info-chip"><span>🍸</span> Barra disponible</div>
-    <div class="info-chip"><span>🔊</span> Funktion-One</div>
-    <div class="info-chip"><span>🚫</span> No reingreso</div>
-  </div>
-
-  <div class="info-prohibited">
-    <div class="info-prohibited-title">No ingresan</div>
-    <div class="info-prohibited-items">
-      <div class="info-prohibited-tag">🚫 Cámaras profesionales</div>
-      <div class="info-prohibited-tag">🚫 Bebidas externas</div>
-      <div class="info-prohibited-tag">🚫 Armas / objetos punzantes</div>
-      <div class="info-prohibited-tag">🚫 Sustancias ilegales</div>
-      <div class="info-prohibited-tag">🚫 Mascotas</div>
-      <div class="info-prohibited-tag">🚫 Menores de edad</div>
+  <div class="info-box">
+    <div>
+      <div class="info-group-title">Detalles</div>
+      <div class="info-list">
+        <div class="info-chip"><span>🎵</span> Techno / House / DnB</div>
+        <div class="info-chip"><span>🪪</span> 18+</div>
+        <div class="info-chip"><span>🏛️</span> Indoor · 3 rooms</div>
+        <div class="info-chip"><span>🍸</span> Barra disponible</div>
+        <div class="info-chip"><span>🔊</span> Funktion-One</div>
+        <div class="info-chip"><span>🚫</span> No reingreso</div>
+      </div>
+    </div>
+    <div class="info-divider"></div>
+    <div>
+      <div class="info-group-title">No ingresan</div>
+      <div class="info-prohibited-items">
+        <div class="info-prohibited-tag">🚫 Cámaras profesionales</div>
+        <div class="info-prohibited-tag">🚫 Bebidas externas</div>
+        <div class="info-prohibited-tag">🚫 Armas / objetos punzantes</div>
+        <div class="info-prohibited-tag">🚫 Sustancias ilegales</div>
+        <div class="info-prohibited-tag">🚫 Mascotas</div>
+        <div class="info-prohibited-tag">🚫 Menores de edad</div>
+      </div>
     </div>
   </div>
 </section>
@@ -854,11 +836,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
      ABOUT
      ═══════════════════════════════════════════ -->
 <div class="divider"></div>
-<section class="section">
+<section class="section" style="text-align:center;">
   <div class="section-label">Sobre el evento</div>
   <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
-  <p class="about-text">La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos. Room 1 techno, Room 2 drum & bass, Room 3 residents locales. No fotos, no VIP, no ego.</p>
-  <p class="about-text">Inspirado en la filosofía de Fabric London — donde la música es el centro de todo. Sound system Funktion-One, iluminación minimal, experiencia inmersiva.</p>
+  <p class="about-text" style="margin-left:auto;margin-right:auto;">La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos. Room 1 techno, Room 2 drum & bass, Room 3 residents locales. No fotos, no VIP, no ego.</p>
+  <p class="about-text" style="margin-left:auto;margin-right:auto;">Inspirado en la filosofía de Fabric London — donde la música es el centro de todo. Sound system Funktion-One, iluminación minimal, experiencia inmersiva.</p>
 </section>
 
 
@@ -869,20 +851,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <section class="section">
   <div class="venue-block">
     <div class="venue-info">
-      <div class="section-label">Venue</div>
+      <div class="section-label" style="text-align:left;">Venue</div>
       <div class="venue-name">Casa Paz Soldán</div>
       <div class="venue-addr">Jirón de la Unión 1039, Cercado de Lima<br>Casona histórica — ambiente cultural</div>
       <div class="venue-chips">
-        <div class="venue-chip">Indoor</div>
         <div class="venue-chip">Capacidad: 1,200</div>
         <div class="venue-chip">Multi-stage</div>
-        <div class="venue-chip">Verificación en puerta</div>
       </div>
     </div>
     <div class="venue-map">
       <iframe
         src="https://maps.google.com/maps?q=Casa+Paz+Soldan+Jiron+de+la+Union+1039+Lima+Peru&t=&z=17&ie=UTF8&iwloc=&output=embed"
-        width="100%" height="100%" style="border:0; border-radius: inherit;" allowfullscreen="" loading="lazy"
+        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
@@ -925,8 +905,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 <script>
 function goMarketplace(tier) {
-  // In the real app this navigates to marketplace with the event + tier filter
-  // e.g. go('marketplace', { event: 'fabriclima-001', tier: tier })
   alert('→ Marketplace · filtro: ' + tier);
 }
 </script>
