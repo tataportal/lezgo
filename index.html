@@ -1670,239 +1670,6 @@ body::after {
 /* ═══════════════════════════════════════════
    EVENT DEMO PAGE
    ═══════════════════════════════════════════ */
-.ev-page { max-width: 1600px; margin: 0 auto; }
-
-/* Event Hero */
-.ev-hero {
-  position: relative; min-height: 520px; display: flex; align-items: flex-end;
-  overflow: hidden;
-}
-.ev-hero-img {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  overflow: hidden;
-}
-.ev-hero-img::after {
-  content: ''; position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.7) 50%, rgba(10,10,10,1) 100%);
-}
-.ev-hero-content {
-  position: relative; z-index: 2;
-  padding: 80px 48px 48px; width: 100%;
-}
-.ev-hero-back {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--text-mid); cursor: pointer;
-  margin-bottom: 24px; transition: color 0.2s;
-}
-.ev-hero-back:hover { color: var(--acid); }
-.ev-hero-back svg { width: 16px; height: 16px; }
-.ev-hero-tags {
-  display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
-}
-.ev-hero-tag {
-  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-  padding: 6px 14px; border: 1px solid var(--border); color: var(--text-mid);
-}
-.ev-hero-tag.tag-acid { background: var(--acid); color: var(--bg); border-color: var(--acid); }
-.ev-hero-tag.tag-soldout { background: var(--red); color: #fff; border-color: var(--red); font-weight: 800; }
-.ev-hero-title {
-  font-size: clamp(36px, 5vw, 64px); font-weight: 800;
-  letter-spacing: -2px; line-height: 1.05; margin-bottom: 16px;
-}
-.ev-hero-title span { color: var(--acid); }
-.ev-hero-sub {
-  font-size: 19px; color: var(--text-mid); max-width: 600px;
-  line-height: 1.6; margin-bottom: 24px;
-}
-.ev-hero-info {
-  display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 32px;
-}
-.ev-hero-info-item {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 16px; color: var(--text);
-}
-.ev-hero-info-item svg { width: 18px; height: 18px; color: var(--acid); flex-shrink: 0; }
-.ev-hero-cta {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--acid); color: var(--bg); border: none;
-  padding: 16px 36px; font-size: 16px; font-weight: 700;
-  letter-spacing: -0.3px; cursor: pointer; transition: all 0.2s;
-}
-.ev-hero-cta:hover { background: #fff; box-shadow: 0 0 30px var(--acid-glow); }
-
-/* Ticket Section */
-.ev-tickets-section {
-  padding: 80px 48px 100px;
-}
-.ev-tickets-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--acid); margin-bottom: 12px; opacity: 0.8;
-}
-.ev-tickets-heading {
-  font-size: clamp(28px, 4vw, 44px); font-weight: 700;
-  letter-spacing: -1px; margin-bottom: 8px;
-}
-.ev-tickets-sub {
-  font-size: 17px; color: var(--text-mid); margin-bottom: 48px;
-}
-
-/* Ticket Cards Grid */
-.tk-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-/* Individual Ticket Card */
-.tk-card {
-  position: relative; border-radius: 16px; overflow: hidden;
-  cursor: pointer; transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
-  display: flex; flex-direction: column;
-}
-.tk-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-}
-.tk-card.tk-soldout { cursor: default; opacity: 0.6; }
-.tk-card.tk-soldout:hover { transform: none; box-shadow: none; }
-
-/* Card inner — the gradient face */
-.tk-card-inner {
-  position: relative; aspect-ratio: 3/4; padding: 28px;
-  display: flex; flex-direction: column; justify-content: space-between;
-  border-radius: 16px; overflow: hidden;
-}
-
-/* Gradient variants */
-.tk-card-inner.tk-purple {
-  background: linear-gradient(160deg, #7B68EE 0%, #9B8FFF 40%, #6B5CE7 100%);
-  border: 2px solid rgba(155,143,255,0.4);
-}
-.tk-card-inner.tk-orange {
-  background: linear-gradient(160deg, #FF8C42 0%, #FFB347 40%, #FF6B1A 100%);
-  border: 2px solid rgba(255,179,71,0.4);
-}
-.tk-card-inner.tk-acid {
-  background: linear-gradient(160deg, #C8D900 0%, #E5FF00 40%, #A8B800 100%);
-  border: 2px solid rgba(229,255,0,0.4);
-}
-.tk-card-inner.tk-dark {
-  background: var(--bg-raised); border: 1px solid var(--border);
-}
-.tk-card.tk-soldout .tk-card-inner { filter: grayscale(0.3); }
-
-/* Card content */
-.tk-card-type {
-  font-size: clamp(24px, 3vw, 36px); font-weight: 800;
-  line-height: 1.05; letter-spacing: -1px; color: #fff;
-}
-.tk-card-inner.tk-dark .tk-card-type { color: var(--text-mid); }
-.tk-card-phase {
-  font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.85);
-  margin-top: 4px;
-}
-.tk-card-inner.tk-dark .tk-card-phase { color: var(--text-dim); }
-.tk-card-phase-name { font-size: 11px; font-weight: 500; color: var(--acid); opacity: 0.9; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-.tk-card-logo {
-  display: flex; justify-content: center; align-items: center;
-  flex: 1; font-size: 52px; line-height: 1; filter: saturate(1.2);
-}
-.tk-card-inner.tk-dark .tk-card-logo { opacity: 0.35; }
-
-.tk-card-bottom {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 3px; text-align: center; line-height: 1.2;
-}
-.tk-bottom-price {
-  font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px;
-}
-.tk-bottom-fee {
-  font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.45);
-  letter-spacing: 0.2px;
-}
-.tk-card-inner.tk-dark .tk-card-bottom { color: var(--text-dim); }
-
-/* SOLD OUT label below soldout cards */
-.tk-card-price {
-  text-align: center; padding: 16px 0 0;
-  font-size: 18px; font-weight: 700; color: var(--text);
-}
-.tk-card-price.tk-price-soldout {
-  color: var(--text-dim); font-size: 13px; font-weight: 600;
-  letter-spacing: 2px;
-}
-
-/* Hover tooltip */
-.tk-card-tooltip {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-  background: #fff; color: var(--bg); padding: 10px 20px;
-  font-size: 13px; font-weight: 700; border-radius: 8px;
-  white-space: nowrap; opacity: 0; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none; z-index: 10;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-}
-.tk-card:hover .tk-card-tooltip {
-  opacity: 1; transform: translate(-50%, -50%) scale(1);
-}
-.tk-card.tk-soldout .tk-card-tooltip {
-  background: rgba(255,255,255,0.1); color: var(--text-dim);
-  backdrop-filter: blur(10px);
-}
-
-/* Checkmark + features below cards — 2×2 grid */
-.tk-features {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);
-}
-.tk-feature {
-  display: flex; align-items: center; gap: 12px;
-  font-size: 14px; font-weight: 600; color: var(--text-mid);
-  background: var(--bg-raised); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px; padding: 14px 16px;
-}
-.tk-feature svg { width: 18px; height: 18px; color: var(--acid); flex-shrink: 0; }
-.tk-feature-icon { flex-shrink: 0; font-size: 16px; line-height: 1; }
-
-/* Event info section */
-.ev-info-section {
-  padding: 0 48px 80px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-}
-.ev-info-block h3 {
-  font-size: 20px; font-weight: 700; margin-bottom: 16px;
-  letter-spacing: -0.3px;
-}
-.ev-info-block p {
-  font-size: 17px; color: var(--text-mid); line-height: 1.7;
-}
-.ev-lineup-list {
-  display: flex; flex-direction: column; gap: 0;
-  border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; overflow: hidden;
-}
-.ev-lineup-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 20px; background: var(--bg-raised);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 14px; font-weight: 600;
-  border-left: 3px solid transparent;
-  transition: background 0.15s;
-}
-.ev-lineup-item:last-child { border-bottom: none; }
-.ev-lineup-item.headliner { border-left-color: var(--acid); background: rgba(229,255,0,0.04); }
-.ev-lineup-item:hover { background: rgba(255,255,255,0.06); }
-.ev-lineup-time { color: var(--acid); font-size: 13px; }
-
-/* Event Landing — Actions */
-.ev-hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.ev-btn-secondary {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(229,255,0,0.08); border: 1.5px solid rgba(229,255,0,0.25);
-  color: #fff; border-radius: 14px; padding: 13px 20px;
-  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
-  transition: background 0.2s;
-}
-.ev-btn-secondary:hover { background: rgba(229,255,0,0.15); }
 
 /* Stats Bar */
 .ev-stats-bar {
@@ -1921,128 +1688,11 @@ body::after {
   text-transform: uppercase; color: var(--text-dim); margin-top: 4px;
 }
 
-/* Section generic */
-.ev-section {
-  padding: 60px 48px; border-top: 1px solid var(--border);
-}
-.ev-section-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--acid); margin-bottom: 12px; opacity: 0.8;
-}
-.ev-section-title {
-  font-size: clamp(24px, 3.5vw, 36px); font-weight: 700;
-  letter-spacing: -0.5px; margin-bottom: 32px;
-}
-
-/* Lineup Grid (cards) */
-.ev-lineup-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
-.ev-artist-card {
-  background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 14px; padding: 20px; transition: all 0.2s;
-  position: relative; overflow: hidden;
-}
-.ev-artist-card:hover { background: var(--bg-hover); border-color: rgba(229,255,0,0.15); }
-.ev-artist-card.ev-headliner {
-  border-color: rgba(229,255,0,0.3); background: rgba(229,255,0,0.04);
-}
-.ev-artist-card.ev-headliner::before {
-  content: 'HEADLINER'; position: absolute; top: 8px; right: 8px;
-  font-size: 8px; font-weight: 800; letter-spacing: 2px; color: var(--acid);
-  background: rgba(229,255,0,0.1); padding: 3px 8px; border-radius: 4px;
-}
-.ev-artist-name {
-  font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;
-}
-.ev-artist-role {
-  font-size: 12px; color: var(--text-dim); font-weight: 500;
-}
-
-/* About section */
-.ev-about-content {
-  display: grid; grid-template-columns: 2fr 1fr; gap: 48px;
-}
-.ev-about-text {
-  font-size: 17px; color: var(--text-mid); line-height: 1.7;
-}
-.ev-about-details {
-  display: flex; flex-direction: column; gap: 12px;
-}
-.ev-detail-chip {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; background: var(--bg-raised);
-  border: 1px solid var(--border); border-radius: 12px;
-}
-.ev-detail-chip-icon { font-size: 18px; flex-shrink: 0; }
-.ev-detail-chip-text {
-  display: flex; flex-direction: column;
-}
-.ev-detail-chip-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--text-dim);
-}
-.ev-detail-chip-value {
-  font-size: 14px; font-weight: 600; color: var(--text);
-}
-
-/* Marketplace CTA for sold-out */
-.ev-mp-box {
-  background: linear-gradient(135deg, rgba(229,255,0,0.06) 0%, rgba(229,255,0,0.02) 100%);
-  border: 1px solid rgba(229,255,0,0.15); border-radius: 20px;
-  padding: 48px; text-align: center; margin-top: 32px;
-}
-.ev-mp-icon { font-size: 48px; margin-bottom: 16px; }
-.ev-mp-box h3 {
-  font-size: 22px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.3px;
-}
-.ev-mp-box p {
-  font-size: 15px; color: var(--text-mid); max-width: 500px;
-  margin: 0 auto 24px; line-height: 1.6;
-}
-
-/* Venue section */
-.ev-venue-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;
-}
-.ev-venue-address {
-  font-size: 16px; color: var(--text-mid); margin-bottom: 20px; line-height: 1.6;
-}
-.ev-venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.ev-venue-chip {
-  font-size: 12px; font-weight: 600; padding: 6px 14px;
-  background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 8px; color: var(--text-mid);
-}
-.ev-venue-map {
-  min-height: 200px; border-radius: 16px; overflow: hidden;
-}
-
-/* Tags cloud */
-.ev-tags-cloud {
-  display: flex; flex-wrap: wrap; gap: 10px;
-}
-.ev-tag-pill {
-  font-size: 13px; font-weight: 600; padding: 8px 18px;
-  background: var(--bg-raised); border: 1px solid var(--border);
-  border-radius: 100px; color: var(--text-mid); transition: all 0.15s;
-}
-.ev-tag-pill:hover { border-color: rgba(229,255,0,0.3); color: var(--text); }
-
-/* Mobile responsive for event landing */
+/* Mobile responsive for stats bar */
 @media (max-width: 768px) {
-  .ev-section { padding: 40px 20px; }
   .ev-stats-bar { grid-template-columns: repeat(2, 1fr); }
-  .ev-about-content { grid-template-columns: 1fr; }
-  .ev-venue-grid { grid-template-columns: 1fr; }
-  .ev-lineup-grid { grid-template-columns: repeat(2, 1fr); }
-  .ev-hero-content { padding: 60px 20px 32px; }
-  .ev-tickets-section { padding: 40px 20px 60px; }
-  .ev-mp-box { padding: 32px 20px; }
 }
 @media (max-width: 480px) {
-  .ev-lineup-grid { grid-template-columns: 1fr; }
   .ev-stats-bar { grid-template-columns: 1fr 1fr; }
 }
 
@@ -7504,7 +7154,10 @@ body::after {
     if (DEMO_MODE) {
       if (typeof DEMO_EVENTS !== 'undefined') {
         DEMO_EVENTS.forEach(ev => {
-          if (!allEvents.find(e => e._id === ev._id)) {
+          var existing = allEvents.findIndex(e => e._id === ev._id);
+          if (existing !== -1) {
+            allEvents[existing] = Object.assign({}, allEvents[existing], ev);
+          } else {
             allEvents.push(ev);
           }
         });
@@ -7897,19 +7550,24 @@ body::after {
 
         let phasesHtml = '';
         if (t.phases && Array.isArray(t.phases)) {
+          let accum = 0;
           t.phases.forEach(phase => {
-            const status = phase.status || 'future';
-            const isActive = (phase.status === 'active');
-            const isPast = (phase.status === 'past');
-            const isFuture = (phase.status === 'future');
-            const phaseClass = isPast ? 'tk-phase--past' : (isActive ? 'tk-phase--active' : 'tk-phase--future');
+            let cls = 'tk-phase--future';
+            if (t.sold >= t.capacity) {
+              cls = 'tk-phase--past'; // all sold
+            } else if (accum + phase.quantity <= t.sold) {
+              cls = 'tk-phase--past';
+            } else if (accum <= t.sold) {
+              cls = 'tk-phase--active';
+            }
+            accum += phase.quantity;
             phasesHtml += `
-              <div class="tk-phase ${phaseClass}">
+              <div class="tk-phase ${cls}">
                 <div class="tk-phase-left">
                   <div class="tk-phase-dot"></div>
                   <span class="tk-phase-name">${phase.name}</span>
                 </div>
-                <span class="tk-phase-price">S/ ${phase.price}</span>
+                <span class="tk-phase-price">S/ ${phase.price.toLocaleString()}</span>
               </div>
             `;
           });
@@ -7926,7 +7584,7 @@ body::after {
                 <div class="tk-overlay-hint">${t.name} · reventa verificada</div>
               </div>
             ` : ''}
-            <div class="tk-inner ${tierGrad}">
+            <div class="tk-inner ${tierSold ? 'tk-sold' : tierGrad}">
               <div class="tk-header">
                 <div class="tk-name">${t.name}</div>
                 ${t.includes ? `
@@ -8440,6 +8098,12 @@ body::after {
   ];
 
   var DEMO_EVENTS = [
+    { _id: 'fabriclima-001', name: 'FABRICLIMA 001', subtitle: 'Grand Opening', date: '2026-04-12', dateLabel: 'Sáb 12 Abril', venue: 'Almacén 77', location: 'Callao', distrito: 'callao', genre: 'techno / house / dnb', status: 'sold-out', organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80', description: 'La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos. Room 1 techno, Room 2 drum & bass, Room 3 residents locales. No fotos, no VIP, no ego.', descriptionLong: 'Inspirado en la filosofía de Fabric London — donde la música es el centro de todo. Sound system Funktion-One, iluminación minimal, experiencia inmersiva.', timeStart: '22:00', timeEnd: '10:00', tags: ['festival','techno','house','dnb','underground','indoor','massive','18+'], lineup: ['Ben Klock b2b Marcel Dettmann', 'Andy C', 'Craig Richards', 'Residents Lima'], meta: { crowdSize: 1200, multiStage: true, alcohol: true, reentry: false }, tickets: [
+      { id: 'general', name: 'General', capacity: 700, sold: 700, includes: ['Acceso a 3 rooms', 'Barra standard'], phases: [{ name: 'Early Bird', price: 55, quantity: 175 }, { name: 'Preventa 1', price: 65, quantity: 175 }, { name: 'Preventa 2', price: 75, quantity: 175 }, { name: 'Full Price', price: 85, quantity: 175 }] },
+      { id: 'vip', name: 'VIP', capacity: 300, sold: 300, includes: ['Zona exclusiva Room 1', 'Barra premium', 'Fast-lane ingreso'], phases: [{ name: 'Early Bird', price: 100, quantity: 75 }, { name: 'Preventa 1', price: 120, quantity: 75 }, { name: 'Preventa 2', price: 135, quantity: 75 }, { name: 'Full Price', price: 150, quantity: 75 }] },
+      { id: 'super-vip', name: 'Super VIP', capacity: 150, sold: 150, includes: ['Backstage access', 'Open bar premium', 'Meet & greet artistas'], phases: [{ name: 'Early Bird', price: 200, quantity: 38 }, { name: 'Preventa 1', price: 250, quantity: 37 }, { name: 'Preventa 2', price: 280, quantity: 38 }, { name: 'Full Price', price: 300, quantity: 37 }] },
+      { id: 'box', name: 'Box', capacity: 50, sold: 50, includes: ['Sala lounge 10 pax', '4 botellas + mixer', 'Vista al stage'], phases: [{ name: 'Preventa', price: 1500, quantity: 25 }, { name: 'Full Price', price: 1800, quantity: 25 }] }
+    ] },
     { _id: 'demo-ev-past', name: 'Bodysonic', subtitle: 'Warm-Up Sessions', date: '2026-02-14', dateLabel: '14 Febrero 2026', venue: 'La Cueva', location: 'Cercado de Lima', distrito: 'cercado', genre: 'techno', status: 'published', organizer: 'demo-user-001', image: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80', lineup: ['DJ Nobu', 'Lokier'], tickets: [
       { id: 'general', name: 'General', capacity: 300, sold: 280, includes: ['Acceso general'], phases: [{ name: 'Early Bird', price: 40, quantity: 80 }, { name: 'Preventa', price: 55, quantity: 120 }, { name: 'Full Price', price: 65, quantity: 100 }] }
     ] },
