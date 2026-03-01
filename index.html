@@ -7440,7 +7440,7 @@ body::after {
   function openEvent(eventId) {
     currentEventId = eventId;
     const ev = allEvents.find(e => e._id === eventId);
-    if (!ev) { go('evento'); return; }
+    if (!ev) { go('eventos'); return; }
 
     const evTags = Array.isArray(ev.tags) ? ev.tags : [];
     const isSoldOut = ev.status === 'sold-out';
@@ -7788,7 +7788,8 @@ body::after {
 
     // Store event & navigate
     window._currentEvent = ev;
-    go('evento');
+    // Show evento view (use _skipOpenEvent to avoid infinite loop)
+    go('evento', { _skipOpenEvent: true, _eventId: eventId });
   }
 
   // Helper function for marketplace navigation
@@ -9246,8 +9247,21 @@ body::after {
 
     // Update URL hash (skip if triggered by popstate to avoid loop)
     if (!opts._fromPop) {
-      const hash = view === 'eventos' ? '' : '#' + view;
-      history.pushState({ view: view }, '', hash || window.location.pathname);
+      var hash;
+      if (view === 'eventos') {
+        hash = '';
+      } else if (view === 'evento' && (opts._eventId || currentEventId)) {
+        hash = '#evento/' + (opts._eventId || currentEventId);
+      } else {
+        hash = '#' + view;
+      }
+      history.pushState({ view: view, eventId: opts._eventId || currentEventId || null }, '', hash || window.location.pathname);
+    }
+
+    // If navigating to evento view without data populated, re-open the event
+    if (view === 'evento' && !opts._skipOpenEvent && currentEventId) {
+      openEvent(currentEventId);
+      return;
     }
 
     // Trigger data loads for Firebase-powered views
@@ -9259,7 +9273,11 @@ body::after {
 
   // ── Hash Router: handle back/forward + page load ──
   window.addEventListener('popstate', function(e) {
-    const view = (e.state && e.state.view) ? e.state.view : (location.hash.replace('#','') || 'eventos');
+    const state = e.state || {};
+    const view = state.view || (location.hash.replace('#','').split('/')[0] || 'eventos');
+    if (view === 'evento' && state.eventId) {
+      currentEventId = state.eventId;
+    }
     go(view, { _fromPop: true });
   });
 
@@ -9267,8 +9285,14 @@ body::after {
   (function initHashRoute() {
     const hash = location.hash.replace('#', '');
     if (hash && hash !== 'eventos') {
-      // Delay slightly so Firebase auth + events can initialize
-      setTimeout(function() { go(hash); }, 300);
+      // Handle #evento/eventId format
+      const parts = hash.split('/');
+      if (parts[0] === 'evento' && parts[1]) {
+        // Delay so Firebase auth + events can initialize, then open specific event
+        setTimeout(function() { openEvent(parts[1]); }, 500);
+      } else {
+        setTimeout(function() { go(parts[0]); }, 300);
+      }
     }
   })();
 
