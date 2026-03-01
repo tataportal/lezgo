@@ -865,13 +865,25 @@ const fallbackImages = [
  */
 function getActivePhase(t) {
   if (!t.phases || !t.phases.length) return { price: t.price || 0, name: '' };
+  const now = new Date();
+  // Two triggers advance phases: (1) sold out quantity, (2) release date passed
+  // Find the latest phase whose releaseDate has passed
+  let dateActiveIdx = 0;
+  for (let i = 0; i < t.phases.length; i++) {
+    const rd = t.phases[i].releaseDate;
+    if (rd && new Date(rd) <= now) dateActiveIdx = i;
+  }
+  // Find the phase based on sold quantity
+  let soldActiveIdx = 0;
   let soldSoFar = t.sold || 0;
   for (let i = 0; i < t.phases.length; i++) {
-    const phase = t.phases[i];
-    if (soldSoFar < (phase.quantity || 0)) return phase;
-    soldSoFar -= (phase.quantity || 0);
+    if (soldSoFar < (t.phases[i].quantity || 0)) { soldActiveIdx = i; break; }
+    soldSoFar -= (t.phases[i].quantity || 0);
+    if (i === t.phases.length - 1) soldActiveIdx = i;
   }
-  return t.phases[t.phases.length - 1];
+  // The active phase is whichever is further along
+  const activeIdx = Math.max(dateActiveIdx, soldActiveIdx);
+  return t.phases[activeIdx];
 }
 
 /**
@@ -879,18 +891,28 @@ function getActivePhase(t) {
  */
 function getPhaseStates(t) {
   if (!t.phases || !t.phases.length) return [];
+  const now = new Date();
+  // Find active index using same dual-trigger logic as getActivePhase
+  let dateActiveIdx = 0;
+  for (let i = 0; i < t.phases.length; i++) {
+    const rd = t.phases[i].releaseDate;
+    if (rd && new Date(rd) <= now) dateActiveIdx = i;
+  }
+  let soldActiveIdx = 0;
+  let soldSoFar = t.sold || 0;
+  for (let i = 0; i < t.phases.length; i++) {
+    if (soldSoFar < (t.phases[i].quantity || 0)) { soldActiveIdx = i; break; }
+    soldSoFar -= (t.phases[i].quantity || 0);
+    if (i === t.phases.length - 1) soldActiveIdx = i;
+  }
+  const activeIdx = Math.max(dateActiveIdx, soldActiveIdx);
   const tierSold = t.sold >= t.capacity;
-  let accum = 0;
-  return t.phases.map(phase => {
+
+  return t.phases.map((phase, i) => {
     let state = 'future';
-    if (tierSold) {
-      state = 'past';
-    } else if (accum + (phase.quantity || 0) <= t.sold) {
-      state = 'past';
-    } else if (accum <= t.sold) {
-      state = 'active';
-    }
-    accum += phase.quantity || 0;
+    if (tierSold) { state = 'past'; }
+    else if (i < activeIdx) { state = 'past'; }
+    else if (i === activeIdx) { state = 'active'; }
     return { ...phase, state };
   });
 }
