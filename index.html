@@ -1876,9 +1876,9 @@ body::after {
    ═══════════════════════════════════════════ */
 #v-evento .tk-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 #v-evento .tk-card {
@@ -1893,14 +1893,14 @@ body::after {
   box-shadow: 0 24px 80px rgba(0,0,0,0.6);
 }
 #v-evento .tk-inner {
-  padding: 36px 32px;
+  padding: 40px 36px;
   height: 100%;
   display: flex; flex-direction: column;
   border: 1.5px solid var(--alpha-light);
   border-radius: 0;
   position: relative;
   overflow: hidden;
-  min-height: 480px;
+  min-height: 520px;
 }
 /* Tier gradients — easily customizable */
 #v-evento .tk-tier-1 {
@@ -1946,10 +1946,10 @@ body::after {
   backdrop-filter: blur(6px);
 }
 #v-evento .tk-card--sold:hover .tk-overlay { opacity: 1; pointer-events: auto; }
-#v-evento .tk-overlay-icon { font-size: var(--fs-2xl); margin-bottom: 12px; }
+#v-evento .tk-overlay-icon { font-size: var(--fs-3xl); margin-bottom: 16px; }
 #v-evento .tk-overlay-text {
-  font-size: var(--fs-lg); font-weight: 800; color: var(--acid);
-  letter-spacing: -0.3px; margin-bottom: 4px;
+  font-size: var(--fs-xl); font-weight: 800; color: var(--acid);
+  letter-spacing: -0.5px; margin-bottom: 8px;
 }
 #v-evento .tk-overlay-hint {
   font-size: var(--fs-xs); color: var(--text-muted); font-weight: 500;
@@ -1957,13 +1957,13 @@ body::after {
 
 /* Card content */
 #v-evento .tk-name {
-  font-size: var(--fs-2xl); font-weight: 900;
-  letter-spacing: -1px; line-height: 1;
-  margin-bottom: 20px;
+  font-size: var(--fs-3xl); font-weight: 900;
+  letter-spacing: -1.5px; line-height: 0.95;
+  margin-bottom: 24px;
 }
 #v-evento .tk-includes {
-  font-size: var(--fs-base); color: rgba(255,255,255,0.5);
-  line-height: 1.7; margin-top: 0;
+  font-size: var(--fs-lg); color: rgba(255,255,255,0.55);
+  line-height: 1.8; margin-top: 0;
   list-style: none;
 }
 #v-evento .tk-includes li {
@@ -1978,7 +1978,7 @@ body::after {
 }
 
 #v-evento .tk-header {
-  min-height: 130px;
+  min-height: 150px;
 }
 
 /* Phase pricing table */
@@ -1988,15 +1988,15 @@ body::after {
 }
 #v-evento .tk-phase {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0;
-  font-size: var(--fs-base); font-weight: 600;
+  padding: 10px 0;
+  font-size: var(--fs-lg); font-weight: 600;
 }
 #v-evento .tk-phase-name { color: rgba(255,255,255,0.35); }
 #v-evento .tk-phase-price { color: rgba(255,255,255,0.35); }
 #v-evento .tk-phase--past .tk-phase-name { text-decoration: line-through; }
 #v-evento .tk-phase--past .tk-phase-price { text-decoration: line-through; }
 #v-evento .tk-phase--active .tk-phase-name { color: var(--acid); }
-#v-evento .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: var(--fs-lg); }
+#v-evento .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: 800; font-size: var(--fs-xl); }
 #v-evento .tk-phase--future .tk-phase-name { color: var(--alpha-strong); }
 #v-evento .tk-phase--future .tk-phase-price { color: var(--alpha-strong); }
 #v-evento .tk-phase-dot {
@@ -2008,8 +2008,8 @@ body::after {
 #v-evento .tk-phase--future .tk-phase-dot { background: var(--alpha-light); }
 #v-evento .tk-phase-left { display: flex; align-items: center; }
 #v-evento .tk-price-simple {
-  font-size: var(--fs-2xl); font-weight: 900; color: var(--text);
-  margin: 16px 0 auto; letter-spacing: -1px;
+  font-size: var(--fs-3xl); font-weight: 900; color: var(--text);
+  margin: 20px 0 auto; letter-spacing: -1.5px;
 }
 
 /* Buy / sold bottom */
@@ -2020,15 +2020,18 @@ body::after {
   display: flex; align-items: center; justify-content: space-between;
 }
 #v-evento .tk-buy {
-  padding: 14px 28px;
+  padding: 18px 36px;
   background: var(--acid);
   border: none;
   border-radius: var(--radius-btn);
-  color: var(--gray-950); font-size: var(--fs-base); font-weight: 800;
+  color: var(--gray-950); font-size: var(--fs-lg); font-weight: 900;
   transition: all 0.2s;
   white-space: nowrap;
   cursor: pointer;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: center;
 }
 #v-evento .tk-buy:hover { background: var(--gray-50); color: var(--gray-950); box-shadow: 0 0 30px var(--acid-glow); transform: translateY(-1px); }
 #v-evento .tk-sold-label {
@@ -2251,10 +2254,10 @@ body::after {
   #v-evento .hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
   #v-evento .section { padding: 56px 20px; }
   #v-evento .tk-grid { gap: 16px; }
-  #v-evento .tk-inner { min-height: auto; padding: 28px 24px; }
-  #v-evento .tk-name { font-size: var(--fs-xl); }
+  #v-evento .tk-inner { min-height: auto; padding: 32px 28px; }
+  #v-evento .tk-name { font-size: var(--fs-2xl); }
   #v-evento .tk-price { font-size: var(--fs-xl); }
-  #v-evento .tk-buy { padding: 12px 24px; font-size: var(--fs-sm); }
+  #v-evento .tk-buy { padding: 16px 28px; font-size: var(--fs-base); width: 100%; }
   #v-evento .info-list { gap: 8px 12px; }
   #v-evento .venue-block { grid-template-columns: 1fr; }
   #v-evento .lineup-grid { grid-template-columns: 1fr 1fr; }
@@ -3474,7 +3477,7 @@ body::after {
   .ev-hero-content { padding: 60px 40px 48px; }
   .ev-tickets-section { padding: 60px 40px 80px; }
   .ev-info-section { padding: 0 40px 60px; }
-  .tk-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  #v-evento .tk-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
   .sc { padding: 60px 40px 80px; }
   .sc-main { gap: 48px; }
   .dk-hero { padding: 80px 40px 60px; gap: 60px; }
@@ -3564,7 +3567,7 @@ body::after {
   .ev-hero-info { gap: 16px; }
   .ev-tickets-section { padding: 48px 24px 60px; }
   .ev-info-section { grid-template-columns: 1fr; padding: 0 24px 48px; gap: 32px; }
-  .tk-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  #v-evento .tk-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
   .tk-features { gap: 20px; }
 
   /* === SCANNER === */
@@ -3666,10 +3669,10 @@ body::after {
   .ev-hero-info { flex-direction: column; gap: 10px; }
   .ev-tickets-section { padding: 36px 16px 48px; }
   .ev-info-section { padding: 0 16px 36px; }
-  .tk-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .tk-card-type { font-size: var(--fs-lg); }
-  .tk-card-inner { padding: 20px; }
-  .tk-card-price { font-size: var(--fs-base); }
+  #v-evento .tk-grid { grid-template-columns: 1fr; gap: 14px; }
+  #v-evento .tk-name { font-size: var(--fs-xl); }
+  #v-evento .tk-inner { padding: 24px 20px; min-height: auto; }
+  #v-evento .tk-price-simple { font-size: var(--fs-xl); }
   .tk-features { flex-direction: column; gap: 12px; }
 
   /* === SCANNER === */
