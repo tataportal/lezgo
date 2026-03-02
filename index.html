@@ -558,6 +558,9 @@ body::after {
   display: flex;
   align-items: center;
   height: 48px;
+  position: sticky;
+  top: 64px;
+  z-index: 199;
 }
 .marquee-track {
   display: inline-flex;
@@ -4061,6 +4064,7 @@ body::after {
 
   /* === NAVIGATION MOBILE IMPROVEMENTS === */
   .main-nav-inner { padding: 0 12px; height: 56px; }
+  .marquee { top: 56px; }
   .nav-logo { font-size: var(--fs-lg); }
   .nav-categories { gap: 0; }
   .nav-cat { padding: 0 10px; font-size: 12px; height: 56px; }
@@ -4640,6 +4644,7 @@ body::after {
   /* Landscape orientation on smaller devices */
   .hero { min-height: 300px; height: 60vh; }
   .main-nav-inner { height: 52px; padding: 0 16px; }
+  .marquee { top: 52px; }
   .nav-cat { height: 52px; padding: 0 8px; }
 
   /* Reduce padding for landscape */
@@ -4658,6 +4663,7 @@ body::after {
 @media (max-width: 480px) and (max-height: 500px) {
   body { font-size: 14px; }
   .main-nav-inner { height: 48px; }
+  .marquee { top: 48px; }
   .hero { height: 50vh; min-height: 200px; }
   .hero h1 { font-size: var(--fs-lg); }
   .nav-cat { height: 48px; font-size: 11px; padding: 0 6px; }
