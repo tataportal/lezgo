@@ -4660,11 +4660,14 @@ body::after {
 
 /* Conocenos Tabs */
 .conocenos-tabs-container {
-  background: var(--bg);
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   position: sticky;
-  top: 0;
-  z-index: 50;
+  top: 64px;
+  z-index: 90;
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.5);
 }
 .conocenos-tabs {
   display: flex;
@@ -4673,24 +4676,27 @@ body::after {
 }
 .conocenos-tab {
   flex: 1;
-  padding: 24px;
+  padding: 20px 24px;
   text-align: center;
   font-size: var(--fs-base);
   font-weight: 800;
   color: var(--text-mid);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   border: none;
   background: transparent;
-  border-bottom: 3px solid var(--border);
-  letter-spacing: 0.05em;
+  border-bottom: 3px solid transparent;
+  letter-spacing: 0.08em;
+  position: relative;
 }
 .conocenos-tab:hover {
-  color: var(--acid);
+  color: var(--text);
+  background: rgba(229,255,0,0.03);
 }
 .conocenos-tab.active {
   color: var(--acid);
   border-bottom-color: var(--acid);
+  background: rgba(229,255,0,0.05);
 }
 .conocenos-tab-content {
   display: none;
@@ -4702,6 +4708,18 @@ body::after {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+/* Sticky tabs responsive top offset */
+@media (max-width: 768px) {
+  .conocenos-tabs-container { top: 56px; }
+  .conocenos-tab { padding: 16px 12px; font-size: 13px; }
+}
+@media (max-width: 900px) and (max-height: 600px) {
+  .conocenos-tabs-container { top: 52px; }
+}
+@media (max-width: 480px) and (max-height: 500px) {
+  .conocenos-tabs-container { top: 48px; }
+  .conocenos-tab { padding: 14px 8px; font-size: 12px; }
 }
 .auth-sub { font-size: var(--fs-base); color: var(--text-mid); margin-bottom: 28px; line-height: 1.5; }
 
