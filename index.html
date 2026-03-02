@@ -4715,23 +4715,23 @@ body::after {
   text-align: center;
   font-size: var(--fs-lg);
   font-weight: 800;
-  color: var(--acid);
+  color: var(--green);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  border: 2px solid var(--acid);
+  border: 2px solid var(--green);
   background: transparent;
   letter-spacing: 0.1em;
   position: relative;
 }
 .conocenos-tab:hover {
-  background: rgba(229,255,0,0.08);
+  background: rgba(0,255,133,0.08);
 }
 .conocenos-tab.active {
   color: var(--gray-950);
-  background: var(--acid);
+  background: var(--green);
 }
 .conocenos-tab.active:hover {
-  background: #f0ff00;
+  background: #00ff99;
 }
 .conocenos-tab-content {
   display: none;
@@ -4743,11 +4743,12 @@ body::after {
 /* Full-viewport centered slides inside tab content */
 /* Scroll-snap toggled via JS when conocenos is active */
 html.snap-active {
-  scroll-snap-type: y proximity;
   scroll-behavior: smooth;
 }
 html.snap-active body {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
 }
 .conocenos-slide {
   min-height: calc(100vh - 64px - 58px);

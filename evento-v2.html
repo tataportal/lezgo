@@ -1851,7 +1851,9 @@ function showPreviewBanner(eventName) {
   const eventId = params.get('id');
   const slug = params.get('slug');
   const isPreview = params.get('mode') === 'preview';
-  const lookupKey = eventId || slug; // slug comes from Vercel rewrite /:slug → ?slug=:slug
+  // Vercel rewrites pass ?slug= server-side only; client-side we extract from pathname
+  const pathSlug = window.location.pathname.replace(/^\//, '').replace(/\/$/, '') || null;
+  const lookupKey = eventId || slug || pathSlug;
   if (!lookupKey) { console.warn('No event ID or slug in URL'); return; }
 
   // 1. sessionStorage — data pasada por index.html openEvent()
