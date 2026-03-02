@@ -3623,7 +3623,12 @@ body::after {
   .cf-hero { padding: 80px 24px; text-align: center; }
   .cf-hero-inner { grid-template-columns: 1fr; gap: 48px; }
   .cf-hero h1, .cf-hero p { text-align: center; }
-  .cf-tickets { max-width: 400px; margin: 0 auto; }
+  .cf-tickets { max-width: 400px; margin: 0 auto; perspective: none; }
+  .cf-ticket-fake { margin-bottom: 16px; transform: none; }
+  .cf-ticket-real { transform: none; }
+  .dk-tickets { max-width: 400px; margin: 0 auto; perspective: none; }
+  .dk-ticket-fake { margin-bottom: 16px; transform: none; }
+  .dk-ticket-real { transform: none; }
   .cf-stats { grid-template-columns: repeat(2, 1fr); gap: 24px; padding: 40px 24px; }
   .cf-stat { text-align: center; }
   .cf-section { padding: 64px 24px; text-align: center; }
@@ -3746,9 +3751,15 @@ body::after {
   .cf-hero { padding: 60px 16px; }
   .cf-hero h1 { font-size: var(--fs-3xl); }
   .cf-ticket { padding: 18px; }
-  .cf-ticket-fake { margin-bottom: -40px; }
+  .cf-ticket-fake { margin-bottom: 16px; transform: none; }
+  .cf-ticket-real { transform: none; }
+  .cf-tickets { perspective: none; }
   .cf-ticket-event { font-size: var(--fs-base); }
   .cf-ticket-price { font-size: var(--fs-xl); }
+  /* dk-tickets (deck version) */
+  .dk-ticket-fake { margin-bottom: 16px; transform: none; }
+  .dk-ticket-real { transform: none; }
+  .dk-tickets { perspective: none; }
   .cf-stat-num { font-size: var(--fs-2xl); }
   .cf-stats { padding: 32px 16px; gap: 20px; }
   .cf-section { padding: 52px 16px; }
