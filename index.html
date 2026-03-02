@@ -4627,6 +4627,52 @@ body::after {
 .auth-tab.active { color: var(--text); border-bottom: 2px solid var(--acid); }
 .auth-body { padding: 32px; }
 .auth-title { font-size: var(--fs-lg); font-weight: 800; margin-bottom: 6px; }
+
+/* Conocenos Tabs */
+.conocenos-tabs-container {
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--border);
+}
+.conocenos-tabs {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+}
+.conocenos-tab {
+  flex: 1;
+  padding: 24px;
+  text-align: center;
+  font-size: var(--fs-base);
+  font-weight: 800;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: transparent;
+  border-bottom: 3px solid var(--border);
+  letter-spacing: 0.05em;
+}
+.conocenos-tab:hover {
+  color: var(--acid);
+}
+.conocenos-tab.active {
+  color: var(--acid);
+  border-bottom-color: var(--acid);
+}
+.conocenos-tab-content {
+  display: none;
+}
+.conocenos-tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 .auth-sub { font-size: var(--fs-base); color: var(--text-mid); margin-bottom: 28px; line-height: 1.5; }
 
 /* Auth steps */
@@ -6541,6 +6587,509 @@ a[onclick]:active,
     </div>
     <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
     <div class="email-capture-ok" id="pp-email-success">Gracias por creer en el proyecto.<br>Te mantendremos al tanto.</div>
+  </div>
+
+  <div class="site-footer">
+    <div class="site-footer-logo">LEZGO</div>
+    <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     VIEW 2C: CONÓCENOS
+     ═══════════════════════════════════════════ -->
+<div id="v-conocenos" class="view">
+
+  <!-- Marquee -->
+  <div class="marquee mt-0">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> COMPRA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> IDENTIDAD VERIFICADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> SIN ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA VERIFICADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CONTROL TOTAL</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> COMPRA SEGURA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> IDENTIDAD VERIFICADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> SIN ESTAFAS</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> REVENTA VERIFICADA</span>
+      <span class="marquee-item"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> CONTROL TOTAL</span>
+    </div>
+  </div>
+
+  <!-- Hero con Fake vs Real -->
+  <section class="cf-hero" id="conocenos-hero">
+    <div class="cf-glow cf-glow-1"></div>
+    <div class="cf-glow cf-glow-2"></div>
+    <div class="cf-hero-inner">
+      <div>
+        <div class="cf-hero-badge"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> BIENVENIDO AL FUTURO</div>
+        <h1>
+          <span class="outline">COMPRA</span>
+          <span class="acid-text">
+            <span class="cf-glitch-layer cf-glitch-pink" aria-hidden="true">TICKETS</span>
+            <span class="cf-glitch-layer cf-glitch-cyan" aria-hidden="true">TICKETS</span>
+            TICKETS
+          </span>
+          <span class="white-text">SIN MIEDO</span>
+        </h1>
+        <p class="cf-hero-text"><strong>Cero estafas. Cero reventas falsas.</strong></p>
+        <div class="cf-btns">
+          <button class="btn-acid" onclick="go('marketplace')">Buscar Reventa →</button>
+          <button class="btn-border" onclick="go('promotores')">Crear Evento →</button>
+        </div>
+      </div>
+
+      <!-- Tickets -->
+      <div class="cf-tickets" id="cf-tickets-conocenos">
+        <div class="cf-ticket cf-ticket-fake" id="t-fake-conocenos">
+          <div class="gline gline-1"></div>
+          <div class="gline gline-2"></div>
+          <div class="gline gline-3"></div>
+          <div class="cf-ticket-badge badge-fake">FALSO</div>
+          <div class="cf-ticket-event">Bad Bunny — World Tour</div>
+          <div class="cf-ticket-venue-sm">Estadio Nacional · 15 Mar 2026</div>
+          <div class="cf-ticket-row">
+            <div>
+              <div class="cf-ticket-price-label">Precio Scammer</div>
+              <div class="cf-ticket-price">S/450</div>
+            </div>
+            <div style="font-size: var(--fs-base);color:rgba(255,255,255,0.4);text-align:right;">
+              Precio real: <span class="line-through">S/90</span>
+            </div>
+          </div>
+          <div class="cf-ticket-qr">
+            <div class="cf-qr-mini"></div>
+            <span>QR INVALIDO — DATOS CORRUPTOS</span>
+          </div>
+        </div>
+
+        <div class="cf-ticket cf-ticket-real" id="t-real-conocenos">
+          <div class="cf-ticket-badge badge-verified"><span><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span></span> VERIFICADO</div>
+          <div class="cf-ticket-event">Bad Bunny — World Tour</div>
+          <div class="cf-ticket-venue-sm">Estadio Nacional · 15 Mar 2026</div>
+          <div class="cf-ticket-row">
+            <div>
+              <div class="cf-ticket-price-label">Precio Justo</div>
+              <div class="cf-ticket-price">S/90</div>
+            </div>
+            <div style="font-size: var(--fs-sm);color:rgba(255,255,255,0.6);text-align:right;">
+              Vinculado a:<br>
+              <span class="text-acid fw-bold">Mario L. ✓</span>
+            </div>
+          </div>
+          <div class="cf-ticket-qr">
+            <div class="cf-qr-mini"><div class="cf-qr-inner"></div></div>
+            <span>ID VERIFICADO — ENTRADA GARANTIZADA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full-Width Tabs -->
+  <div class="conocenos-tabs-container">
+    <div class="conocenos-tabs">
+      <button class="conocenos-tab active" onclick="conocenosSwitchTab('asistentes')">PARA ASISTENTES</button>
+      <button class="conocenos-tab" onclick="conocenosSwitchTab('organizadores')">PARA ORGANIZADORES</button>
+    </div>
+  </div>
+
+  <!-- Tab Content: PARA ASISTENTES (from v-fans) -->
+  <div id="conocenos-asistentes" class="conocenos-tab-content active">
+    <!-- Para Fans -->
+    <section class="cf-section">
+      <div class="cf-section-label">// Para Fans</div>
+      <h2 class="cf-section-title">Así funciona<br>para <span class="text-acid">ti.</span></h2>
+      <p class="cf-section-text nowrap">Tres pasos. Sin complicaciones. Tu entrada está protegida por tu identidad.</p>
+      <div class="dk-how-grid" style="margin-top:48px;">
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-1">
+            <div class="dk-how-num">01</div>
+            <div class="dk-how-logo">🎫</div>
+            <h3>Compra tu<br>entrada</h3>
+            <div class="dk-how-tooltip">Simple y seguro →</div>
+          </div>
+          <div class="dk-how-desc">Elige el evento, paga con tarjeta. <strong>Tu entrada queda vinculada a tu ID automáticamente.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-2">
+            <div class="dk-how-num">02</div>
+            <div class="dk-how-logo">🪪</div>
+            <h3>Presenta tu<br>ID en puerta</h3>
+            <div class="dk-how-tooltip">Zero fraude →</div>
+          </div>
+          <div class="dk-how-desc">Muestra tu ID, te toman una foto, y entras. <strong>Sin QR, sin screenshots, sin fraude.</strong></div>
+        </div>
+        <div class="dk-how-card" onclick="go('marketplace')">
+          <div class="dk-how-inner dk-grad-3">
+            <div class="dk-how-num">03</div>
+            <div class="dk-how-logo" style="font-size: var(--fs-4xl);">🔄</div>
+            <h3>Revende<br>seguro</h3>
+            <div class="dk-how-tooltip">Marketplace →</div>
+          </div>
+          <div class="dk-how-desc">Publica tu ticket, indica el precio y <strong>otro fan podrá comprarlo dentro de Lezgo.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios para fans -->
+    <section class="cf-section" style="border-top:1px solid var(--border);">
+      <div class="cf-section-label">// Beneficios</div>
+      <h2 class="cf-section-title">Obtén beneficios<br>por ser un <span class="text-acid">fan real.</span></h2>
+      <p class="cf-section-text">Asistir tiene recompensas. Tu historial te abre puertas que otros no tienen.</p>
+      <div class="cf-features">
+        <div class="cf-feature">
+          <div class="cf-feature-icon">🏆</div>
+          <h3>Badges</h3>
+          <p>Cada evento suma un badge a tu perfil. <strong>Tu historial musical, verificado y visible.</strong></p>
+        </div>
+        <div class="cf-feature">
+          <div class="cf-feature-icon">⚡</div>
+          <h3>Acceso anticipado</h3>
+          <p>Más badges, más prioridad. <strong>Entras primero a la preventa, sin depender de la suerte.</strong></p>
+        </div>
+        <div class="cf-feature">
+          <div class="cf-feature-icon">💎</div>
+          <h3>Beneficios exclusivos</h3>
+          <p>Descuentos, upgrades de zona y merch. <strong>Lo ganas asistiendo, no por sorteo.</strong></p>
+        </div>
+        <div class="cf-feature">
+          <div class="cf-feature-icon">🎯</div>
+          <h3>Perfil verificado</h3>
+          <p>Tu identidad respaldada por tu historial real. <strong>Los promotores saben que eres un fan de verdad.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nuestros Compromisos -->
+    <section class="cf-section" style="border-top:1px solid var(--border);">
+      <div class="cf-section-label">// Para los fans</div>
+      <h2 class="cf-section-title">Nuestros compromisos<br>con <span class="text-acid">los fans.</span></h2>
+      <p class="cf-section-text">Sabemos cómo funciona el ticketing en Perú. Por eso construimos Lezgo con reglas claras desde el día uno.</p>
+      <div class="cf-compromisos">
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">01 — CARGOS</div>
+          <h4>Sinceridad en los cargos</h4>
+          <p>Antes de pagar ves exactamente qué se cobra y por qué. Plataforma, verificación y procesamiento desglosados. Sin cargos sorpresa al final del checkout.</p>
+          <span class="cf-compromiso-badge">Cargos visibles siempre</span>
+        </div>
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">02 — REVENTA</div>
+          <h4>Transparencia en el marketplace</h4>
+          <p>Todos los tickets en reventa están visibles en un solo lugar. Ves el <span class="cap">precio original vs. precio de reventa</span> de cada entrada antes de decidir. Sin mercado negro, sin intermediarios ocultos.</p>
+          <span class="cf-compromiso-badge">Precios visibles para todos</span>
+        </div>
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">03 — PRIVACIDAD</div>
+          <h4>Tu data no se vende. Nunca.</h4>
+          <p>Tu ID y datos personales se usan exclusivamente para verificar tu identidad en la compra y en puerta. No los vendemos a marcas, promotores ni terceros. Punto.</p>
+          <span class="cf-compromiso-badge">Datos solo para verificar</span>
+        </div>
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">04 — ANTI-SCALPING</div>
+          <h4>Un ID, una entrada</h4>
+          <p>Cada entrada está atada a un documento real. Un revendedor no puede comprar 50 entradas sin 50 identidades verificadas. Anti-scalping by design, no una promesa vacía.</p>
+          <span class="cf-compromiso-badge">1 ID = 1 entrada</span>
+        </div>
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">05 — SOPORTE</div>
+          <h4>Soporte real en menos de 24h</h4>
+          <p>Si algo sale mal — pago duplicado, error de verificación, entrada que no aparece — respondemos en menos de <span class="cap">24 horas</span>. Una persona, no un bot.</p>
+          <span class="cf-compromiso-badge">Respuesta &lt;24h</span>
+        </div>
+
+        <div class="cf-compromiso">
+          <div class="cf-compromiso-num">06 — ESTÁNDARES</div>
+          <h4>Estándares internacionales de transparencia</h4>
+          <p>Nos alineamos con las mejores prácticas globales del ticketing: fees declarados antes del checkout, política de reembolso publicada y sin cambios de precio sorpresa. Lo que en otros países ya es norma, en Perú lo hacemos realidad.</p>
+          <span class="cf-compromiso-badge">Estándares internacionales</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FAQ Fans -->
+    <div class="faq-section">
+      <div class="faq-section-title">// Preguntas frecuentes</div>
+      <div class="faq-section-heading">Para asistentes</div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Cómo compro mi entrada?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Elige tu evento, selecciona el tipo de entrada y la cantidad, inicia sesión con tu email (magic link) o Google, y confirma tu compra. Tu entrada aparece automáticamente en "Mis Entradas".</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Qué necesito para entrar al evento?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Tu documento de identidad (DNI, carnet de extranjería o pasaporte) y tu celular con tu cuenta de Lezgo. En la puerta se valida persona + ID para el ingreso. No necesitas imprimir nada.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Qué pasa si no puedo ir al evento?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Puedes poner tu entrada a la venta en el <a href="javascript:void(0)" onclick="go('marketplace')" class="text-acid">Marketplace de Lezgo</a>. Se transfiere al nuevo fan de forma segura. Con más fans usando la plataforma, entre todos podemos acabar con la reventa abusiva.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Mi entrada es transferible?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Solo a través del Marketplace oficial. No puedes pasar tu entrada a otra persona directamente porque cada entrada está vinculada a un ID verificado (DNI, carnet de extranjería o pasaporte).</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Qué tipo de eventos encuentro en Lezgo?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Fiestas, conciertos y próximamente clubes. Trabajamos con promotores verificados para garantizar la calidad de cada evento publicado en la plataforma.</div></div>
+      </div>
+    </div>
+
+    <!-- Email Capture -->
+    <div class="email-capture">
+      <h3>Estamos construyendo<br><span class="text-acid">algo distinto.</span></h3>
+      <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
+      <div class="email-capture-form" id="email-form-asist-conocenos">
+        <input class="email-capture-input" type="email" id="email-input-asist-conocenos" placeholder="tu@correo.com" aria-label="Correo para asistencia">
+        <button class="email-capture-btn" onclick="asistSubmitEmail()">Unirme</button>
+      </div>
+      <div class="email-capture-legal">Al suscribirte aceptas recibir máximo 1 correo por semana. <strong>Sin spam, nunca.</strong><br>Te puedes salir cuando quieras.</div>
+      <div class="email-capture-ok" id="email-ok-asist-conocenos">Gracias por creer en el proyecto.<br>Te mantendremos al tanto.</div>
+    </div>
+  </div>
+
+  <!-- Tab Content: PARA ORGANIZADORES (from v-promotores) -->
+  <div id="conocenos-organizadores" class="conocenos-tab-content">
+    <!-- ═══ FASE 1: PRE-LANZAMIENTO ═══ -->
+    <section class="cf-section">
+      <div class="pp-phase-tag">PRE-LANZAMIENTO</div>
+      <div class="cf-section-label">// Setup</div>
+      <h2 class="cf-section-title">Configura todo<br><span class="text-acid">desde el inicio.</span></h2>
+      <p class="cf-section-text">Tú defines las reglas: cantidades, precios, límites de compra. Todo desde un solo lugar.</p>
+      <div class="dk-how-grid" style="margin-top:48px;">
+        <div class="dk-how-card cursor-pointer" onclick="openEventForm()">
+          <div class="dk-how-inner dk-grad-1">
+            <div class="dk-how-num">01</div>
+            <div class="dk-how-logo">📋</div>
+            <h3>Crea tu<br>evento</h3>
+            <div class="dk-how-tooltip">Probar ahora →</div>
+          </div>
+          <div class="dk-how-desc">Nombre, fecha, ubicación, lineup, descripción. <strong>Sin formularios eternos. Listo en minutos.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-2">
+            <div class="dk-how-num">02</div>
+            <div class="dk-how-logo">🎫</div>
+            <h3>Define tus<br>entradas</h3>
+            <div class="dk-how-tooltip">Control total →</div>
+          </div>
+          <div class="dk-how-desc">Cantidades por categoría, precio base, máximo por persona, fechas de drops. <strong>Tú decides todo en el contrato inicial.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-3">
+            <div class="dk-how-num">03</div>
+            <div class="dk-how-logo">🎨</div>
+            <h3>Página<br>del evento</h3>
+            <div class="dk-how-tooltip">Tu marca →</div>
+          </div>
+          <div class="dk-how-desc">Landing personalizada con tu branding. <strong>Lista para compartir y vender desde el primer momento.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FASE 2: LANZAMIENTO ═══ -->
+    <section class="cf-section" style="border-top:1px solid var(--border);">
+      <div class="pp-phase-tag">LANZAMIENTO</div>
+      <div class="cf-section-label">// En vivo</div>
+      <h2 class="cf-section-title">Monitorea cada<br><span class="text-acid">venta.</span></h2>
+      <p class="cf-section-text">Dashboard en tiempo real con todos los datos que necesitas: entradas vendidas, revenue por categoría y seguridad verificada.</p>
+      <div class="dk-how-grid" style="margin-top:48px;">
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-1">
+            <div class="dk-how-num">01</div>
+            <div class="dk-how-logo">📊</div>
+            <h3>Sales<br>dashboard</h3>
+            <div class="dk-how-tooltip">Datos en vivo →</div>
+          </div>
+          <div class="dk-how-desc">Cada venta, cada reembolso, cada ajuste de precio. <strong>Ves exactamente cuánta revenue generaste y en qué momento.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-2">
+            <div class="dk-how-num">02</div>
+            <div class="dk-how-logo">🔍</div>
+            <h3>Scanner<br>de ID</h3>
+            <div class="dk-how-tooltip">Verificación instantánea →</div>
+          </div>
+          <div class="dk-how-desc">Escanea el documento en la puerta. <strong>Lezgo comprueba automáticamente si es entrada legítima.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-3">
+            <div class="dk-how-num">03</div>
+            <div class="dk-how-logo">⚔️</div>
+            <h3>Anti-<br>scalping</h3>
+            <div class="dk-how-tooltip">Sin bots →</div>
+          </div>
+          <div class="dk-how-desc">Un documento = una entrada máximo. <strong>Los scalpers no pueden comprar en masa. Tus fans tienen oportunidad justa.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FASE 3: POST-EVENTO ═══ -->
+    <section class="cf-section" style="border-top:1px solid var(--border);">
+      <div class="pp-phase-tag">POST-EVENTO</div>
+      <div class="cf-section-label">// Después</div>
+      <h2 class="cf-section-title">Sigue ganando con<br><span class="text-acid">la reventa.</span></h2>
+      <p class="cf-section-text">Gana comisión en cada reventa verificada. Tu evento sigue generando ingresos pasivo mientras tú planeas el próximo.</p>
+      <div class="dk-how-grid" style="margin-top:48px;">
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-1">
+            <div class="dk-how-num">01</div>
+            <div class="dk-how-logo">💰</div>
+            <h3>Revenue<br>en reventa</h3>
+            <div class="dk-how-tooltip">Ingresos extra →</div>
+          </div>
+          <div class="dk-how-desc">Definiste el % de comisión en reventa. <strong>Cada ticket que se revende, tú ganas.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-2">
+            <div class="dk-how-num">02</div>
+            <div class="dk-how-logo">📈</div>
+            <h3>Analytics<br>de fans</h3>
+            <div class="dk-how-tooltip">Datos de audiencia →</div>
+          </div>
+          <div class="dk-how-desc">Quiénes fueron, cuántos volverían, cuál fue la demo. <strong>Data real para planear el próximo evento.</strong></div>
+        </div>
+        <div class="dk-how-card">
+          <div class="dk-how-inner dk-grad-3">
+            <div class="dk-how-num">03</div>
+            <div class="dk-how-logo">🔄</div>
+            <h3>Next<br>evento</h3>
+            <div class="dk-how-tooltip">Crece seguro →</div>
+          </div>
+          <div class="dk-how-desc">Ya tienes comunidad verificada. <strong>Tus fans conocen a tus fans. Crece de forma controlada.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beneficios para Promotores -->
+    <section class="cf-section" style="border-top:1px solid var(--border);">
+      <div class="cf-section-label">// Mecánicas de venta</div>
+      <h2 class="cf-section-title">Control absoluto<br>sobre <span class="text-acid">tu modelo.</span></h2>
+      <p class="cf-section-text">Adapta Lezgo a tu visión. Precios dinámicos, fases de drops, límites por persona, restricciones geográficas. Tú decides.</p>
+      <div class="pp-mechanics-grid">
+        <div class="pp-mech">
+          <div class="pp-mech-icon">🎟️</div>
+          <h3>Categorías de entradas</h3>
+          <p>GA, VIP, palco, zona standing, resguardo. <strong>Define cuantas categorías necesites con precios diferentes.</strong></p>
+        </div>
+        <div class="pp-mech">
+          <div class="pp-mech-icon">📅</div>
+          <h3>Fases de drops</h3>
+          <p>Early birds, preventa, preventa 2, venta normal. <strong>Cada fase con su precio y cantidad.</strong></p>
+        </div>
+        <div class="pp-mech">
+          <div class="pp-mech-icon">🔐</div>
+          <h3>Límites por persona</h3>
+          <p>Máximo 2 entradas por ID, máximo 4, máximo 1. <strong>Evita especulación sin perder oportunidades de venta.</strong></p>
+        </div>
+        <div class="pp-mech">
+          <div class="pp-mech-icon">🚀</div>
+          <h3>Precios dinámicos</h3>
+          <p>Sube precio conforme se agoten. <strong>O mantén el mismo. Tú eres who sets the rules.</strong></p>
+        </div>
+        <div class="pp-mech">
+          <div class="pp-mech-icon">🌍</div>
+          <h3>Restricciones</h3>
+          <p>Solo Lima, solo Perú, solo menores de 30, solo mayores de 21. <strong>Vende solo a quien tu quieres.</strong></p>
+        </div>
+        <div class="pp-mech">
+          <div class="pp-mech-icon">💳</div>
+          <h3>Métodos de pago</h3>
+          <p>Tarjeta, transferencia, wallet. <strong>Tus fans usan el método que prefieren.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Promotores -->
+    <div class="faq-section">
+      <div class="faq-section-title">// Preguntas frecuentes</div>
+      <div class="faq-section-heading">Para promotores</div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Cuánto cobra Lezgo por transacción?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Cobramos una comisión por ticket vendido que varía según el volumen. Estos cargos están publicados y no cambian. Tú ves los números antes de confirmar. No hay sorpresas.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Puedo personalizar mi evento?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Sí. Tu página de evento incluye tu branding, fotos, descripción, horarios y lineup. Lezgo maneja la tienda, tú controlas la experiencia.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Cómo hago para pedir payout?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Tu dashboard muestra el dinero disponible. Pide payout cuando quieras. Transferencia a tu cuenta bancaria en 24-48h. Sin mínimo.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Puedo editar mi evento después de publicado?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Puedes cambiar descripción, fotos y horarios cuando quieras. No puedes cambiar el precio base de una fase activa, pero puedes activar una nueva fase con diferente precio.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Cómo funciona el scanner ID en la puerta?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">Lezgo te da una app para escanear en puerta. Escaneas el documento del asistente + comparas la foto con su cara. El sistema valida si es entrada legítima o no. En tiempo real.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="faqToggle(this)">
+          <span class="faq-q-text">¿Qué pasa si alguien intenta usar una entrada falsa?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer"><div class="faq-a-text">El scanner lo detecta inmediatamente. La entrada no valida. Simplemente no entra. Cero responsabilidad para ti, cero estrés.</div></div>
+      </div>
+    </div>
+
+    <!-- Email Capture Promotores -->
+    <div class="email-capture">
+      <h3>¿Listo para lanzar<br><span class="text-acid">tu evento?</span></h3>
+      <p>Cero complicaciones. Máximo control. Tus reglas, nuestros sistemas.<br>Déjanos tu correo y te mandamos la documentación para empezar.</p>
+      <div class="email-capture-form" id="email-form-promo-conocenos">
+        <input class="email-capture-input" type="email" id="email-input-promo-conocenos" placeholder="tu@correo.com" aria-label="Correo para promotores">
+        <button class="email-capture-btn" onclick="promoSubmitEmail()">Lanzar evento</button>
+      </div>
+      <div class="email-capture-legal">Te contaremos cómo funciona Lezgo step-by-step. <strong>Sin presión, sin email spam.</strong><br>Si no es para ti, sin problemas.</div>
+      <div class="email-capture-ok" id="email-ok-promo-conocenos">Nos encanta tu entusiasmo.<br>Te escribimos pronto.</div>
+    </div>
   </div>
 
   <div class="site-footer">
@@ -10573,6 +11122,18 @@ a[onclick]:active,
     if (panel) panel.classList.add('active');
   }
 
+  function conocenosSwitchTab(tab) {
+    document.querySelectorAll('.conocenos-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.conocenos-tab-content').forEach(c => c.classList.remove('active'));
+    if (tab === 'asistentes') {
+      document.querySelectorAll('.conocenos-tab')[0].classList.add('active');
+      document.getElementById('conocenos-asistentes').classList.add('active');
+    } else if (tab === 'organizadores') {
+      document.querySelectorAll('.conocenos-tab')[1].classList.add('active');
+      document.getElementById('conocenos-organizadores').classList.add('active');
+    }
+  }
+
   function mtToggleTicket(id) {
     const expand = document.getElementById(id + '-expand');
     if (!expand) return;
@@ -12297,32 +12858,6 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      VIEW 7: CONÓCENOS — About Us
      ═══════════════════════════════════════════ -->
-<div id="v-conocenos" class="view">
-  <div class="content">
-    <section style="padding: 80px 48px; max-width: 1600px; margin: 0 auto;">
-      <h1 style="font-size: var(--fs-3xl); font-weight: 800; margin-bottom: 24px;">Conócenos</h1>
-      <p style="font-size: var(--fs-lg); color: var(--text-dim); max-width: 600px; line-height: 1.8;">
-        LEZGO es la plataforma de ticketing más segura para eventos de música electrónica en Lima.
-        Eliminamos el fraude con verificación de DNI y ofrecemos reventa segura y transparente.
-      </p>
-      <div style="margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
-        <div style="background: var(--bg-raised); padding: 32px; border-radius: 12px; border: 1px solid var(--border);">
-          <h3 style="font-size: var(--fs-lg); font-weight: 700; margin-bottom: 16px; color: var(--acid);">Nuestra Misión</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">Crear un ecosistema de eventos donde no haya lugar para el fraude y todos disfruten de las mejores experiencias musicales.</p>
-        </div>
-        <div style="background: var(--bg-raised); padding: 32px; border-radius: 12px; border: 1px solid var(--border);">
-          <h3 style="font-size: var(--fs-lg); font-weight: 700; margin-bottom: 16px; color: var(--acid);">Tecnología</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">Usamos verificación con DNI y código QR único por entrada para garantizar la autenticidad de cada boleto.</p>
-        </div>
-        <div style="background: var(--bg-raised); padding: 32px; border-radius: 12px; border: 1px solid var(--border);">
-          <h3 style="font-size: var(--fs-lg); font-weight: 700; margin-bottom: 16px; color: var(--acid);">Comunidad</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">Somos una comunidad de fans y organizadores comprometidos con eventos auténticos y seguros.</p>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
-
 <!-- ═══════════════════════════════════════════
      VIEW 8: AUTH — Login / Register
      ═══════════════════════════════════════════ -->
