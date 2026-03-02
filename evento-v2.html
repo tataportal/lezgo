@@ -29,7 +29,7 @@
   --gray-700: #1A1A1A;
   --gray-600: #222222;
   --gray-500: #333333;
-  --gray-400: #555555;
+  --gray-400: #757575;
   --gray-300: #888888;
   --gray-200: #aaaaaa;
   --gray-100: #cccccc;
@@ -55,6 +55,37 @@
   --alpha-medium: rgba(255,255,255,0.15);
   --alpha-strong: rgba(255,255,255,0.25);
   --alpha-heavy: rgba(255,255,255,0.5);
+
+  /* ── Acid opacity scale ── */
+  --acid-30: rgba(229,255,0,0.3);
+  --acid-20: rgba(229,255,0,0.2);
+  --acid-12: rgba(229,255,0,0.12);
+  --acid-06: rgba(229,255,0,0.06);
+  --acid-05: rgba(229,255,0,0.05);
+  --acid-04: rgba(229,255,0,0.04);
+  --acid-03: rgba(229,255,0,0.03);
+  --acid-10: rgba(229,255,0,0.1);
+
+  /* ── Dark overlay scale ── */
+  --dark-85: rgba(0,0,0,0.85);
+  --dark-60: rgba(0,0,0,0.6);
+  --dark-45: rgba(0,0,0,0.45);
+  --dark-40: rgba(0,0,0,0.4);
+  --dark-30: rgba(0,0,0,0.3);
+
+  /* ── Green opacity scale ── */
+  --green-30: rgba(0,255,133,0.3);
+  --green-15: rgba(0,255,133,0.15);
+  --green-08: rgba(0,255,133,0.08);
+  --green-05: rgba(0,255,133,0.05);
+
+  /* ── Red opacity scale ── */
+  --red-30: rgba(255,77,77,0.3);
+  --red-15: rgba(255,77,77,0.15);
+
+  /* ── White reference ── */
+  --color-white: #ffffff;
+
 
   /* ── Tier colors (borders only) ── */
   --tier-1: rgba(59,130,246,0.5);
@@ -154,7 +185,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .hero-back {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: var(--fs-sm); font-weight: 700; color: rgba(255,255,255,0.85);
-  background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+  background: var(--dark-45); backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 10px 20px 10px 16px; border-radius: 50px;
   border: 1px solid rgba(255,255,255,0.15);
@@ -162,7 +193,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   letter-spacing: 0.5px; text-transform: uppercase;
   transition: all 0.2s;
 }
-.hero-back:hover { color: var(--acid); border-color: rgba(229,255,0,0.3); background: rgba(0,0,0,0.6); }
+.hero-back:hover { color: var(--acid); border-color: var(--acid-30); background: var(--dark-60); }
 .hero-back svg { width: 14px; height: 14px; }
 
 /* Event title block */
@@ -297,7 +328,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .tk-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  box-shadow: 0 24px 80px var(--dark-60);
 }
 .tk-inner {
   padding: 32px 28px;
@@ -336,7 +367,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* ── Available overlay on hover ── */
 .tk-card--avail { cursor: pointer; }
-.tk-card--avail:hover { box-shadow: 0 24px 80px rgba(229,255,0,0.12); }
+.tk-card--avail:hover { box-shadow: 0 24px 80px var(--acid-12); }
 .tk-card--avail:hover .tk-inner { opacity: 0.2; }
 .tk-card--avail:hover .tk-overlay { opacity: 1; pointer-events: auto; }
 
@@ -514,7 +545,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .lineup-card-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, transparent 60%);
+  background: linear-gradient(0deg, var(--dark-85) 0%, rgba(0,0,0,0.2) 40%, transparent 60%);
   z-index: 1;
 }
 .lineup-card-content {
@@ -751,7 +782,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   opacity: 0;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
   padding: 0;
-  box-shadow: 0 32px 100px rgba(0,0,0,0.6), 0 0 60px rgba(229,255,0,0.04);
+  box-shadow: 0 32px 100px var(--dark-60), 0 0 60px var(--acid-04);
 }
 .pm-drawer.pm-open { transform: scale(1) translateY(0); opacity: 1; }
 
@@ -1837,7 +1868,7 @@ function pmCheckout() {
    ═══════════════════════════════════════════ */
 function showPreviewBanner(eventName) {
   const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(229,255,0,0.1);border-bottom:1px solid rgba(229,255,0,0.3);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);font-family:Sora,sans-serif;';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--acid-10);border-bottom:1px solid var(--acid-30);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);font-family:Sora,sans-serif;';
   banner.innerHTML = '<div style="font-size: var(--fs-sm);font-weight:700;color:#E5FF00;">PREVIEW <span style="font-weight:400;color: var(--text-mid);margin-left:8px;">Así se verá tu evento en Lezgo</span></div><a href="javascript:window.close()" style="font-size: var(--fs-xs);color:#E5FF00;text-decoration:underline;font-weight:600;">Cerrar preview</a>';
   document.body.prepend(banner);
   // Add top padding to body so content isn't hidden under banner
