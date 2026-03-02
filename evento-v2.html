@@ -310,9 +310,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: visible;
 }
 .tk-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0;
-  flex-wrap: wrap;
   width: 100%;
   margin: 0 auto;
 }
@@ -322,9 +322,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
-  flex: 1 1 220px;
-  min-width: 220px;
-  max-width: 100%;
 }
 .tk-card:hover {
   transform: translateY(-8px);
@@ -337,7 +334,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* ── Tier strokes (border-only, no solid fill) ── */
@@ -395,13 +392,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* Card content */
 .tk-name {
-  font-size: 48px; font-weight: var(--fw-extrabold);
+  font-size: 40px; font-weight: var(--fw-extrabold);
   letter-spacing: -0.5px; line-height: 1;
-  margin-bottom: 16px; color: #fff;
+  margin-bottom: 14px; color: #fff;
 }
 .tk-includes {
-  font-size: 20px; color: rgba(255,255,255,0.75);
-  line-height: 1.7; margin-top: 0;
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  line-height: 1.65; margin-top: 0;
 }
 .tk-includes li {
   list-style: none;
@@ -416,6 +413,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 .tk-header {
   min-height: auto;
+  flex: 0 0 auto;
 }
 .tk-includes {
   max-height: none;
@@ -424,20 +422,22 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* Phase pricing table */
 .tk-phases {
-  padding-top: 20px;
-  display: flex; flex-direction: column; gap: 6px;
+  padding-top: 16px;
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 4px;
 }
 .tk-phase {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0;
-  font-size: 22px; font-weight: var(--fw-medium);
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 5px 0;
+  font-size: 18px; font-weight: var(--fw-medium);
+  gap: 12px;
 }
-.tk-phase-name { color: rgba(255,255,255,0.75); }
-.tk-phase-price { color: rgba(255,255,255,0.75); }
+.tk-phase-name { color: rgba(255,255,255,0.75); white-space: nowrap; }
+.tk-phase-price { color: rgba(255,255,255,0.75); white-space: nowrap; text-align: right; }
 .tk-phase--past .tk-phase-name { text-decoration: line-through; color: rgba(255,255,255,0.3); }
 .tk-phase--past .tk-phase-price { text-decoration: line-through; color: rgba(255,255,255,0.3); }
 .tk-phase--active .tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; }
-.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: 32px; text-decoration: none; }
+.tk-phase--active .tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: 26px; text-decoration: none; }
 .tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.15); }
 .tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.15); }
 .tk-phase-dot {
@@ -461,13 +461,16 @@ button { font-family: inherit; cursor: pointer; border: none; }
   margin: 16px 0 auto; letter-spacing: -0.5px;
 }
 .tk-buy {
-  padding: 18px 32px;
+  padding: 14px 24px;
   background: var(--acid);
   border: none;
   border-radius: var(--radius-btn);
-  color: var(--gray-950); font-size: 22px; font-weight: var(--fw-bold);
+  color: var(--gray-950); font-size: 18px; font-weight: var(--fw-bold);
   transition: all 0.2s;
   white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
 }
 .tk-buy:hover { background: #fff; color: var(--gray-950); box-shadow: 0 0 30px var(--acid-glow); }
 .tk-sold-all {
@@ -934,15 +937,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .hero-meta-item { font-size: var(--fs-sm); }
   .hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
   .section { padding: 64px 20px; }
-  .tk-grid { flex-wrap: wrap; padding: 0 12px; gap: 12px; }
+  .tk-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; gap: 12px; }
   .tk-grid-wrap { height: auto !important; }
-  .tk-card { flex: 1 1 calc(50% - 6px); min-width: calc(50% - 6px); max-width: 100%; }
   .tk-inner { min-height: auto; padding: 24px 20px; }
   .tk-header { min-height: auto; }
-  .tk-name { font-size: 36px; }
-  .tk-includes { font-size: 18px; }
-  .tk-buy { padding: 14px 20px; font-size: 18px; }
-  .tk-phase { font-size: 18px; }
+  .tk-name { font-size: 32px; }
+  .tk-includes { font-size: 16px; }
+  .tk-buy { padding: 14px 20px; font-size: 16px; }
+  .tk-phase { font-size: 16px; }
+  .tk-phase--active .tk-phase-price { font-size: 22px; }
   .info-list { gap: 8px 12px; }
   .venue-block { grid-template-columns: 1fr; }
   .lineup-grid { grid-template-columns: 1fr 1fr; }
@@ -953,17 +956,16 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .trust-item { padding: 20px 12px; }
 }
 @media (max-width: 480px) {
-  .tk-grid { gap: 12px; flex-wrap: wrap; padding: 0 16px; }
+  .tk-grid { grid-template-columns: 1fr; gap: 12px; padding: 0 16px; }
   .tk-grid-wrap { height: auto !important; }
-  .tk-card { flex: 1 1 100%; min-width: 100%; max-width: 100%; }
   .tk-inner { min-height: auto; padding: 20px 18px; }
   .tk-header { min-height: auto; }
-  .tk-includes { max-height: none; font-size: 18px; }
-  .tk-name { font-size: 32px; margin-bottom: 8px; }
+  .tk-includes { max-height: none; font-size: 16px; }
+  .tk-name { font-size: 28px; margin-bottom: 8px; }
   .tk-phases { padding-top: 12px; }
-  .tk-phase { font-size: 18px; padding: 3px 0; }
-  .tk-phase--active .tk-phase-price { font-size: 26px; }
-  .tk-buy { padding: 12px 18px; font-size: 18px; }
+  .tk-phase { font-size: 16px; padding: 3px 0; }
+  .tk-phase--active .tk-phase-price { font-size: 22px; }
+  .tk-buy { padding: 12px 18px; font-size: 16px; }
   .tk-bottom { padding-top: 8px; }
   .lineup-grid { grid-template-columns: 1fr; }
   .lineup-card--hl .lineup-name { font-size: var(--fs-xl); }
