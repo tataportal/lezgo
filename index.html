@@ -4705,6 +4705,47 @@ body::after {
   display: block;
   animation: fadeIn 0.3s ease-in;
 }
+/* Full-viewport slide sections inside tab content */
+.conocenos-slide {
+  min-height: calc(100vh - 64px - 53px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px !important;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.conocenos-slide:last-child {
+  border-bottom: none;
+}
+/* FAQ and email slides don't need centering — they flow naturally */
+.faq-section.conocenos-slide,
+.email-capture.conocenos-slide {
+  justify-content: flex-start;
+  padding-top: 100px !important;
+}
+@media (max-width: 768px) {
+  .conocenos-slide {
+    min-height: calc(100vh - 56px - 49px);
+    padding: 60px 24px !important;
+  }
+  .faq-section.conocenos-slide,
+  .email-capture.conocenos-slide {
+    padding-top: 80px !important;
+  }
+}
+@media (max-width: 480px) {
+  .conocenos-slide {
+    min-height: calc(100vh - 56px - 45px);
+    padding: 48px 16px !important;
+  }
+  .faq-section.conocenos-slide,
+  .email-capture.conocenos-slide {
+    padding-top: 60px !important;
+  }
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -6754,7 +6795,7 @@ a[onclick]:active,
   <!-- Tab Content: PARA ASISTENTES (from v-fans) -->
   <div id="conocenos-asistentes" class="conocenos-tab-content active">
     <!-- Para Fans -->
-    <section class="cf-section">
+    <section class="cf-section conocenos-slide">
       <div class="cf-section-label">// Para Fans</div>
       <h2 class="cf-section-title">Así funciona<br>para <span class="text-acid">ti.</span></h2>
       <p class="cf-section-text nowrap">Tres pasos. Sin complicaciones. Tu entrada está protegida por tu identidad.</p>
@@ -6790,7 +6831,7 @@ a[onclick]:active,
     </section>
 
     <!-- Beneficios para fans -->
-    <section class="cf-section" style="border-top:1px solid var(--border);">
+    <section class="cf-section conocenos-slide">
       <div class="cf-section-label">// Beneficios</div>
       <h2 class="cf-section-title">Obtén beneficios<br>por ser un <span class="text-acid">fan real.</span></h2>
       <p class="cf-section-text">Asistir tiene recompensas. Tu historial te abre puertas que otros no tienen.</p>
@@ -6819,7 +6860,7 @@ a[onclick]:active,
     </section>
 
     <!-- Nuestros Compromisos -->
-    <section class="cf-section" style="border-top:1px solid var(--border);">
+    <section class="cf-section conocenos-slide">
       <div class="cf-section-label">// Para los fans</div>
       <h2 class="cf-section-title">Nuestros compromisos<br>con <span class="text-acid">los fans.</span></h2>
       <p class="cf-section-text">Sabemos cómo funciona el ticketing en Perú. Por eso construimos Lezgo con reglas claras desde el día uno.</p>
@@ -6871,7 +6912,7 @@ a[onclick]:active,
     </section>
 
     <!-- FAQ Fans -->
-    <div class="faq-section">
+    <div class="faq-section conocenos-slide">
       <div class="faq-section-title">// Preguntas frecuentes</div>
       <div class="faq-section-heading">Para asistentes</div>
 
@@ -6917,7 +6958,7 @@ a[onclick]:active,
     </div>
 
     <!-- Email Capture -->
-    <div class="email-capture">
+    <div class="email-capture conocenos-slide">
       <h3>Estamos construyendo<br><span class="text-acid">algo distinto.</span></h3>
       <p>Lezgo es un proyecto independiente.<br>Estamos creando la plataforma para volver a confiar en los eventos.<br>Déjanos tu correo y te contamos cómo avanzamos.</p>
       <div class="email-capture-form" id="email-form-asist-conocenos">
@@ -6932,7 +6973,7 @@ a[onclick]:active,
   <!-- Tab Content: PARA ORGANIZADORES (from v-promotores) -->
   <div id="conocenos-organizadores" class="conocenos-tab-content">
     <!-- ═══ FASE 1: PRE-LANZAMIENTO ═══ -->
-    <section class="cf-section">
+    <section class="cf-section conocenos-slide">
       <div class="pp-phase-tag">PRE-LANZAMIENTO</div>
       <div class="cf-section-label">// Setup</div>
       <h2 class="cf-section-title">Configura todo<br><span class="text-acid">desde el inicio.</span></h2>
@@ -6969,7 +7010,7 @@ a[onclick]:active,
     </section>
 
     <!-- ═══ FASE 2: LANZAMIENTO ═══ -->
-    <section class="cf-section" style="border-top:1px solid var(--border);">
+    <section class="cf-section conocenos-slide">
       <div class="pp-phase-tag">LANZAMIENTO</div>
       <div class="cf-section-label">// En vivo</div>
       <h2 class="cf-section-title">Monitorea cada<br><span class="text-acid">venta.</span></h2>
@@ -7006,7 +7047,7 @@ a[onclick]:active,
     </section>
 
     <!-- ═══ FASE 3: POST-EVENTO ═══ -->
-    <section class="cf-section" style="border-top:1px solid var(--border);">
+    <section class="cf-section conocenos-slide">
       <div class="pp-phase-tag">POST-EVENTO</div>
       <div class="cf-section-label">// Después</div>
       <h2 class="cf-section-title">Sigue ganando con<br><span class="text-acid">la reventa.</span></h2>
@@ -7043,7 +7084,7 @@ a[onclick]:active,
     </section>
 
     <!-- Beneficios para Promotores -->
-    <section class="cf-section" style="border-top:1px solid var(--border);">
+    <section class="cf-section conocenos-slide">
       <div class="cf-section-label">// Mecánicas de venta</div>
       <h2 class="cf-section-title">Control absoluto<br>sobre <span class="text-acid">tu modelo.</span></h2>
       <p class="cf-section-text">Adapta Lezgo a tu visión. Precios dinámicos, fases de drops, límites por persona, restricciones geográficas. Tú decides.</p>
@@ -7082,7 +7123,7 @@ a[onclick]:active,
     </section>
 
     <!-- FAQ Promotores -->
-    <div class="faq-section">
+    <div class="faq-section conocenos-slide">
       <div class="faq-section-title">// Preguntas frecuentes</div>
       <div class="faq-section-heading">Para promotores</div>
 
@@ -7136,7 +7177,7 @@ a[onclick]:active,
     </div>
 
     <!-- Email Capture Promotores -->
-    <div class="email-capture">
+    <div class="email-capture conocenos-slide">
       <h3>¿Listo para lanzar<br><span class="text-acid">tu evento?</span></h3>
       <p>Cero complicaciones. Máximo control. Tus reglas, nuestros sistemas.<br>Déjanos tu correo y te mandamos la documentación para empezar.</p>
       <div class="email-capture-form" id="email-form-promo-conocenos">
