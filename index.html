@@ -1409,7 +1409,6 @@ body::after {
   height: calc(100vh - 64px - 50px);
   padding: 40px 48px;
   box-sizing: border-box;
-  scroll-snap-align: start;
 }
 @media (max-width: 768px) {
   #conocenos-hero {
@@ -1837,11 +1836,13 @@ body::after {
 #v-promotor .pf { text-align: center; }
 #v-promotor .pf-header { flex-direction: column; align-items: center; text-align: center; }
 #v-promotor .pf-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  color: var(--text-dim); text-decoration: none; font-size: var(--fs-sm);
-  font-weight: 600; transition: color 0.2s; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.7); text-decoration: none; font-size: var(--fs-sm);
+  font-weight: 700; transition: all 0.2s; align-self: flex-start;
+  background: rgba(255,255,255,0.06); padding: 8px 18px 8px 14px;
+  border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
 }
-#v-promotor .pf-back:hover { color: var(--text); }
+#v-promotor .pf-back:hover { color: var(--acid); border-color: rgba(229,255,0,0.3); }
 #v-promotor .pf-back svg { width: 16px; height: 16px; }
 #v-promotor .promotor-events-title {
   font-size: var(--fs-lg); font-weight: 700; text-transform: uppercase;
@@ -2023,14 +2024,18 @@ body::after {
   margin: 0 auto;
 }
 #v-evento .hero-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted);
-  background: none; margin-bottom: 28px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: var(--fs-sm); font-weight: 700; color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 10px 20px 10px 16px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.15);
+  margin-bottom: 28px;
   letter-spacing: 0.5px; text-transform: uppercase;
-  transition: color 0.2s;
-  border: none; cursor: pointer;
+  transition: all 0.2s;
+  cursor: pointer;
 }
-#v-evento .hero-back:hover { color: var(--acid); }
+#v-evento .hero-back:hover { color: var(--acid); border-color: rgba(229,255,0,0.3); background: rgba(0,0,0,0.6); }
 #v-evento .hero-back svg { width: 14px; height: 14px; }
 
 /* Event title block */
@@ -4026,7 +4031,7 @@ body::after {
   .cal-nav, .cal-clear { min-width: 44px; min-height: 44px; }
 
   /* View toggle buttons */
-  .view-toggle-btn { min-height: 40px; min-width: 44px; padding: 8px 12px; }
+  .view-toggle-btn { min-height: 44px; min-width: 44px; padding: 10px 14px; }
 
   /* Close buttons */
   .pm-close { width: 44px; height: 44px; }
@@ -4740,30 +4745,40 @@ body::after {
   display: block;
   animation: fadeIn 0.3s ease-in;
 }
-/* Full-viewport centered slides inside tab content */
-/* Scroll-snap toggled via JS when conocenos is active */
+/* ═══════════════════════════════════════════════════════
+   SCROLL-SNAP for Conócenos slides (rebuilt from scratch)
+   Container: html.snap-active  →  proximity snap
+   Children:  .conocenos-slide  →  snap-align: start
+   scroll-margin-top offsets for navbar(64) + tabs(58) = 122px
+   ═══════════════════════════════════════════════════════ */
 html.snap-active {
   scroll-snap-type: y proximity;
-  scroll-behavior: smooth;
 }
+/* Full-viewport centered slides */
 .conocenos-slide {
+  /* Sizing: fill viewport below navbar + tabs */
   min-height: calc(100vh - 64px - 58px);
+  box-sizing: border-box;
+  /* Snap: align top of slide to just below sticky tabs */
+  scroll-snap-align: start;
+  scroll-margin-top: 122px;
+  /* Centering: flex column, both axes */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 60px 48px !important;
+  /* Spacing & decoration */
+  padding: 60px 48px;
   border-bottom: 1px solid var(--border);
   position: relative;
-  max-width: 1440px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  scroll-snap-align: start;
 }
+/* Constrain inner content width without affecting the slide itself */
 .conocenos-slide > * {
   max-width: 1200px;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .conocenos-slide:last-child {
   border-bottom: none;
@@ -4771,13 +4786,15 @@ html.snap-active {
 @media (max-width: 768px) {
   .conocenos-slide {
     min-height: calc(100vh - 56px - 54px);
-    padding: 48px 24px !important;
+    scroll-margin-top: 110px; /* 56 + 54 */
+    padding: 48px 24px;
   }
 }
 @media (max-width: 480px) {
   .conocenos-slide {
     min-height: calc(100vh - 48px - 50px);
-    padding: 40px 16px !important;
+    scroll-margin-top: 98px; /* 48 + 50 */
+    padding: 40px 16px;
   }
 }
 @keyframes fadeIn {
@@ -11025,8 +11042,8 @@ a[onclick]:active,
   }
 
   function asistSubmitEmail() {
-    const input = document.getElementById('email-input-asist');
-    const form = document.getElementById('email-form-asist');
+    const input = document.getElementById('email-input-asist') || document.getElementById('email-input-asist-conocenos');
+    const form = document.getElementById('email-form-asist') || document.getElementById('email-form-asist-conocenos');
     const email = input.value.trim();
     if (!email || !email.includes('@')) { input.focus(); return; }
     form.style.opacity = '0.5';
@@ -11042,7 +11059,8 @@ a[onclick]:active,
       })
     }).then(() => {
       form.style.display = 'none';
-      document.getElementById('email-ok-asist').style.display = 'block';
+      var okEl = document.getElementById('email-ok-asist') || document.getElementById('email-ok-asist-conocenos');
+      if (okEl) okEl.style.display = 'block';
     }).catch(() => {
       form.style.opacity = '1';
       form.style.pointerEvents = 'auto';
@@ -11072,6 +11090,32 @@ a[onclick]:active,
     }).catch(() => {
       bar.style.opacity = '1';
       bar.style.pointerEvents = 'auto';
+      toast('Error al enviar. Intenta de nuevo.', 'error');
+    });
+  }
+
+  function promoSubmitEmail() {
+    var input = document.getElementById('email-input-promo-conocenos');
+    var form = document.getElementById('email-form-promo-conocenos');
+    if (!input || !form) return;
+    var email = input.value.trim();
+    if (!email || !email.includes('@')) { input.focus(); return; }
+    form.style.opacity = '0.5';
+    form.style.pointerEvents = 'none';
+    fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email, source: 'promo-conocenos',
+        fecha: new Date().toLocaleDateString('es-PE', { timeZone: 'America/Lima' }),
+        hora: new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima', hour12: false })
+      })
+    }).then(function() {
+      form.style.display = 'none';
+      document.getElementById('email-ok-promo-conocenos').style.display = 'block';
+    }).catch(function() {
+      form.style.opacity = '1';
+      form.style.pointerEvents = 'auto';
       toast('Error al enviar. Intenta de nuevo.', 'error');
     });
   }
@@ -13109,7 +13153,7 @@ a[onclick]:active,
           </div>
         </div>
         <div class="auth-legal">
-          Al continuar aceptas los <a href="javascript:void(0)" onclick="go('terminos');return false;">Términos de Uso</a> y <a href="javascript:void(0)" onclick="go('privacidad');return false;">Política de Privacidad</a> de Lezgo.
+          Al continuar aceptas los <a href="/terminos" target="_blank" style="color:var(--acid)">Términos de Uso</a> y <a href="/privacidad" target="_blank" style="color:var(--acid)">Política de Privacidad</a> de Lezgo.
         </div>
       </div>
     </div>

@@ -62,13 +62,17 @@ button { font-family: inherit; cursor: pointer; border: none; }
   margin: 0 auto;
 }
 .hero-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 600; color: var(--text-3);
-  background: none; margin-bottom: 28px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 10px 20px 10px 16px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.15);
+  margin-bottom: 28px;
   letter-spacing: 0.5px; text-transform: uppercase;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
-.hero-back:hover { color: var(--acid); }
+.hero-back:hover { color: var(--acid); border-color: rgba(229,255,0,0.3); background: rgba(0,0,0,0.6); }
 .hero-back svg { width: 14px; height: 14px; }
 
 /* Event title block */
