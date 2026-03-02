@@ -724,9 +724,177 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 
 /* ═══════════════════════════════════════════
+   PURCHASE MODAL
+   ═══════════════════════════════════════════ */
+.pm-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+.pm-overlay.pm-open { opacity: 1; pointer-events: auto; }
+
+.pm-drawer {
+  width: 90vw; max-width: 520px;
+  background: var(--gray-900);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+  padding: 0;
+  box-shadow: 0 32px 100px rgba(0,0,0,0.6), 0 0 60px rgba(229,255,0,0.04);
+}
+.pm-drawer.pm-open { transform: scale(1) translateY(0); opacity: 1; }
+
+.pm-handle { display: none; }
+.pm-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.pm-title {
+  font-size: var(--fs-lg); font-weight: var(--fw-bold);
+}
+.pm-close {
+  width: 36px; height: 36px; border-radius: var(--radius-full);
+  background: var(--gray-700); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-dim);
+  font-size: 18px; transition: all 0.2s;
+}
+.pm-close:hover { background: var(--gray-600); color: var(--text); }
+
+.pm-tiers { padding: 8px 0; }
+.pm-tier {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.pm-tier:last-child { border-bottom: none; }
+.pm-tier:hover { background: var(--alpha-subtle); }
+.pm-tier-info { flex: 1; min-width: 0; }
+.pm-tier-name {
+  font-size: var(--fs-base); font-weight: var(--fw-semibold);
+  color: var(--text); margin-bottom: 2px;
+}
+.pm-tier-phase {
+  font-size: var(--fs-xs); color: var(--acid);
+  font-weight: var(--fw-medium);
+}
+.pm-tier-includes {
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 4px; line-height: 1.4;
+}
+.pm-tier-price {
+  font-size: var(--fs-base); font-weight: var(--fw-bold);
+  color: var(--text); margin-right: 16px;
+  white-space: nowrap;
+}
+.pm-tier-sold {
+  font-size: var(--fs-xs); color: var(--red);
+  font-weight: var(--fw-semibold);
+  margin-right: 16px;
+}
+
+.pm-qty {
+  display: flex; align-items: center; gap: 0;
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.pm-qty-btn {
+  width: 38px; height: 38px;
+  background: var(--gray-700); border: none;
+  color: var(--text); font-size: 18px; font-weight: var(--fw-bold);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.pm-qty-btn:hover { background: var(--gray-600); }
+.pm-qty-btn:active { background: var(--gray-500); }
+.pm-qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.pm-qty-btn:disabled:hover { background: var(--gray-700); }
+.pm-qty-val {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-sm); font-weight: var(--fw-bold);
+  color: var(--text); background: var(--gray-800);
+  border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+}
+.pm-qty-val.pm-qty-active { color: var(--acid); }
+
+.pm-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--gray-900);
+  position: sticky; bottom: 0;
+  border-radius: 0 0 16px 16px;
+}
+.pm-summary {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.pm-summary-label {
+  font-size: var(--fs-sm); color: var(--text-dim);
+}
+.pm-summary-items {
+  font-size: var(--fs-xs); color: var(--text-muted);
+  margin-top: 2px;
+}
+.pm-summary-total {
+  font-size: var(--fs-xl); font-weight: var(--fw-extrabold);
+  color: var(--acid);
+}
+.pm-checkout-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--acid);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+.pm-checkout-btn:hover { background: #fff; box-shadow: 0 0 30px var(--acid-glow); }
+.pm-checkout-btn:active { transform: scale(0.98); }
+.pm-checkout-btn:disabled { opacity: 0.4; cursor: not-allowed; background: var(--gray-500); color: var(--text-muted); }
+.pm-checkout-btn:disabled:hover { box-shadow: none; background: var(--gray-500); }
+
+.pm-empty-msg {
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* ═══════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
+  .pm-overlay { align-items: flex-end; justify-content: center; }
+  .pm-drawer {
+    width: 100%; max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+    transform: translateY(100%); opacity: 1;
+  }
+  .pm-drawer.pm-open { transform: translateY(0); }
+  .pm-handle { display: block; }
+  .pm-footer { border-radius: 0; }
+  .pm-header { padding: 16px 20px 14px; }
+  .pm-footer { padding: 14px 20px 20px; }
   .hero { min-height: 85vh; }
   .hero-meta { gap: 12px; }
   .hero-meta-item { font-size: var(--fs-sm); }
@@ -777,6 +945,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .btn { padding: 14px 24px; font-size: 13px; }
   .sticky-cta { display: flex; }
   body { padding-bottom: 88px; }
+  .pm-drawer { max-height: 92vh; border-radius: 16px 16px 0 0; }
+  .pm-qty-btn { width: 34px; height: 34px; font-size: 16px; }
+  .pm-qty-val { width: 34px; height: 34px; font-size: var(--fs-xs); }
+  .pm-header { padding: 14px 16px 12px; }
+  .pm-footer { padding: 12px 16px 20px; border-radius: 0; }
+  .pm-checkout-btn { padding: 14px 16px; font-size: var(--fs-sm); border-radius: 8px; }
 }
 </style>
 
@@ -950,11 +1124,38 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <div class="sticky-cta" id="sticky-cta">
   <div class="sticky-cta-content">
     <div class="sticky-cta-price" id="sticky-cta-price">Desde S/ 0</div>
-    <button class="sticky-cta-btn" id="sticky-cta-btn" onclick="document.getElementById('ev-tk-grid').scrollIntoView({behavior:'smooth'})">
+    <button class="sticky-cta-btn" id="sticky-cta-btn" onclick="pmOpen()">
       Comprar entradas
     </button>
   </div>
 </div>
+
+
+<!-- ═══════════════════════════════════════════
+     PURCHASE MODAL
+     ═══════════════════════════════════════════ -->
+<div class="pm-overlay" id="pm-overlay" onclick="pmClose()">
+<div class="pm-drawer" id="pm-drawer" onclick="event.stopPropagation()">
+  <div class="pm-handle"></div>
+  <div class="pm-header">
+    <div class="pm-title">Elige tus entradas</div>
+    <button class="pm-close" onclick="pmClose()">✕</button>
+  </div>
+  <div class="pm-tiers" id="pm-tiers">
+    <!-- JS generates tier rows -->
+  </div>
+  <div class="pm-footer" id="pm-footer">
+    <div class="pm-summary">
+      <div>
+        <div class="pm-summary-label">Total</div>
+        <div class="pm-summary-items" id="pm-items-count">0 entradas</div>
+      </div>
+      <div class="pm-summary-total" id="pm-total">S/ 0</div>
+    </div>
+    <button class="pm-checkout-btn" id="pm-checkout-btn" disabled onclick="pmCheckout()">Selecciona tus entradas</button>
+  </div>
+</div>
+</div> <!-- /pm-overlay -->
 
 
 <!-- ═══════════════════════════════════════════
@@ -1185,7 +1386,7 @@ function renderEvent(ev) {
     `;
   } else {
     ctaBox.innerHTML = `
-      <button class="btn btn-primary" onclick="document.getElementById('ev-tk-grid').scrollIntoView({behavior:'smooth'})">Comprar entradas</button>
+      <button class="btn btn-primary" onclick="pmOpen()">Comprar entradas</button>
       <a class="btn btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
     `;
   }
@@ -1480,26 +1681,151 @@ function goMarketplace(tier) {
 }
 
 /**
- * Purchase Modal placeholders — en index.html estas funciones
- * están definidas en el módulo de compra.
- * Aquí son stubs para que el template funcione standalone.
+ * Purchase Modal — full implementation ported from evento-v3
  */
 var pmTicketCatalog = {};
 var pmTicketQty = {};
+var PM_MAX_PER_TIER = 6;
+var PM_MAX_TOTAL = 10;
 
-function pmOpen(eventName) {
-  // TODO: abrir modal de compra — go('purchase', { event: eventName })
-  console.log('pmOpen:', eventName);
+function pmOpen(preSelectTierId) {
+  pmBuildTicketList();
+  if (preSelectTierId && pmTicketQty[preSelectTierId] === 0) {
+    pmQtyChange(preSelectTierId, 1);
+  }
+  document.getElementById('pm-overlay').classList.add('pm-open');
+  document.getElementById('pm-drawer').classList.add('pm-open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('sticky-cta').style.display = 'none';
+}
+
+function pmClose() {
+  document.getElementById('pm-overlay').classList.remove('pm-open');
+  document.getElementById('pm-drawer').classList.remove('pm-open');
+  document.body.style.overflow = '';
+  if (window.innerWidth <= 480) {
+    document.getElementById('sticky-cta').style.display = 'flex';
+  }
 }
 
 function pmQtyChange(ticketId, delta) {
-  // TODO: actualizar cantidad en modal de compra
-  console.log('pmQtyChange:', ticketId, delta);
+  const current = pmTicketQty[ticketId] || 0;
+  const newVal = current + delta;
+  if (newVal < 0 || newVal > PM_MAX_PER_TIER) return;
+
+  const totalOther = Object.entries(pmTicketQty)
+    .filter(([id]) => id !== ticketId)
+    .reduce((sum, [, qty]) => sum + qty, 0);
+  if (newVal + totalOther > PM_MAX_TOTAL) return;
+
+  pmTicketQty[ticketId] = newVal;
+  pmUpdateUI();
 }
 
 function pmBuildTicketList() {
-  // TODO: construir lista de tickets en modal de compra
-  console.log('pmBuildTicketList');
+  const container = document.getElementById('pm-tiers');
+  if (!container) return;
+
+  const ev = window._currentEvent;
+  if (!ev || !ev.tickets || ev.tickets.length === 0) {
+    container.innerHTML = '<div class="pm-empty-msg">No hay entradas disponibles</div>';
+    return;
+  }
+
+  let html = '';
+  ev.tickets.forEach((t, i) => {
+    const tierSold = t.sold >= t.capacity;
+    const activePhase = getActivePhase(t);
+    const currentPrice = activePhase.price || t.price || 0;
+    const phaseName = activePhase.name || '';
+    const includes = (t.includes || []).slice(0, 3).join(' · ');
+    const qty = pmTicketQty[t.id] || 0;
+    const totalOther = Object.entries(pmTicketQty)
+      .filter(([id]) => id !== t.id)
+      .reduce((sum, [, q]) => sum + q, 0);
+    const canAdd = !tierSold && qty < PM_MAX_PER_TIER && (qty + totalOther) < PM_MAX_TOTAL;
+    const canRemove = qty > 0;
+
+    if (tierSold) {
+      html += `
+        <div class="pm-tier" style="opacity: 0.5;">
+          <div class="pm-tier-info">
+            <div class="pm-tier-name">${t.name}</div>
+            ${includes ? `<div class="pm-tier-includes">${includes}</div>` : ''}
+          </div>
+          <div class="pm-tier-sold">AGOTADO</div>
+        </div>`;
+    } else {
+      html += `
+        <div class="pm-tier">
+          <div class="pm-tier-info">
+            <div class="pm-tier-name">${t.name}</div>
+            ${phaseName ? `<div class="pm-tier-phase">${phaseName}</div>` : ''}
+            ${includes ? `<div class="pm-tier-includes">${includes}</div>` : ''}
+          </div>
+          <div class="pm-tier-price">S/ ${currentPrice.toLocaleString()}</div>
+          <div class="pm-qty">
+            <button class="pm-qty-btn" onclick="event.stopPropagation();pmQtyChange('${t.id}',-1)" ${!canRemove ? 'disabled' : ''}>−</button>
+            <div class="pm-qty-val ${qty > 0 ? 'pm-qty-active' : ''}">${qty}</div>
+            <button class="pm-qty-btn" onclick="event.stopPropagation();pmQtyChange('${t.id}',1)" ${!canAdd ? 'disabled' : ''}>+</button>
+          </div>
+        </div>`;
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+function pmUpdateUI() {
+  pmBuildTicketList();
+
+  const ev = window._currentEvent;
+  let totalPrice = 0;
+  let totalItems = 0;
+
+  if (ev && ev.tickets) {
+    ev.tickets.forEach(t => {
+      const qty = pmTicketQty[t.id] || 0;
+      if (qty > 0) {
+        const activePhase = getActivePhase(t);
+        const price = activePhase.price || t.price || 0;
+        totalPrice += price * qty;
+        totalItems += qty;
+      }
+    });
+  }
+
+  document.getElementById('pm-total').textContent = totalPrice === 0 ? 'S/ 0' : 'S/ ' + totalPrice.toLocaleString();
+  document.getElementById('pm-items-count').textContent = totalItems === 0 ? '0 entradas' : totalItems + (totalItems === 1 ? ' entrada' : ' entradas');
+
+  const btn = document.getElementById('pm-checkout-btn');
+  if (totalItems > 0) {
+    btn.disabled = false;
+    btn.textContent = 'Continuar — S/ ' + totalPrice.toLocaleString();
+  } else {
+    btn.disabled = true;
+    btn.textContent = 'Selecciona tus entradas';
+  }
+}
+
+function pmCheckout() {
+  const ev = window._currentEvent;
+  if (!ev) return;
+
+  const items = [];
+  ev.tickets.forEach(t => {
+    const qty = pmTicketQty[t.id] || 0;
+    if (qty > 0) {
+      const activePhase = getActivePhase(t);
+      const price = activePhase.price || t.price || 0;
+      items.push({ tier: t.name, qty, price, subtotal: price * qty });
+    }
+  });
+
+  const total = items.reduce((sum, i) => sum + i.subtotal, 0);
+  const summary = items.map(i => `${i.qty}x ${i.tier} (S/ ${i.subtotal.toLocaleString()})`).join('\n');
+
+  alert('🎫 Resumen de compra:\n\n' + summary + '\n\nTotal: S/ ' + total.toLocaleString() + '\n\n(Checkout próximamente)');
 }
 
 
