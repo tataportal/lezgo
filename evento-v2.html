@@ -277,7 +277,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .tk-grid {
   display: flex;
   gap: 0;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
   margin: 0 auto;
 }
@@ -287,8 +287,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 1 1 220px;
+  min-width: 220px;
+  max-width: 100%;
 }
 .tk-card:hover {
   transform: translateY(-8px);
@@ -733,7 +734,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .section { padding: 56px 20px; }
   .tk-grid { flex-wrap: wrap; }
   .tk-grid-wrap { height: auto !important; }
-  .tk-card { flex: 0 0 calc(50% - 0px); min-width: calc(50%); }
+  .tk-card { flex: 1 1 calc(50% - 0px); min-width: calc(50% - 0px); max-width: 100%; }
   .tk-inner { min-height: 360px; padding: 24px 20px; }
   .tk-name { font-size: var(--fs-xl); }
   .tk-buy { padding: 10px 16px; font-size: var(--fs-xs); }
@@ -750,7 +751,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 @media (max-width: 480px) {
   .tk-grid { gap: 0; flex-wrap: wrap; }
   .tk-grid-wrap { height: auto !important; }
-  .tk-card { flex: 0 0 100%; min-width: 100%; }
+  .tk-card { flex: 1 1 100%; min-width: 100%; max-width: 100%; }
   .tk-inner { min-height: 320px; padding: 20px 18px; }
   .tk-name { font-size: var(--fs-lg); }
   .tk-phase { font-size: 11px; padding: 4px 0; }
