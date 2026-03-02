@@ -4743,12 +4743,8 @@ body::after {
 /* Full-viewport centered slides inside tab content */
 /* Scroll-snap toggled via JS when conocenos is active */
 html.snap-active {
+  scroll-snap-type: y proximity;
   scroll-behavior: smooth;
-}
-html.snap-active body {
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  height: 100vh;
 }
 .conocenos-slide {
   min-height: calc(100vh - 64px - 58px);
