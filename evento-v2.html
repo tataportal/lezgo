@@ -824,7 +824,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
       <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
     </div>
     <div class="mp-action">
-      <button class="btn btn-primary" id="ev-mp-btn">Ver Marketplace →</button>
+      <button class="btn btn-primary" id="ev-mp-btn">Buscar en reventa →</button>
     </div>
   </div>
 </section>
@@ -1164,7 +1164,7 @@ function renderEvent(ev) {
 
   if (isSoldOut) {
     ctaBox.innerHTML = `
-      <button class="btn btn-sold" onclick="goMarketplace('all')">SOLD OUT — Ver Marketplace</button>
+      <button class="btn btn-sold" onclick="goMarketplace('all')">AGOTADO — Buscar en reventa →</button>
       <a class="btn btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
     `;
   } else {
@@ -1376,9 +1376,9 @@ function buildTicketCard(t, eventName, index) {
   if (!tierSold) {
     bottom = `<button class="tk-buy" onclick="event.stopPropagation();pmOpen('${(eventName||'').replace(/'/g,"\\'")}');pmQtyChange('${t.id}',1)">Comprar</button>`;
   } else if (hasResale) {
-    bottom = `<div class="tk-sold-all">SOLD OUT — Ver en Marketplace</div>`;
+    bottom = `<div class="tk-sold-all">AGOTADO — Ver en reventa</div>`;
   } else {
-    bottom = `<div class="tk-sold-all">SOLD OUT</div>`;
+    bottom = `<div class="tk-sold-all">AGOTADO</div>`;
   }
 
   let availHtml = '';
