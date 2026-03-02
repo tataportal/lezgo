@@ -4778,7 +4778,7 @@ body::after {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   position: sticky;
-  top: 64px;
+  top: 112px; /* nav 64px + marquee 48px */
   z-index: 90;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 2px 20px rgba(0,0,0,0.5);
@@ -4875,16 +4875,16 @@ html.snap-active {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-/* Sticky tabs responsive top offset */
+/* Sticky tabs responsive top offset: nav height + marquee 48px */
 @media (max-width: 768px) {
-  .conocenos-tabs-container { top: 56px; }
+  .conocenos-tabs-container { top: 104px; } /* nav 56 + marquee 48 */
   .conocenos-tab { padding: 16px 12px; font-size: 13px; }
 }
 @media (max-width: 900px) and (max-height: 600px) {
-  .conocenos-tabs-container { top: 52px; }
+  .conocenos-tabs-container { top: 100px; } /* nav 52 + marquee 48 */
 }
 @media (max-width: 480px) and (max-height: 500px) {
-  .conocenos-tabs-container { top: 48px; }
+  .conocenos-tabs-container { top: 96px; } /* nav 48 + marquee 48 */
   .conocenos-tab { padding: 14px 8px; font-size: 12px; }
 }
 .auth-sub { font-size: var(--fs-base); color: var(--text-mid); margin-bottom: 28px; line-height: 1.5; }
