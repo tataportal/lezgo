@@ -11468,7 +11468,17 @@ a[onclick]:active,
   setInterval(cfGlitch, 1500);
   setInterval(() => { if (Math.random() > 0.6) cfGlitch(); }, 500);
 
-  // ── Mouse parallax on tickets ──
+  // ── Glitch effect on Conócenos hero ──
+  const cfHeroConocenos = document.getElementById('conocenos-hero');
+  function cfGlitchConocenos() {
+    if (!cfHeroConocenos) return;
+    cfHeroConocenos.classList.add('cf-glitch-on');
+    setTimeout(() => cfHeroConocenos.classList.remove('cf-glitch-on'), 200);
+  }
+  setInterval(cfGlitchConocenos, 1500);
+  setInterval(() => { if (Math.random() > 0.6) cfGlitchConocenos(); }, 500);
+
+  // ── Mouse parallax on tickets (fans) ──
   const tFake = document.getElementById('t-fake');
   const tReal = document.getElementById('t-real');
   document.addEventListener('mousemove', (e) => {
@@ -11477,6 +11487,11 @@ a[onclick]:active,
     const y = (e.clientY / window.innerHeight - 0.5) * 2;
     tFake.style.transform = `rotate(-3deg) rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
     tReal.style.transform = `rotate(2deg) rotateY(${x * 15}deg) rotateX(${-y * 15}deg)`;
+    // Conocenos tickets parallax too
+    const tFakeC = document.getElementById('t-fake-conocenos');
+    const tRealC = document.getElementById('t-real-conocenos');
+    if (tFakeC) tFakeC.style.transform = `rotate(-3deg) rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
+    if (tRealC) tRealC.style.transform = `rotate(2deg) rotateY(${x * 15}deg) rotateX(${-y * 15}deg)`;
   });
 
   // ── Mouse tilt on Deck ticket mockups ──
