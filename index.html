@@ -4740,26 +4740,38 @@ body::after {
   display: block;
   animation: fadeIn 0.3s ease-in;
 }
-/* Slide sections inside tab content — natural height, good spacing */
+/* Full-viewport centered slides inside tab content */
 .conocenos-slide {
-  padding: 80px 48px !important;
+  min-height: calc(100vh - 64px - 58px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 48px !important;
   border-bottom: 1px solid var(--border);
   position: relative;
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
 }
+.conocenos-slide > * {
+  max-width: 1200px;
+  width: 100%;
+}
 .conocenos-slide:last-child {
   border-bottom: none;
 }
 @media (max-width: 768px) {
   .conocenos-slide {
-    padding: 60px 24px !important;
+    min-height: calc(100vh - 56px - 54px);
+    padding: 48px 24px !important;
   }
 }
 @media (max-width: 480px) {
   .conocenos-slide {
-    padding: 48px 16px !important;
+    min-height: calc(100vh - 48px - 50px);
+    padding: 40px 16px !important;
   }
 }
 @keyframes fadeIn {
