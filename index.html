@@ -3894,6 +3894,7 @@ body::after {
   .mp { padding: 48px 24px 60px; }
   .mp-search-bar { flex-direction: column; height: auto; }
   .mp-search-field { padding: 14px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+  .mp-search-bar .search-btn { padding: 16px 20px; justify-content: center; }
   .mp-top { flex-direction: column; align-items: flex-start; gap: 16px; }
   .mp-listing { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
   .mp-listing-img { display: none; }
@@ -7368,10 +7369,11 @@ a[onclick]:active,
             </div>
           </div>
         </div>
-        <div class="mp-search-field mp-search-field-main" style="border-right:none;">
+        <div class="mp-search-field mp-search-field-main" style="border-right:none;position:relative;">
           <div class="search-field-label">Buscar</div>
-          <div class="search-field-value" style="opacity:0.5;">Evento, artista o lugar...</div>
+          <input class="search-field-value" id="mp-search-text-input" type="text" placeholder="Evento, artista o lugar..." autocomplete="off" aria-label="Buscar en reventa" oninput="mpSearchTextChanged()" onkeydown="if(event.key==='Enter'){doMpSearch();event.preventDefault();}" style="background:transparent;border:none;outline:none;color:var(--text);font-size:var(--fs-base);width:100%;font-family:inherit;">
         </div>
+        <button class="search-btn" onclick="doMpSearch()">Buscar</button>
       </div>
 
       <!-- Filter pills -->
@@ -12270,6 +12272,19 @@ a[onclick]:active,
   let mpLocFilter = 'todos';
   let mpCalYear = 2026, mpCalMonth = 4;
   let mpRangeStart = null, mpRangeEnd = null;
+  let mpTextFilter = '';
+
+  function doMpSearch() {
+    var input = document.getElementById('mp-search-text-input');
+    mpTextFilter = input ? input.value.trim().toLowerCase() : '';
+    mpApplyAllFilters();
+  }
+
+  function mpSearchTextChanged() {
+    var input = document.getElementById('mp-search-text-input');
+    mpTextFilter = input ? input.value.trim().toLowerCase() : '';
+    if (mpTextFilter === '') mpApplyAllFilters();
+  }
 
   function mpToggle(type) {
     const other = type === 'loc' ? 'date' : 'loc';
@@ -12418,6 +12433,15 @@ a[onclick]:active,
       listings.forEach(l => {
         if (l.style.display === 'none') return;
         if (l.dataset.oferta !== '1') l.style.display = 'none';
+      });
+    }
+
+    // Text search filter
+    if (mpTextFilter) {
+      listings.forEach(l => {
+        if (l.style.display === 'none') return;
+        var text = l.textContent.toLowerCase();
+        if (!text.includes(mpTextFilter)) l.style.display = 'none';
       });
     }
 
