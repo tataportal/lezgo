@@ -1170,11 +1170,12 @@ body::after {
    PROMOTORES — Phase tags, dashboard, resale flow
    ═══════════════════════════════════════════ */
 .pp-phase-tag {
-  display: inline-block; padding: 4px 14px;
+  display: block; width: fit-content; margin: 0 auto 20px auto;
+  padding: 4px 14px;
   background: rgba(229,255,0,0.1); border: 1px solid rgba(229,255,0,0.2);
-  border-radius: var(--radius-pill); font-size: var(--fs-xs); font-weight: 700;
-  color: var(--acid); letter-spacing: 1.5px; text-transform: uppercase;
-  margin-bottom: 24px;
+  border-radius: var(--radius-pill); font-size: 11px; font-weight: 700;
+  color: var(--acid); letter-spacing: 2px; text-transform: uppercase;
+  text-align: center;
 }
 
 /* Fans & Promotores — slide layout like deck */
@@ -4737,13 +4738,9 @@ body::after {
   display: block;
   animation: fadeIn 0.3s ease-in;
 }
-/* Full-viewport slide sections inside tab content */
+/* Slide sections inside tab content — natural height, good spacing */
 .conocenos-slide {
-  min-height: calc(100vh - 64px - 53px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 80px 64px !important;
+  padding: 80px 48px !important;
   border-bottom: 1px solid var(--border);
   position: relative;
   max-width: 100%;
@@ -4752,30 +4749,14 @@ body::after {
 .conocenos-slide:last-child {
   border-bottom: none;
 }
-/* FAQ and email slides don't need centering — they flow naturally */
-.faq-section.conocenos-slide,
-.email-capture.conocenos-slide {
-  justify-content: flex-start;
-  padding-top: 100px !important;
-}
 @media (max-width: 768px) {
   .conocenos-slide {
-    min-height: calc(100vh - 56px - 49px);
     padding: 60px 24px !important;
-  }
-  .faq-section.conocenos-slide,
-  .email-capture.conocenos-slide {
-    padding-top: 80px !important;
   }
 }
 @media (max-width: 480px) {
   .conocenos-slide {
-    min-height: calc(100vh - 56px - 45px);
     padding: 48px 16px !important;
-  }
-  .faq-section.conocenos-slide,
-  .email-capture.conocenos-slide {
-    padding-top: 60px !important;
   }
 }
 @keyframes fadeIn {
