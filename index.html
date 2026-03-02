@@ -1075,10 +1075,11 @@ body::after {
   margin-top: 40px;
 }
 .cf-compromiso {
-  padding: 24px 24px; background: var(--bg-raised);
+  padding: 32px 28px; background: var(--bg-raised);
   border: 1px solid var(--alpha-light); border-radius: 0;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex; flex-direction: column;
+  min-height: 220px;
 }
 .cf-compromiso:hover {
   border-color: rgba(229,255,0,0.25);
@@ -4714,7 +4715,7 @@ body::after {
   text-align: center;
   font-size: var(--fs-lg);
   font-weight: 800;
-  color: var(--text-mid);
+  color: var(--acid);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   border: 2px solid var(--acid);
@@ -4723,13 +4724,11 @@ body::after {
   position: relative;
 }
 .conocenos-tab:hover {
-  color: var(--acid);
-  background: rgba(229,255,0,0.05);
+  background: rgba(229,255,0,0.08);
 }
 .conocenos-tab.active {
   color: var(--gray-950);
   background: var(--acid);
-  border-bottom-color: var(--acid);
 }
 .conocenos-tab.active:hover {
   background: #f0ff00;
@@ -4742,7 +4741,12 @@ body::after {
   animation: fadeIn 0.3s ease-in;
 }
 /* Full-viewport centered slides inside tab content */
-#v-conocenos {
+/* Scroll-snap toggled via JS when conocenos is active */
+html.snap-active {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+html.snap-active body {
   scroll-snap-type: y proximity;
 }
 .conocenos-slide {
@@ -6175,7 +6179,7 @@ a[onclick]:active,
         <p class="cf-hero-text"><strong>Cero estafas. Cero reventas falsas.</strong></p>
         <div class="cf-btns">
           <button class="conocenos-pill" onclick="go('marketplace')">Buscar Reventa →</button>
-          <button class="conocenos-pill-outline" onclick="go('organizer')">Crear Evento →</button>
+          <button class="conocenos-pill-outline" onclick="openEventForm()">Crear Evento →</button>
         </div>
       </div>
 
@@ -6766,7 +6770,7 @@ a[onclick]:active,
         <p class="cf-hero-text"><strong>Cero estafas. Cero reventas falsas.</strong></p>
         <div class="cf-btns">
           <button class="conocenos-pill" onclick="go('marketplace')">Buscar Reventa →</button>
-          <button class="conocenos-pill-outline" onclick="go('organizer')">Crear Evento →</button>
+          <button class="conocenos-pill-outline" onclick="openEventForm()">Crear Evento →</button>
         </div>
       </div>
 
@@ -11138,6 +11142,12 @@ a[onclick]:active,
     }
     if (map[view] !== undefined) {
       document.querySelectorAll('.nav-cat')[map[view]].classList.add('active');
+    }
+    // Toggle scroll-snap for conocenos slides
+    if (view === 'conocenos') {
+      document.documentElement.classList.add('snap-active');
+    } else {
+      document.documentElement.classList.remove('snap-active');
     }
     window.scrollTo(0, 0);
 
