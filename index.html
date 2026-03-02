@@ -6082,8 +6082,8 @@ a[onclick]:active,
         </h1>
         <p class="cf-hero-text"><strong>Cero estafas. Cero reventas falsas.</strong></p>
         <div class="cf-btns">
-          <button class="btn-acid" onclick="go('eventos')">Explorar eventos →</button>
-          <button class="btn-border">¿Cómo funciona? →</button>
+          <button class="conocenos-pill" onclick="go('marketplace')">Buscar Reventa →</button>
+          <button class="conocenos-pill-outline" onclick="go('organizer')">Crear Evento →</button>
         </div>
       </div>
 
@@ -6372,8 +6372,8 @@ a[onclick]:active,
         </h1>
         <p class="cf-hero-text nowrap"><strong>Control total sobre la venta y reventa de tus entradas.</strong></p>
         <div class="cf-btns">
-          <button class="btn-acid" onclick="openEventForm()">Probar ahora →</button>
-          <button class="btn-border" onclick="go('fans')">¿Cómo funciona para fans? →</button>
+          <button class="conocenos-pill" onclick="openEventForm()">Crear Evento →</button>
+          <button class="conocenos-pill-outline" onclick="go('conocenos');setTimeout(()=>conocenosSwitchTab('asistentes'),100)">Para Asistentes →</button>
         </div>
       </div>
     </div>
@@ -7755,7 +7755,7 @@ a[onclick]:active,
       </p>
       <div class="dk-hero-btns">
         <button class="dk-btn-primary" onclick="window.open('mailto:tata@frensonly.club','_blank')" data-es="CONTACTAR EQUIPO →" data-en="CONTACT TEAM →">CONTACTAR EQUIPO →</button>
-        <button class="dk-btn-secondary" onclick="go('fans')" data-es="PARA FANS →" data-en="FOR FANS →">PARA FANS →</button>
+        <button class="dk-btn-secondary" onclick="go('conocenos')" data-es="CONÓCENOS →" data-en="ABOUT US →">CONÓCENOS →</button>
       </div>
     </div>
     <div class="dk-tickets">
@@ -11023,6 +11023,17 @@ a[onclick]:active,
     if (promoterViews.includes(view) && userProfile?.role !== 'promoter') {
       toast('Esta sección es solo para organizadores', 'warning');
       go('eventos');
+      return;
+    }
+    // Redirect old views to conocenos tabs
+    if (view === 'fans') {
+      go('conocenos', opts);
+      setTimeout(() => conocenosSwitchTab('asistentes'), 50);
+      return;
+    }
+    if (view === 'promotores') {
+      go('conocenos', opts);
+      setTimeout(() => conocenosSwitchTab('organizadores'), 50);
       return;
     }
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
