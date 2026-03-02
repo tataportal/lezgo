@@ -1650,6 +1650,42 @@ body::after {
 }
 .pf-meta { font-size: var(--fs-base); color: var(--text-dim); margin-bottom: 8px; }
 .pf-meta span { color: var(--acid); font-weight: 600; }
+
+/* ═══════════════════════════════════════════
+   PROMOTOR PROFILE
+   ═══════════════════════════════════════════ */
+.hero-promoter-link {
+  color: var(--acid);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.hero-promoter-link:hover { opacity: 0.7; }
+.hero-promoter-link .promoter-check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; background: var(--acid);
+  border-radius: var(--radius-full); font-size: 10px; color: var(--bg);
+  margin-left: 4px; vertical-align: middle;
+}
+
+#v-promotor .pf { text-align: center; }
+#v-promotor .pf-header { flex-direction: column; align-items: center; text-align: center; }
+#v-promotor .pf-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text-dim); text-decoration: none; font-size: var(--fs-sm);
+  font-weight: 600; transition: color 0.2s; align-self: flex-start;
+}
+#v-promotor .pf-back:hover { color: var(--text); }
+#v-promotor .pf-back svg { width: 16px; height: 16px; }
+#v-promotor .promotor-events-title {
+  font-size: var(--fs-lg); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text); margin-bottom: 24px; text-align: left;
+}
+#v-promotor .promotor-events-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;
+}
+
 .pf-stats-row { display: flex; gap: 32px; }
 .pf-stat { font-size: var(--fs-base); color: var(--text-mid); }
 .pf-stat strong { color: var(--acid); font-weight: 700; font-size: var(--fs-lg); margin-right: 4px; }
@@ -6564,6 +6600,30 @@ a[onclick]:active,
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     PROMOTOR PROFILE
+     ═══════════════════════════════════════════ -->
+<div id="v-promotor" class="view">
+  <div class="pf">
+    <a href="#" class="pf-back" onclick="go('eventos'); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Eventos
+    </a>
+    <div class="pf-header">
+      <div class="pf-avatar">
+        <div class="pf-verified-ring"></div>
+        <span id="promotor-initials">XX</span>
+      </div>
+      <div class="pf-info">
+        <h1 id="promotor-name">Promotor <span class="pf-check">&#10003;</span></h1>
+        <div class="pf-meta">Productor verificado · <span id="promotor-event-count">0</span> eventos</div>
+      </div>
+    </div>
+    <div class="promotor-events-title">Sus eventos</div>
+    <div class="promotor-events-grid" id="promotor-events-grid"></div>
+  </div>
+</div>
+
 
 <!-- ═══════════════════════════════════════════
      VIEW 5: EVENTO DETAIL
@@ -8083,7 +8143,7 @@ a[onclick]:active,
       '<div class="hero-meta">' + metaDate + ' · ' + feat.venue + ', ' + feat.location + '</div>' +
       '<div class="hero-actions">' +
         '<button class="hero-cta" onclick="openEvent(\'' + feat._id + '\')">' + ctaText + '</button>' +
-        '<div class="hero-sponsor">' + (feat.promoter ? 'Producido por ' + feat.promoter + '. Powered by ' : 'Powered by ') + '<span>LEZGO ' + smileyIcon + '</span></div>' +
+        '<div class="hero-sponsor">' + (feat.promoter ? 'Producido por <a href="#" onclick="event.preventDefault();goPromoter(\'' + feat.promoter.replace(/'/g, "\\'") + '\')" class="hero-promoter-link">' + feat.promoter + ' <span class="promoter-check">&#10003;</span></a>. Powered by ' : 'Powered by ') + '<span>LEZGO ' + smileyIcon + '</span></div>' +
       '</div>';
   }
 
@@ -10196,6 +10256,32 @@ a[onclick]:active,
     });
   }
 
+  // ── Promoter Profile ──
+  function goPromoter(name) {
+    window._promoterName = name;
+    go('promotor', { promoterName: name });
+  }
+
+  function loadPromoterProfile(name) {
+    if (!name) return;
+    var initials = name.split(' ').slice(0, 2).map(function(w) { return w.charAt(0).toUpperCase(); }).join('');
+    var events = allEvents.filter(function(ev) {
+      return ev.promoter && ev.promoter.toLowerCase() === name.toLowerCase();
+    });
+    var now = new Date();
+    events.sort(function(a, b) {
+      var dA = new Date(a.date + 'T12:00:00'), dB = new Date(b.date + 'T12:00:00');
+      var aPast = dA < now, bPast = dB < now;
+      if (aPast !== bPast) return aPast ? 1 : -1;
+      return dA - dB;
+    });
+    document.getElementById('promotor-initials').textContent = initials || 'P';
+    document.getElementById('promotor-name').innerHTML = name.replace(/</g,'&lt;') + ' <span class="pf-check">&#10003;</span>';
+    document.getElementById('promotor-event-count').textContent = events.length;
+    var grid = document.getElementById('promotor-events-grid');
+    grid.innerHTML = events.length > 0 ? events.map(buildEvCard).join('') : '<div style="text-align:center;padding:40px 20px;color:var(--text-mid);">Este productor aún no tiene eventos.</div>';
+  }
+
   function go(view, opts) {
     opts = opts || {};
     // Protected views require auth
@@ -10232,10 +10318,12 @@ a[onclick]:active,
         hash = '';
       } else if (view === 'evento' && (opts._eventId || currentEventId)) {
         hash = '#evento/' + (opts._eventId || currentEventId);
+      } else if (view === 'promotor' && (opts.promoterName || window._promoterName)) {
+        hash = '#promotor/' + encodeURIComponent(opts.promoterName || window._promoterName);
       } else {
         hash = '#' + view;
       }
-      history.pushState({ view: view, eventId: opts._eventId || currentEventId || null }, '', hash || window.location.pathname);
+      history.pushState({ view: view, eventId: opts._eventId || currentEventId || null, promoterName: opts.promoterName || window._promoterName || null }, '', hash || window.location.pathname);
     }
 
     // If navigating to evento view without data populated, re-open the event
@@ -10249,6 +10337,7 @@ a[onclick]:active,
     if (view === 'marketplace' && typeof loadMarketplace === 'function') loadMarketplace();
     if (view === 'organizer' && typeof loadOrganizerDashboard === 'function') loadOrganizerDashboard();
     if (view === 'perfil' && typeof loadProfile === 'function') loadProfile();
+    if (view === 'promotor' && typeof loadPromoterProfile === 'function') loadPromoterProfile(opts.promoterName || window._promoterName);
     if (view === 'scanner' && typeof populateScannerEvents === 'function') populateScannerEvents();
   }
 
@@ -10259,12 +10348,15 @@ a[onclick]:active,
     if (view === 'evento' && state.eventId) {
       currentEventId = state.eventId;
     }
+    if (view === 'promotor' && state.promoterName) {
+      window._promoterName = state.promoterName;
+    }
     // Close purchase modal if open
     const pmOverlay = document.getElementById('pm-overlay');
     if (pmOverlay && pmOverlay.classList.contains('pm-open')) {
       pmClose();
     }
-    go(view, { _fromPop: true });
+    go(view, { _fromPop: true, promoterName: state.promoterName });
   });
 
   // On page load: read hash and navigate
@@ -10274,8 +10366,11 @@ a[onclick]:active,
       // Handle #evento/eventId format
       const parts = hash.split('/');
       if (parts[0] === 'evento' && parts[1]) {
-        // Delay so Firebase auth + events can initialize, then open specific event
         setTimeout(function() { openEvent(parts[1]); }, 500);
+      } else if (parts[0] === 'promotor' && parts[1]) {
+        var pName = decodeURIComponent(parts[1]);
+        window._promoterName = pName;
+        setTimeout(function() { go('promotor', { promoterName: pName }); }, 500);
       } else {
         setTimeout(function() { go(parts[0]); }, 300);
       }
