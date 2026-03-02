@@ -678,34 +678,37 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .footer-copy { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; opacity: 0.5; }
 
 /* ═══════════════════════════════════════════
-   PURCHASE MODAL (drawer from bottom)
+   PURCHASE MODAL (centered card)
    ═══════════════════════════════════════════ */
 .pm-overlay {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(12px);
   opacity: 0; pointer-events: none;
   transition: opacity 0.3s ease;
+  display: flex; align-items: center; justify-content: center;
 }
 .pm-overlay.pm-open { opacity: 1; pointer-events: auto; }
 
 .pm-drawer {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 201;
+  position: relative; z-index: 201;
   background: var(--gray-900);
-  border-top: 1px solid var(--border-mid);
-  border-radius: 20px 20px 0 0;
-  max-height: 85vh;
+  border: 1px solid var(--border-mid);
+  border-radius: 16px;
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: 80vh;
   overflow-y: auto;
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
   padding: 0;
+  box-shadow: 0 32px 100px rgba(0,0,0,0.6), 0 0 60px rgba(229,255,0,0.04);
 }
-.pm-drawer.pm-open { transform: translateY(0); }
+.pm-drawer.pm-open { transform: scale(1) translateY(0); opacity: 1; }
 
 .pm-handle {
-  width: 40px; height: 4px; border-radius: 2px;
-  background: var(--gray-500);
-  margin: 12px auto 0;
+  display: none; /* hidden on desktop centered modal */
 }
 .pm-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -789,10 +792,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* Footer with total */
 .pm-footer {
-  padding: 16px 24px 24px;
+  padding: 16px 24px 20px;
   border-top: 1px solid var(--border);
   background: var(--gray-900);
   position: sticky; bottom: 0;
+  border-radius: 0 0 16px 16px;
 }
 .pm-summary {
   display: flex; align-items: center; justify-content: space-between;
@@ -815,7 +819,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   background: var(--acid);
   color: #000;
   border: none;
-  border-radius: 0;
+  border-radius: 10px;
   font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   cursor: pointer;
@@ -906,7 +910,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .mp-desc { max-width: 100%; }
   .trust-row { grid-template-columns: 1fr 1fr; }
   .trust-item { padding: 20px 12px; }
-  .pm-drawer { max-height: 90vh; }
+  /* Modal becomes bottom drawer on tablet */
+  .pm-overlay { align-items: flex-end; justify-content: center; }
+  .pm-drawer {
+    width: 100%; max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 85vh;
+    transform: translateY(100%); opacity: 1;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.4);
+  }
+  .pm-drawer.pm-open { transform: translateY(0); }
+  .pm-handle { display: block; }
+  .pm-footer { border-radius: 0; }
   .pm-tier { padding: 14px 20px; }
   .pm-tier-name { font-size: var(--fs-sm); }
   .pm-tier-price { font-size: var(--fs-sm); margin-right: 12px; }
@@ -931,6 +946,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .trust-item { padding: 16px 10px; }
   .trust-icon { font-size: var(--fs-lg); margin-bottom: 8px; }
   .pm-drawer { max-height: 92vh; border-radius: 16px 16px 0 0; }
+  .pm-handle { display: block; }
   .pm-tier { padding: 12px 16px; }
   .pm-tier-name { font-size: var(--fs-sm); }
   .pm-tier-price { font-size: var(--fs-sm); margin-right: 10px; }
@@ -938,8 +954,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .pm-qty-val { width: 34px; height: 34px; font-size: var(--fs-xs); }
   .pm-header { padding: 14px 16px 12px; }
   .pm-title { font-size: var(--fs-base); }
-  .pm-footer { padding: 12px 16px 20px; }
-  .pm-checkout-btn { padding: 14px 16px; font-size: var(--fs-sm); }
+  .pm-footer { padding: 12px 16px 20px; border-radius: 0; }
+  .pm-checkout-btn { padding: 14px 16px; font-size: var(--fs-sm); border-radius: 8px; }
   .pm-summary-total { font-size: var(--fs-lg); }
   .trust-text { font-size: 11px; }
   .hero-title { letter-spacing: -2px; }
@@ -1133,8 +1149,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <!-- ═══════════════════════════════════════════
      PURCHASE MODAL
      ═══════════════════════════════════════════ -->
-<div class="pm-overlay" id="pm-overlay" onclick="pmClose()"></div>
-<div class="pm-drawer" id="pm-drawer">
+<div class="pm-overlay" id="pm-overlay" onclick="pmClose()">
+<div class="pm-drawer" id="pm-drawer" onclick="event.stopPropagation()">
   <div class="pm-handle"></div>
   <div class="pm-header">
     <div class="pm-title">Elige tus entradas</div>
@@ -1154,6 +1170,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
     <button class="pm-checkout-btn" id="pm-checkout-btn" disabled onclick="pmCheckout()">Selecciona tus entradas</button>
   </div>
 </div>
+</div> <!-- /pm-overlay -->
 
 
 <!-- ═══════════════════════════════════════════
