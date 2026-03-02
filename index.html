@@ -1485,6 +1485,36 @@ body::after {
 }
 .btn-border:active { transform: scale(0.97); }
 
+/* Conócenos pill buttons */
+.conocenos-pill {
+  background: var(--acid); color: var(--gray-950); border: none;
+  padding: 16px 36px; font-size: var(--fs-base); font-weight: 700;
+  letter-spacing: 0.5px; border-radius: 50px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+.conocenos-pill:hover {
+  background: #f0ff00;
+  box-shadow: 0 0 40px rgba(229, 255, 0, 0.4);
+  transform: translateY(-2px);
+}
+.conocenos-pill:active { transform: scale(0.97); }
+
+.conocenos-pill-outline {
+  background: transparent; color: white; border: 1.5px solid white;
+  padding: 16px 36px; font-size: var(--fs-base); font-weight: 700;
+  letter-spacing: 0.5px; border-radius: 50px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+.conocenos-pill-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(229, 255, 0, 0.05);
+  transform: translateY(-2px);
+}
+.conocenos-pill-outline:active { transform: scale(0.97); }
+
 /* Fake vs Real Tickets */
 .cf-tickets { position: relative; perspective: 1000px; max-width: 480px; }
 .cf-ticket {
@@ -5668,6 +5698,14 @@ a[onclick]:active,
 }
 
 /* Counter Animation */
+@keyframes conocenos-glitch {
+  0%, 100% { text-shadow: none; }
+  20% { text-shadow: -2px 0 #ff0040, 2px 0 #0ff; }
+  40% { text-shadow: 2px 0 #ff0040, -2px 0 #0ff; }
+  60% { text-shadow: -1px 0 #ff0040, 1px 0 #0ff; transform: translate(1px, 0); }
+  80% { text-shadow: 1px 0 #ff0040, -1px 0 #0ff; transform: translate(-1px, 0); }
+}
+
 @keyframes countUp {
   from {
     transform: translateY(10px);
@@ -6626,17 +6664,17 @@ a[onclick]:active,
         <div class="cf-hero-badge"><span class="acid-smiley"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span> BIENVENIDO AL FUTURO</div>
         <h1>
           <span class="outline">COMPRA</span>
-          <span class="acid-text">
+          <span class="acid-text" style="position: relative; display: inline-block;">
             <span class="cf-glitch-layer cf-glitch-pink" aria-hidden="true">TICKETS</span>
             <span class="cf-glitch-layer cf-glitch-cyan" aria-hidden="true">TICKETS</span>
-            TICKETS
+            <span style="animation: conocenos-glitch 3s infinite;">TICKETS</span>
           </span>
           <span class="white-text">SIN MIEDO</span>
         </h1>
         <p class="cf-hero-text"><strong>Cero estafas. Cero reventas falsas.</strong></p>
         <div class="cf-btns">
-          <button class="btn-acid" onclick="go('marketplace')">Buscar Reventa →</button>
-          <button class="btn-border" onclick="go('promotores')">Crear Evento →</button>
+          <button class="conocenos-pill" onclick="go('marketplace')">Buscar Reventa →</button>
+          <button class="conocenos-pill-outline" onclick="go('organizer')">Crear Evento →</button>
         </div>
       </div>
 
