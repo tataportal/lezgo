@@ -1401,6 +1401,20 @@ body::after {
   padding: 100px 48px;
   position: relative; overflow: hidden;
 }
+/* Conocenos hero: fit within viewport below nav+marquee */
+#conocenos-hero {
+  min-height: calc(100vh - 64px - 50px);
+  height: calc(100vh - 64px - 50px);
+  padding: 40px 48px;
+  box-sizing: border-box;
+}
+@media (max-width: 768px) {
+  #conocenos-hero {
+    min-height: calc(100vh - 56px - 46px);
+    height: auto;
+    padding: 32px 24px;
+  }
+}
 .cf-glow {
   position: absolute;
   border-radius: var(--radius-full);
@@ -1486,34 +1500,52 @@ body::after {
 .btn-border:active { transform: scale(0.97); }
 
 /* Conócenos pill buttons */
+.cf-btns {
+  margin-top: 32px;
+}
 .conocenos-pill {
   background: var(--acid); color: var(--gray-950); border: none;
-  padding: 16px 36px; font-size: var(--fs-base); font-weight: 700;
+  padding: 20px 48px; font-size: var(--fs-lg); font-weight: 800;
   letter-spacing: 0.5px; border-radius: 50px;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
+  box-shadow: 0 0 30px rgba(229, 255, 0, 0.25), 0 4px 15px rgba(0,0,0,0.3);
 }
 .conocenos-pill:hover {
   background: #f0ff00;
-  box-shadow: 0 0 40px rgba(229, 255, 0, 0.4);
-  transform: translateY(-2px);
+  box-shadow: 0 0 60px rgba(229, 255, 0, 0.5), 0 6px 20px rgba(0,0,0,0.3);
+  transform: translateY(-3px) scale(1.02);
 }
 .conocenos-pill:active { transform: scale(0.97); }
 
 .conocenos-pill-outline {
-  background: transparent; color: white; border: 1.5px solid white;
-  padding: 16px 36px; font-size: var(--fs-base); font-weight: 700;
+  background: rgba(255,255,255,0.06); color: white; border: 2px solid rgba(255,255,255,0.6);
+  padding: 20px 48px; font-size: var(--fs-lg); font-weight: 800;
   letter-spacing: 0.5px; border-radius: 50px;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .conocenos-pill-outline:hover {
   border-color: var(--acid);
   color: var(--acid);
-  background: rgba(229, 255, 0, 0.05);
-  transform: translateY(-2px);
+  background: rgba(229, 255, 0, 0.08);
+  box-shadow: 0 0 40px rgba(229, 255, 0, 0.2), 0 6px 20px rgba(0,0,0,0.3);
+  transform: translateY(-3px) scale(1.02);
 }
 .conocenos-pill-outline:active { transform: scale(0.97); }
+
+@media (max-width: 768px) {
+  .conocenos-pill, .conocenos-pill-outline {
+    padding: 18px 36px; font-size: var(--fs-base);
+    width: 100%;
+    text-align: center;
+  }
+  .cf-btns {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
 
 /* Fake vs Real Tickets */
 .cf-tickets { position: relative; perspective: 1000px; max-width: 480px; }
