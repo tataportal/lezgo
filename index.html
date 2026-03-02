@@ -8331,7 +8331,9 @@ a[onclick]:active,
     if (ev) {
       // Pasar data del evento via sessionStorage para que v2 no necesite re-fetch
       try { sessionStorage.setItem('lezgo_event', JSON.stringify(ev)); } catch(e) {}
-      window.location.href = 'evento-v2.html?id=' + eventId;
+      // Clean URL: use slug field if available, otherwise use _id
+      var slug = ev.slug || ev._id;
+      window.location.href = '/' + slug;
       return;
     }
     // Fallback: si no se encuentra, ir a eventos

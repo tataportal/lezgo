@@ -1849,26 +1849,26 @@ function showPreviewBanner(eventName) {
 (async function init() {
   const params = new URLSearchParams(window.location.search);
   const eventId = params.get('id');
+  const slug = params.get('slug');
   const isPreview = params.get('mode') === 'preview';
-  if (!eventId) { console.warn('No event ID in URL'); return; }
+  const lookupKey = eventId || slug; // slug comes from Vercel rewrite /:slug → ?slug=:slug
+  if (!lookupKey) { console.warn('No event ID or slug in URL'); return; }
 
-  // 1. sessionStorage — data pasada por index.html openEvent() o previewEvent()
+  // 1. sessionStorage — data pasada por index.html openEvent()
   try {
     const cached = sessionStorage.getItem('lezgo_event');
     if (cached) {
       const ev = JSON.parse(cached);
-      if (ev._id === eventId || isPreview) {
+      if (ev._id === lookupKey || ev.slug === lookupKey || isPreview) {
         renderEvent(ev);
-        // Keep sessionStorage for preview so user can refresh; clear for normal navigation
         if (!isPreview) sessionStorage.removeItem('lezgo_event');
-        // Show preview banner if in preview mode
         if (isPreview) showPreviewBanner(ev.name || 'Evento');
         return;
       }
     }
   } catch (e) {}
 
-  // 2. Firebase — acceso directo por ID (para links compartidos, bookmarks, etc.)
+  // 2. Firebase — buscar por ID directo o por campo slug
   try {
     const firebaseConfig = {
       apiKey: "AIzaSyDPUyIOfSKa1b9Cn4ExMhmAhacsOzfgu8A",
@@ -1880,12 +1880,23 @@ function showPreviewBanner(eventName) {
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const doc = await db.collection('events').doc(eventId).get();
+
+    // Try direct ID lookup first
+    const doc = await db.collection('events').doc(lookupKey).get();
     if (doc.exists) {
       renderEvent({ ...doc.data(), _id: doc.id });
-    } else {
-      console.error('Event not found:', eventId);
+      return;
     }
+
+    // Fallback: query by slug field
+    const snap = await db.collection('events').where('slug', '==', lookupKey).limit(1).get();
+    if (!snap.empty) {
+      const d = snap.docs[0];
+      renderEvent({ ...d.data(), _id: d.id });
+      return;
+    }
+
+    console.error('Event not found:', lookupKey);
   } catch (err) {
     console.error('Failed to load event:', err);
   }
