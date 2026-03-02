@@ -342,7 +342,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .tk-tier-2 { background: transparent; border-color: rgba(139,92,246,0.5); }
 .tk-tier-3 { background: transparent; border-color: rgba(229,255,0,0.35); }
 .tk-tier-4 { background: transparent; border-color: rgba(255,59,59,0.4); }
-.tk-tier-basic { background: transparent; border-color: rgba(255,255,255,0.12); }
+.tk-tier-basic { background: transparent; border-color: var(--border-light); }
 
 /* ── Sold out: dark, muted ── */
 .tk-sold {
@@ -354,7 +354,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 /* sold + resale available → clickable, goes to marketplace */
 .tk-card--sold { cursor: pointer; }
 .tk-card--sold:hover .tk-sold { opacity: 0.2; }
-.tk-card--sold:hover { box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+.tk-card--sold:hover { box-shadow: 0 24px 80px var(--dark-40); }
 
 /* sold + NO resale → dead end, no click */
 .tk-card--dead { cursor: default; }
@@ -408,16 +408,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .tk-includes li::before {
   content: ''; position: absolute; left: 0; top: 8px;
   width: 4px; height: 4px; border-radius: 50%;
-  background: rgba(255,255,255,0.2);
+  background: var(--alpha-medium);
 }
 
 .tk-header {
   min-height: auto;
   flex: 0 0 auto;
-}
-.tk-includes {
-  max-height: none;
-  overflow: visible;
 }
 
 /* Phase pricing table */
@@ -432,28 +428,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
   font-size: 18px; font-weight: var(--fw-medium);
   gap: 12px;
 }
-.tk-phase-name { color: rgba(255,255,255,0.75); white-space: nowrap; }
-.tk-phase-price { color: rgba(255,255,255,0.75); white-space: nowrap; text-align: right; }
-.tk-phase--past .tk-phase-name { text-decoration: line-through; color: rgba(255,255,255,0.3); }
-.tk-phase--past .tk-phase-price { text-decoration: line-through; color: rgba(255,255,255,0.3); }
+.tk-phase-name { color: var(--alpha-heavy); white-space: nowrap; }
+.tk-phase-price { color: var(--alpha-heavy); white-space: nowrap; text-align: right; }
+.tk-phase--past .tk-phase-name { text-decoration: line-through; color: var(--alpha-subtle); }
+.tk-phase--past .tk-phase-price { text-decoration: line-through; color: var(--alpha-subtle); }
 .tk-phase--active .tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; }
 .tk-phase--active .tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: 26px; text-decoration: none; }
-.tk-phase--future .tk-phase-name { color: rgba(255,255,255,0.15); }
-.tk-phase--future .tk-phase-price { color: rgba(255,255,255,0.15); }
+.tk-phase--future .tk-phase-name { color: var(--acid-muted); }
+.tk-phase--future .tk-phase-price { color: var(--acid-muted); }
 .tk-phase-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.08); flex-shrink: 0; margin-right: 10px;
+  background: var(--alpha-light); flex-shrink: 0; margin-right: 10px;
 }
-.tk-phase--past .tk-phase-dot { background: rgba(255,255,255,0.12); }
+.tk-phase--past .tk-phase-dot { background: var(--border-light); }
 .tk-phase--active .tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
-.tk-phase--future .tk-phase-dot { background: rgba(255,255,255,0.06); }
+.tk-phase--future .tk-phase-dot { background: var(--alpha-subtle); }
 .tk-phase-left { display: flex; align-items: center; }
 
 /* Buy / sold bottom */
 .tk-bottom {
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--alpha-subtle);
   display: flex; align-items: center; justify-content: space-between;
 }
 .tk-price-simple {
@@ -479,7 +475,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   letter-spacing: 0.5px; white-space: nowrap;
   width: 100%;
 }
-/* availability bar removed */
 
 /* ═══════════════════════════════════════════
    MARKETPLACE BANNER
@@ -530,10 +525,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 .lineup-card:hover {
   border-color: var(--acid-muted);
-}
-.lineup-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 60px var(--dark-40);
 }
 .lineup-card-img {
   position: absolute; inset: 0;
@@ -562,7 +555,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   margin-bottom: 6px;
 }
 .lineup-role {
-  font-size: var(--fs-xs); color: rgba(255,255,255,0.5);
+  font-size: var(--fs-xs); color: var(--alpha-heavy);
   font-weight: var(--fw-medium); margin-bottom: 10px;
 }
 .lineup-tags {
@@ -571,9 +564,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .lineup-tag {
   font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: 1.5px;
   text-transform: uppercase; padding: 4px 10px;
-  background: rgba(255,255,255,0.08);
+  background: var(--alpha-light);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--radius-pill); color: rgba(255,255,255,0.5);
+  border-radius: var(--radius-pill); color: var(--alpha-heavy);
   backdrop-filter: blur(4px);
 }
 /* Headliner — same size, just styled differently */
@@ -614,21 +607,21 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .info-chip {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 18px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--alpha-subtle);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-pill);
   font-size: var(--fs-sm); font-weight: var(--fw-medium);
   color: var(--text-mid);
   transition: all 0.2s ease;
 }
 .info-chip:hover {
-  background: rgba(255,255,255,0.08);
+  background: var(--alpha-light);
   border-color: var(--acid-muted);
 }
 .info-chip span { font-size: var(--fs-base); }
 .info-divider {
   height: 1px;
-  background: rgba(255,255,255,0.08);
+  background: var(--alpha-light);
 }
 .info-prohibited-items {
   display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
@@ -681,6 +674,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
   min-height: 280px; border-radius: 0;
   background: var(--surface); border: 1px solid var(--border);
   overflow: hidden;
+}
+.venue-map-link {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; width: 100%; height: 100%; border-radius: inherit;
+  background: var(--surface); border: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.venue-map-link:hover {
+  background: var(--acid-muted);
 }
 
 /* ═══════════════════════════════════════════
@@ -940,7 +942,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .tk-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; gap: 12px; }
   .tk-grid-wrap { height: auto !important; }
   .tk-inner { min-height: auto; padding: 24px 20px; }
-  .tk-header { min-height: auto; }
   .tk-name { font-size: 32px; }
   .tk-includes { font-size: 16px; }
   .tk-buy { padding: 14px 20px; font-size: 16px; }
@@ -959,7 +960,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .tk-grid { grid-template-columns: 1fr; gap: 12px; padding: 0 16px; }
   .tk-grid-wrap { height: auto !important; }
   .tk-inner { min-height: auto; padding: 20px 18px; }
-  .tk-header { min-height: auto; }
   .tk-includes { max-height: none; font-size: 16px; }
   .tk-name { font-size: 28px; margin-bottom: 8px; }
   .tk-phases { padding-top: 12px; }
@@ -1002,7 +1002,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <section class="hero">
   <div class="hero-bg" id="ev-hero-bg"></div>
   <div class="hero-content">
-    <a href="index.html" class="hero-back" style="text-decoration:none">
+    <a href="index.html" class="hero-back">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Eventos
     </a>
@@ -1014,7 +1014,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
         <div class="icon">📅</div>
         <div id="ev-date"></div>
       </div>
-      <a class="hero-meta-item" id="ev-location-link" href="#" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <a class="hero-meta-item" id="ev-location-link" href="#" target="_blank" rel="noopener" style="color:inherit;">
         <div class="icon">📍</div>
         <div id="ev-location"></div>
       </a>
@@ -1431,7 +1431,6 @@ function renderEvent(ev) {
   const tkGrid = document.getElementById('ev-tk-grid');
   if (ev.tickets && ev.tickets.length > 0) {
     tkGrid.innerHTML = ev.tickets.map((t, i) => buildTicketCard(t, ev.name, i)).join('');
-    scaleTicketGrid();
   }
 
   // Marketplace banner: show if event is sold out
@@ -1517,9 +1516,7 @@ function renderEvent(ev) {
     const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
     const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + mapQuery;
     document.getElementById('ev-venue-map').innerHTML = `
-      <a href="${mapsUrl}" target="_blank" rel="noopener"
-         style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;border-radius:inherit;background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:background 0.2s;"
-         onmouseover="this.style.background='var(--acid-muted)'" onmouseout="this.style.background='var(--surface)'">
+      <a href="${mapsUrl}" target="_blank" rel="noopener" class="venue-map-link">
         <div style="font-size: var(--fs-3xl);">📍</div>
         <div style="color: var(--text);font-size: var(--fs-base);font-weight:700;">Ver ubicación en Google Maps</div>
         <div style="color:var(--text-mid);font-size: var(--fs-sm);">${ev.venue || ''}${ev.location ? ', ' + ev.location : ''}</div>
@@ -1568,11 +1565,6 @@ function renderEvent(ev) {
  *   Future: resaleListings === 0 → dead (tk-card--dead → sin link)
  */
 
-// ── Scale ticket grid (now handled by CSS flex: 1 1 0) ──
-function scaleTicketGrid() {
-  // Cards now use flex: 1 1 0 to fill width automatically via CSS
-  // This function is kept for backward compatibility (called from renderEvent)
-}
 function buildTicketCard(t, eventName, index) {
   const tierSold = t.sold >= t.capacity;
   // TODO: cuando exista marketplace collection, consultar resaleListings
@@ -1641,8 +1633,6 @@ function buildTicketCard(t, eventName, index) {
     bottom = `<div class="tk-sold-all">AGOTADO</div>`;
   }
 
-  let availHtml = '';
-
   return `
     <div class="${cardClass}"${onclick}>
       ${overlay}
@@ -1655,7 +1645,6 @@ function buildTicketCard(t, eventName, index) {
           <div class="tk-price-simple">S/ ${currentPrice.toLocaleString()}</div>
         `}
         <div class="tk-bottom">${bottom}</div>
-        ${availHtml}
       </div>
     </div>`;
 }

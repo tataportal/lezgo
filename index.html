@@ -371,7 +371,7 @@ body::after {
    VIEW SYSTEM
    ═══════════════════════════════════════════ */
 .view { display: none; }
-.view.active { display: block; }
+.view.active { display: block; animation: viewFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
 /* ═══════════════════════════════════════════
    HERO — Evento Destacado
@@ -536,6 +536,7 @@ body::after {
   padding: 0 20px;
   border-right: 1px solid var(--border);
   cursor: pointer; transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative; overflow: visible;
 }
 .search-field:hover { background: var(--bg-hover); }
 .search-field-label {
@@ -622,7 +623,6 @@ body::after {
 /* ═══════════════════════════════════════════
    DROPDOWNS & CALENDAR
    ═══════════════════════════════════════════ */
-.search-field { position: relative; overflow: visible; }
 .dropdown {
   display: none;
   position: absolute;
@@ -2100,7 +2100,7 @@ body::after {
   background: var(--dark-45); backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 10px 20px 10px 16px; border-radius: 50px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--alpha-medium);
   margin-bottom: 28px;
   letter-spacing: 0.5px; text-transform: uppercase;
   transition: all 0.2s;
@@ -5714,10 +5714,6 @@ html.snap-active {
    ═══════════════════════════════════════════ */
 
 /* View Transitions */
-.view.active {
-  animation: viewFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
 @keyframes viewFadeIn {
   from {
     opacity: 0;
@@ -8846,8 +8842,6 @@ a[onclick]:active,
 
   // Events loaded after DEMO_EVENTS is defined (see below)
 
-  // ── seedDemoData removed — demo data now served from DEMO_TICKETS/DEMO_RESALE/DEMO_EVENTS arrays above ──
-
   // ── Load Events from Firestore ──
   var allEvents = [];
   var currentEventId = null;
@@ -10880,8 +10874,6 @@ a[onclick]:active,
     }
   }
 
-  // ── Note: QR Scanner with Camera removed in favor of DNI-based lookup ──
-
   function manualScanDni() {
     const input = document.getElementById('scanner-dni-input');
     const dni = input.value.trim();
@@ -11085,8 +11077,6 @@ a[onclick]:active,
     } catch (err) { log.error('loadProfile error:', err); }
   }
 
-  // goWithAuth removed — auth checking is handled by go() in Script 2
-
   // loadEvents is called on page load
 </script>
 
@@ -11095,8 +11085,6 @@ a[onclick]:active,
      ═══════════════════════════════════════════ -->
 <script>
   // ── View Switching ──
-  // ── Email capture (legacy — replaced by submitEmail/asistSubmitEmail/ppSubmitEmail below) ──
-  // cfSubmitEmail removed — HTML elements cf-email-input/bar/success don't exist
 
   // ← PEGA TU URL DE GOOGLE APPS SCRIPT ACÁ ↓
   // ── FAQ Accordion ──
@@ -13101,27 +13089,6 @@ a[onclick]:active,
 
       lastScrollY = scrollY;
     }, { passive: true });
-  }
-
-  // Counter animation for numbers
-  function animateCounter(element, target, duration = 1000) {
-    const start = 0;
-    const startTime = performance.now();
-
-    const updateCounter = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const currentValue = Math.floor(start + (target - start) * progress);
-
-      element.textContent = currentValue.toLocaleString();
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      }
-    };
-
-    element.classList.add('counter-animate');
-    requestAnimationFrame(updateCounter);
   }
 
   // Initialize all animations on page load
