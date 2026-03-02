@@ -851,99 +851,97 @@ body::after {
 .events-datelist.active { display: block; }
 
 .dl-date-group { margin-bottom: 0; }
-.dl-date-group + .dl-date-group { border-top: 1px solid var(--border); }
+.dl-date-group + .dl-date-group { margin-top: 24px; }
 
+/* ── Date header: slash + "SÁB, 14 FEB" ── */
 .dl-date-header {
-  display: flex; gap: 14px; align-items: center;
-  padding: 20px 0 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  display: flex; align-items: center; gap: 0;
+  padding: 0 0 16px;
 }
-.dl-date-day {
-  font-size: 42px; font-weight: 800;
-  color: var(--text);
-  letter-spacing: -2px;
-  line-height: 1;
-  min-width: 52px;
-  text-align: center;
+.dl-date-slash {
+  width: 20px; height: 28px; position: relative; margin-right: 10px; flex-shrink: 0;
 }
-.dl-date-meta {
-  display: flex; flex-direction: column; gap: 1px;
+.dl-date-slash::before {
+  content: ''; position: absolute;
+  top: 0; left: 8px; width: 3px; height: 100%;
+  background: var(--acid); transform: rotate(-20deg); border-radius: 2px;
 }
-.dl-date-weekday {
-  font-size: var(--fs-base); font-weight: 800;
-  color: var(--acid);
-  letter-spacing: 1.5px;
-  line-height: 1.2;
-}
-.dl-date-monthyear {
-  font-size: var(--fs-xs); font-weight: 600;
-  color: var(--text-dim);
-  letter-spacing: 0.5px;
-  line-height: 1.3;
+.dl-date-label {
+  font-size: 22px; font-weight: 800; color: var(--acid);
+  letter-spacing: 2px; line-height: 1; text-transform: uppercase;
 }
 
+/* ── Event row: big image left + info right ── */
 .dl-event-row {
-  display: flex; align-items: center; gap: 16px;
-  padding: 14px 0;
-  border-top: 1px solid var(--alpha-minimal);
+  display: flex; align-items: stretch; gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.15s;
-  margin-left: 66px;
+  transition: background 0.2s;
 }
 .dl-event-row:hover {
-  background: rgba(229,255,0,0.03);
+  background: rgba(229,255,0,0.025);
 }
 .dl-event-img {
-  width: 60px; height: 60px;
-  border-radius: 6px;
+  width: 240px; height: 150px;
+  border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
   background-size: cover;
   background-position: center;
   background-color: var(--bg-raised);
 }
-.dl-event-info { flex: 1; min-width: 0; }
-.dl-event-name {
-  font-size: var(--fs-base); font-weight: 700;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin-bottom: 3px;
-  color: var(--text);
+.dl-event-info {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 8px;
 }
-.dl-event-sub {
+.dl-event-name {
+  font-size: 22px; font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.dl-event-venue {
+  display: flex; align-items: center; gap: 6px;
   font-size: var(--fs-sm); color: var(--text-dim);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dl-event-venue-pin {
+  width: 14px; height: 14px; flex-shrink: 0; color: var(--acid);
 }
 .dl-event-right {
-  display: flex; flex-direction: column; align-items: flex-end;
-  flex-shrink: 0; gap: 2px;
-  text-align: right;
-}
-.dl-event-price-label {
-  font-size: 11px; font-weight: 600; color: var(--text-dim);
-  letter-spacing: 0.3px; text-transform: uppercase;
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+  flex-shrink: 0; gap: 6px;
+  min-width: 100px;
 }
 .dl-event-price {
-  font-size: var(--fs-base); font-weight: 800; color: var(--acid);
+  font-size: var(--fs-base); font-weight: 700; color: var(--acid);
+  display: flex; align-items: center; gap: 6px;
+}
+.dl-event-price-tag {
+  width: 14px; height: 14px; color: var(--acid); flex-shrink: 0;
 }
 .dl-event-sold {
   font-size: var(--fs-xs); font-weight: 700; color: var(--red);
   letter-spacing: 0.5px; text-transform: uppercase;
-  line-height: 1.3;
 }
 .dl-event-sold-link {
-  font-size: 11px; font-weight: 600; color: var(--acid);
-  letter-spacing: 0.3px;
+  font-size: var(--fs-xs); font-weight: 600; color: var(--acid);
   display: flex; align-items: center; gap: 4px;
-  white-space: nowrap;
 }
 
 /* ── Date list responsive ── */
-@media (max-width: 600px) {
-  .dl-date-day { font-size: 32px; min-width: 40px; }
-  .dl-event-row { margin-left: 54px; gap: 12px; }
-  .dl-event-img { width: 50px; height: 50px; }
-  .dl-event-name { font-size: var(--fs-sm); }
+@media (max-width: 768px) {
+  .dl-event-img { width: 160px; height: 110px; }
+  .dl-event-name { font-size: 17px; }
+  .dl-event-row { gap: 16px; }
+  .dl-date-label { font-size: 18px; }
+}
+@media (max-width: 480px) {
+  .dl-event-img { width: 120px; height: 85px; }
+  .dl-event-name { font-size: 15px; }
+  .dl-event-row { gap: 12px; padding: 12px 0; }
+  .dl-event-right { min-width: auto; }
   .dl-event-price { font-size: var(--fs-sm); }
 }
 
@@ -8239,6 +8237,9 @@ a[onclick]:active,
   }
 
   // ── DATE LIST VIEW (RA-style) ──
+  var pinSvg = '<svg class="dl-event-venue-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>';
+  var tagSvg = '<svg class="dl-event-price-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>';
+
   function renderDateList() {
     if (allEvents.length === 0) return;
     var sorted = allEvents.slice().sort(function(a, b) { return a.date < b.date ? -1 : 1; });
@@ -8255,11 +8256,11 @@ a[onclick]:active,
       var d = new Date(dateKey + 'T12:00:00');
       var dayNum = d.getDate();
       var weekday = dayNames[d.getDay()];
-      var monthYear = monthNames[d.getMonth()] + ' ' + d.getFullYear();
+      var month = monthNames[d.getMonth()];
       html += '<div class="dl-date-group">';
       html += '<div class="dl-date-header">';
-      html += '<div class="dl-date-day">' + dayNum + '</div>';
-      html += '<div class="dl-date-meta"><div class="dl-date-weekday">' + weekday + '</div><div class="dl-date-monthyear">' + monthYear + '</div></div>';
+      html += '<div class="dl-date-slash"></div>';
+      html += '<div class="dl-date-label">' + weekday + ', ' + dayNum + ' ' + month + '</div>';
       html += '</div>';
       groups[dateKey].forEach(function(ev) {
         var img = getEventImage(ev);
@@ -8272,15 +8273,14 @@ a[onclick]:active,
         html += '<div class="dl-event-img" style="background-image:url(' + img + ')"></div>';
         html += '<div class="dl-event-info">';
         html += '<div class="dl-event-name">' + ev.name + '</div>';
-        html += '<div class="dl-event-sub">' + venueLine + '</div>';
+        html += '<div class="dl-event-venue">' + pinSvg + ' ' + venueLine + '</div>';
         html += '</div>';
         html += '<div class="dl-event-right">';
         if (isSold) {
           html += '<div class="dl-event-sold">AGOTADO</div>';
-          html += '<div class="dl-event-sold-link">Buscar en reventa →</div>';
+          html += '<div class="dl-event-sold-link">' + tagSvg + ' Reventa</div>';
         } else if (price) {
-          html += '<div class="dl-event-price-label">Desde</div>';
-          html += '<div class="dl-event-price">' + price + '</div>';
+          html += '<div class="dl-event-price">' + tagSvg + ' ' + price + '</div>';
         }
         html += '</div></div>';
       });
