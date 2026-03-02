@@ -961,15 +961,15 @@ body::after {
 .events-datelist.active { display: block; }
 
 .dl-date-group { margin-bottom: 0; }
-.dl-date-group + .dl-date-group { margin-top: 8px; }
+.dl-date-group + .dl-date-group { margin-top: 40px; }
 
 /* ── Date header: slash + "SÁB, 14 FEB" ── */
 .dl-date-header {
   display: flex; align-items: center; gap: 0;
-  padding: 0 0 8px;
+  padding: 0 0 16px;
 }
 .dl-date-slash {
-  width: 20px; height: 28px; position: relative; margin-right: 10px; flex-shrink: 0;
+  width: 20px; height: 32px; position: relative; margin-right: 12px; flex-shrink: 0;
 }
 .dl-date-slash::before {
   content: ''; position: absolute;
@@ -977,24 +977,25 @@ body::after {
   background: var(--acid); transform: rotate(-20deg); border-radius: 2px;
 }
 .dl-date-label {
-  font-size: 30px; font-weight: 800; color: var(--acid);
-  letter-spacing: 2px; line-height: 1; text-transform: uppercase;
+  font-size: 28px; font-weight: 800; color: var(--acid);
+  letter-spacing: 2.5px; line-height: 1; text-transform: uppercase;
 }
 
 /* ── Event row: big image left + info right ── */
 .dl-event-row {
-  display: flex; align-items: stretch; gap: 24px;
-  padding: 16px 0;
+  display: flex; align-items: stretch; gap: 28px;
+  padding: 20px 0;
   border-top: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.25s;
+  border-radius: 8px;
 }
 .dl-event-row:hover {
   background: rgba(229,255,0,0.025);
 }
 .dl-event-img {
-  width: 240px; height: 150px;
-  border-radius: 4px;
+  width: 340px; height: 210px;
+  border-radius: 6px;
   overflow: hidden;
   flex-shrink: 0;
   background-size: cover;
@@ -1003,30 +1004,54 @@ body::after {
 }
 .dl-event-info {
   flex: 1; min-width: 0;
-  display: flex; flex-direction: column; justify-content: center; gap: 8px;
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
 }
 .dl-event-name {
-  font-size: 30px; font-weight: 800;
+  font-size: 28px; font-weight: 800;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.15;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+}
+.dl-event-subtitle {
+  font-size: var(--fs-sm); font-weight: 600; color: var(--acid);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  opacity: 0.85;
 }
 .dl-event-venue {
   display: flex; align-items: center; gap: 6px;
-  font-size: var(--fs-sm); color: #b0b0b0;
+  font-size: var(--fs-base); color: var(--text-dim);
 }
 .dl-event-venue-pin {
   width: 14px; height: 14px; flex-shrink: 0; color: var(--acid);
 }
+.dl-event-time {
+  display: flex; align-items: center; gap: 6px;
+  font-size: var(--fs-sm); color: var(--text-muted); font-weight: 500;
+}
+.dl-event-time svg { width: 13px; height: 13px; flex-shrink: 0; color: var(--text-muted); }
+.dl-event-tags {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px;
+}
+.dl-event-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px;
+  background: var(--alpha-light); color: var(--text-dim);
+  border: 1px solid var(--border-light);
+}
 .dl-event-right {
   display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
-  flex-shrink: 0; gap: 6px;
-  min-width: 100px;
+  flex-shrink: 0; gap: 8px;
+  min-width: 120px;
 }
 .dl-event-price {
-  font-size: var(--fs-base); font-weight: 700; color: var(--acid);
+  font-size: var(--fs-lg); font-weight: 800; color: var(--acid);
   display: flex; align-items: center; gap: 6px;
+  letter-spacing: -0.3px;
+}
+.dl-event-price-label {
+  font-size: var(--fs-xs); font-weight: 500; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
 .dl-event-price-tag {
   width: 14px; height: 14px; color: var(--acid); flex-shrink: 0;
@@ -1039,20 +1064,29 @@ body::after {
   font-size: var(--fs-xs); font-weight: 600; color: var(--acid);
   display: flex; align-items: center; gap: 4px;
 }
+.dl-event-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px;
+  background: var(--acid); color: var(--gray-950);
+}
 
 /* ── Date list responsive ── */
 @media (max-width: 768px) {
-  .dl-event-img { width: 160px; height: 110px; }
-  .dl-event-name { font-size: 17px; }
-  .dl-event-row { gap: 16px; }
-  .dl-date-label { font-size: 18px; }
+  .dl-event-img { width: 200px; height: 140px; }
+  .dl-event-name { font-size: 20px; }
+  .dl-event-row { gap: 18px; }
+  .dl-date-label { font-size: 20px; }
+  .dl-date-group + .dl-date-group { margin-top: 28px; }
+  .dl-event-tags { display: none; }
 }
 @media (max-width: 480px) {
-  .dl-event-img { width: 120px; height: 85px; }
-  .dl-event-name { font-size: 15px; }
-  .dl-event-row { gap: 12px; padding: 12px 0; }
+  .dl-event-img { width: 140px; height: 100px; }
+  .dl-event-name { font-size: 16px; }
+  .dl-event-row { gap: 14px; padding: 14px 0; }
   .dl-event-right { min-width: auto; }
-  .dl-event-price { font-size: var(--fs-sm); }
+  .dl-event-price { font-size: var(--fs-base); }
+  .dl-date-group + .dl-date-group { margin-top: 20px; }
+  .dl-event-subtitle { font-size: 11px; }
 }
 
 /* ═══════════════════════════════════════════
@@ -9093,18 +9127,34 @@ a[onclick]:active,
         var venueLine = venue + (loc ? ', ' + loc : '');
         var price = getLowestPrice(ev);
         var isSold = ev.status === 'sold-out';
+        var clockSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+        var timeStart = ev.timeStart || '';
+        var timeEnd = ev.timeEnd || '';
+        var timeLine = timeStart && timeEnd ? timeStart + ' — ' + timeEnd : (timeStart || '');
+        var subtitle = ev.subtitle || '';
+        var tags = Array.isArray(ev.tags) ? ev.tags : [];
+        var badge = ev.badge || '';
         html += '<div class="dl-event-row" onclick="openEvent(\'' + ev._id + '\')">';
         html += '<div class="dl-event-img" style="background-image:url(' + img + ')"></div>';
         html += '<div class="dl-event-info">';
+        if (subtitle) html += '<div class="dl-event-subtitle">' + subtitle + '</div>';
         html += '<div class="dl-event-name">' + ev.name + '</div>';
         html += '<div class="dl-event-venue">' + pinSvg + ' ' + venueLine + '</div>';
+        if (timeLine) html += '<div class="dl-event-time">' + clockSvg + ' ' + timeLine + '</div>';
+        if (tags.length > 0) {
+          html += '<div class="dl-event-tags">';
+          tags.slice(0, 3).forEach(function(t) { html += '<span class="dl-event-tag">' + t + '</span>'; });
+          html += '</div>';
+        }
         html += '</div>';
         html += '<div class="dl-event-right">';
+        if (badge) html += '<div class="dl-event-badge">' + badge + '</div>';
         if (isSold) {
           html += '<div class="dl-event-sold">AGOTADO</div>';
           html += '<div class="dl-event-sold-link">' + tagSvg + ' Reventa</div>';
         } else if (price) {
-          html += '<div class="dl-event-price">' + tagSvg + ' ' + price + '</div>';
+          html += '<div class="dl-event-price-label">Desde</div>';
+          html += '<div class="dl-event-price">' + price + '</div>';
         }
         html += '</div></div>';
       });
