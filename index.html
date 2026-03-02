@@ -3285,7 +3285,7 @@ body::after {
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 }
 .dk-how-inner {
-  position: relative; aspect-ratio: 3/4; padding: 48px 40px;
+  position: relative; aspect-ratio: 2/3; padding: 32px 28px;
   display: flex; flex-direction: column; justify-content: space-between;
   border-radius: 0; overflow: hidden;
 }
@@ -4709,9 +4709,9 @@ body::after {
 }
 .conocenos-tab {
   flex: 1;
-  padding: 20px 24px;
+  padding: 18px 24px;
   text-align: center;
-  font-size: var(--fs-base);
+  font-size: var(--fs-lg);
   font-weight: 800;
   color: var(--text-mid);
   cursor: pointer;
@@ -4719,17 +4719,20 @@ body::after {
   border: none;
   background: transparent;
   border-bottom: 3px solid transparent;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   position: relative;
 }
 .conocenos-tab:hover {
-  color: var(--text);
-  background: rgba(229,255,0,0.03);
+  color: var(--acid);
+  background: rgba(229,255,0,0.05);
 }
 .conocenos-tab.active {
-  color: var(--acid);
+  color: var(--gray-950);
+  background: var(--acid);
   border-bottom-color: var(--acid);
-  background: rgba(229,255,0,0.05);
+}
+.conocenos-tab.active:hover {
+  background: #f0ff00;
 }
 .conocenos-tab-content {
   display: none;
