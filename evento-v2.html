@@ -269,13 +269,19 @@ button { font-family: inherit; cursor: pointer; border: none; }
 /* ═══════════════════════════════════════════
    TICKETS
    ═══════════════════════════════════════════ */
+.tk-grid-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: visible;
+}
 .tk-grid {
   display: flex;
   justify-content: center;
   gap: 0;
-  max-width: 1100px;
+  flex-wrap: nowrap;
+  transform-origin: top center;
+  width: max-content;
   margin: 0 auto;
-  flex-wrap: wrap;
 }
 .tk-card {
   position: relative;
@@ -283,9 +289,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: hidden;
   display: flex; flex-direction: column;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
-  flex: 1 1 0;
-  min-width: 200px;
-  max-width: 400px;
+  width: 260px;
+  flex-shrink: 0;
 }
 .tk-card:hover {
   transform: translateY(-8px);
@@ -728,8 +733,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .hero-meta-item { font-size: var(--fs-sm); }
   .hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
   .section { padding: 56px 20px; }
-  .tk-grid { max-width: 100%; }
-  .tk-card { width: calc(50% - 4px); }
+  .tk-grid { max-width: 100%; flex-wrap: wrap; width: auto !important; transform: none !important; }
+  .tk-grid-wrap { height: auto !important; }
+  .tk-card { width: calc(50% - 4px); flex-shrink: 1; }
   .tk-inner { min-height: 360px; padding: 24px 20px; }
   .tk-name { font-size: var(--fs-xl); }
   .tk-buy { padding: 10px 16px; font-size: var(--fs-xs); }
@@ -744,8 +750,9 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .trust-item { padding: 20px 12px; }
 }
 @media (max-width: 480px) {
-  .tk-grid { gap: 8px; }
-  .tk-card { width: 100%; }
+  .tk-grid { gap: 8px; flex-wrap: wrap; width: auto !important; transform: none !important; }
+  .tk-grid-wrap { height: auto !important; }
+  .tk-card { width: 100%; flex-shrink: 1; }
   .tk-inner { min-height: 320px; padding: 20px 18px; }
   .tk-name { font-size: var(--fs-lg); }
   .tk-phase { font-size: 11px; padding: 4px 0; }
@@ -814,8 +821,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
 <section class="section">
   <div class="section-label">Entradas</div>
   <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
-  <div class="tk-grid" id="ev-tk-grid">
-    <!-- JS genera cada card con buildTicketCard(tier) -->
+  <div class="tk-grid-wrap" id="ev-tk-wrap">
+    <div class="tk-grid" id="ev-tk-grid">
+      <!-- JS genera cada card con buildTicketCard(tier) -->
+    </div>
   </div>
 
   <!-- Marketplace CTA -->
@@ -1179,6 +1188,7 @@ function renderEvent(ev) {
   const tkGrid = document.getElementById('ev-tk-grid');
   if (ev.tickets && ev.tickets.length > 0) {
     tkGrid.innerHTML = ev.tickets.map((t, i) => buildTicketCard(t, ev.name, i)).join('');
+    scaleTicketGrid();
   }
 
   // Marketplace banner: show if event is sold out
@@ -1314,6 +1324,27 @@ function renderEvent(ev) {
  *   t.sold >= t.capacity  → sold out  (tk-card--sold → marketplace)
  *   Future: resaleListings === 0 → dead (tk-card--dead → sin link)
  */
+
+// ── Scale ticket grid proportionally to fill container ──
+function scaleTicketGrid() {
+  const grid = document.getElementById('ev-tk-grid');
+  const wrap = document.getElementById('ev-tk-wrap');
+  if (!grid || !wrap || !grid.children.length) return;
+  // Reset any previous scale
+  grid.style.transform = '';
+  wrap.style.height = '';
+  // Wait for layout
+  requestAnimationFrame(() => {
+    const wrapW = wrap.offsetWidth;
+    const gridW = grid.scrollWidth;
+    if (gridW > 0 && gridW < wrapW) {
+      const scale = wrapW / gridW;
+      grid.style.transform = 'scale(' + scale + ')';
+      wrap.style.height = (grid.offsetHeight * scale) + 'px';
+    }
+  });
+}
+window.addEventListener('resize', scaleTicketGrid);
 function buildTicketCard(t, eventName, index) {
   const tierSold = t.sold >= t.capacity;
   // TODO: cuando exista marketplace collection, consultar resaleListings
