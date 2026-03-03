@@ -11654,6 +11654,11 @@ a[onclick]:active,
 
   function go(view, opts) {
     opts = opts || {};
+    // If already logged in, redirect auth to profile
+    if (view === 'auth' && currentUser) {
+      go('perfil');
+      return;
+    }
     // Protected views require auth
     const protectedViews = ['mis-entradas', 'perfil', 'organizer', 'scanner'];
     if (protectedViews.includes(view) && !currentUser) {
