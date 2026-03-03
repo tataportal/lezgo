@@ -6117,8 +6117,8 @@ a[onclick]:active,
           </div>
           <div class="nd-divider"></div>
           <!-- Logged-out: login -->
-          <div class="nd-item nd-logged-out" onclick="authGoogleLogin()">
-            <span class="nd-icon">🔑</span> <span data-es="Iniciar sesión con Google" data-en="Sign in with Google">Iniciar sesión con Google</span>
+          <div class="nd-item nd-logged-out" onclick="go('auth')">
+            <span class="nd-icon">✉️</span> <span data-es="Iniciar sesión" data-en="Sign in">Iniciar sesión</span>
           </div>
           <!-- Logged-in: logout -->
           <div class="nd-item danger nd-logged-in" onclick="authLogout()">
@@ -8811,6 +8811,25 @@ a[onclick]:active,
         await db.collection('users').doc(user.uid).set(userProfile);
       }
       updateUIForAuth(true);
+
+      // Auto-advance purchase modal if user just logged in via magic link
+      var pendingModal = window.localStorage.getItem('lezgoPendingModal');
+      if (pendingModal) {
+        window.localStorage.removeItem('lezgoPendingModal');
+        if (pendingModal === 'pm') {
+          // Primary purchase modal — advance to ticket selection (step 1)
+          var pmOverlay = document.getElementById('pm-overlay');
+          if (pmOverlay && pmOverlay.classList.contains('pm-open')) {
+            pmGoStep(1);
+          }
+        } else if (pendingModal === 'rm') {
+          // Resale modal — advance to listing review (step 1)
+          var rmOverlay = document.getElementById('rm-overlay');
+          if (rmOverlay && rmOverlay.classList.contains('rm-open')) {
+            rmGoStep(1);
+          }
+        }
+      }
     } else {
       userProfile = null;
       updateUIForAuth(false);
@@ -9643,29 +9662,17 @@ a[onclick]:active,
 
   // ── Login within Purchase Modal ──
   async function pmLoginWith(method) {
-    if (method === 'guest') {
-      pmGoStep(1);
-      return;
-    }
-    if (method === 'google') {
-      try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        await auth.signInWithPopup(provider);
-        pmUserLoggedIn = true;
-        pmGoStep(1);
-      } catch (err) {
-        if (err.code !== 'auth/popup-closed-by-user') log.error(err);
-      }
-      return;
-    }
     if (method === 'email') {
       const email = document.getElementById('pm-login-email').value.trim();
       const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       if (!valid) {
         document.getElementById('pm-login-email').style.borderColor = '#f87171';
-        document.getElementById('pm-login-email').placeholder = 'Ingresa un email válido';
+        toast('Ingresa un email válido', 'warning');
+        setTimeout(() => { document.getElementById('pm-login-email').style.borderColor = ''; }, 1500);
         return;
       }
+      const btn = document.getElementById('pm-send-link-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
       try {
         const actionCodeSettings = {
           url: window.location.href,
@@ -9673,15 +9680,17 @@ a[onclick]:active,
         };
         await auth.sendSignInLinkToEmail(email, actionCodeSettings);
         window.localStorage.setItem('lezgoEmailForSignIn', email);
-        // Show confirmation in the modal
+        window.localStorage.setItem('lezgoPendingModal', 'pm');
+        // Show "link sent" confirmation
+        const sentEl = document.getElementById('pm-link-sent');
+        if (sentEl) sentEl.style.display = 'block';
         const emailEl = document.getElementById('pm-login-email');
-        if (emailEl) {
-          emailEl.value = '';
-          emailEl.placeholder = '✉️ Link enviado! Revisa tu email';
-          emailEl.style.borderColor = 'var(--acid)';
-        }
+        if (emailEl) emailEl.style.display = 'none';
+        if (btn) btn.style.display = 'none';
       } catch (err) {
         log.error('Magic link error:', err);
+        toast('Error al enviar link: ' + (err.message || 'Intenta de nuevo'), 'error');
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar magic link →'; }
       }
       return;
     }
@@ -10337,19 +10346,37 @@ a[onclick]:active,
     }
   }
 
-  function rmLoginWith(method) {
-    if (method === 'guest') {
-      rmGoStep(1);
-      return;
-    }
-    if (method === 'google') {
-      if (typeof authGoogleLogin === 'function') authGoogleLogin();
-      return;
-    }
+  async function rmLoginWith(method) {
     if (method === 'email') {
       var email = document.getElementById('rm-login-email').value.trim();
-      if (!email) { toast('Ingresa tu email', 'warning'); return; }
-      if (typeof authSendLink === 'function') authSendLink(email);
+      var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!valid) {
+        document.getElementById('rm-login-email').style.borderColor = '#f87171';
+        toast('Ingresa un email válido', 'warning');
+        setTimeout(function() { document.getElementById('rm-login-email').style.borderColor = ''; }, 1500);
+        return;
+      }
+      var btn = document.getElementById('rm-send-link-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+      try {
+        var actionCodeSettings = {
+          url: window.location.href,
+          handleCodeInApp: true
+        };
+        await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+        window.localStorage.setItem('lezgoEmailForSignIn', email);
+        window.localStorage.setItem('lezgoPendingModal', 'rm');
+        // Show "link sent" confirmation
+        var sentEl = document.getElementById('rm-link-sent');
+        if (sentEl) sentEl.style.display = 'block';
+        var emailEl = document.getElementById('rm-login-email');
+        if (emailEl) emailEl.style.display = 'none';
+        if (btn) btn.style.display = 'none';
+      } catch (err) {
+        log.error('Magic link error:', err);
+        toast('Error al enviar link: ' + (err.message || 'Intenta de nuevo'), 'error');
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar magic link →'; }
+      }
       return;
     }
   }
@@ -13560,16 +13587,14 @@ a[onclick]:active,
         <!-- LOGIN PANEL -->
         <div id="auth-login-panel">
           <div class="auth-title">Bienvenido de vuelta 👋</div>
-          <div class="auth-sub">Entra con tu email. Acceso rápido, sin complicaciones.</div>
+          <div class="auth-sub">Ingresa tu email y te enviaremos un link mágico. Sin contraseña.</div>
           <label class="auth-label">Email</label>
-          <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com" aria-label="Correo electrónico">
-          <button class="auth-btn" onclick="authSendLink()">Entrar con email →</button>
-          <div class="auth-divider">o continúa con</div>
-          <button class="auth-btn-ghost" onclick="authGoogleLogin()">
-            <span>🔵</span> Google
-          </button>
-          <div id="auth-link-sent" style="display:none; margin-top:16px; background:var(--acid-muted); border:1px solid var(--acid-20); border-radius: 0; padding:16px; font-size: var(--fs-base); text-align:center; color:var(--acid);">
-            ✉️ Link enviado a tu email. Revisa tu bandeja.
+          <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com" aria-label="Correo electrónico" onkeydown="if(event.key==='Enter')authSendLink()">
+          <button class="auth-btn" id="auth-send-link-btn" onclick="authSendLink()">Enviar magic link →</button>
+          <div id="auth-link-sent" style="display:none; margin-top:16px; background:var(--acid-muted); border:1px solid var(--acid-20); border-radius: 0; padding:16px; font-size: var(--fs-base); text-align:center; color:var(--acid); line-height:1.6;">
+            <div style="font-size:24px;margin-bottom:8px;">📬</div>
+            <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
+            <span style="font-size:var(--fs-xs);color:var(--text-dim);">Al hacer clic en el link entrarás automáticamente.</span>
           </div>
         </div>
         <!-- REGISTER PANEL -->
@@ -14127,36 +14152,26 @@ a[onclick]:active,
         <div class="pm-step-dot" id="pm-dot-4">✓</div>
       </div>
 
-      <!-- PANEL 0: Login / Crear cuenta -->
+      <!-- PANEL 0: Login / Magic Link -->
       <div class="pm-panel" id="pm-panel-0">
         <div style="text-align:center;padding:4px 0 24px;">
-          <div style="font-size: var(--fs-3xl);margin-bottom:14px;line-height:1;">🎫</div>
-          <div style="font-size: var(--fs-lg);font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;">Obtén tu entrada</div>
-          <div style="font-size: var(--fs-base);color:var(--text-mid);line-height:1.5;">Inicia sesión para vincular tu ticket a tu identidad y proteger tu compra.</div>
-        </div>
-
-        <!-- Google -->
-        <button onclick="pmLoginWith('google')" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--gray-50);color:var(--gray-800);border:none;border-radius: 0;padding:14px 20px;font-size: var(--fs-base);font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:12px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continuar con Google
-        </button>
-
-        <!-- Divider -->
-        <div style="display:flex;align-items:center;gap:12px;margin:4px 0 12px;">
-          <div class="divider-h"></div>
-          <span style="font-size: var(--fs-sm);color:var(--text-dim);font-weight:600;">o</span>
-          <div class="divider-h"></div>
+          <div style="font-size: var(--fs-3xl);margin-bottom:14px;line-height:1;">✉️</div>
+          <div style="font-size: var(--fs-lg);font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;">Ingresa tu email</div>
+          <div style="font-size: var(--fs-base);color:var(--text-mid);line-height:1.5;">Te enviaremos un link mágico para verificar tu identidad y vincular tu entrada.</div>
         </div>
 
         <!-- Email login -->
         <input class="pm-input" type="email" id="pm-login-email" placeholder="tu@email.com" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')pmLoginWith('email')">
-        <button class="pm-cta" onclick="pmLoginWith('email')" style="margin-bottom:10px;">Entrar con email →</button>
+        <button class="pm-cta" id="pm-send-link-btn" onclick="pmLoginWith('email')" style="margin-bottom:10px;">Enviar magic link →</button>
 
-        <!-- Guest -->
-        <button class="pm-cta-secondary" onclick="pmLoginWith('guest')">Continuar sin cuenta</button>
+        <div id="pm-link-sent" style="display:none;text-align:center;padding:20px 0;font-size:var(--fs-sm);color:var(--acid);line-height:1.6;">
+          <div style="font-size:32px;margin-bottom:10px;">📬</div>
+          <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
+          <span style="color:var(--text-dim);font-size:var(--fs-xs);margin-top:8px;display:block;">Al hacer clic en el link volverás aquí y continuará tu compra automáticamente.</span>
+        </div>
 
         <div style="margin-top:16px;text-align:center;font-size: var(--fs-sm);color:var(--text-dim);line-height:1.6;">
-          Al continuar aceptas nuestros <span class="text-acid cursor-pointer">Términos de servicio</span> y <span class="text-acid cursor-pointer">Política de privacidad</span>.
+          Al continuar aceptas nuestros <span class="text-acid" style="cursor:pointer;">Términos de servicio</span> y <span class="text-acid" style="cursor:pointer;">Política de privacidad</span>.
         </div>
       </div>
 
@@ -14367,15 +14382,20 @@ a[onclick]:active,
       <!-- STEP 0: Login -->
       <div class="rm-panel" id="rm-panel-0">
         <div style="text-align:center;padding:24px 0 20px;">
-          <div style="font-size:40px;margin-bottom:12px;">🔐</div>
-          <div style="font-size:var(--fs-lg);font-weight:700;">Inicia sesión para comprar</div>
-          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;">Necesitas una cuenta para vincular la entrada a tu DNI</div>
+          <div style="font-size:40px;margin-bottom:12px;">✉️</div>
+          <div style="font-size:var(--fs-lg);font-weight:700;">Ingresa tu email</div>
+          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;line-height:1.5;">Te enviaremos un link mágico para verificar tu identidad y vincular la entrada a tu cuenta.</div>
         </div>
-        <button class="rm-cta" onclick="rmLoginWith('google')" style="background:var(--bg-raised);color:var(--text);border:1px solid var(--alpha-light);margin-bottom:10px;text-transform:none;letter-spacing:0;font-weight:600;">🔵 Continuar con Google</button>
-        <div style="display:flex;align-items:center;gap:12px;margin:16px 0;"><div style="flex:1;height:1px;background:var(--alpha-light);"></div><span style="font-size:var(--fs-sm);color:var(--text-dim);">o</span><div style="flex:1;height:1px;background:var(--alpha-light);"></div></div>
-        <input class="rm-input" type="email" id="rm-login-email" placeholder="tu@email.com" style="margin-bottom:10px;">
-        <button class="rm-cta" onclick="rmLoginWith('email')" style="margin-bottom:10px;">Entrar con email →</button>
-        <button class="rm-cta-secondary" onclick="rmLoginWith('guest')">Continuar como invitado</button>
+        <input class="rm-input" type="email" id="rm-login-email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')rmLoginWith('email')">
+        <button class="rm-cta" id="rm-send-link-btn" onclick="rmLoginWith('email')">Enviar magic link →</button>
+        <div id="rm-link-sent" style="display:none;text-align:center;padding:20px 0;font-size:var(--fs-sm);color:var(--acid);line-height:1.6;">
+          <div style="font-size:32px;margin-bottom:10px;">📬</div>
+          <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
+          <span style="color:var(--text-dim);font-size:var(--fs-xs);margin-top:8px;display:block;">Al hacer clic en el link volverás aquí y continuará tu compra automáticamente.</span>
+        </div>
+        <div style="margin-top:16px;text-align:center;font-size:var(--fs-sm);color:var(--text-dim);line-height:1.6;">
+          Al continuar aceptas nuestros <span class="text-acid" style="cursor:pointer;">Términos de servicio</span> y <span class="text-acid" style="cursor:pointer;">Política de privacidad</span>.
+        </div>
       </div>
 
       <!-- STEP 1: Review Listing -->
