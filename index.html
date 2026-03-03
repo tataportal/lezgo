@@ -6245,36 +6245,37 @@ a[onclick]:active,
 }
 .ev-tk-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 20px;
 }
 .ev-tk-card {
   position: relative;
-  border-radius: 0;
+  border-radius: 16px;
   overflow: hidden;
   display: flex; flex-direction: column;
-  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+  transition: transform 0.3s ease, box-shadow 0.3s;
 }
 .ev-tk-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 24px 80px var(--dark-60);
+  transform: translateY(-4px);
 }
 .ev-tk-inner {
-  padding: 32px 28px;
+  padding: 28px 24px;
   height: 100%;
   display: flex; flex-direction: column;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 0;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
   position: relative;
   overflow: visible;
+  background: var(--gray-900);
 }
-.ev-tk-tier-1 { background: transparent; border-color: rgba(59,130,246,0.5); }
-.ev-tk-tier-2 { background: transparent; border-color: rgba(139,92,246,0.5); }
-.ev-tk-tier-3 { background: transparent; border-color: rgba(229,255,0,0.35); }
-.ev-tk-tier-4 { background: transparent; border-color: rgba(255,59,59,0.4); }
-.ev-tk-tier-basic { background: transparent; border-color: var(--border-light); }
+.ev-tk-tier-1 { border-color: rgba(59,130,246,0.25); }
+.ev-tk-tier-2 { border-color: rgba(139,92,246,0.25); }
+.ev-tk-tier-3 { border-color: rgba(229,255,0,0.2); }
+.ev-tk-tier-4 { border-color: rgba(255,59,59,0.2); }
+.ev-tk-tier-basic { border-color: var(--border-light); }
 .ev-tk-sold {
   background: transparent;
   border-color: rgba(255,255,255,0.15);
@@ -6299,8 +6300,8 @@ a[onclick]:active,
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-  border-radius: 0;
-  background: rgba(5,5,5,0.75);
+  border-radius: 16px;
+  background: rgba(5,5,5,0.8);
   backdrop-filter: blur(6px);
 }
 .ev-tk-card--sold:hover .ev-tk-overlay { opacity: 1; pointer-events: auto; }
@@ -6313,21 +6314,22 @@ a[onclick]:active,
   font-size: var(--fs-xs); color: var(--text-muted); font-weight: var(--fw-medium);
 }
 .ev-tk-name {
-  font-size: 40px; font-weight: var(--fw-extrabold);
-  letter-spacing: -0.5px; line-height: 1;
-  margin-bottom: 14px; color: #fff;
+  font-size: var(--fs-xl); font-weight: var(--fw-extrabold);
+  letter-spacing: -0.3px; line-height: 1.1;
+  margin-bottom: 12px; color: #fff;
 }
 .ev-tk-includes {
-  font-size: 17px; color: rgba(255,255,255,0.65);
-  line-height: 1.65; margin-top: 0;
+  font-size: var(--fs-sm); color: var(--text-dim);
+  line-height: 1.6; margin-top: 0;
+  padding-left: 0;
 }
 .ev-tk-includes li {
   list-style: none;
-  padding-left: 16px;
+  padding-left: 14px;
   position: relative;
 }
 .ev-tk-includes li::before {
-  content: ''; position: absolute; left: 0; top: 8px;
+  content: ''; position: absolute; left: 0; top: 7px;
   width: 4px; height: 4px; border-radius: 50%;
   background: var(--alpha-medium);
 }
@@ -6341,25 +6343,26 @@ a[onclick]:active,
   display: flex; flex-direction: column; gap: 4px;
 }
 .ev-tk-phase {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 5px 0;
-  font-size: 18px; font-weight: var(--fw-medium);
-  gap: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  font-size: var(--fs-sm); font-weight: var(--fw-medium);
+  gap: 8px;
 }
-.ev-tk-phase-name { color: var(--alpha-heavy); white-space: nowrap; }
-.ev-tk-phase-price { color: var(--alpha-heavy); white-space: nowrap; text-align: right; }
-.ev-tk-phase--past .ev-tk-phase-name { text-decoration: line-through; color: var(--alpha-subtle); }
-.ev-tk-phase--past .ev-tk-phase-price { text-decoration: line-through; color: var(--alpha-subtle); }
-.ev-tk-phase--active .ev-tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; }
-.ev-tk-phase--active .ev-tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: 26px; text-decoration: none; }
-.ev-tk-phase--future .ev-tk-phase-name { color: var(--acid-muted); }
-.ev-tk-phase--future .ev-tk-phase-price { color: var(--acid-muted); }
+.ev-tk-phase-name { color: var(--text-dim); white-space: nowrap; }
+.ev-tk-phase-price { color: var(--text-dim); white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.ev-tk-phase--past .ev-tk-phase-name { text-decoration: line-through; color: var(--text-muted); opacity: 0.4; }
+.ev-tk-phase--past .ev-tk-phase-price { text-decoration: line-through; color: var(--text-muted); opacity: 0.4; }
+.ev-tk-phase--active { padding: 10px 0; }
+.ev-tk-phase--active .ev-tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; font-size: var(--fs-base); }
+.ev-tk-phase--active .ev-tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: var(--fs-xl); text-decoration: none; }
+.ev-tk-phase--future .ev-tk-phase-name { color: var(--text-muted); opacity: 0.5; }
+.ev-tk-phase--future .ev-tk-phase-price { color: var(--text-muted); opacity: 0.5; }
 .ev-tk-phase-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--alpha-light); flex-shrink: 0; margin-right: 10px;
+  background: var(--alpha-light); flex-shrink: 0; margin-right: 8px;
 }
-.ev-tk-phase--past .ev-tk-phase-dot { background: var(--border-light); }
-.ev-tk-phase--active .ev-tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
+.ev-tk-phase--past .ev-tk-phase-dot { background: var(--border-light); opacity: 0.4; }
+.ev-tk-phase--active .ev-tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); width: 8px; height: 8px; }
 .ev-tk-phase--future .ev-tk-phase-dot { background: var(--alpha-subtle); }
 .ev-tk-phase-left { display: flex; align-items: center; }
 .ev-tk-bottom {
@@ -6373,17 +6376,18 @@ a[onclick]:active,
   margin: 16px 0 auto; letter-spacing: -0.5px;
 }
 .ev-tk-buy {
-  padding: 14px 24px;
+  padding: 12px 20px;
   background: var(--acid);
   border: none;
-  border-radius: var(--radius-btn);
-  color: var(--gray-950); font-size: 18px; font-weight: var(--fw-bold);
+  border-radius: 10px;
+  color: var(--gray-950); font-size: var(--fs-sm); font-weight: var(--fw-bold);
   transition: all 0.2s;
   white-space: nowrap;
   width: 100%;
   text-align: center;
   cursor: pointer;
   font-family: inherit;
+  margin-top: 8px;
 }
 .ev-tk-buy:hover { background: #fff; color: var(--gray-950); box-shadow: 0 0 30px var(--acid-glow); }
 .ev-tk-sold-all {
@@ -6667,13 +6671,11 @@ a[onclick]:active,
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .ev-section { padding: 64px 20px; }
-  .ev-tk-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; gap: 12px; }
-  .ev-tk-inner { min-height: auto; padding: 24px 20px; }
-  .ev-tk-name { font-size: 32px; }
-  .ev-tk-includes { font-size: 16px; }
-  .ev-tk-buy { padding: 14px 20px; font-size: 16px; }
-  .ev-tk-phase { font-size: 16px; }
-  .ev-tk-phase--active .ev-tk-phase-price { font-size: 22px; }
+  .ev-tk-grid { grid-template-columns: repeat(2, 1fr); padding: 0 16px; gap: 12px; }
+  .ev-tk-inner { min-height: auto; padding: 22px 18px; }
+  .ev-tk-name { font-size: var(--fs-lg); }
+  .ev-tk-buy { padding: 12px 18px; }
+  .ev-tk-phase--active .ev-tk-phase-price { font-size: var(--fs-lg); }
   .ev-info-list { gap: 8px 12px; }
   .ev-venue-block { grid-template-columns: 1fr; }
   .ev-lineup-grid { grid-template-columns: 1fr 1fr; }
@@ -6692,12 +6694,10 @@ a[onclick]:active,
 @media (max-width: 480px) {
   .ev-tk-grid { grid-template-columns: 1fr; gap: 12px; padding: 0 16px; }
   .ev-tk-inner { min-height: auto; padding: 20px 18px; }
-  .ev-tk-includes { max-height: none; font-size: 16px; }
-  .ev-tk-name { font-size: 28px; margin-bottom: 8px; }
-  .ev-tk-phases { padding-top: 12px; }
-  .ev-tk-phase { font-size: 16px; padding: 3px 0; }
-  .ev-tk-phase--active .ev-tk-phase-price { font-size: 22px; }
-  .ev-tk-buy { padding: 12px 18px; font-size: 16px; }
+  .ev-tk-includes { max-height: none; }
+  .ev-tk-name { font-size: var(--fs-lg); margin-bottom: 8px; }
+  .ev-tk-phases { padding-top: 10px; }
+  .ev-tk-phase--active .ev-tk-phase-price { font-size: var(--fs-lg); }
   .ev-tk-bottom { padding-top: 8px; }
   .ev-lineup-grid { grid-template-columns: 1fr; }
   .ev-lineup-card--hl .ev-lineup-name { font-size: var(--fs-xl); }
