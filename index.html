@@ -4548,6 +4548,152 @@ body::after {
 @keyframes pm-spin { to { transform: rotate(360deg); } }
 .pm-loading-text { font-size: var(--fs-base); color: var(--text-mid); }
 
+/* ═══════════════════════════════════════════
+   RESALE CHECKOUT MODAL (.rm-*)
+   ═══════════════════════════════════════════ */
+.rm-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.rm-overlay.rm-open { opacity: 1; pointer-events: auto; }
+.rm-sheet {
+  background: var(--bg-card); width: 100%; max-width: 520px;
+  max-height: 92vh; overflow-y: auto; position: relative;
+  transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  border-top: 2px solid var(--acid);
+}
+.rm-overlay.rm-open .rm-sheet { transform: translateY(0); }
+.rm-handle {
+  width: 40px; height: 4px; background: var(--alpha-medium); border-radius: 2px;
+  margin: 10px auto 0; opacity: 0.6;
+}
+.rm-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 20px 28px 16px; border-bottom: 1px solid var(--alpha-light);
+}
+.rm-header-event { font-size: var(--fs-sm); font-weight: 600; color: var(--acid); letter-spacing: 0.08em; text-transform: uppercase; }
+.rm-header-title { font-size: var(--fs-lg); font-weight: 700; margin-top: 4px; }
+.rm-close {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--alpha-light);
+  background: transparent; color: var(--text-mid); font-size: 16px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+}
+.rm-close:hover { background: var(--alpha-medium); }
+.rm-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+.rm-steps {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; margin-bottom: 28px;
+}
+.rm-step-dot {
+  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-sm); font-weight: 700; border: 2px solid var(--alpha-light);
+  color: var(--text-dim); transition: all 0.3s;
+}
+.rm-step-dot.active { border-color: var(--acid); color: var(--acid); background: var(--acid-10); }
+.rm-step-dot.done { border-color: var(--acid); color: var(--bg); background: var(--acid); }
+.rm-step-line {
+  width: 32px; height: 2px; background: var(--alpha-light); transition: background 0.3s;
+}
+.rm-step-line.done { background: var(--acid); opacity: 0.6; }
+.rm-panel { display: none; }
+.rm-panel.active { display: block; animation: pmSlideIn 0.3s ease-out; }
+.rm-listing-review {
+  background: var(--bg-raised); border: 1px solid var(--alpha-light);
+  padding: 20px; margin-bottom: 20px;
+}
+.rm-review-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; font-size: var(--fs-base); color: var(--text-mid);
+}
+.rm-review-row strong { color: var(--text); }
+.rm-input {
+  width: 100%; padding: 14px 18px; background: var(--bg-raised);
+  border: 1px solid var(--alpha-light); color: var(--text);
+  font-size: var(--fs-base); font-family: inherit; margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+.rm-input:focus { border-color: rgba(229,255,0,0.5); outline: none; }
+.rm-input::placeholder { color: rgba(255,255,255,0.45); }
+.rm-pay-summary { margin-bottom: 24px; }
+.rm-pay-row { display: flex; justify-content: space-between; font-size: var(--fs-base); margin-bottom: 10px; color: var(--text-mid); }
+.rm-pay-row.total { font-size: var(--fs-lg); font-weight: 800; color: var(--text); border-top: 1px solid var(--alpha-light); padding-top: 12px; margin-top: 4px; margin-bottom: 0; }
+.rm-pay-row.total span:last-child { color: var(--acid); }
+.rm-fee-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: var(--fs-base); color: var(--text-dim); margin-bottom: 4px;
+}
+.rm-fee-toggle {
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  color: var(--text-dim); font-size: var(--fs-sm);
+}
+.rm-fee-toggle:hover { color: var(--text); }
+.rm-fee-chevron { font-size: 10px; transition: transform 0.2s; display: inline-block; }
+.rm-fee-chevron.open { transform: rotate(180deg); }
+.rm-fee-breakdown {
+  display: none; flex-direction: column; gap: 6px;
+  margin: 8px 0 12px; padding: 12px 16px;
+  background: var(--acid-04); border-radius: 6px;
+}
+.rm-fee-breakdown.visible { display: flex; }
+.rm-fee-line { display: flex; justify-content: space-between; font-size: var(--fs-sm); color: var(--text-dim); }
+.rm-fee-line span:last-child { color: var(--text-mid); font-weight: 500; }
+.rm-fee-label { display: flex; align-items: center; gap: 6px; }
+.rm-fee-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.rm-card-row { display: flex; gap: 8px; margin-bottom: 20px; }
+.rm-card-opt {
+  flex: 1; padding: 12px; text-align: center; background: var(--bg-raised);
+  border: 1px solid var(--alpha-light); cursor: pointer; font-size: var(--fs-sm);
+  font-weight: 600; color: var(--text-dim); transition: all 0.2s;
+}
+.rm-card-opt.selected { border-color: var(--acid); color: var(--acid); background: var(--acid-06); }
+.rm-card-opt .rm-card-icon { font-size: var(--fs-lg); display: block; margin-bottom: 4px; }
+.rm-cta {
+  width: 100%; padding: 18px; border: none; font-size: var(--fs-base);
+  font-weight: 800; cursor: pointer; text-transform: uppercase;
+  letter-spacing: 0.06em; background: var(--acid); color: var(--bg);
+  transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+}
+.rm-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(229,255,0,0.35); }
+.rm-cta:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.rm-cta-secondary {
+  width: 100%; padding: 14px; border: 1px solid var(--alpha-light);
+  background: transparent; color: var(--text-dim); font-size: var(--fs-sm);
+  font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s;
+}
+.rm-cta-secondary:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
+.rm-loading {
+  display: none; flex-direction: column; align-items: center; gap: 16px;
+  padding: 40px 0; text-align: center;
+}
+.rm-loading.visible { display: flex; }
+.rm-spinner {
+  width: 32px; height: 32px; border: 3px solid var(--alpha-light);
+  border-top-color: var(--acid); border-radius: 50%;
+  animation: pm-spin 0.8s linear infinite;
+}
+.rm-loading-text { font-size: var(--fs-base); color: var(--text-mid); }
+.rm-confirm-icon { font-size: var(--fs-4xl); text-align: center; margin-bottom: 16px; animation: pm-celebrate 0.8s cubic-bezier(0.175,0.885,0.32,1.275); }
+.rm-confirm-title { font-size: var(--fs-xl); font-weight: 900; text-align: center; margin-bottom: 8px; }
+.rm-confirm-sub { font-size: var(--fs-base); color: var(--text-mid); text-align: center; margin-bottom: 28px; line-height: 1.6; }
+.rm-ticket-card-preview {
+  background: linear-gradient(135deg, var(--bg-raised) 0%, rgba(229,255,0,0.04) 100%);
+  border: 1px solid var(--acid-20); padding: 24px; position: relative; overflow: hidden;
+}
+.rm-ticket-card-preview::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--acid), transparent);
+}
+.rm-ticket-card-event { font-size: var(--fs-sm); font-weight: 600; color: var(--acid); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.rm-ticket-card-name { font-size: var(--fs-lg); font-weight: 800; margin-bottom: 16px; }
+.rm-ticket-card-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.rm-ticket-card-detail { font-size: var(--fs-sm); color: var(--text-mid); display: flex; gap: 8px; }
+.rm-ticket-card-detail strong { color: var(--text); }
+.rm-ticket-verified { text-align: center; font-size: var(--fs-sm); color: var(--green); font-weight: 600; margin-top: 12px; }
+.rm-resale-badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 700; background: var(--green-15); color: #00FF85; border: 1px solid var(--green-30); letter-spacing: 0.05em; text-transform: uppercase; margin-left: 8px; }
+.mt-ticket-status-resale-purchase { background: var(--green-15); color: #00FF85; border-color: var(--green-30); }
+
 /* Countdown timer */
 .ev-countdown {
   display: flex; align-items: center; gap: 6px;
@@ -9714,7 +9860,9 @@ a[onclick]:active,
       
       // Status badge HTML
       var statusBadgeHtml = '';
-      if (isActive) {
+      if (isActive && t.boughtInResale) {
+        statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-resale-purchase"><span style="font-size: 10px;">●</span> Comprada en Reventa</span>';
+      } else if (isActive) {
         statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-active"><span style="font-size: 10px;">●</span> Activa</span>';
       } else if (isUsed) {
         statusBadgeHtml = '<span class="mt-ticket-status-badge mt-ticket-status-used"><span style="font-size: 10px;">●</span> Usada</span>';
@@ -9745,7 +9893,7 @@ a[onclick]:active,
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">DNI vinculado</span><span class="mt-ticket-detail-value">${maskedDni}</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Verificación</span><span class="mt-ticket-detail-value" style="color: var(--green);">Verificado con Lezgo ✓</span></div>
             <div class="mt-ticket-detail-row"><span class="mt-ticket-detail-label">Productor</span><span class="mt-ticket-detail-value">${escHtml(t.promoter || '—')}</span></div>
-            <div class="mt-ticket-detail-row border-none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida' : isUsed ? '✓ Usada' : isResale ? '💰 En reventa' : '✓ Activa'}</span></div>
+            <div class="mt-ticket-detail-row border-none"><span class="mt-ticket-detail-label">Estado</span><span class="mt-ticket-detail-value">${isTransferred ? '🔄 Transferida' : isUsed ? '✓ Usada' : isResale ? '💰 En reventa' : t.boughtInResale ? '💚 Comprada en reventa' : '✓ Activa'}</span></div>
           </div>
         </div>`;
 
@@ -9930,7 +10078,7 @@ a[onclick]:active,
             <span class="mp-listing-price ${priceDiff}">S/${r.askingPrice}</span>
           </div>
           ${tagHtml}
-          <button class="mp-listing-btn" onclick="event.stopPropagation();buyResale('${r._id}')">Comprar →</button>
+          <button class="mp-listing-btn" onclick="event.stopPropagation();rmOpenCheckout('${escHtml(r._id)}',{eventName:'${escHtml(r.eventName)}',ticketTier:'${escHtml(r.ticketTier)}',originalPrice:${r.originalPrice},askingPrice:${r.askingPrice},sellerName:'${escHtml(r.sellerName||'Anónimo')}',eventDate:'${r.eventDate||''}',eventDateLabel:'${escHtml(r.eventDateLabel||'')}',eventVenue:'${escHtml(r.eventVenue||'')}'})">Comprar →</button>
         </div>
       </div>`;
     });
@@ -9953,7 +10101,7 @@ a[onclick]:active,
           eventName: r.eventName, eventDate: r.eventDate || '', eventDateLabel: r.eventDate || '',
           eventVenue: r.eventVenue || '', eventLocation: '', eventTimeStart: '22:00', eventTimeEnd: '05:00',
           ticketName: r.ticketTier, price: r.askingPrice, userDni: userProfile?.dni || '',
-          status: 'active', _canUpgrade: false, image: '', promoter: ''
+          status: 'active', _canUpgrade: false, image: '', promoter: '', boughtInResale: true, transferredFrom: r.sellerId || ''
         });
       } else {
         const resaleDoc = await db.collection('resale').doc(resaleId).get();
@@ -9964,18 +10112,269 @@ a[onclick]:active,
             userId: currentUser.uid, userEmail: currentUser.email,
             userName: userProfile?.displayName || currentUser.displayName || '',
             userDni: userProfile?.dni || '', status: 'active',
-            transferredAt: firebase.firestore.FieldValue.serverTimestamp()
+            transferredAt: firebase.firestore.FieldValue.serverTimestamp(),
+            transferredFrom: r.sellerId || '',
+            boughtInResale: true
           });
         }
         await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
       }
-      toast('¡Entrada comprada! Ya está en "Mis Entradas".', 'success');
-      loadMarketplace();
+      if (!rmResaleData) {
+        toast('¡Entrada comprada! Ya está en "Mis Entradas".', 'success');
+        loadMarketplace();
+      }
     } catch (err) {
       log.error('buyResale error:', err);
       toast('Error al comprar: ' + err.message, 'error');
     }
   }
+
+  // ═══════════════════════════════════════════
+  // RESALE CHECKOUT MODAL (rm*)
+  // ═══════════════════════════════════════════
+  var rmCurrentStep = 1;
+  var rmSelectedPay = 'card';
+  var rmVerifiedDni = '';
+  var rmVerifiedName = '';
+  var rmResaleData = null;
+  var rmResaleId = null;
+
+  function rmOpenCheckout(resaleId, data) {
+    rmResaleId = resaleId;
+    rmResaleData = data;
+    rmCurrentStep = 1;
+    rmSelectedPay = 'card';
+    rmVerifiedDni = '';
+    rmVerifiedName = '';
+
+    // Populate review step
+    document.getElementById('rm-review-event').textContent = data.eventName || '';
+    document.getElementById('rm-review-tier').textContent = data.ticketTier || '';
+    document.getElementById('rm-review-date').textContent = data.eventDateLabel || data.eventDate || '';
+    document.getElementById('rm-review-venue').textContent = data.eventVenue || '';
+    document.getElementById('rm-review-seller').textContent = data.sellerName || 'Anónimo';
+    document.getElementById('rm-review-original').textContent = 'S/' + (data.originalPrice || 0);
+    document.getElementById('rm-review-asking').textContent = 'S/' + (data.askingPrice || 0);
+    document.getElementById('rm-event-label').textContent = (data.eventName || 'REVENTA SEGURA').toUpperCase();
+
+    // Check auth — go to step 0 (login) or step 1 (review)
+    if (!currentUser) {
+      rmGoStep(0);
+    } else {
+      rmGoStep(1);
+    }
+
+    document.getElementById('rm-overlay').classList.add('rm-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function rmClose() {
+    document.getElementById('rm-overlay').classList.remove('rm-open');
+    document.body.style.overflow = '';
+    rmResaleData = null;
+    rmResaleId = null;
+    rmVerifiedDni = '';
+    rmVerifiedName = '';
+    rmCurrentStep = 1;
+    // Reset inputs
+    var dniInput = document.getElementById('rm-dni-input');
+    var nameInput = document.getElementById('rm-name-input');
+    if (dniInput) dniInput.value = '';
+    if (nameInput) nameInput.value = '';
+    // Reset loading state
+    var loading = document.getElementById('rm-loading');
+    var payBtn = document.getElementById('rm-pay-btn');
+    if (loading) loading.classList.remove('visible');
+    if (payBtn) { payBtn.style.display = ''; payBtn.disabled = false; }
+    // Reset verify btn
+    var verifyBtn = document.getElementById('rm-verify-btn');
+    if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verificar y continuar →'; }
+    rmGoStep(0);
+  }
+
+  function rmOverlayClick(e) {
+    if (e.target === document.getElementById('rm-overlay')) rmClose();
+  }
+
+  function rmGoStep(step) {
+    document.querySelectorAll('.rm-panel').forEach(function(p) { p.classList.remove('active'); });
+    var panel = document.getElementById('rm-panel-' + step);
+    if (panel) panel.classList.add('active');
+    rmCurrentStep = step;
+
+    // Show/hide steps bar (hidden on step 0)
+    var bar = document.getElementById('rm-steps-bar');
+    if (bar) bar.style.display = step === 0 ? 'none' : 'flex';
+
+    // Update step dots
+    for (var i = 1; i <= 4; i++) {
+      var dot = document.getElementById('rm-dot-' + i);
+      if (!dot) continue;
+      dot.classList.remove('active', 'done');
+      if (i < step) dot.classList.add('done');
+      else if (i === step) dot.classList.add('active');
+    }
+    for (var j = 1; j <= 3; j++) {
+      var line = document.getElementById('rm-line-' + j);
+      if (!line) continue;
+      if (j < step) line.classList.add('done');
+      else line.classList.remove('done');
+    }
+
+    var titles = { 0: 'Inicia sesión', 1: 'Detalles de la entrada', 2: 'Verifica tu identidad', 3: 'Pago', 4: '¡Listo!' };
+    var titleEl = document.getElementById('rm-step-title');
+    if (titleEl) titleEl.textContent = titles[step] || '';
+
+    // Auto-fill DNI on step 2
+    if (step === 2) {
+      setTimeout(function() {
+        var dniInput = document.getElementById('rm-dni-input');
+        var nameInput = document.getElementById('rm-name-input');
+        if (userProfile && userProfile.dni && dniInput && !dniInput.value) dniInput.value = userProfile.dni;
+        if (userProfile && userProfile.displayName && nameInput && !nameInput.value) nameInput.value = userProfile.displayName;
+      }, 100);
+    }
+
+    if (step === 3) {
+      rmBuildPaySummary();
+    }
+  }
+
+  function rmBuildPaySummary() {
+    if (!rmResaleData) return;
+    var askingPrice = rmResaleData.askingPrice || 0;
+    var platformFeeRate = 0.033;
+    var verificationFeeRate = 0.021;
+    var processingFeeRate = 0.029;
+    var totalFeeRate = platformFeeRate + verificationFeeRate + processingFeeRate;
+    var totalFee = Math.round(askingPrice * totalFeeRate * 100) / 100;
+    var total = askingPrice + totalFee;
+
+    document.getElementById('rm-pay-item').textContent = (rmResaleData.ticketTier || 'Entrada') + ' — ' + (rmResaleData.eventName || 'Reventa');
+    document.getElementById('rm-pay-item-price').textContent = 'S/' + askingPrice;
+    document.getElementById('rm-pay-fee').textContent = 'S/' + totalFee.toFixed(2);
+    document.getElementById('rm-pay-total').textContent = 'S/' + total.toFixed(2);
+
+    document.getElementById('rm-fee-plataforma').textContent = (platformFeeRate * 100).toFixed(1) + '%';
+    document.getElementById('rm-fee-verificacion').textContent = (verificationFeeRate * 100).toFixed(1) + '%';
+    document.getElementById('rm-fee-procesamiento').textContent = (processingFeeRate * 100).toFixed(1) + '%';
+
+    // Reset desglose
+    document.getElementById('rm-fee-breakdown').classList.remove('visible');
+    document.getElementById('rm-fee-chevron').classList.remove('open');
+  }
+
+  async function rmVerifyDni() {
+    var btn = document.getElementById('rm-verify-btn');
+    btn.disabled = true;
+    var dni = document.getElementById('rm-dni-input').value.trim();
+    var name = document.getElementById('rm-name-input').value.trim();
+    if (!/^\d{8}$/.test(dni) || !name) {
+      toast('Ingresa un DNI válido (8 dígitos) y tu nombre completo', 'warning');
+      document.getElementById('rm-dni-input').style.borderColor = '#ff4d4d';
+      document.getElementById('rm-name-input').style.borderColor = name ? '' : '#ff4d4d';
+      setTimeout(function() {
+        document.getElementById('rm-dni-input').style.borderColor = '';
+        document.getElementById('rm-name-input').style.borderColor = '';
+      }, 1800);
+      btn.disabled = false;
+      return;
+    }
+    rmVerifiedDni = dni;
+    rmVerifiedName = name;
+
+    // Save DNI to user profile
+    if (currentUser) {
+      if (userProfile) { userProfile.dni = dni; userProfile.displayName = name; }
+      if (!DEMO_MODE) {
+        try { await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name }); } catch(e) {}
+      }
+    }
+
+    btn.textContent = '🔍 Verificando...';
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.textContent = 'Verificar y continuar →';
+      rmGoStep(3);
+    }, 1000);
+  }
+
+  async function rmPay() {
+    if (!rmResaleId || !rmResaleData) { toast('Error: datos de reventa no disponibles', 'error'); return; }
+
+    var loading = document.getElementById('rm-loading');
+    var btn = document.getElementById('rm-pay-btn');
+    var backBtn = btn ? btn.nextElementSibling : null;
+
+    if (btn) { btn.disabled = true; btn.style.display = 'none'; }
+    if (backBtn) backBtn.style.display = 'none';
+    if (loading) loading.classList.add('visible');
+
+    try {
+      // Use existing buyResale() logic internally
+      await buyResale(rmResaleId);
+
+      // Populate confirmation screen
+      var askingPrice = rmResaleData.askingPrice || 0;
+      var totalFee = Math.round(askingPrice * 0.083 * 100) / 100;
+      var total = askingPrice + totalFee;
+      var maskedDni = rmVerifiedDni ? rmVerifiedDni.substring(0, 2) + '****' + rmVerifiedDni.substring(6) : '———';
+
+      document.getElementById('rm-confirm-event').textContent = (rmResaleData.eventName || '').toUpperCase();
+      document.getElementById('rm-confirm-ticket-name').textContent = rmResaleData.ticketTier || 'Entrada';
+      document.getElementById('rm-confirm-date').textContent = rmResaleData.eventDateLabel || rmResaleData.eventDate || '';
+      document.getElementById('rm-confirm-venue').textContent = rmResaleData.eventVenue || '';
+      document.getElementById('rm-confirm-dni').textContent = maskedDni;
+      document.getElementById('rm-confirm-total').textContent = 'S/' + total.toFixed(2);
+
+      if (loading) loading.classList.remove('visible');
+      rmGoStep(4);
+    } catch (err) {
+      if (loading) loading.classList.remove('visible');
+      if (btn) { btn.style.display = ''; btn.disabled = false; }
+      if (backBtn) backBtn.style.display = '';
+      toast('Error al procesar: ' + err.message, 'error');
+    }
+  }
+
+  function rmLoginWith(method) {
+    if (method === 'guest') {
+      rmGoStep(1);
+      return;
+    }
+    if (method === 'google') {
+      if (typeof authGoogleLogin === 'function') authGoogleLogin();
+      return;
+    }
+    if (method === 'email') {
+      var email = document.getElementById('rm-login-email').value.trim();
+      if (!email) { toast('Ingresa tu email', 'warning'); return; }
+      if (typeof authSendLink === 'function') authSendLink(email);
+      return;
+    }
+  }
+
+  function rmSelectPay(method) {
+    rmSelectedPay = method;
+    document.querySelectorAll('.rm-card-opt').forEach(function(o) { o.classList.remove('selected'); });
+    var sel = document.getElementById('rm-pay-' + method);
+    if (sel) sel.classList.add('selected');
+    var cardFields = document.getElementById('rm-pay-card-fields');
+    var yapeFields = document.getElementById('rm-pay-yape-fields');
+    if (cardFields) cardFields.style.display = method === 'card' ? 'block' : 'none';
+    if (yapeFields) yapeFields.style.display = (method === 'yape' || method === 'izipay') ? 'block' : 'none';
+  }
+
+  function rmToggleDesglose() {
+    var bd = document.getElementById('rm-fee-breakdown');
+    var ch = document.getElementById('rm-fee-chevron');
+    if (bd) bd.classList.toggle('visible');
+    if (ch) ch.classList.toggle('open');
+  }
+
+  function rmFormatDni(input) { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 8); }
+  function rmFormatCard(input) { var v = input.value.replace(/\D/g, '').slice(0, 16); input.value = v.replace(/(.{4})/g, '$1 ').trim(); }
+  function rmFormatExp(input) { var v = input.value.replace(/\D/g, '').slice(0, 4); if (v.length >= 2) v = v.slice(0, 2) + '/' + v.slice(2); input.value = v; }
 
   // ── Scanner ──
   var scannerSelectedEventId = null;
@@ -13933,6 +14332,159 @@ a[onclick]:active,
         </div>
         <div style="text-align:center;margin-top:16px;padding:16px;border-top:1px solid rgba(255,255,255,0.1);font-weight:600;color:var(--text-mid);">Total pagado: <span id="pm-confirm-total">S/0</span></div>
         <button class="pm-cta" onclick="pmClose();go('mis-entradas')" style="margin-top:24px">Ver mis entradas →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     RESALE CHECKOUT MODAL
+     ═══════════════════════════════════════════ -->
+<div class="rm-overlay" id="rm-overlay" onclick="rmOverlayClick(event)">
+  <div class="rm-sheet">
+    <div class="rm-handle"></div>
+    <div class="rm-header">
+      <div>
+        <div class="rm-header-event" id="rm-event-label">REVENTA SEGURA</div>
+        <div class="rm-header-title" id="rm-step-title">Comprar entrada en reventa</div>
+      </div>
+      <button class="rm-close" onclick="rmClose()">✕</button>
+    </div>
+    <div class="rm-body">
+
+      <!-- Steps indicator -->
+      <div class="rm-steps" id="rm-steps-bar">
+        <div class="rm-step-dot active" id="rm-dot-1">1</div>
+        <div class="rm-step-line" id="rm-line-1"></div>
+        <div class="rm-step-dot" id="rm-dot-2">2</div>
+        <div class="rm-step-line" id="rm-line-2"></div>
+        <div class="rm-step-dot" id="rm-dot-3">3</div>
+        <div class="rm-step-line" id="rm-line-3"></div>
+        <div class="rm-step-dot" id="rm-dot-4">✓</div>
+      </div>
+
+      <!-- STEP 0: Login -->
+      <div class="rm-panel" id="rm-panel-0">
+        <div style="text-align:center;padding:24px 0 20px;">
+          <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+          <div style="font-size:var(--fs-lg);font-weight:700;">Inicia sesión para comprar</div>
+          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;">Necesitas una cuenta para vincular la entrada a tu DNI</div>
+        </div>
+        <button class="rm-cta" onclick="rmLoginWith('google')" style="background:var(--bg-raised);color:var(--text);border:1px solid var(--alpha-light);margin-bottom:10px;text-transform:none;letter-spacing:0;font-weight:600;">🔵 Continuar con Google</button>
+        <div style="display:flex;align-items:center;gap:12px;margin:16px 0;"><div style="flex:1;height:1px;background:var(--alpha-light);"></div><span style="font-size:var(--fs-sm);color:var(--text-dim);">o</span><div style="flex:1;height:1px;background:var(--alpha-light);"></div></div>
+        <input class="rm-input" type="email" id="rm-login-email" placeholder="tu@email.com" style="margin-bottom:10px;">
+        <button class="rm-cta" onclick="rmLoginWith('email')" style="margin-bottom:10px;">Entrar con email →</button>
+        <button class="rm-cta-secondary" onclick="rmLoginWith('guest')">Continuar como invitado</button>
+      </div>
+
+      <!-- STEP 1: Review Listing -->
+      <div class="rm-panel active" id="rm-panel-1">
+        <div style="text-align:center;padding:16px 0 24px;">
+          <div style="font-size:40px;margin-bottom:12px;">🎫</div>
+          <div style="font-size:var(--fs-lg);font-weight:700;letter-spacing:-0.5px;">Detalles de la entrada</div>
+        </div>
+        <div class="rm-listing-review">
+          <div class="rm-review-row"><span>Evento</span><strong id="rm-review-event"></strong></div>
+          <div class="rm-review-row"><span>Tipo de entrada</span><strong id="rm-review-tier"></strong></div>
+          <div class="rm-review-row"><span>Fecha</span><strong id="rm-review-date"></strong></div>
+          <div class="rm-review-row"><span>Lugar</span><strong id="rm-review-venue"></strong></div>
+          <div class="rm-review-row"><span>Vendedor</span><strong id="rm-review-seller"></strong></div>
+          <div class="rm-review-row" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--alpha-light);">
+            <span style="font-size:var(--fs-sm);color:var(--text-dim);">Precio original</span>
+            <span id="rm-review-original" style="text-decoration:line-through;color:var(--text-dim);"></span>
+          </div>
+          <div class="rm-review-row" style="font-weight:700;font-size:var(--fs-lg);">
+            <span>Precio de reventa</span>
+            <span id="rm-review-asking" style="color:var(--acid);"></span>
+          </div>
+        </div>
+        <div style="padding:16px;background:var(--acid-06);border:1px solid var(--acid-20);margin-bottom:20px;font-size:var(--fs-sm);color:var(--text-mid);display:flex;gap:10px;align-items:flex-start;">
+          <span style="font-size:18px;">🔒</span>
+          <div><strong style="color:var(--acid);">Compra protegida.</strong> La entrada se vinculará a tu DNI al completar la compra. El vendedor perderá acceso inmediatamente.</div>
+        </div>
+        <button class="rm-cta" onclick="rmGoStep(2)">Continuar →</button>
+      </div>
+
+      <!-- STEP 2: DNI Verification -->
+      <div class="rm-panel" id="rm-panel-2">
+        <div style="text-align:center;padding:16px 0 24px;">
+          <div style="font-size:40px;margin-bottom:12px;">🪪</div>
+          <div style="font-size:var(--fs-lg);font-weight:700;">Verifica tu identidad</div>
+          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;">Tu entrada quedará vinculada a este DNI</div>
+        </div>
+        <div style="font-size:var(--fs-sm);font-weight:600;color:var(--text-mid);margin-bottom:6px;">DNI (8 dígitos)</div>
+        <input class="rm-input" type="text" id="rm-dni-input" placeholder="72345678" maxlength="8" inputmode="numeric" oninput="rmFormatDni(this)">
+        <div style="font-size:var(--fs-sm);font-weight:600;color:var(--text-mid);margin-bottom:6px;">Nombre completo</div>
+        <input class="rm-input" type="text" id="rm-name-input" placeholder="Como aparece en tu DNI">
+        <button class="rm-cta" id="rm-verify-btn" onclick="rmVerifyDni()">Verificar y continuar →</button>
+        <button class="rm-cta-secondary" onclick="rmGoStep(1)">← Volver</button>
+      </div>
+
+      <!-- STEP 3: Payment -->
+      <div class="rm-panel" id="rm-panel-3">
+        <div class="rm-pay-summary">
+          <div id="rm-pay-items">
+            <div class="rm-pay-row"><span id="rm-pay-item">Entrada en reventa</span><span id="rm-pay-item-price">S/0</span></div>
+          </div>
+          <div class="rm-fee-row" style="margin-bottom:2px;">
+            <span class="rm-fee-toggle" onclick="rmToggleDesglose()">
+              Cargo por servicio
+              <span class="rm-fee-chevron" id="rm-fee-chevron">▼</span>
+            </span>
+            <span id="rm-pay-fee" style="font-weight:600;color:var(--text-mid);">S/0</span>
+          </div>
+          <div class="rm-fee-breakdown" id="rm-fee-breakdown">
+            <div class="rm-fee-line"><span class="rm-fee-label"><span class="rm-fee-dot" style="background:#E5FF00;"></span>Plataforma Lezgo</span><span id="rm-fee-plataforma">3.3%</span></div>
+            <div class="rm-fee-line"><span class="rm-fee-label"><span class="rm-fee-dot" style="background:#60a5fa;"></span>Verificación de identidad</span><span id="rm-fee-verificacion">2.1%</span></div>
+            <div class="rm-fee-line"><span class="rm-fee-label"><span class="rm-fee-dot" style="background:#a78bfa;"></span>Procesamiento de pago</span><span id="rm-fee-procesamiento">2.9%</span></div>
+          </div>
+          <div class="rm-pay-row total"><span>Total a pagar</span><span id="rm-pay-total">S/0</span></div>
+        </div>
+        <div class="rm-card-row">
+          <div class="rm-card-opt selected" id="rm-pay-card" onclick="rmSelectPay('card')"><span class="rm-card-icon">💳</span>Tarjeta</div>
+          <div class="rm-card-opt" id="rm-pay-yape" onclick="rmSelectPay('yape')"><span class="rm-card-icon">📱</span>Yape / Plin</div>
+          <div class="rm-card-opt" id="rm-pay-izipay" onclick="rmSelectPay('izipay')"><span class="rm-card-icon">🏦</span>Izipay</div>
+        </div>
+        <div id="rm-pay-card-fields">
+          <input class="rm-input" type="text" placeholder="Número de tarjeta" maxlength="19" oninput="rmFormatCard(this)">
+          <div style="display:flex;gap:10px;">
+            <input class="rm-input" type="text" placeholder="MM/AA" maxlength="5" oninput="rmFormatExp(this)" style="flex:1;">
+            <input class="rm-input" type="password" placeholder="CVV" maxlength="3" style="flex:1;">
+          </div>
+        </div>
+        <div id="rm-pay-yape-fields" class="d-none">
+          <div style="text-align:center;font-size:var(--fs-base);color:var(--text-mid);padding:20px 0;">📲 Se abrirá el flujo de Yape/Plin al continuar</div>
+        </div>
+        <div class="rm-loading" id="rm-loading">
+          <div class="rm-spinner"></div>
+          <div class="rm-loading-text">Procesando pago seguro...</div>
+        </div>
+        <div style="text-align:center;margin-bottom:16px;font-size:var(--fs-sm);color:var(--green);display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span style="font-size:14px;">🔒</span><span>Pago 100% seguro y encriptado</span>
+        </div>
+        <button class="rm-cta" id="rm-pay-btn" onclick="rmPay()">Pagar ahora 🔒</button>
+        <button class="rm-cta-secondary" onclick="rmGoStep(2)">← Volver</button>
+      </div>
+
+      <!-- STEP 4: Confirmation -->
+      <div class="rm-panel" id="rm-panel-4">
+        <div class="rm-confirm-icon">🎉</div>
+        <div class="rm-confirm-title">¡Entrada comprada!</div>
+        <div class="rm-confirm-sub">Tu entrada en reventa está vinculada a tu DNI. Presenta tu documento en la puerta.</div>
+        <div class="rm-ticket-card-preview">
+          <div class="rm-ticket-card-event" id="rm-confirm-event"></div>
+          <div class="rm-ticket-card-name" id="rm-confirm-ticket-name"></div>
+          <div class="rm-ticket-card-details">
+            <div class="rm-ticket-card-detail">📅 <strong id="rm-confirm-date"></strong></div>
+            <div class="rm-ticket-card-detail">📍 <strong id="rm-confirm-venue"></strong></div>
+            <div class="rm-ticket-card-detail">🪪 <strong id="rm-confirm-dni">———</strong> <span style="color:var(--text-dim);margin-left:4px;">DNI Vinculado</span></div>
+          </div>
+          <div style="text-align:center;padding:12px 0;">🪪</div>
+          <div class="rm-ticket-verified">✅ Verificado con Lezgo</div>
+        </div>
+        <div style="text-align:center;margin-top:16px;padding:16px;border-top:1px solid var(--alpha-light);font-weight:600;color:var(--text-mid);">Total pagado: <span id="rm-confirm-total" style="color:var(--acid);">S/0</span></div>
+        <button class="rm-cta" onclick="rmClose();loadMyTickets();go('mis-entradas')" style="margin-top:24px;">Ver mis entradas →</button>
       </div>
 
     </div>
