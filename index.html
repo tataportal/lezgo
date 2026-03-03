@@ -6343,8 +6343,8 @@ a[onclick]:active,
   display: flex; flex-direction: column; gap: 4px;
 }
 .ev-tk-phase {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0;
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 5px 0;
   font-size: var(--fs-sm); font-weight: var(--fw-medium);
   gap: 8px;
 }
@@ -6352,9 +6352,8 @@ a[onclick]:active,
 .ev-tk-phase-price { color: var(--text-dim); white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
 .ev-tk-phase--past .ev-tk-phase-name { text-decoration: line-through; color: var(--text-muted); opacity: 0.4; }
 .ev-tk-phase--past .ev-tk-phase-price { text-decoration: line-through; color: var(--text-muted); opacity: 0.4; }
-.ev-tk-phase--active { padding: 10px 0; }
-.ev-tk-phase--active .ev-tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; font-size: var(--fs-base); }
-.ev-tk-phase--active .ev-tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: var(--fs-xl); text-decoration: none; }
+.ev-tk-phase--active .ev-tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; }
+.ev-tk-phase--active .ev-tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: var(--fs-base); text-decoration: none; }
 .ev-tk-phase--future .ev-tk-phase-name { color: var(--text-muted); opacity: 0.5; }
 .ev-tk-phase--future .ev-tk-phase-price { color: var(--text-muted); opacity: 0.5; }
 .ev-tk-phase-dot {
@@ -6362,9 +6361,9 @@ a[onclick]:active,
   background: var(--alpha-light); flex-shrink: 0; margin-right: 8px;
 }
 .ev-tk-phase--past .ev-tk-phase-dot { background: var(--border-light); opacity: 0.4; }
-.ev-tk-phase--active .ev-tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); width: 8px; height: 8px; }
+.ev-tk-phase--active .ev-tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
 .ev-tk-phase--future .ev-tk-phase-dot { background: var(--alpha-subtle); }
-.ev-tk-phase-left { display: flex; align-items: center; }
+.ev-tk-phase-left { display: flex; align-items: baseline; }
 .ev-tk-bottom {
   margin-top: auto;
   padding-top: 12px;
