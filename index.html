@@ -13012,10 +13012,12 @@ a[onclick]:active,
     }
     // Subtotal label
     document.getElementById('pm-step1-subtotal').textContent = subtotal === 0 && totalQty > 0 ? 'GRATIS' : 'S/' + subtotal;
-    // Continue button
+    // Continue button — show price and ensure onclick
     const btn = document.getElementById('pm-step1-continue');
     btn.disabled = totalQty === 0;
     btn.style.opacity = totalQty === 0 ? '0.4' : '1';
+    btn.textContent = totalQty === 0 ? 'Continuar →' : 'Continuar — ' + (subtotal === 0 ? 'GRATIS' : 'S/ ' + subtotal);
+    btn.onclick = function() { pmGoStep(2); };
     // ID notice
     const notice = document.getElementById('pm-id-notice');
     const noticeText = document.getElementById('pm-id-notice-text');
