@@ -6140,14 +6140,6 @@ a[onclick]:active,
               <span id="nd-lang-en" style="font-size: var(--fs-xs);font-weight:800;padding:3px 7px;border-radius: 0;background:rgba(255,255,255,0.08);color:var(--text-dim);">EN</span>
             </div>
           </div>
-          <!-- Demo mode: role switch -->
-          <div class="nd-item nd-logged-in d-none" id="nd-role-switch" onclick="demoToggleRole()">
-            <span class="nd-icon" id="nd-role-icon">👑</span> <span id="nd-role-label" style="white-space:nowrap">Modo</span>
-            <div style="margin-left:auto;display:flex;gap:4px;align-items:center;">
-              <span id="nd-role-fan" style="font-size: var(--fs-xs);font-weight:800;padding:3px 7px;border-radius: 0;background:var(--acid);color: var(--gray-950);">FAN</span>
-              <span id="nd-role-promoter" style="font-size: var(--fs-xs);font-weight:800;padding:3px 7px;border-radius: 0;background:rgba(255,255,255,0.08);color:var(--text-dim);">PRO</span>
-            </div>
-          </div>
           <div class="nd-divider"></div>
           <!-- Logged-out: login -->
           <div class="nd-item nd-logged-out" onclick="go('auth')">
@@ -8745,11 +8737,6 @@ a[onclick]:active,
     }
   })();
 
-  // ── Demo mode: everyone logs in as demo user ──
-  var DEMO_MODE = true;
-  var DEMO_UID = 'demo-user-001';
-  var demoRole = 'fan';
-
   // ── HTML Escaping Helper ──
   function escHtml(str) {
     if (!str) return '';
@@ -8777,68 +8764,8 @@ a[onclick]:active,
     setTimeout(function() { if (t.parentElement) { t.classList.add('toast-out'); setTimeout(function() { t.remove(); }, 300); } }, duration);
   }
 
-  function demoApplyAuth() {
-    // Don't re-apply auth if user explicitly logged out
-    if (window._demoLoggedOut) return;
-    currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
-    userProfile = { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: demoRole, dni: '72345678' };
-    updateUIForAuth(true);
-    // Show role switch toggle
-    var sw = document.getElementById('nd-role-switch');
-    if (sw) sw.style.display = '';
-    demoUpdateRoleUI();
-  }
-
-  function demoLogin() {
-    window._demoLoggedOut = false;
-    demoApplyAuth();
-    go('eventos');
-  }
-
-  function demoToggleRole() {
-    demoRole = demoRole === 'fan' ? 'promoter' : 'fan';
-    demoApplyAuth();
-    // Refresh current view
-    var current = document.querySelector('.view.active');
-    if (current) {
-      var id = current.id.replace('v-', '');
-      go(id);
-    }
-  }
-
-  function demoUpdateRoleUI() {
-    var fanBadge = document.getElementById('nd-role-fan');
-    var proBadge = document.getElementById('nd-role-promoter');
-    var icon = document.getElementById('nd-role-icon');
-    var label = document.getElementById('nd-role-label');
-    if (demoRole === 'fan') {
-      if (fanBadge) { fanBadge.style.background = 'var(--acid)'; fanBadge.style.color = '#000'; }
-      if (proBadge) { proBadge.style.background = 'rgba(255,255,255,0.08)'; proBadge.style.color = 'var(--text-dim)'; }
-      if (icon) icon.textContent = '👑';
-      if (label) label.textContent = 'Modo';
-    } else {
-      if (proBadge) { proBadge.style.background = 'var(--acid)'; proBadge.style.color = '#000'; }
-      if (fanBadge) { fanBadge.style.background = 'rgba(255,255,255,0.08)'; fanBadge.style.color = 'var(--text-dim)'; }
-      if (icon) icon.textContent = '🎧';
-      if (label) label.textContent = 'Modo';
-    }
-  }
-
-  // In DEMO_MODE start logged-out so user can test full auth flow
-  if (DEMO_MODE) {
-    window._demoLoggedOut = true;
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() { updateUIForAuth(false); });
-    } else {
-      updateUIForAuth(false);
-    }
-  }
 
   auth.onAuthStateChanged(async (user) => {
-    if (DEMO_MODE) {
-      demoApplyAuth();
-      return;
-    }
     currentUser = user;
     if (user) {
       // Load or create user profile
@@ -9059,60 +8986,13 @@ a[onclick]:active,
   //   Structured key-value for dashboards, recommendations, data mining.
   //   Keys: bpmRange, production, crowdSize, dressCode, foodDrinks, artistOrigin, multiStage, recurring, avgTicketPrice
 
-  // Events loaded after DEMO_EVENTS is defined (see below)
+  // Events loaded from Firestore
 
   // ── Load Events from Firestore ──
   var allEvents = [];
   var currentEventId = null;
 
-  function injectDemoData() {
-    if (typeof DEMO_EVENTS !== 'undefined') {
-      DEMO_EVENTS.forEach(ev => {
-        var existing = allEvents.findIndex(e => e._id === ev._id);
-        if (existing !== -1) {
-          allEvents[existing] = Object.assign({}, allEvents[existing], ev);
-        } else {
-          allEvents.push(ev);
-        }
-      });
-    }
-    if (typeof DEMO_TICKETS !== 'undefined') {
-      DEMO_TICKETS.forEach(t => {
-        if (!allEvents.find(e => e._id === t.eventId)) {
-          allEvents.push({ _id: t.eventId, name: t.eventName, date: t.eventDate, dateLabel: t.eventDateLabel, venue: t.eventVenue, location: t.eventLocation, timeStart: t.eventTimeStart, timeEnd: t.eventTimeEnd, image: t.image || '', genre: 'techno', status: 'published', promoter: t.promoter || '', tickets: [{ name: t.ticketName, price: t.price }] });
-        }
-      });
-    }
-  }
-
   async function loadEvents() {
-    // In DEMO_MODE: render demo data INSTANTLY, then optionally merge Firestore in background
-    if (DEMO_MODE) {
-      injectDemoData();
-      renderAllSections();
-      // Background: merge Firestore data silently (only re-render if new events found)
-      try {
-        var prevCount = allEvents.length;
-        const snapshot = await db.collection('events').where('status', 'in', ['published', 'sold-out']).get();
-        if (snapshot.size > 0) {
-          var hasNew = false;
-          snapshot.forEach(doc => {
-            var data = { ...doc.data(), _id: doc.id };
-            var existing = allEvents.findIndex(e => e._id === data._id);
-            if (existing !== -1) {
-              allEvents[existing] = Object.assign({}, allEvents[existing], data);
-            } else {
-              allEvents.push(data);
-              hasNew = true;
-            }
-          });
-          // Only re-render if Firestore had events not in demo data
-          if (hasNew) renderAllSections();
-        }
-      } catch (err) { log.error('Firestore background merge:', err); }
-      return;
-    }
-    // Non-demo: load from Firestore first
     try {
       const snapshot = await db.collection('events').where('status', 'in', ['published', 'sold-out']).get();
       allEvents = [];
@@ -9440,7 +9320,6 @@ a[onclick]:active,
 
   // ── Real Auth Functions ──
   async function authGoogleLogin() {
-    if (DEMO_MODE) { demoLogin(); return; }
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
@@ -9458,11 +9337,6 @@ a[onclick]:active,
   }
 
   async function authSendLink() {
-    // In demo mode, just log back in
-    if (DEMO_MODE) {
-      demoLogin();
-      return;
-    }
     const emailInput = document.getElementById('auth-email-input');
     const email = emailInput.value.trim();
     if (!email || !email.includes('@')) {
@@ -9548,15 +9422,9 @@ a[onclick]:active,
     // Update UI immediately to logged-out state
     updateUIForAuth(false);
 
-    if (DEMO_MODE) {
-      // In demo mode, flag that user explicitly logged out
-      window._demoLoggedOut = true;
+    auth.signOut().then(() => {
       go('auth');
-    } else {
-      auth.signOut().then(() => {
-        go('auth');
-      });
-    }
+    });
   }
 
   // ── Purchase Flow (Free Tickets) ──
@@ -9589,55 +9457,34 @@ a[onclick]:active,
         return;
       }
 
-      if (DEMO_MODE) {
-        // Demo: add tickets to DEMO_TICKETS array
-        for (const [ticketId, qty] of selectedTickets) {
-          for (let i = 0; i < qty; i++) {
-            var demoId = 'demo-tk-' + Date.now() + '-' + Math.random().toString(36).substr(2,4);
-            DEMO_TICKETS.push({
-              _id: demoId, userId: currentUser.uid, eventId: ev._id || ev.id,
-              eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
-              eventDate: ev.date, eventDateLabel: ev.dateLabel || '',
-              eventVenue: ev.venue, eventLocation: ev.location,
-              eventTimeStart: ev.timeStart || '22:00', eventTimeEnd: ev.timeEnd || '05:00',
-              ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
-              price: pmTicketCatalog[ticketId]?.price || 0,
-              userDni: pmVerifiedDni || userProfile?.dni || '',
-              status: 'active', _canUpgrade: true, image: ev.image || '',
-              promoter: ev.promoter || ev.name || ''
-            });
-          }
+      const batch = db.batch();
+      for (const [ticketId, qty] of selectedTickets) {
+        for (let i = 0; i < qty; i++) {
+          const ticketRef = db.collection('tickets').doc();
+          batch.set(ticketRef, {
+            ticketId: ticketRef.id,
+            eventId: ev._id || ev.id,
+            eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
+            eventDate: ev.date,
+            eventDateLabel: ev.dateLabel,
+            eventTimeStart: ev.timeStart,
+            eventTimeEnd: ev.timeEnd,
+            eventVenue: ev.venue,
+            eventLocation: ev.location,
+            ticketType: ticketId,
+            ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
+            price: pmTicketCatalog[ticketId]?.price || 0,
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            userDni: pmVerifiedDni || userProfile?.dni || '',
+            userName: pmVerifiedName || userProfile?.displayName || currentUser.displayName || '',
+            status: 'active',
+            usedAt: null,
+            purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
         }
-      } else {
-        const batch = db.batch();
-        for (const [ticketId, qty] of selectedTickets) {
-          for (let i = 0; i < qty; i++) {
-            const ticketRef = db.collection('tickets').doc();
-            batch.set(ticketRef, {
-              ticketId: ticketRef.id,
-              eventId: ev._id || ev.id,
-              eventName: ev.name + (ev.subtitle ? ' — ' + ev.subtitle : ''),
-              eventDate: ev.date,
-              eventDateLabel: ev.dateLabel,
-              eventTimeStart: ev.timeStart,
-              eventTimeEnd: ev.timeEnd,
-              eventVenue: ev.venue,
-              eventLocation: ev.location,
-              ticketType: ticketId,
-              ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
-              price: pmTicketCatalog[ticketId]?.price || 0,
-              userId: currentUser.uid,
-              userEmail: currentUser.email,
-              userDni: pmVerifiedDni || userProfile?.dni || '',
-              userName: pmVerifiedName || userProfile?.displayName || currentUser.displayName || '',
-              status: 'active',
-              usedAt: null,
-              purchasedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-          }
-        }
-        await batch.commit();
       }
+      await batch.commit();
 
       loading.classList.remove('visible');
       btn.style.display = '';
@@ -9708,9 +9555,7 @@ a[onclick]:active,
     // Save DNI to user profile if logged in
     if (currentUser) {
       if (userProfile) { userProfile.dni = dni; userProfile.displayName = name; }
-      if (!DEMO_MODE) {
-        await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name });
-      }
+      await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name });
     }
 
     btn.disabled = true;
@@ -9735,11 +9580,6 @@ a[onclick]:active,
 
   // ── Login within Purchase Modal ──
   async function pmLoginWith(method) {
-    if (DEMO_MODE && method === 'email') {
-      demoLogin();
-      pmGoStep(1);
-      return;
-    }
     if (method === 'email') {
       const email = document.getElementById('pm-login-email').value.trim();
       const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -9774,24 +9614,9 @@ a[onclick]:active,
     }
   }
 
-  // ── My Tickets (Mis Entradas) ──
-  // Demo tickets data (used when DEMO_MODE is on to bypass Firestore auth)
-  var DEMO_TICKETS = [
-    { _id: 'demo-tk-1', userId: 'demo-user-001', eventId: 'fabriclima-001', eventName: 'FABRICLIMA 001', eventDate: '2026-04-12', eventDateLabel: '12 Abril 2026', eventVenue: 'Almacén 77', eventLocation: 'Callao', eventTimeStart: '22:00', eventTimeEnd: '06:00', ticketName: 'General', price: 85, userDni: '72345678', status: 'active', _canUpgrade: true, image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80', promoter: 'Fabric Lima' },
-    { _id: 'demo-tk-2', userId: 'demo-user-001', eventId: 'dekmantel-lima', eventName: 'Dekmantel 2026', eventDate: '2026-05-25', eventDateLabel: '25 Mayo 2026', eventVenue: 'Parque de la Exposición', eventLocation: 'Lima', eventTimeStart: '14:00', eventTimeEnd: '23:00', ticketName: 'Picnic VIP', price: 220, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=500&q=80', promoter: 'Dekmantel' },
-    { _id: 'demo-tk-3', userId: 'demo-user-001', eventId: 'whp-lima', eventName: 'WHP Lima', eventDate: '2026-06-27', eventDateLabel: '27 Junio 2026', eventVenue: 'Almacén Industrial', eventLocation: 'Callao', eventTimeStart: '20:00', eventTimeEnd: '05:00', ticketName: 'Full Access', price: 200, userDni: '72345678', status: 'active', _canUpgrade: false, image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80', promoter: 'The Warehouse Project' },
-    { _id: 'demo-tk-4', userId: 'demo-user-001', eventId: 'bodysonic-lima', eventName: 'Bodysonic', eventDate: '2026-02-14', eventDateLabel: '14 Febrero 2026', eventVenue: 'La Cueva', eventLocation: 'Cercado de Lima', eventTimeStart: '23:59', eventTimeEnd: '06:00', ticketName: 'General', price: 65, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=500&q=80', promoter: 'Bodysonic Collective' },
-    { _id: 'demo-tk-5', userId: 'demo-user-001', eventId: 'room3-sessions-lima', eventName: 'Room 3 Sessions', eventDate: '2026-01-22', eventDateLabel: '22 Enero 2026', eventVenue: 'Hotel B Rooftop', eventLocation: 'Barranco', eventTimeStart: '22:00', eventTimeEnd: '03:00', ticketName: 'Entrada + Drink', price: 60, userDni: '72345678', status: 'used', image: 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=500&q=80', promoter: 'Room 3' }
-  ];
+  // ── Seed event data (reference for Firestore seeding) ──
 
-  var DEMO_RESALE = [
-    { _id: 'demo-resale-1', sellerId: 'demo-user-001', sellerName: 'Lucas D.', eventName: 'HESSLE AUDIO Lima Session', eventDate: '2026-05-03', eventDateLabel: '03 Mayo 2026', eventVenue: 'MATE Museo, Barranco', ticketTier: 'General', originalPrice: 70, askingPrice: 60, status: 'listed', image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&q=80' },
-    { _id: 'demo-resale-2', sellerId: 'demo-user-002', sellerName: 'Camila R.', eventName: 'Drumcode Night Lima Edition', eventDate: '2026-05-10', eventDateLabel: '10 Mayo 2026', eventVenue: 'Arena Perú, Santa Anita', ticketTier: 'VIP', originalPrice: 389, askingPrice: 350, status: 'listed', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80' },
-    { _id: 'demo-resale-3', sellerId: 'demo-user-003', sellerName: 'Diego M.', eventName: 'EXIT Through The Warehouse', eventDate: '2026-06-06', eventDateLabel: '06 Junio 2026', eventVenue: 'Ubicación secreta, Callao', ticketTier: 'Blind Ticket', originalPrice: 50, askingPrice: 50, status: 'listed', image: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=500&q=80' }
-  ];
-
-  var DEMO_EVENTS = [
-    // ═══ DEMO-ONLY events ═══
+  var SEED_EVENTS = [
     // fabriclima-001 — SOLD OUT — all phases past
     { _id: 'fabriclima-001', name: 'FABRICLIMA 001', subtitle: 'Grand Opening', date: '2026-04-12', dateLabel: 'Sáb 12 Abril', venue: 'Almacén 77', location: 'Callao', distrito: 'Callao', genre: 'techno / house / dnb', status: 'sold-out', organizer: 'demo-user-001', promoter: 'Fabric Lima', image: 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80', description: 'La primera noche FABRICLIMA. Tres rooms, un concepto: música sin compromisos. Room 1 techno, Room 2 drum & bass, Room 3 residents locales. No fotos, no VIP, no ego.', descriptionLong: 'Inspirado en la filosofía de Fabric London — donde la música es el centro de todo. Sound system Funktion-One, iluminación minimal, experiencia inmersiva.', timeStart: '22:00', timeEnd: '10:00', tags: ['festival','techno','house','dnb','underground','indoor','massive','18+'], lineup: ['Ben Klock b2b Marcel Dettmann', 'Andy C', 'Craig Richards', 'Residents Lima'], meta: { crowdSize: 1200, multiStage: true, alcohol: true, reentry: false }, prohibitedItems: ['Cámaras profesionales','Bebidas externas','Armas / objetos punzantes','Sustancias ilegales','Mascotas','Menores de edad'], visibleSections: { lineup: true, about: true, venue: true, video: false, tags: true }, address: 'Av. Argentina 1234, Callao', tickets: [
       { id: 'ga-10pm', name: 'GA 10pm', capacity: 700, sold: 700, includes: ['Acceso a 3 rooms', 'Barra standard'], phases: [{ name: 'Early Birds', price: 55, quantity: 175 }, { name: 'Preventa 1', price: 65, quantity: 175 }, { name: 'Preventa 2', price: 75, quantity: 175 }, { name: 'Full Price', price: 85, quantity: 175 }] },
@@ -9890,22 +9715,18 @@ a[onclick]:active,
     ] }
   ];
 
-  // ── Load events NOW (after DEMO_EVENTS is defined) ──
+  // ── Load events NOW ──
   loadEvents();
 
   async function loadMyTickets() {
     if (!currentUser) { go('auth'); return; }
     try {
     var tickets;
-    if (DEMO_MODE) {
-      tickets = DEMO_TICKETS.slice();
-    } else {
-      const snapshot = await db.collection('tickets')
-        .where('userId', '==', currentUser.uid)
-        .get();
-      tickets = [];
-      snapshot.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
-    }
+    const snapshot = await db.collection('tickets')
+      .where('userId', '==', currentUser.uid)
+      .get();
+    tickets = [];
+    snapshot.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
     tickets.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
 
     const activePanel = document.getElementById('mt-proximas');
@@ -10021,12 +9842,8 @@ a[onclick]:active,
     if (cPas) cPas.textContent = historyCount;
     // Count user's resale listings
     if (cRev) {
-      if (DEMO_MODE) {
-        cRev.textContent = DEMO_RESALE.filter(r => r.sellerId === currentUser.uid).length;
-      } else {
-        var resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).where('status', '==', 'listed').get();
-        cRev.textContent = resaleSnap.size;
-      }
+      var resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).where('status', '==', 'listed').get();
+      cRev.textContent = resaleSnap.size;
     }
 
     // Render empty states with better messaging
@@ -10066,27 +9883,14 @@ a[onclick]:active,
     if (!eventName || !tier || price <= 0) { toast('Datos incompletos. Intenta de nuevo.', 'warning'); return; }
 
     try {
-      if (DEMO_MODE) {
-        // Demo: add to DEMO_RESALE, update ticket status
-        DEMO_RESALE.push({
-          _id: 'demo-resale-' + Date.now(), ticketId: ticketDocId, sellerId: currentUser.uid,
-          sellerName: (userProfile?.displayName || 'Lucas D.').split(' ')[0] + ' ' + ((userProfile?.displayName || '').split(' ')[1] || '')[0] + '.',
-          eventName: eventName, ticketTier: tier, originalPrice: price, askingPrice: price, status: 'listed'
-        });
-        if (ticketDocId) {
-          var tk = DEMO_TICKETS.find(function(t) { return t._id === ticketDocId; });
-          if (tk) tk.status = 'resale-listed';
-        }
-      } else {
-        await db.collection('resale').add({
-          ticketId: ticketDocId, sellerId: currentUser.uid, sellerEmail: currentUser.email,
-          eventName: eventName, ticketTier: tier, askingPrice: price,
-          fee: Math.round(price * 0.05), netToSeller: price - Math.round(price * 0.05),
-          status: 'listed', createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        if (ticketDocId) {
-          await db.collection('tickets').doc(ticketDocId).update({ status: 'resale-listed' });
-        }
+      await db.collection('resale').add({
+        ticketId: ticketDocId, sellerId: currentUser.uid, sellerEmail: currentUser.email,
+        eventName: eventName, ticketTier: tier, askingPrice: price,
+        fee: Math.round(price * 0.05), netToSeller: price - Math.round(price * 0.05),
+        status: 'listed', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      if (ticketDocId) {
+        await db.collection('tickets').doc(ticketDocId).update({ status: 'resale-listed' });
       }
       resaleClose();
       setTimeout(() => {
@@ -10123,14 +9927,10 @@ a[onclick]:active,
     if (!container) return;
 
     var listings;
-    if (DEMO_MODE) {
-      listings = DEMO_RESALE.filter(r => r.status === 'listed');
-    } else {
-      const snapshot = await db.collection('resale').where('status', '==', 'listed').get();
-      if (snapshot.empty) return;
-      listings = [];
-      snapshot.forEach(doc => { listings.push({ _id: doc.id, ...doc.data() }); });
-    }
+    const snapshot = await db.collection('resale').where('status', '==', 'listed').get();
+    if (snapshot.empty) return;
+    listings = [];
+    snapshot.forEach(doc => { listings.push({ _id: doc.id, ...doc.data() }); });
 
     if (listings.length === 0) return;
 
@@ -10177,35 +9977,20 @@ a[onclick]:active,
   async function buyResale(resaleId) {
     if (!currentUser) { go('auth'); return; }
     try {
-      if (DEMO_MODE) {
-        // Find in DEMO_RESALE, mark sold, add ticket to DEMO_TICKETS
-        var idx = DEMO_RESALE.findIndex(r => r._id === resaleId);
-        if (idx === -1) { toast('Esta entrada ya no está disponible.', 'error'); return; }
-        var r = DEMO_RESALE[idx];
-        DEMO_RESALE[idx].status = 'sold';
-        DEMO_TICKETS.push({
-          _id: 'demo-tk-' + Date.now(), userId: currentUser.uid, eventId: r.eventName.toLowerCase().replace(/\s+/g,'-'),
-          eventName: r.eventName, eventDate: r.eventDate || '', eventDateLabel: r.eventDate || '',
-          eventVenue: r.eventVenue || '', eventLocation: '', eventTimeStart: '22:00', eventTimeEnd: '05:00',
-          ticketName: r.ticketTier, price: r.askingPrice, userDni: userProfile?.dni || '',
-          status: 'active', _canUpgrade: false, image: '', promoter: '', boughtInResale: true, transferredFrom: r.sellerId || ''
+      const resaleDoc = await db.collection('resale').doc(resaleId).get();
+      if (!resaleDoc.exists) { toast('Esta entrada ya no está disponible.', 'error'); return; }
+      const r = resaleDoc.data();
+      if (r.ticketId) {
+        await db.collection('tickets').doc(r.ticketId).update({
+          userId: currentUser.uid, userEmail: currentUser.email,
+          userName: userProfile?.displayName || currentUser.displayName || '',
+          userDni: userProfile?.dni || '', status: 'active',
+          transferredAt: firebase.firestore.FieldValue.serverTimestamp(),
+          transferredFrom: r.sellerId || '',
+          boughtInResale: true
         });
-      } else {
-        const resaleDoc = await db.collection('resale').doc(resaleId).get();
-        if (!resaleDoc.exists) { toast('Esta entrada ya no está disponible.', 'error'); return; }
-        const r = resaleDoc.data();
-        if (r.ticketId) {
-          await db.collection('tickets').doc(r.ticketId).update({
-            userId: currentUser.uid, userEmail: currentUser.email,
-            userName: userProfile?.displayName || currentUser.displayName || '',
-            userDni: userProfile?.dni || '', status: 'active',
-            transferredAt: firebase.firestore.FieldValue.serverTimestamp(),
-            transferredFrom: r.sellerId || '',
-            boughtInResale: true
-          });
-        }
-        await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
       }
+      await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
       if (!rmResaleData) {
         toast('¡Entrada comprada! Ya está en "Mis Entradas".', 'success');
         loadMarketplace();
@@ -10373,9 +10158,7 @@ a[onclick]:active,
     // Save DNI to user profile
     if (currentUser) {
       if (userProfile) { userProfile.dni = dni; userProfile.displayName = name; }
-      if (!DEMO_MODE) {
-        try { await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name }); } catch(e) {}
-      }
+      try { await db.collection('users').doc(currentUser.uid).update({ dni: dni, displayName: name }); } catch(e) {}
     }
 
     btn.textContent = '🔍 Verificando...';
@@ -10425,11 +10208,6 @@ a[onclick]:active,
   }
 
   async function rmLoginWith(method) {
-    if (DEMO_MODE && method === 'email') {
-      demoLogin();
-      rmGoStep(1);
-      return;
-    }
     if (method === 'email') {
       var email = document.getElementById('rm-login-email').value.trim();
       var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -10494,37 +10272,20 @@ a[onclick]:active,
     if (!scannerSelectedEventId) { toast('Selecciona un evento primero', 'error'); return; }
     try {
       var ticket = null;
-      if (DEMO_MODE) {
-        const matching = DEMO_TICKETS.filter(t => t.userDni === dni && t.eventId === scannerSelectedEventId && t.status === 'active');
-        if (matching.length > 0) {
-          ticket = matching[0];
-          ticket.status = 'used';
-          scanResult('approved');
-          if (typeof loadScannerCounter === 'function') loadScannerCounter();
-        } else {
-          const usedTickets = DEMO_TICKETS.filter(t => t.userDni === dni && t.eventId === scannerSelectedEventId && t.status === 'used');
-          if (usedTickets.length > 0) {
-            scanResult('used');
-          } else {
-            scanResult('invalid');
-          }
-        }
+      const query = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'active');
+      const snapshot = await query.get();
+      if (snapshot.size > 0) {
+        ticket = snapshot.docs[0];
+        await ticket.ref.update({ status: 'used', usedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        scanResult('approved');
+        if (typeof loadScannerCounter === 'function') loadScannerCounter();
       } else {
-        const query = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'active');
-        const snapshot = await query.get();
-        if (snapshot.size > 0) {
-          ticket = snapshot.docs[0];
-          await ticket.ref.update({ status: 'used', usedAt: firebase.firestore.FieldValue.serverTimestamp() });
-          scanResult('approved');
-          if (typeof loadScannerCounter === 'function') loadScannerCounter();
+        const usedQuery = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'used');
+        const usedSnapshot = await usedQuery.get();
+        if (usedSnapshot.size > 0) {
+          scanResult('used');
         } else {
-          const usedQuery = db.collection('tickets').where('userDni', '==', dni).where('eventId', '==', scannerSelectedEventId).where('status', '==', 'used');
-          const usedSnapshot = await usedQuery.get();
-          if (usedSnapshot.size > 0) {
-            scanResult('used');
-          } else {
-            scanResult('invalid');
-          }
+          scanResult('invalid');
         }
       }
       await loadScannerCounter();
@@ -10566,13 +10327,9 @@ a[onclick]:active,
     if (!container) return;
 
     var events;
-    if (DEMO_MODE) {
-      events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
-    } else {
-      const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
-      events = [];
-      snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
-    }
+    const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+    events = [];
+    snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
 
     let totalSold = 0;
     let totalGross = 0;
@@ -10606,8 +10363,6 @@ a[onclick]:active,
       var sold = 0;
       if (ev.tickets) {
         sold = ev.tickets.reduce((s, t) => s + (t.sold || 0), 0);
-      } else if (DEMO_MODE) {
-        sold = DEMO_TICKETS.filter(t => t.eventId === ev._id).length;
       } else {
         const ticketSnap = await db.collection('tickets').where('eventId', '==', ev._id).get();
         sold = ticketSnap.size;
@@ -10875,17 +10630,10 @@ a[onclick]:active,
         efRenderTiers();
       }
 
-      if (DEMO_MODE) {
-        // Find event in DEMO_EVENTS or allEvents
-        var ev = DEMO_EVENTS.find(e => e._id === eventId) || allEvents.find(e => e._id === eventId);
-        if (!ev) { toast('Evento no encontrado.', 'error'); go('organizer'); return; }
-        efPopulateForm(ev);
-      } else {
-        db.collection('events').doc(eventId).get().then(doc => {
-          if (!doc.exists) { toast('Evento no encontrado.', 'error'); go('organizer'); return; }
-          efPopulateForm(doc.data());
-        });
-      }
+      db.collection('events').doc(eventId).get().then(doc => {
+        if (!doc.exists) { toast('Evento no encontrado.', 'error'); go('organizer'); return; }
+        efPopulateForm(doc.data());
+      });
     } else {
       if (titleEl) titleEl.textContent = 'Nuevo Evento';
       // Start with 1 default tier
@@ -11195,30 +10943,13 @@ a[onclick]:active,
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Guardando...'; }
 
     try {
-      if (DEMO_MODE) {
-        // Demo: add/update in DEMO_EVENTS and allEvents arrays
-        eventData.changelog = [logEntry];
-        eventData.createdAt = new Date().toISOString();
-        if (efEditingId) {
-          var ei = DEMO_EVENTS.findIndex(e => e._id === efEditingId);
-          if (ei !== -1) Object.assign(DEMO_EVENTS[ei], eventData);
-          var ai = allEvents.findIndex(e => e._id === efEditingId);
-          if (ai !== -1) Object.assign(allEvents[ai], eventData);
-        } else {
-          var newId = 'demo-ev-' + Date.now();
-          eventData._id = newId;
-          DEMO_EVENTS.push(eventData);
-          allEvents.push(eventData);
-        }
+      if (efEditingId) {
+        eventData.changelog = firebase.firestore.FieldValue.arrayUnion(logEntry);
+        await db.collection('events').doc(efEditingId).update(eventData);
       } else {
-        if (efEditingId) {
-          eventData.changelog = firebase.firestore.FieldValue.arrayUnion(logEntry);
-          await db.collection('events').doc(efEditingId).update(eventData);
-        } else {
-          eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-          eventData.changelog = [logEntry];
-          await db.collection('events').add(eventData);
-        }
+        eventData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        eventData.changelog = [logEntry];
+        await db.collection('events').add(eventData);
       }
       if (saveBtn) { saveBtn.textContent = '✅ Guardado!'; }
       setTimeout(() => {
@@ -11235,12 +10966,8 @@ a[onclick]:active,
 
   async function exportEventTickets(eventId) {
     var tickets = [];
-    if (DEMO_MODE) {
-      tickets = DEMO_TICKETS.filter(function(t) { return t.eventId === eventId; });
-    } else {
-      var snapshot = await db.collection('tickets').where('eventId', '==', eventId).get();
-      snapshot.forEach(function(doc) { tickets.push(doc.data()); });
-    }
+    var snapshot = await db.collection('tickets').where('eventId', '==', eventId).get();
+    snapshot.forEach(function(doc) { tickets.push(doc.data()); });
     var csv = 'Nombre,Email,DNI,Tipo,Estado,Fecha Compra\n';
     tickets.forEach(function(t) {
       csv += '"' + (t.userName || t.eventName || '') + '","' + (t.userEmail || '') + '","' + (t.userDni || '') + '","' + (t.ticketName || '') + '","' + (t.status || '') + '","' + (t.eventDate || '') + '"\n';
@@ -11257,13 +10984,9 @@ a[onclick]:active,
     if (!currentUser) { go('auth'); return; }
     try {
       var events;
-      if (DEMO_MODE) {
-        events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
-      } else {
-        const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
-        events = [];
-        snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
-      }
+      const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+      events = [];
+      snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
 
       var csv = 'Evento,Fecha,Lugar,Entradas Vendidas,Revenue Gross,Fee LEZGO,Revenue Neto\n';
       const FEE_RATE = 0.08;
@@ -11292,8 +11015,6 @@ a[onclick]:active,
         var sold = 0;
         if (ev.tickets) {
           sold = ev.tickets.reduce((s, t) => s + (t.sold || 0), 0);
-        } else if (DEMO_MODE) {
-          sold = DEMO_TICKETS.filter(t => t.eventId === ev._id).length;
         } else {
           const ticketSnap = await db.collection('tickets').where('eventId', '==', ev._id).get();
           sold = ticketSnap.size;
@@ -11336,16 +11057,10 @@ a[onclick]:active,
     if (!scannerSelectedEventId) return;
     try {
       var totalSold = 0, totalUsed = 0;
-      if (DEMO_MODE) {
-        const tickets = DEMO_TICKETS.filter(t => t.eventId === scannerSelectedEventId);
-        totalSold = tickets.length;
-        totalUsed = tickets.filter(t => t.status === 'used').length;
-      } else {
-        const snapshot = await db.collection('tickets').where('eventId', '==', scannerSelectedEventId).get();
-        totalSold = snapshot.size;
-        totalUsed = 0;
-        snapshot.forEach(doc => { if (doc.data().status === 'used') totalUsed++; });
-      }
+      const snapshot = await db.collection('tickets').where('eventId', '==', scannerSelectedEventId).get();
+      totalSold = snapshot.size;
+      totalUsed = 0;
+      snapshot.forEach(doc => { if (doc.data().status === 'used') totalUsed++; });
       const checkinCount = document.getElementById('scanner-checkin-count');
       const totalSoldEl = document.getElementById('scanner-total-sold');
       const checkinPct = document.getElementById('scanner-checkin-pct');
@@ -11365,12 +11080,8 @@ a[onclick]:active,
     if (!select || !currentUser) return;
     try {
       var events = [];
-      if (DEMO_MODE) {
-        events = DEMO_EVENTS.filter(e => e.organizer === currentUser.uid);
-      } else {
-        const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
-        snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
-      }
+      const snapshot = await db.collection('events').where('organizer', '==', currentUser.uid).get();
+      snapshot.forEach(doc => { events.push({ _id: doc.id, ...doc.data() }); });
       select.innerHTML = '<option value="">— Selecciona un evento —</option>';
       events.forEach(e => {
         const opt = document.createElement('option');
@@ -11400,22 +11111,14 @@ a[onclick]:active,
     if (newName === null) return; // cancelled
     newName = newName.trim();
     if (!newName) { toast('El nombre no puede estar vacío.', 'warning'); return; }
-    if (DEMO_MODE) {
-      if (!userProfile) userProfile = {};
-      userProfile.displayName = newName;
-      if (currentUser) currentUser.displayName = newName;
-      toast('Perfil actualizado.', 'success');
-      loadProfile();
-    } else {
-      db.collection('users').doc(currentUser.uid).set({ displayName: newName }, { merge: true })
-        .then(function() {
-          if (!userProfile) userProfile = {};
-          userProfile.displayName = newName;
-          toast('Perfil actualizado.', 'success');
-          loadProfile();
-        })
-        .catch(function(err) { toast('Error: ' + err.message, 'error'); });
-    }
+    db.collection('users').doc(currentUser.uid).set({ displayName: newName }, { merge: true })
+      .then(function() {
+        if (!userProfile) userProfile = {};
+        userProfile.displayName = newName;
+        toast('Perfil actualizado.', 'success');
+        loadProfile();
+      })
+      .catch(function(err) { toast('Error: ' + err.message, 'error'); });
   }
 
   // ── Profile ──
@@ -11433,9 +11136,9 @@ a[onclick]:active,
     if (dniEl) dniEl.textContent = userProfile?.dni ? 'DNI: ' + userProfile.dni : 'DNI no verificado';
     if (initialsEl) initialsEl.textContent = displayName.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().substring(0,2);
 
-    // Dynamic stats from demo data
-    var tickets = DEMO_MODE ? DEMO_TICKETS.filter(function(t){ return t.userId === currentUser.uid; }) : [];
-    var resales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'listed'; }) : [];
+    // Dynamic stats from Firestore
+    var tickets = [];
+    var resales = [];
     var uniqueEvents = [];
     tickets.forEach(function(t){ if (uniqueEvents.indexOf(t.eventId) === -1) uniqueEvents.push(t.eventId); });
 
@@ -11450,7 +11153,7 @@ a[onclick]:active,
       if (d && distritos.indexOf(d) === -1) distritos.push(d);
     });
     var activeTickets = tickets.filter(function(t){ return t.status === 'active'; }).length;
-    var completedResales = DEMO_MODE ? DEMO_RESALE.filter(function(r){ return r.sellerId === currentUser.uid && r.status === 'sold'; }).length : 0;
+    var completedResales = 0;
     var vipCount = tickets.filter(function(t){ return (t.ticketName || '').toLowerCase().match(/vip|premium|full access/); }).length;
     var totalSpent = tickets.reduce(function(s, t){ return s + (t.price || 0); }, 0);
 
@@ -11952,9 +11655,7 @@ a[onclick]:active,
   document.addEventListener('click', function() { mtMenuClose(); });
 
   function mtTransfer(ticketId) {
-    var t = DEMO_MODE ? DEMO_TICKETS.find(function(tk) { return tk._id === ticketId; }) : null;
-    if (!t && DEMO_MODE) { toast('Entrada no encontrada.', 'error'); return; }
-    transferOpen(t ? t.eventName : 'Evento', t ? (t.ticketName || 'General') : 'General', ticketId);
+    transferOpen('Evento', 'General', ticketId);
   }
 
   function mtDownloadReceipt(ticketId, eventName, tier, price) {
@@ -12081,46 +11782,22 @@ a[onclick]:active,
     if (!confirm(confirmMsg)) return;
 
     try {
-      if (DEMO_MODE) {
-        var tk = DEMO_TICKETS.find(function(t) { return t._id === ticketDocId; });
-        if (!tk) { toast('Entrada no encontrada.', 'error'); return; }
-        tk.status = 'transferred';
-        tk._transferredTo = email;
-        tk._transferDate = new Date().toISOString();
-        tk._transferMsg = msg;
-        // Create a new ticket for the recipient (demo simulation)
-        DEMO_TICKETS.push({
-          _id: 'demo-transfer-' + Date.now(),
-          eventId: tk.eventId,
-          eventName: tk.eventName,
-          ticketName: tk.ticketName,
-          price: tk.price,
-          date: tk.date,
-          status: 'active',
-          buyerEmail: email,
-          buyerDNI: '—',
-          _transferredFrom: currentUser ? currentUser.email : 'unknown',
-          _transferMsg: msg,
-          _isReceivedTransfer: true
-        });
-      } else {
-        // Production: update Firestore
-        await db.collection('tickets').doc(ticketDocId).update({
-          status: 'transferred',
-          transferredTo: email,
-          transferDate: firebase.firestore.FieldValue.serverTimestamp(),
-          transferMsg: msg || null
-        });
-        // Create transfer record
-        await db.collection('transfers').add({
-          ticketId: ticketDocId,
-          fromUserId: currentUser.uid,
-          fromEmail: currentUser.email,
-          toEmail: email,
-          message: msg || null,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }
+      // Update Firestore
+      await db.collection('tickets').doc(ticketDocId).update({
+        status: 'transferred',
+        transferredTo: email,
+        transferDate: firebase.firestore.FieldValue.serverTimestamp(),
+        transferMsg: msg || null
+      });
+      // Create transfer record
+      await db.collection('transfers').add({
+        ticketId: ticketDocId,
+        fromUserId: currentUser.uid,
+        fromEmail: currentUser.email,
+        toEmail: email,
+        message: msg || null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
       transferClose();
       setTimeout(function() {
         toast('¡Entrada transferida exitosamente a ' + email + '! Le llegará una notificación.', 'success');
