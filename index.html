@@ -8801,6 +8801,12 @@ a[onclick]:active,
           if (rmOverlay && rmOverlay.classList.contains('rm-open')) {
             rmGoStep(1);
           }
+        } else if (pendingModal === 'register') {
+          // Registration flow — advance to step 2 (DNI verification)
+          var authRegisterPanel = document.getElementById('auth-register-panel');
+          if (authRegisterPanel && authRegisterPanel.classList.contains('d-none') === false) {
+            authRegStep(2);
+          }
         }
       }
     } else {
@@ -9366,35 +9372,94 @@ a[onclick]:active,
     }
   }
 
-  async function authFinishRegister() {
-    if (!currentUser) return;
-    const nameInput = document.getElementById('reg-name');
-    const dniInput = document.getElementById('reg-dni');
-
-    const updates = {};
-    if (nameInput && nameInput.value) updates.displayName = nameInput.value.trim();
-    if (dniInput && dniInput.value) updates.dni = dniInput.value.trim();
-
-    if (Object.keys(updates).length > 0) {
-      await db.collection('users').doc(currentUser.uid).update(updates);
-      userProfile = { ...userProfile, ...updates };
+  async function authRegGoogle() {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await auth.signInWithPopup(provider);
+      if (result.user) {
+        // Advance to step 2 after Google sign-in
+        authRegStep(2);
+      }
+    } catch (err) {
+      log.error('Google registration error:', err);
+      if (err.code !== 'auth/popup-closed-by-user') {
+        toast('Error: ' + err.message, 'error');
+      }
     }
-
-    // Show success
-    const actions = document.getElementById('auth-photo-actions');
-    const loading = document.getElementById('auth-loading-reg');
-    const success = document.getElementById('auth-reg-success');
-    const photoSection = document.getElementById('auth-photo-section');
-    if (loading) loading.style.display = 'block';
-    if (actions) actions.style.display = 'none';
-    setTimeout(() => {
-      if (loading) loading.style.display = 'none';
-      if (photoSection) photoSection.style.display = 'none';
-      if (success) success.style.display = 'block';
-    }, 1500);
   }
 
-  function authLogout() {
+  async function authRegSendLink() {
+    const emailInput = document.getElementById('reg-email');
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      emailInput.style.borderColor = '#f87171';
+      setTimeout(() => emailInput.style.borderColor = '', 1500);
+      return;
+    }
+    try {
+      const actionCodeSettings = {
+        url: window.location.origin + '/',
+        handleCodeInApp: true
+      };
+      await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+      window.localStorage.setItem('lezgoEmailForSignIn', email);
+      window.localStorage.setItem('lezgoPendingModal', 'register');
+      const msgEl = document.getElementById('auth-reg-link-sent');
+      if (msgEl) {
+        msgEl.textContent = '✉️ Link enviado a ' + email + '. Revisa tu bandeja (y spam).';
+        msgEl.style.display = 'block';
+      }
+    } catch (err) {
+      log.error('Magic link registration error:', err);
+      const msgEl = document.getElementById('auth-reg-link-sent');
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.textContent = 'Error: ' + (err.message || 'Intenta de nuevo');
+      }
+    }
+  }
+
+  async function authFinishRegister() {
+    if (!currentUser) {
+      toast('Primero inicia sesión', 'error');
+      return;
+    }
+
+    try {
+      const nameInput = document.getElementById('reg-name');
+      const dniInput = document.getElementById('reg-dni');
+
+      const updates = {
+        email: currentUser.email,
+        role: 'fan'
+      };
+      if (nameInput && nameInput.value) updates.displayName = nameInput.value.trim();
+      if (dniInput && dniInput.value) updates.dni = dniInput.value.trim();
+
+      // Use .set with merge to avoid overwriting existing data
+      await db.collection('users').doc(currentUser.uid).set(updates, { merge: true });
+      userProfile = { ...userProfile, ...updates };
+
+      // Show success
+      const actions = document.getElementById('auth-photo-actions');
+      const loading = document.getElementById('auth-loading-reg');
+      const success = document.getElementById('auth-reg-success');
+      const photoSection = document.getElementById('auth-photo-section');
+      if (loading) loading.style.display = 'block';
+      if (actions) actions.style.display = 'none';
+      setTimeout(() => {
+        if (loading) loading.style.display = 'none';
+        if (photoSection) photoSection.style.display = 'none';
+        if (success) success.style.display = 'block';
+      }, 1500);
+    } catch (err) {
+      log.error('Registration finish error:', err);
+      toast('Error al completar registro: ' + err.message, 'error');
+    }
+  }
+
+  async function authLogout() {
     // Reset authentication state
     pmUserLoggedIn = false;
     pmUserDniVerified = false;
@@ -9422,9 +9487,8 @@ a[onclick]:active,
     // Update UI immediately to logged-out state
     updateUIForAuth(false);
 
-    auth.signOut().then(() => {
-      go('auth');
-    });
+    await auth.signOut();
+    go('auth');
   }
 
   // ── Purchase Flow (Free Tickets) ──
@@ -9580,6 +9644,17 @@ a[onclick]:active,
 
   // ── Login within Purchase Modal ──
   async function pmLoginWith(method) {
+    if (method === 'google') {
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const result = await auth.signInWithPopup(provider);
+        if (result.user) pmGoStep(1);
+      } catch (err) {
+        if (err.code !== 'auth/popup-closed-by-user') toast('Error: ' + err.message, 'error');
+      }
+      return;
+    }
     if (method === 'email') {
       const email = document.getElementById('pm-login-email').value.trim();
       const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -9883,11 +9958,28 @@ a[onclick]:active,
     if (!eventName || !tier || price <= 0) { toast('Datos incompletos. Intenta de nuevo.', 'warning'); return; }
 
     try {
+      // Get ticket data to include all event info
+      const ticketData = ticketDocId ? (await db.collection('tickets').doc(ticketDocId).get()).data() : {};
+      const eventData = ticketData.eventId ? (await db.collection('events').doc(ticketData.eventId).get()).data() : {};
+      
       await db.collection('resale').add({
-        ticketId: ticketDocId, sellerId: currentUser.uid, sellerEmail: currentUser.email,
-        eventName: eventName, ticketTier: tier, askingPrice: price,
-        fee: Math.round(price * 0.05), netToSeller: price - Math.round(price * 0.05),
-        status: 'listed', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        ticketId: ticketDocId,
+        eventId: ticketData.eventId || '',
+        eventName: eventName,
+        eventDate: ticketData.eventDate || eventData.date || '',
+        eventDateLabel: ticketData.eventDateLabel || '',
+        eventVenue: ticketData.eventVenue || eventData.venue || '',
+        ticketTier: tier,
+        originalPrice: ticketData.price || 0,
+        askingPrice: price,
+        sellerId: currentUser.uid,
+        sellerName: userProfile?.displayName || currentUser.displayName || '',
+        sellerEmail: currentUser.email,
+        image: eventData.image || '',
+        status: 'listed',
+        fee: Math.round(price * 0.05),
+        netToSeller: price - Math.round(price * 0.05),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       if (ticketDocId) {
         await db.collection('tickets').doc(ticketDocId).update({ status: 'resale-listed' });
@@ -9977,24 +10069,38 @@ a[onclick]:active,
   async function buyResale(resaleId) {
     if (!currentUser) { go('auth'); return; }
     try {
-      const resaleDoc = await db.collection('resale').doc(resaleId).get();
-      if (!resaleDoc.exists) { toast('Esta entrada ya no está disponible.', 'error'); return; }
-      const r = resaleDoc.data();
-      if (r.ticketId) {
-        await db.collection('tickets').doc(r.ticketId).update({
-          userId: currentUser.uid, userEmail: currentUser.email,
-          userName: userProfile?.displayName || currentUser.displayName || '',
-          userDni: userProfile?.dni || '', status: 'active',
-          transferredAt: firebase.firestore.FieldValue.serverTimestamp(),
-          transferredFrom: r.sellerId || '',
-          boughtInResale: true
-        });
-      }
-      await db.collection('resale').doc(resaleId).update({ status: 'sold', buyerId: currentUser.uid });
+      // Use atomic transaction to ensure data consistency
+      await db.runTransaction(async (transaction) => {
+        const resaleRef = db.collection('resale').doc(resaleId);
+        const resaleDoc = await transaction.get(resaleRef);
+        if (!resaleDoc.exists) { toast('Esta entrada ya no está disponible.', 'error'); return; }
+        
+        const r = resaleDoc.data();
+        if (r.status !== 'listed') { toast('Esta entrada ya no está disponible.', 'error'); return; }
+        
+        // Update resale doc to sold
+        transaction.update(resaleRef, { status: 'sold', buyerId: currentUser.uid });
+        
+        // Update original ticket ownership
+        if (r.ticketId) {
+          const ticketRef = db.collection('tickets').doc(r.ticketId);
+          transaction.update(ticketRef, {
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            userName: userProfile?.displayName || currentUser.displayName || '',
+            userDni: userProfile?.dni || '',
+            status: 'active',
+            transferredAt: firebase.firestore.FieldValue.serverTimestamp(),
+            transferredFrom: r.sellerId || '',
+            boughtInResale: true
+          });
+        }
+      });
+      // Always refresh marketplace, but toast only when called directly (not from modal)
       if (!rmResaleData) {
         toast('¡Entrada comprada! Ya está en "Mis Entradas".', 'success');
-        loadMarketplace();
       }
+      loadMarketplace();
     } catch (err) {
       log.error('buyResale error:', err);
       toast('Error al comprar: ' + err.message, 'error');
@@ -10208,6 +10314,17 @@ a[onclick]:active,
   }
 
   async function rmLoginWith(method) {
+    if (method === 'google') {
+      try {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        var result = await auth.signInWithPopup(provider);
+        if (result.user) rmGoStep(1);
+      } catch (err) {
+        if (err.code !== 'auth/popup-closed-by-user') toast('Error: ' + err.message, 'error');
+      }
+      return;
+    }
     if (method === 'email') {
       var email = document.getElementById('rm-login-email').value.trim();
       var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -11139,6 +11256,19 @@ a[onclick]:active,
     // Dynamic stats from Firestore
     var tickets = [];
     var resales = [];
+
+    // Load user's tickets from Firestore
+    try {
+      const ticketSnap = await db.collection('tickets').where('userId', '==', currentUser.uid).get();
+      ticketSnap.forEach(doc => { tickets.push({ _id: doc.id, ...doc.data() }); });
+    } catch(e) { console.error('loadProfile tickets:', e); }
+
+    // Load user's resale listings
+    try {
+      const resaleSnap = await db.collection('resale').where('sellerId', '==', currentUser.uid).get();
+      resaleSnap.forEach(doc => { resales.push({ _id: doc.id, ...doc.data() }); });
+    } catch(e) { console.error('loadProfile resales:', e); }
+
     var uniqueEvents = [];
     tickets.forEach(function(t){ if (uniqueEvents.indexOf(t.eventId) === -1) uniqueEvents.push(t.eventId); });
 
@@ -11153,7 +11283,7 @@ a[onclick]:active,
       if (d && distritos.indexOf(d) === -1) distritos.push(d);
     });
     var activeTickets = tickets.filter(function(t){ return t.status === 'active'; }).length;
-    var completedResales = 0;
+    var completedResales = resales.filter(r => r.status === 'sold').length;
     var vipCount = tickets.filter(function(t){ return (t.ticketName || '').toLowerCase().match(/vip|premium|full access/); }).length;
     var totalSpent = tickets.reduce(function(s, t){ return s + (t.price || 0); }, 0);
 
@@ -11570,6 +11700,20 @@ a[onclick]:active,
 
   let authRegCurrentStep = 1;
   function authRegStep(step) {
+    // Check if user is authenticated before advancing to step 2
+    if (step === 2 && !currentUser) {
+      toast('Primero crea tu cuenta', 'warning');
+      return;
+    }
+
+    // If advancing to step 2, pre-fill name from currentUser if available
+    if (step === 2 && currentUser) {
+      const nameInput = document.getElementById('reg-name');
+      if (nameInput && !nameInput.value && currentUser.displayName) {
+        nameInput.value = currentUser.displayName;
+      }
+    }
+
     document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
     const target = document.getElementById('auth-reg-' + step);
     if (target) target.classList.add('active');
@@ -13381,14 +13525,28 @@ a[onclick]:active,
             <span></span>
             <span></span>
           </div>
-          <!-- REG STEP 1: Email -->
+          <!-- REG STEP 1: Create Account (Google or Magic Link) -->
           <div class="auth-step active" id="auth-reg-1">
             <div class="auth-title">Crea tu cuenta 🚀</div>
-            <div class="auth-sub">Solo necesitas tu email y DNI. En 2 minutos estás dentro.</div>
+            <div class="auth-sub">Primero crea tu cuenta, luego verificamos tu identidad.</div>
+            <button class="auth-btn" onclick="authRegGoogle()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#333;border:1px solid var(--alpha-light);margin-bottom:16px;">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09a6.97 6.97 0 0 1 0-4.17V7.07H2.18A11.96 11.96 0 0 0 0 12c0 1.94.46 3.77 1.28 5.41l3.56-2.84.01-.48z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Continuar con Google
+            </button>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+              <span style="font-size:var(--fs-xs);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">o con email</span>
+              <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+            </div>
             <label class="auth-label">Email</label>
-            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com" aria-label="Correo electrónico" onkeydown="if(event.key==='Enter')authRegStep(2)">
-            <button class="auth-btn" onclick="authRegStep(2)">Continuar →</button>
-            <div style="text-align:center;margin-top:16px;font-size:var(--fs-sm);color:var(--text-dim);">
+            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com" aria-label="Correo electrónico" onkeydown="if(event.key==='Enter')authRegSendLink()">
+            <button class="auth-btn" id="auth-reg-send-link-btn" onclick="authRegSendLink()" style="background:transparent;color:var(--acid);border:1px solid var(--acid);">Enviar magic link →</button>
+            <div id="auth-reg-link-sent" style="display:none; margin-top:16px; background:var(--acid-muted); border:1px solid var(--acid-20); border-radius: 0; padding:16px; font-size: var(--fs-base); text-align:center; color:var(--acid); line-height:1.6;">
+              <div style="font-size:24px;margin-bottom:8px;">📬</div>
+              <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
+              <span style="font-size:var(--fs-xs);color:var(--text-dim);">Al hacer clic en el link entrarás automáticamente y continuaremos con tu registro.</span>
+            </div>
+            <div style="text-align:center;margin-top:20px;font-size:var(--fs-sm);color:var(--text-dim);">
               ¿Ya tienes cuenta? <a href="#" onclick="event.preventDefault();authSwitchTab('login')" style="color:var(--acid);font-weight:600;text-decoration:none;">Inicia sesión</a>
             </div>
           </div>
@@ -13931,14 +14089,24 @@ a[onclick]:active,
       <!-- PANEL 0: Login / Magic Link -->
       <div class="pm-panel" id="pm-panel-0">
         <div style="text-align:center;padding:4px 0 24px;">
-          <div style="font-size: var(--fs-3xl);margin-bottom:14px;line-height:1;">✉️</div>
-          <div style="font-size: var(--fs-lg);font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;">Ingresa tu email</div>
-          <div style="font-size: var(--fs-base);color:var(--text-mid);line-height:1.5;">Te enviaremos un link mágico para verificar tu identidad y vincular tu entrada.</div>
+          <div style="font-size: var(--fs-3xl);margin-bottom:14px;line-height:1;">🔐</div>
+          <div style="font-size: var(--fs-lg);font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;">Inicia sesión para comprar</div>
+          <div style="font-size: var(--fs-base);color:var(--text-mid);line-height:1.5;">Necesitas una cuenta para vincular tu entrada a tu identidad.</div>
         </div>
 
+        <!-- Google login -->
+        <button class="pm-cta" onclick="pmLoginWith('google')" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#333;margin-bottom:12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09a6.97 6.97 0 0 1 0-4.17V7.07H2.18A11.96 11.96 0 0 0 0 12c0 1.94.46 3.77 1.28 5.41l3.56-2.84.01-.48z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continuar con Google
+        </button>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+          <span style="font-size:var(--fs-xs);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">o con email</span>
+          <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+        </div>
         <!-- Email login -->
         <input class="pm-input" type="email" id="pm-login-email" placeholder="tu@email.com" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')pmLoginWith('email')">
-        <button class="pm-cta" id="pm-send-link-btn" onclick="pmLoginWith('email')" style="margin-bottom:10px;">Enviar magic link →</button>
+        <button class="pm-cta" id="pm-send-link-btn" onclick="pmLoginWith('email')" style="margin-bottom:10px;background:transparent;color:var(--acid);border:1px solid var(--acid);">Enviar magic link →</button>
 
         <div id="pm-link-sent" style="display:none;text-align:center;padding:20px 0;font-size:var(--fs-sm);color:var(--acid);line-height:1.6;">
           <div style="font-size:32px;margin-bottom:10px;">📬</div>
@@ -14158,12 +14326,21 @@ a[onclick]:active,
       <!-- STEP 0: Login -->
       <div class="rm-panel" id="rm-panel-0">
         <div style="text-align:center;padding:24px 0 20px;">
-          <div style="font-size:40px;margin-bottom:12px;">✉️</div>
-          <div style="font-size:var(--fs-lg);font-weight:700;">Ingresa tu email</div>
-          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;line-height:1.5;">Te enviaremos un link mágico para verificar tu identidad y vincular la entrada a tu cuenta.</div>
+          <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+          <div style="font-size:var(--fs-lg);font-weight:700;">Inicia sesión para comprar</div>
+          <div style="font-size:var(--fs-sm);color:var(--text-mid);margin-top:8px;line-height:1.5;">Necesitas una cuenta para vincular la entrada a tu identidad.</div>
+        </div>
+        <button class="rm-cta" onclick="rmLoginWith('google')" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#333;margin-bottom:12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09a6.97 6.97 0 0 1 0-4.17V7.07H2.18A11.96 11.96 0 0 0 0 12c0 1.94.46 3.77 1.28 5.41l3.56-2.84.01-.48z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continuar con Google
+        </button>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+          <span style="font-size:var(--fs-xs);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">o con email</span>
+          <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
         </div>
         <input class="rm-input" type="email" id="rm-login-email" placeholder="tu@email.com" onkeydown="if(event.key==='Enter')rmLoginWith('email')">
-        <button class="rm-cta" id="rm-send-link-btn" onclick="rmLoginWith('email')">Enviar magic link →</button>
+        <button class="rm-cta" id="rm-send-link-btn" onclick="rmLoginWith('email')" style="background:transparent;color:var(--acid);border:1px solid var(--acid);">Enviar magic link →</button>
         <div id="rm-link-sent" style="display:none;text-align:center;padding:20px 0;font-size:var(--fs-sm);color:var(--acid);line-height:1.6;">
           <div style="font-size:32px;margin-bottom:10px;">📬</div>
           <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
