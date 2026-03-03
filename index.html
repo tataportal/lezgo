@@ -302,6 +302,19 @@ body::after {
   border-radius: var(--radius-full);
 }
 .nav-username { font-size: var(--fs-sm); font-weight: 500; color: var(--text-mid); }
+.nav-auth-btns { display: flex; align-items: center; gap: 10px; }
+.nav-auth-btns .nav-btn-login {
+  padding: 8px 18px; font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
+  background: transparent; border: 1px solid var(--alpha-light); color: var(--text);
+  font-family: inherit; transition: all 0.2s;
+}
+.nav-auth-btns .nav-btn-login:hover { border-color: var(--text-mid); }
+.nav-auth-btns .nav-btn-register {
+  padding: 8px 18px; font-size: var(--fs-sm); font-weight: 700; cursor: pointer;
+  background: var(--acid); border: none; color: var(--bg);
+  font-family: inherit; transition: all 0.2s;
+}
+.nav-auth-btns .nav-btn-register:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--acid-30); }
 
 /* Hamburger menu icon (hidden on desktop) */
 .nav-hamburger {
@@ -3840,6 +3853,7 @@ body::after {
   .nav-categories { display: none; }
   .main-nav-inner { justify-content: space-between; }
   .nav-username { display: none; }
+  .nav-auth-btns { display: none !important; }
 
   /* === HERO === */
   .hero { height: 65vh; min-height: 480px; max-height: 650px; }
@@ -6096,7 +6110,11 @@ a[onclick]:active,
       <div class="nav-cat" onclick="go('conocenos')" data-es="Conócenos" data-en="About Us">Conócenos</div>
     </div>
     <div class="nav-right">
-      <div class="nav-user" onclick="ndToggle(event)">
+      <div class="nav-auth-btns" id="nav-auth-btns" style="display:none;">
+        <button class="nav-btn-login" onclick="go('auth')">Iniciar sesión</button>
+        <button class="nav-btn-register" onclick="go('auth');setTimeout(function(){authSwitchTab('register')},50)">Crear cuenta</button>
+      </div>
+      <div class="nav-user" id="nav-user-logged" onclick="ndToggle(event)">
         <div class="nav-avatar">ML</div>
         <span class="nav-username">Mario</span>
         <div class="nav-dropdown" id="nav-dropdown" onclick="event.stopPropagation()">
@@ -6152,6 +6170,10 @@ a[onclick]:active,
     <div class="nav-cat active" onclick="go('eventos'); closeMobileMenu();" data-es="Eventos" data-en="Events">Eventos</div>
     <div class="nav-cat" onclick="go('marketplace'); closeMobileMenu();" data-es="Reventa" data-en="Resale">Reventa</div>
     <div class="nav-cat" onclick="go('conocenos'); closeMobileMenu();" data-es="Conócenos" data-en="About Us">Conócenos</div>
+    <div class="nav-mobile-auth" id="nav-mobile-auth" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--alpha-light); display:flex; gap:8px;">
+      <button class="nav-btn-login" onclick="go('auth'); closeMobileMenu();" style="flex:1;padding:12px;font-size:var(--fs-sm);font-weight:600;cursor:pointer;background:transparent;border:1px solid var(--alpha-light);color:var(--text);font-family:inherit;">Iniciar sesión</button>
+      <button class="nav-btn-register" onclick="go('auth'); closeMobileMenu(); setTimeout(function(){authSwitchTab('register')},50);" style="flex:1;padding:12px;font-size:var(--fs-sm);font-weight:700;cursor:pointer;background:var(--acid);border:none;color:var(--bg);font-family:inherit;">Crear cuenta</button>
+    </div>
   </div>
 </div>
 
@@ -8863,11 +8885,17 @@ a[onclick]:active,
   function updateUIForAuth(loggedIn) {
     const navAvatar = document.querySelector('.nav-avatar');
     const navUsername = document.querySelector('.nav-username');
+    const navUserLogged = document.getElementById('nav-user-logged');
+    const navAuthBtns = document.getElementById('nav-auth-btns');
     if (loggedIn && currentUser) {
       const name = userProfile?.displayName || currentUser.displayName || currentUser.email?.split('@')[0] || 'U';
       const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
       if (navAvatar) navAvatar.textContent = initials;
       if (navUsername) navUsername.textContent = name.split(' ')[0];
+      if (navUserLogged) navUserLogged.style.display = '';
+      if (navAuthBtns) navAuthBtns.style.display = 'none';
+      var mobileAuth = document.getElementById('nav-mobile-auth');
+      if (mobileAuth) mobileAuth.style.display = 'none';
       // Show logged-in items in dropdown
       document.querySelectorAll('.nd-logged-in').forEach(el => el.style.display = '');
       document.querySelectorAll('.nd-logged-out').forEach(el => el.style.display = 'none');
@@ -8878,8 +8906,10 @@ a[onclick]:active,
       const promoterBtn = document.getElementById('pf-promoter-btn');
       if (promoterBtn) promoterBtn.style.display = isPromoter ? 'none' : '';
     } else {
-      if (navAvatar) navAvatar.textContent = '?';
-      if (navUsername) navUsername.textContent = 'Entrar';
+      if (navUserLogged) navUserLogged.style.display = 'none';
+      if (navAuthBtns) navAuthBtns.style.display = 'flex';
+      var mobileAuth = document.getElementById('nav-mobile-auth');
+      if (mobileAuth) mobileAuth.style.display = 'flex';
       document.querySelectorAll('.nd-logged-in').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.nd-logged-out').forEach(el => el.style.display = '');
     }
@@ -9410,6 +9440,7 @@ a[onclick]:active,
 
   // ── Real Auth Functions ──
   async function authGoogleLogin() {
+    if (DEMO_MODE) { demoLogin(); return; }
     try {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
@@ -13644,14 +13675,26 @@ a[onclick]:active,
         <!-- LOGIN PANEL -->
         <div id="auth-login-panel">
           <div class="auth-title">Bienvenido de vuelta 👋</div>
-          <div class="auth-sub">Ingresa tu email y te enviaremos un link mágico. Sin contraseña.</div>
+          <div class="auth-sub">Inicia sesión con tu cuenta de Google o con un link mágico.</div>
+          <button class="auth-btn" onclick="authGoogleLogin()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#333;border:1px solid var(--alpha-light);margin-bottom:16px;">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09a6.97 6.97 0 0 1 0-4.17V7.07H2.18A11.96 11.96 0 0 0 0 12c0 1.94.46 3.77 1.28 5.41l3.56-2.84.01-.48z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continuar con Google
+          </button>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+            <span style="font-size:var(--fs-xs);color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;">o con email</span>
+            <div style="flex:1;height:1px;background:var(--alpha-light);"></div>
+          </div>
           <label class="auth-label">Email</label>
           <input class="auth-input" type="email" id="auth-email-input" placeholder="tu@email.com" aria-label="Correo electrónico" onkeydown="if(event.key==='Enter')authSendLink()">
-          <button class="auth-btn" id="auth-send-link-btn" onclick="authSendLink()">Enviar magic link →</button>
+          <button class="auth-btn" id="auth-send-link-btn" onclick="authSendLink()" style="background:transparent;color:var(--acid);border:1px solid var(--acid);">Enviar magic link →</button>
           <div id="auth-link-sent" style="display:none; margin-top:16px; background:var(--acid-muted); border:1px solid var(--acid-20); border-radius: 0; padding:16px; font-size: var(--fs-base); text-align:center; color:var(--acid); line-height:1.6;">
             <div style="font-size:24px;margin-bottom:8px;">📬</div>
             <strong>¡Link enviado!</strong><br>Revisa tu bandeja de entrada (y spam).<br>
             <span style="font-size:var(--fs-xs);color:var(--text-dim);">Al hacer clic en el link entrarás automáticamente.</span>
+          </div>
+          <div style="text-align:center;margin-top:20px;font-size:var(--fs-sm);color:var(--text-dim);">
+            ¿No tienes una cuenta? <a href="#" onclick="event.preventDefault();authSwitchTab('register')" style="color:var(--acid);font-weight:600;text-decoration:none;">Crea una aquí</a>
           </div>
         </div>
         <!-- REGISTER PANEL -->
