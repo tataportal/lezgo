@@ -8741,6 +8741,8 @@ a[onclick]:active,
   }
 
   function demoApplyAuth() {
+    // Don't re-apply auth if user explicitly logged out
+    if (window._demoLoggedOut) return;
     currentUser = { uid: DEMO_UID, email: 'lucas@lezgo.fans', displayName: 'Lucas Demo' };
     userProfile = { displayName: 'Lucas Demo', email: 'lucas@lezgo.fans', role: demoRole, dni: '72345678' };
     updateUIForAuth(true);
@@ -8748,6 +8750,12 @@ a[onclick]:active,
     var sw = document.getElementById('nd-role-switch');
     if (sw) sw.style.display = '';
     demoUpdateRoleUI();
+  }
+
+  function demoLogin() {
+    window._demoLoggedOut = false;
+    demoApplyAuth();
+    go('eventos');
   }
 
   function demoToggleRole() {
@@ -9403,6 +9411,11 @@ a[onclick]:active,
   }
 
   async function authSendLink() {
+    // In demo mode, just log back in
+    if (DEMO_MODE) {
+      demoLogin();
+      return;
+    }
     const emailInput = document.getElementById('auth-email-input');
     const email = emailInput.value.trim();
     if (!email || !email.includes('@')) {
@@ -9474,6 +9487,10 @@ a[onclick]:active,
     if (overlay && overlay.classList.contains('pm-open')) {
       pmClose();
     }
+    const rmOverlay = document.getElementById('rm-overlay');
+    if (rmOverlay && rmOverlay.classList.contains('rm-open')) {
+      rmClose();
+    }
 
     // Close nav drawer if open
     const navDrawer = document.getElementById('nav-drawer');
@@ -9481,9 +9498,18 @@ a[onclick]:active,
       navDrawer.classList.remove('open');
     }
 
-    auth.signOut().then(() => {
-      go('eventos');
-    });
+    // Update UI immediately to logged-out state
+    updateUIForAuth(false);
+
+    if (DEMO_MODE) {
+      // In demo mode, flag that user explicitly logged out
+      window._demoLoggedOut = true;
+      go('auth');
+    } else {
+      auth.signOut().then(() => {
+        go('auth');
+      });
+    }
   }
 
   // ── Purchase Flow (Free Tickets) ──
@@ -9662,6 +9688,11 @@ a[onclick]:active,
 
   // ── Login within Purchase Modal ──
   async function pmLoginWith(method) {
+    if (DEMO_MODE && method === 'email') {
+      demoLogin();
+      pmGoStep(1);
+      return;
+    }
     if (method === 'email') {
       const email = document.getElementById('pm-login-email').value.trim();
       const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -10347,6 +10378,11 @@ a[onclick]:active,
   }
 
   async function rmLoginWith(method) {
+    if (DEMO_MODE && method === 'email') {
+      demoLogin();
+      rmGoStep(1);
+      return;
+    }
     if (method === 'email') {
       var email = document.getElementById('rm-login-email').value.trim();
       var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
