@@ -4933,7 +4933,7 @@ body::after {
   color: var(--acid); margin-bottom: 48px; cursor: pointer;
 }
 .auth-card {
-  width: 100%; max-width: 420px;
+  width: 100%; max-width: 520px;
   background: var(--alpha-minimal); border: 1px solid var(--alpha-light);
   border-radius: 0; overflow: hidden;
 }
@@ -13384,24 +13384,23 @@ a[onclick]:active,
           <!-- REG STEP 1: Email -->
           <div class="auth-step active" id="auth-reg-1">
             <div class="auth-title">Crea tu cuenta 🚀</div>
-            <div class="auth-sub">Necesitas email y DNI. En 2 minutos estás dentro.</div>
-            <label class="auth-label">Nombre completo</label>
-            <input class="auth-input" type="text" id="reg-name" placeholder="Mario Leder" aria-label="Nombre completo">
+            <div class="auth-sub">Solo necesitas tu email y DNI. En 2 minutos estás dentro.</div>
             <label class="auth-label">Email</label>
-            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com" aria-label="Correo electrónico">
-            <label class="auth-label">Teléfono (opcional)</label>
-            <input class="auth-input" type="tel" id="reg-phone" placeholder="+51 999 000 000" aria-label="Teléfono">
+            <input class="auth-input" type="email" id="reg-email" placeholder="tu@email.com" aria-label="Correo electrónico" onkeydown="if(event.key==='Enter')authRegStep(2)">
             <button class="auth-btn" onclick="authRegStep(2)">Continuar →</button>
+            <div style="text-align:center;margin-top:16px;font-size:var(--fs-sm);color:var(--text-dim);">
+              ¿Ya tienes cuenta? <a href="#" onclick="event.preventDefault();authSwitchTab('login')" style="color:var(--acid);font-weight:600;text-decoration:none;">Inicia sesión</a>
+            </div>
           </div>
-          <!-- REG STEP 2: DNI -->
+          <!-- REG STEP 2: DNI + Name -->
           <div class="auth-step" id="auth-reg-2">
             <div class="auth-title">Verifica tu identidad 🪪</div>
-            <div class="auth-sub">Tu DNI vincula tus entradas a ti. Protegemos tu compra y eliminamos la reventa trucha.</div>
+            <div class="auth-sub">Tu DNI vincula tus entradas a ti. Eliminamos la reventa trucha.</div>
+            <label class="auth-label">Nombre completo</label>
+            <input class="auth-input" type="text" id="reg-name" placeholder="Como aparece en tu DNI" aria-label="Nombre completo">
             <label class="auth-label">Número de DNI</label>
             <input class="auth-input" type="text" id="reg-dni" placeholder="73XXXXXX" maxlength="8" aria-label="DNI">
-            <label class="auth-label">Fecha de nacimiento</label>
-            <input class="auth-input" type="text" id="reg-dob" placeholder="DD/MM/AAAA" maxlength="10" aria-label="Fecha de nacimiento">
-            <div class="pm-security-note" style="margin-top:0; margin-bottom:0;">
+            <div class="pm-security-note" style="margin-top:8px; margin-bottom:0;">
               🔒 Tu DNI solo se usa para verificar tu identidad. No almacenamos datos sensibles.
             </div>
             <button class="auth-btn" style="margin-top:16px" onclick="authRegStep(3)">Verificar DNI →</button>
