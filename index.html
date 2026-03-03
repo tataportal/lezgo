@@ -9509,9 +9509,11 @@ a[onclick]:active,
     // Disable button immediately to prevent double-clicks
     btn.disabled = true;
 
-    // Adapt loading text for free events
+    // Adapt loading text: free when price=0 or coupon covers 100%
     const loadingText = document.getElementById('pm-loading-text');
-    const isFreePurchase = Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0) === 0;
+    const rawSubtotal = Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0);
+    const discountAmt = pmAppliedCoupon ? rawSubtotal * pmAppliedCoupon.discount : 0;
+    const isFreePurchase = (rawSubtotal - discountAmt) <= 0;
     if (loadingText) loadingText.textContent = isFreePurchase ? 'Reservando tu entrada...' : 'Procesando pago seguro...';
 
     loading.classList.add('visible');
@@ -9534,6 +9536,9 @@ a[onclick]:active,
       for (const [ticketId, qty] of selectedTickets) {
         for (let i = 0; i < qty; i++) {
           const ticketRef = db.collection('tickets').doc();
+          const origPrice = pmTicketCatalog[ticketId]?.price || 0;
+          const couponDiscount = pmAppliedCoupon ? pmAppliedCoupon.discount : 0;
+          const finalPrice = Math.round(origPrice * (1 - couponDiscount) * 100) / 100;
           batch.set(ticketRef, {
             ticketId: ticketRef.id,
             eventId: ev._id || ev.id,
@@ -9546,7 +9551,10 @@ a[onclick]:active,
             eventLocation: ev.location,
             ticketType: ticketId,
             ticketName: pmTicketCatalog[ticketId]?.name || ticketId,
-            price: pmTicketCatalog[ticketId]?.price || 0,
+            originalPrice: origPrice,
+            price: finalPrice,
+            couponCode: pmAppliedCoupon ? pmAppliedCoupon.code : null,
+            couponDiscount: couponDiscount,
             userId: currentUser.uid,
             userEmail: currentUser.email,
             userDni: pmVerifiedDni || userProfile?.dni || '',
@@ -9563,16 +9571,21 @@ a[onclick]:active,
       btn.style.display = '';
       backBtn.style.display = '';
 
-      // Show confirmation
+      // Show confirmation (with coupon discount applied)
       let totalPrice = 0;
+      const cDiscount = pmAppliedCoupon ? pmAppliedCoupon.discount : 0;
       const confirmedParts = selectedTickets.map(([id,q]) => {
         const price = pmTicketCatalog[id]?.price || 0;
-        const lineTotal = q * price;
+        const discounted = Math.round(price * (1 - cDiscount) * 100) / 100;
+        const lineTotal = q * discounted;
         totalPrice += lineTotal;
+        if (discounted === 0 && price > 0) {
+          return q + '× ' + (pmTicketCatalog[id]?.name || id).replace('👑 ','') + ' — <s style="color:var(--text-dim)">S/' + (q * price) + '</s> GRATIS';
+        }
         return q + '× ' + (pmTicketCatalog[id]?.name || id).replace('👑 ','') + ' — ' + (lineTotal === 0 ? 'GRATIS' : 'S/' + lineTotal);
       });
       const confirmTicketName = document.getElementById('pm-confirm-ticket-name');
-      if (confirmTicketName) confirmTicketName.textContent = confirmedParts.join(' + ') || 'Entrada';
+      if (confirmTicketName) confirmTicketName.innerHTML = confirmedParts.join(' + ') || 'Entrada';
       const confirmDni = document.getElementById('pm-confirm-dni');
       if (confirmDni) confirmDni.textContent = pmVerifiedDni || userProfile?.dni || '———';
       // Populate confirmation card with current event data
@@ -12850,6 +12863,14 @@ a[onclick]:active,
      ═══════════════════════════════════════════ */
   var pmCurrentStep = 1;
   var pmSelectedPay = 'card';
+  var pmAppliedCoupon = null; // { code, discount (0-1), label }
+
+  // Valid coupon codes
+  var PM_COUPONS = {
+    'DEMO': { discount: 1.0, label: '100% descuento' },
+    'LEZGO50': { discount: 0.5, label: '50% descuento' },
+    'EARLYBIRD': { discount: 0.25, label: '25% descuento' }
+  };
 
   // Ticket quantities & pricing (overwritten by Firebase openEvent when dynamic)
   var pmTicketCatalog = {};
@@ -13027,21 +13048,42 @@ a[onclick]:active,
       html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>${lineTotal === 0 ? 'GRATIS' : 'S/' + lineTotal}</span></div>`;
     }
 
-    const isFree = subtotal === 0 && totalQty > 0;
+    // Calculate coupon discount
+    const discountRate = pmAppliedCoupon ? pmAppliedCoupon.discount : 0;
+    const discountAmount = Math.round(subtotal * discountRate * 100) / 100;
+    const afterDiscount = subtotal - discountAmount;
 
     // Percentage-based fees: 3.3% + 2.1% + 2.9% = 8.3% total
-    const platformFeeRate = 0.033;   // 3.3% platform fee
-    const verificationFeeRate = 0.021; // 2.1% identity verification
-    const processingFeeRate = 0.029;   // 2.9% payment processing
-    const totalFeeRate = platformFeeRate + verificationFeeRate + processingFeeRate; // 8.3%
-    const totalFee = isFree ? 0 : Math.round(subtotal * totalFeeRate * 100) / 100;
-    const total = subtotal + totalFee;
+    const platformFeeRate = 0.033;
+    const verificationFeeRate = 0.021;
+    const processingFeeRate = 0.029;
+    const totalFeeRate = platformFeeRate + verificationFeeRate + processingFeeRate;
+    const totalFee = afterDiscount === 0 ? 0 : Math.round(afterDiscount * totalFeeRate * 100) / 100;
+    const total = afterDiscount + totalFee;
+
+    const isFree = total === 0 && totalQty > 0;
 
     document.getElementById('pm-pay-items').innerHTML = html;
-    document.getElementById('pm-pay-fee').textContent = isFree ? 'S/0.00' : 'S/' + totalFee.toFixed(2);
+    document.getElementById('pm-pay-fee').textContent = 'S/' + totalFee.toFixed(2);
     document.getElementById('pm-pay-total').textContent = isFree ? 'GRATIS' : 'S/' + total.toFixed(2);
+    if (isFree) {
+      document.getElementById('pm-pay-total').style.color = 'var(--acid)';
+    } else {
+      document.getElementById('pm-pay-total').style.color = '';
+    }
 
-    // Hide/show fee row and payment methods for free events
+    // Show/hide discount row
+    const discountRow = document.getElementById('pm-discount-row');
+    if (discountRow) {
+      if (pmAppliedCoupon && discountAmount > 0) {
+        discountRow.style.display = 'flex';
+        document.getElementById('pm-pay-discount').textContent = '-S/' + discountAmount.toFixed(2);
+      } else {
+        discountRow.style.display = 'none';
+      }
+    }
+
+    // Hide/show fee row and payment methods when total is free
     const feeRow = document.querySelector('.pm-fee-row');
     const cardRow = document.querySelector('.pm-card-row');
     const cardFields = document.getElementById('pm-pay-card-fields');
@@ -13065,7 +13107,7 @@ a[onclick]:active,
     }
 
     // Display fee breakdown with actual percentages
-    if (subtotal > 0) {
+    if (afterDiscount > 0) {
       document.getElementById('pm-fee-plataforma').textContent    = (platformFeeRate * 100).toFixed(1) + '%';
       document.getElementById('pm-fee-verificacion').textContent  = (verificationFeeRate * 100).toFixed(1) + '%';
       document.getElementById('pm-fee-procesamiento').textContent = (processingFeeRate * 100).toFixed(1) + '%';
@@ -13073,6 +13115,39 @@ a[onclick]:active,
     // Reset desglose to closed
     document.getElementById('pm-fee-breakdown').classList.remove('visible');
     document.getElementById('pm-fee-chevron').classList.remove('open');
+  }
+
+  function pmApplyCoupon() {
+    const input = document.getElementById('pm-coupon-input');
+    const code = (input.value || '').trim().toUpperCase();
+    if (!code) { toast('Ingresa un código de descuento', 'warning'); return; }
+
+    const coupon = PM_COUPONS[code];
+    if (!coupon) {
+      input.style.borderColor = '#f87171';
+      toast('Código inválido', 'error');
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+
+    pmAppliedCoupon = { code, ...coupon };
+    // Show applied badge, hide input
+    document.getElementById('pm-coupon-input-row').style.display = 'none';
+    const applied = document.getElementById('pm-coupon-applied');
+    applied.style.display = 'block';
+    document.getElementById('pm-coupon-name').textContent = code;
+    document.getElementById('pm-coupon-desc').textContent = coupon.label;
+
+    toast('Cupón aplicado: ' + coupon.label, 'success');
+    pmBuildPaySummary();
+  }
+
+  function pmRemoveCoupon() {
+    pmAppliedCoupon = null;
+    document.getElementById('pm-coupon-input-row').style.display = 'flex';
+    document.getElementById('pm-coupon-applied').style.display = 'none';
+    document.getElementById('pm-coupon-input').value = '';
+    pmBuildPaySummary();
   }
 
   function pmToggleDesglose() {
@@ -13088,6 +13163,15 @@ a[onclick]:active,
 
   function pmOpen(eventLabel) {
     if (eventLabel) document.getElementById('pm-event-label').textContent = eventLabel;
+
+    // Reset coupon state
+    pmAppliedCoupon = null;
+    var couponInputRow = document.getElementById('pm-coupon-input-row');
+    var couponApplied = document.getElementById('pm-coupon-applied');
+    var couponInput = document.getElementById('pm-coupon-input');
+    if (couponInputRow) couponInputRow.style.display = 'flex';
+    if (couponApplied) couponApplied.style.display = 'none';
+    if (couponInput) couponInput.value = '';
 
     // Dynamically build ticket list from current event
     pmBuildTicketList();
@@ -13185,10 +13269,7 @@ a[onclick]:active,
       else line.classList.remove('done');
     }
 
-    // Check if free event for title adaptation
-    const pmIsFreeEvent = Object.entries(pmTicketQty).some(([id, q]) => q > 0) &&
-      Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0) === 0;
-    const titles = { 0: 'Comprar entrada', 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: pmIsFreeEvent ? 'Confirmar' : 'Pago', 4: '¡Listo!' };
+    const titles = { 0: 'Comprar entrada', 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: 'Pago', 4: '¡Listo!' };
     document.getElementById('pm-step-title').textContent = titles[step] || '';
 
     // Auto-fill DNI and name on step 2 if user is logged in
@@ -14295,6 +14376,24 @@ a[onclick]:active,
               </span>
               <span id="pm-fee-procesamiento">2.9%</span>
             </div>
+          </div>
+          <!-- Coupon row -->
+          <div id="pm-coupon-row" style="margin-top:12px;margin-bottom:4px;">
+            <div id="pm-coupon-input-row" style="display:flex;gap:8px;align-items:center;">
+              <input class="pm-input" type="text" id="pm-coupon-input" placeholder="Código de descuento" onkeydown="if(event.key==='Enter')pmApplyCoupon()" style="flex:1;margin:0;text-transform:uppercase;letter-spacing:0.05em;font-size:var(--fs-sm);">
+              <button onclick="pmApplyCoupon()" id="pm-coupon-apply-btn" style="padding:10px 18px;background:transparent;border:1px solid var(--acid);color:var(--acid);border-radius:10px;font-size:var(--fs-sm);font-weight:600;cursor:pointer;white-space:nowrap;">Aplicar</button>
+            </div>
+            <div id="pm-coupon-applied" style="display:none;padding:8px 12px;background:rgba(229,255,0,0.08);border:1px solid rgba(229,255,0,0.25);border-radius:10px;margin-top:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:var(--fs-sm);color:var(--acid);font-weight:600;">🎟 <span id="pm-coupon-name">DEMO</span> — <span id="pm-coupon-desc">100% descuento</span></span>
+                <button onclick="pmRemoveCoupon()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:var(--fs-sm);text-decoration:underline;">Quitar</button>
+              </div>
+            </div>
+          </div>
+          <!-- Discount row (shown when coupon applied) -->
+          <div class="pm-pay-row" id="pm-discount-row" style="display:none;color:var(--acid);">
+            <span>Descuento</span>
+            <span id="pm-pay-discount">-S/0</span>
           </div>
           <div class="pm-pay-row total" style="margin-top:8px;"><span>Total</span><span id="pm-pay-total">S/130</span></div>
         </div>
