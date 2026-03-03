@@ -9509,6 +9509,11 @@ a[onclick]:active,
     // Disable button immediately to prevent double-clicks
     btn.disabled = true;
 
+    // Adapt loading text for free events
+    const loadingText = document.getElementById('pm-loading-text');
+    const isFreePurchase = Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0) === 0;
+    if (loadingText) loadingText.textContent = isFreePurchase ? 'Reservando tu entrada...' : 'Procesando pago seguro...';
+
     loading.classList.add('visible');
     btn.style.display = 'none';
     backBtn.style.display = 'none';
@@ -9633,16 +9638,7 @@ a[onclick]:active,
       btn.textContent = 'Verificar y continuar →';
       pmUserDniVerified = true;
 
-      // For free events, skip payment step
-      const ev = window._currentEvent || allEvents.find(e => e.featured) || allEvents[0];
-      const totalPrice = Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0);
-
-      if (totalPrice === 0) {
-        // Free event — go directly to processing
-        pmPay();
-      } else {
-        pmGoStep(3);
-      }
+      pmGoStep(3);
     }, 1000);
   }
 
@@ -13028,19 +13024,45 @@ a[onclick]:active,
       const lineTotal = qty * t.price;
       subtotal += lineTotal;
       totalQty += qty;
-      html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>S/${lineTotal}</span></div>`;
+      html += `<div class="pm-pay-row"><span>${qty}× ${t.name}</span><span>${lineTotal === 0 ? 'GRATIS' : 'S/' + lineTotal}</span></div>`;
     }
+
+    const isFree = subtotal === 0 && totalQty > 0;
+
     // Percentage-based fees: 3.3% + 2.1% + 2.9% = 8.3% total
     const platformFeeRate = 0.033;   // 3.3% platform fee
     const verificationFeeRate = 0.021; // 2.1% identity verification
     const processingFeeRate = 0.029;   // 2.9% payment processing
     const totalFeeRate = platformFeeRate + verificationFeeRate + processingFeeRate; // 8.3%
-    const totalFee = Math.round(subtotal * totalFeeRate * 100) / 100;
+    const totalFee = isFree ? 0 : Math.round(subtotal * totalFeeRate * 100) / 100;
     const total = subtotal + totalFee;
 
     document.getElementById('pm-pay-items').innerHTML = html;
-    document.getElementById('pm-pay-fee').textContent = 'S/' + totalFee.toFixed(2);
-    document.getElementById('pm-pay-total').textContent = 'S/' + total.toFixed(2);
+    document.getElementById('pm-pay-fee').textContent = isFree ? 'S/0.00' : 'S/' + totalFee.toFixed(2);
+    document.getElementById('pm-pay-total').textContent = isFree ? 'GRATIS' : 'S/' + total.toFixed(2);
+
+    // Hide/show fee row and payment methods for free events
+    const feeRow = document.querySelector('.pm-fee-row');
+    const cardRow = document.querySelector('.pm-card-row');
+    const cardFields = document.getElementById('pm-pay-card-fields');
+    const yapeFields = document.getElementById('pm-pay-yape-fields');
+    const secBadge = document.getElementById('pm-secure-badge');
+    const payBtn = document.getElementById('pm-pay-btn');
+
+    if (isFree) {
+      if (feeRow) feeRow.style.display = 'none';
+      if (cardRow) cardRow.style.display = 'none';
+      if (cardFields) cardFields.style.display = 'none';
+      if (yapeFields) yapeFields.classList.add('d-none');
+      if (secBadge) secBadge.style.display = 'none';
+      if (payBtn) payBtn.textContent = 'Confirmar entrada gratis ✓';
+    } else {
+      if (feeRow) feeRow.style.display = '';
+      if (cardRow) cardRow.style.display = '';
+      if (cardFields) cardFields.style.display = '';
+      if (secBadge) secBadge.style.display = '';
+      if (payBtn) payBtn.textContent = 'Pagar ahora 🔒';
+    }
 
     // Display fee breakdown with actual percentages
     if (subtotal > 0) {
@@ -13163,7 +13185,10 @@ a[onclick]:active,
       else line.classList.remove('done');
     }
 
-    const titles = { 0: 'Comprar entrada', 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: 'Pago', 4: '¡Listo!' };
+    // Check if free event for title adaptation
+    const pmIsFreeEvent = Object.entries(pmTicketQty).some(([id, q]) => q > 0) &&
+      Object.entries(pmTicketQty).reduce((sum, [id, q]) => sum + (pmTicketCatalog[id]?.price || 0) * q, 0) === 0;
+    const titles = { 0: 'Comprar entrada', 1: 'Elige tu entrada', 2: 'Verifica tu identidad', 3: pmIsFreeEvent ? 'Confirmar' : 'Pago', 4: '¡Listo!' };
     document.getElementById('pm-step-title').textContent = titles[step] || '';
 
     // Auto-fill DNI and name on step 2 if user is logged in
@@ -14302,10 +14327,10 @@ a[onclick]:active,
         <!-- Loading -->
         <div class="pm-loading" id="pm-loading">
           <div class="pm-spinner"></div>
-          <div class="pm-loading-text">Procesando pago seguro...</div>
+          <div class="pm-loading-text" id="pm-loading-text">Procesando pago seguro...</div>
         </div>
         <!-- Secure Payment Badge -->
-        <div style="text-align:center;margin-bottom:16px;font-size: var(--fs-sm);color: var(--green);display:flex;align-items:center;justify-content:center;gap:6px;">
+        <div id="pm-secure-badge" style="text-align:center;margin-bottom:16px;font-size: var(--fs-sm);color: var(--green);display:flex;align-items:center;justify-content:center;gap:6px;">
           <span style="font-size:14px;">🔒</span>
           <span>Pago 100% seguro y encriptado</span>
         </div>
