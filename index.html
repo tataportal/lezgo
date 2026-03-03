@@ -9668,7 +9668,7 @@ a[onclick]:active,
       if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
       try {
         const actionCodeSettings = {
-          url: window.location.href,
+          url: window.location.origin + '/',
           handleCodeInApp: true
         };
         await auth.sendSignInLinkToEmail(email, actionCodeSettings);
@@ -10338,7 +10338,7 @@ a[onclick]:active,
       if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
       try {
         var actionCodeSettings = {
-          url: window.location.href,
+          url: window.location.origin + '/',
           handleCodeInApp: true
         };
         await auth.sendSignInLinkToEmail(email, actionCodeSettings);
