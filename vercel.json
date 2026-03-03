@@ -42,7 +42,7 @@
     },
     {
       "source": "/:slug",
-      "destination": "/evento-v2.html?slug=:slug"
+      "destination": "/index.html"
     }
   ]
 }

@@ -6089,6 +6089,632 @@ a[onclick]:active,
   }
 }
 
+/* ═══════════════════════════════════════════
+   EVENT DETAIL VIEW (v-evento) — Ported from evento-v2.html
+   ═══════════════════════════════════════════ */
+
+.ev-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.ev-hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.ev-hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(5,5,5,0.1) 0%,
+    rgba(5,5,5,0.4) 30%,
+    rgba(5,5,5,0.95) 70%,
+    var(--bg) 100%
+  );
+}
+.ev-hero-content {
+  position: relative; z-index: 2;
+  padding: 0 clamp(20px, 5vw, 80px) 0;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+.ev-hero-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: var(--fs-sm); font-weight: 700; color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 10px 20px 10px 16px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.15);
+  margin-bottom: 28px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.ev-hero-back:hover { color: var(--acid); border-color: var(--acid-30); background: rgba(0,0,0,0.6); }
+.ev-hero-back svg { width: 14px; height: 14px; }
+
+.ev-hero-title {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: var(--fw-black);
+  letter-spacing: -3px;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+.ev-hero-sub {
+  font-size: clamp(16px, 2.5vw, 24px);
+  font-weight: var(--fw-regular);
+  color: var(--acid);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.ev-hero-desc {
+  font-size: var(--fs-base); color: var(--text-dim);
+  max-width: 520px; line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.ev-hero-meta {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.ev-hero-meta-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--text-dim);
+}
+.ev-hero-meta-item .icon {
+  width: 40px; height: 40px; border-radius: 0;
+  background: var(--acid-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--fs-lg);
+}
+
+.ev-hero-ctas {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 48px;
+}
+.ev-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 32px; font-size: var(--fs-sm); font-weight: var(--fw-bold);
+  border-radius: var(--radius-btn); transition: all 0.25s;
+  letter-spacing: -0.2px; border: none; cursor: pointer; font-family: inherit;
+}
+.ev-btn-primary {
+  background: var(--acid); color: var(--gray-950);
+}
+.ev-btn-primary:hover {
+  box-shadow: 0 0 50px var(--acid-glow);
+  transform: translateY(-2px);
+}
+.ev-btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text);
+}
+.ev-btn-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: var(--acid-muted);
+}
+.ev-btn-sold {
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--red);
+}
+.ev-btn-sold:hover {
+  background: rgba(255,59,59,0.06);
+}
+
+.ev-section {
+  padding: 72px clamp(20px, 5vw, 80px);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.ev-section-label {
+  font-size: var(--fs-xs); font-weight: var(--fw-bold); letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acid);
+  margin-bottom: 16px; opacity: 0.8;
+  text-align: center;
+}
+.ev-section-heading {
+  font-size: clamp(48px, 6vw, 64px);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 40px;
+  text-align: center;
+}
+.ev-section-heading em { font-style: normal; color: var(--acid); }
+.ev-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* TICKETS */
+.ev-tk-grid-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  overflow: visible;
+}
+.ev-tk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0;
+  width: 100%;
+  margin: 0 auto;
+}
+.ev-tk-card {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+}
+.ev-tk-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 80px var(--dark-60);
+}
+.ev-tk-inner {
+  padding: 32px 28px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 0;
+  position: relative;
+  overflow: visible;
+}
+.ev-tk-tier-1 { background: transparent; border-color: rgba(59,130,246,0.5); }
+.ev-tk-tier-2 { background: transparent; border-color: rgba(139,92,246,0.5); }
+.ev-tk-tier-3 { background: transparent; border-color: rgba(229,255,0,0.35); }
+.ev-tk-tier-4 { background: transparent; border-color: rgba(255,59,59,0.4); }
+.ev-tk-tier-basic { background: transparent; border-color: var(--border-light); }
+.ev-tk-sold {
+  background: transparent;
+  border-color: rgba(255,255,255,0.15);
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.ev-tk-card--sold { cursor: pointer; }
+.ev-tk-card--sold:hover .ev-tk-sold { opacity: 0.2; }
+.ev-tk-card--sold:hover { box-shadow: 0 24px 80px var(--dark-40); }
+.ev-tk-card--dead { cursor: default; }
+.ev-tk-card--dead .ev-tk-sold { opacity: 0.65; }
+.ev-tk-card--dead:hover { transform: none; box-shadow: none; }
+.ev-tk-card--dead .ev-tk-overlay { display: none; }
+.ev-tk-card--avail { cursor: pointer; }
+.ev-tk-card--avail:hover { box-shadow: 0 24px 80px var(--acid-12); }
+.ev-tk-card--avail:hover .ev-tk-inner { opacity: 0.2; }
+.ev-tk-card--avail:hover .ev-tk-overlay { opacity: 1; pointer-events: auto; }
+.ev-tk-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  border-radius: 0;
+  background: rgba(5,5,5,0.75);
+  backdrop-filter: blur(6px);
+}
+.ev-tk-card--sold:hover .ev-tk-overlay { opacity: 1; pointer-events: auto; }
+.ev-tk-overlay-icon { font-size: var(--fs-2xl); margin-bottom: 12px; }
+.ev-tk-overlay-text {
+  font-size: var(--fs-base); font-weight: var(--fw-extrabold); color: var(--acid);
+  letter-spacing: -0.3px; margin-bottom: 4px;
+}
+.ev-tk-overlay-hint {
+  font-size: var(--fs-xs); color: var(--text-muted); font-weight: var(--fw-medium);
+}
+.ev-tk-name {
+  font-size: 40px; font-weight: var(--fw-extrabold);
+  letter-spacing: -0.5px; line-height: 1;
+  margin-bottom: 14px; color: #fff;
+}
+.ev-tk-includes {
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  line-height: 1.65; margin-top: 0;
+}
+.ev-tk-includes li {
+  list-style: none;
+  padding-left: 16px;
+  position: relative;
+}
+.ev-tk-includes li::before {
+  content: ''; position: absolute; left: 0; top: 8px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--alpha-medium);
+}
+.ev-tk-header {
+  min-height: auto;
+  flex: 0 0 auto;
+}
+.ev-tk-phases {
+  padding-top: 16px;
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.ev-tk-phase {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 5px 0;
+  font-size: 18px; font-weight: var(--fw-medium);
+  gap: 12px;
+}
+.ev-tk-phase-name { color: var(--alpha-heavy); white-space: nowrap; }
+.ev-tk-phase-price { color: var(--alpha-heavy); white-space: nowrap; text-align: right; }
+.ev-tk-phase--past .ev-tk-phase-name { text-decoration: line-through; color: var(--alpha-subtle); }
+.ev-tk-phase--past .ev-tk-phase-price { text-decoration: line-through; color: var(--alpha-subtle); }
+.ev-tk-phase--active .ev-tk-phase-name { color: var(--acid); font-weight: var(--fw-bold); text-decoration: none; }
+.ev-tk-phase--active .ev-tk-phase-price { color: var(--acid); font-weight: var(--fw-extrabold); font-size: 26px; text-decoration: none; }
+.ev-tk-phase--future .ev-tk-phase-name { color: var(--acid-muted); }
+.ev-tk-phase--future .ev-tk-phase-price { color: var(--acid-muted); }
+.ev-tk-phase-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--alpha-light); flex-shrink: 0; margin-right: 10px;
+}
+.ev-tk-phase--past .ev-tk-phase-dot { background: var(--border-light); }
+.ev-tk-phase--active .ev-tk-phase-dot { background: var(--acid); box-shadow: 0 0 8px var(--acid-glow); }
+.ev-tk-phase--future .ev-tk-phase-dot { background: var(--alpha-subtle); }
+.ev-tk-phase-left { display: flex; align-items: center; }
+.ev-tk-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--alpha-subtle);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ev-tk-price-simple {
+  font-size: var(--fs-xl); font-weight: var(--fw-black); color: var(--text);
+  margin: 16px 0 auto; letter-spacing: -0.5px;
+}
+.ev-tk-buy {
+  padding: 14px 24px;
+  background: var(--acid);
+  border: none;
+  border-radius: var(--radius-btn);
+  color: var(--gray-950); font-size: 18px; font-weight: var(--fw-bold);
+  transition: all 0.2s;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ev-tk-buy:hover { background: #fff; color: var(--gray-950); box-shadow: 0 0 30px var(--acid-glow); }
+.ev-tk-sold-all {
+  font-size: var(--fs-xs); color: var(--red); font-weight: var(--fw-bold);
+  text-align: center; padding: 10px 0;
+  letter-spacing: 0.5px; white-space: nowrap;
+  width: 100%;
+}
+
+/* MARKETPLACE BANNER */
+.ev-mp-banner {
+  margin-top: 24px;
+  padding: 48px 40px;
+  border-radius: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.ev-mp-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, var(--acid-muted), transparent 60%);
+  pointer-events: none;
+}
+.ev-mp-info { position: relative; z-index: 1; }
+.ev-mp-title {
+  font-size: var(--fs-lg); font-weight: var(--fw-bold); letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+.ev-mp-desc {
+  font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.6;
+}
+.ev-mp-action { position: relative; z-index: 1; flex-shrink: 0; }
+
+/* LINEUP */
+.ev-lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.ev-lineup-card {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s, border-color 0.2s;
+  cursor: pointer;
+}
+.ev-lineup-card:hover {
+  border-color: var(--acid-muted);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px var(--dark-40);
+}
+.ev-lineup-card-img {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center top;
+  filter: grayscale(100%);
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.4s;
+}
+.ev-lineup-card:hover .ev-lineup-card-img {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+}
+.ev-lineup-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, var(--dark-85) 0%, rgba(0,0,0,0.2) 40%, transparent 60%);
+  z-index: 1;
+}
+.ev-lineup-card-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px 20px;
+  z-index: 2;
+}
+.ev-lineup-name {
+  font-size: var(--fs-lg); font-weight: var(--fw-bold);
+  letter-spacing: -0.3px; line-height: 1.1;
+  margin-bottom: 6px;
+}
+.ev-lineup-role {
+  font-size: var(--fs-xs); color: var(--alpha-heavy);
+  font-weight: var(--fw-medium); margin-bottom: 10px;
+}
+.ev-lineup-tags {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.ev-lineup-tag {
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 4px 10px;
+  background: var(--alpha-light);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-pill); color: var(--alpha-heavy);
+  backdrop-filter: blur(4px);
+}
+.ev-lineup-card--hl {
+  aspect-ratio: 3 / 4;
+}
+.ev-lineup-card--hl .ev-lineup-name {
+  font-size: var(--fs-2xl); letter-spacing: -1px;
+}
+.ev-lineup-card--hl .ev-lineup-role {
+  font-size: var(--fs-sm);
+}
+.ev-lineup-badge {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  font-size: var(--fs-xs); font-weight: var(--fw-bold); letter-spacing: 1.5px;
+  background: var(--acid); color: var(--gray-950);
+  padding: 5px 12px; border-radius: var(--radius-pill);
+}
+
+/* INFO */
+.ev-info-box {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.ev-info-group-title {
+  font-size: var(--fs-xs); font-weight: var(--fw-bold); letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.ev-info-list {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+}
+.ev-info-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  background: var(--alpha-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm); font-weight: var(--fw-medium);
+  color: var(--text-mid);
+  transition: all 0.2s ease;
+}
+.ev-info-chip:hover {
+  background: var(--alpha-light);
+  border-color: var(--acid-muted);
+}
+.ev-info-chip span { font-size: var(--fs-base); }
+.ev-info-divider {
+  height: 1px;
+  background: var(--alpha-light);
+}
+.ev-info-prohibited-items {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+}
+.ev-info-prohibited-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,60,60,0.1);
+  border: 1px solid rgba(255,60,60,0.25);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs); font-weight: var(--fw-medium);
+  color: rgba(255,120,120,0.95);
+  transition: all 0.2s ease;
+}
+.ev-info-prohibited-tag:hover {
+  background: rgba(255,60,60,0.15);
+  border-color: rgba(255,60,60,0.4);
+}
+
+/* ABOUT */
+.ev-about-text {
+  font-size: var(--fs-base); color: var(--text-dim); line-height: 1.9;
+  max-width: 750px; font-weight: var(--fw-regular);
+  margin-left: auto; margin-right: auto;
+  letter-spacing: 0.3px;
+}
+.ev-about-text + .ev-about-text { margin-top: 20px; }
+
+/* VENUE */
+.ev-venue-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 32px; align-items: stretch;
+}
+.ev-venue-info {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ev-venue-name { font-size: clamp(22px, 5vw, 28px); font-weight: var(--fw-bold); letter-spacing: -0.3px; margin-bottom: 12px; }
+.ev-venue-addr { font-size: var(--fs-sm); color: var(--text-dim); line-height: 1.7; margin-bottom: 24px; letter-spacing: 0.2px; }
+.ev-venue-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ev-venue-chip {
+  font-size: var(--fs-xs); font-weight: var(--fw-medium); padding: 8px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-pill); color: var(--text-muted);
+}
+.ev-venue-map {
+  min-height: 280px; border-radius: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  overflow: hidden;
+}
+.ev-venue-map-link {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; width: 100%; height: 100%; border-radius: inherit;
+  background: var(--surface); border: 1px solid var(--border);
+  transition: background 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+.ev-venue-map-link:hover {
+  background: var(--acid-muted);
+}
+
+/* TRUST */
+.ev-trust-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.ev-trust-item {
+  text-align: center; padding: 28px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+.ev-trust-item:hover {
+  border-color: var(--acid-muted);
+  background: rgba(229,255,0,0.02);
+}
+.ev-trust-icon { font-size: var(--fs-2xl); margin-bottom: 12px; }
+.ev-trust-text { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--text-muted); line-height: 1.5; }
+
+/* STICKY CTA */
+.ev-sticky-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.95) 50%, var(--bg) 100%);
+  padding: 16px 16px 24px;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+}
+.ev-sticky-cta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.ev-sticky-cta-price {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  font-weight: var(--fw-medium);
+}
+.ev-sticky-cta-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--acid);
+  color: #000;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+.ev-sticky-cta-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* FOOTER */
+.ev-footer {
+  padding: 40px clamp(20px, 5vw, 80px);
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.ev-footer-logo { font-size: var(--fs-base); font-weight: var(--fw-extrabold); letter-spacing: 5px; color: var(--acid); }
+.ev-footer-copy { font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; opacity: 0.5; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .ev-section { padding: 64px 20px; }
+  .ev-tk-grid { grid-template-columns: repeat(2, 1fr); padding: 0 12px; gap: 12px; }
+  .ev-tk-inner { min-height: auto; padding: 24px 20px; }
+  .ev-tk-name { font-size: 32px; }
+  .ev-tk-includes { font-size: 16px; }
+  .ev-tk-buy { padding: 14px 20px; font-size: 16px; }
+  .ev-tk-phase { font-size: 16px; }
+  .ev-tk-phase--active .ev-tk-phase-price { font-size: 22px; }
+  .ev-info-list { gap: 8px 12px; }
+  .ev-venue-block { grid-template-columns: 1fr; }
+  .ev-lineup-grid { grid-template-columns: 1fr 1fr; }
+  .ev-lineup-card--hl .ev-lineup-name { font-size: var(--fs-xl); }
+  .ev-mp-banner { flex-direction: column; text-align: center; padding: 36px 24px; }
+  .ev-mp-desc { max-width: 100%; }
+  .ev-trust-row { grid-template-columns: 1fr 1fr; }
+  .ev-trust-item { padding: 20px 12px; }
+  .ev-hero-meta { gap: 12px; }
+  .ev-hero-meta-item { font-size: var(--fs-sm); }
+  .ev-hero-meta-item .icon { width: 36px; height: 36px; font-size: var(--fs-base); }
+  .ev-section-heading { margin-bottom: 28px; font-size: clamp(22px, 5vw, 32px); }
+  .ev-hero-ctas { gap: 10px; padding-bottom: 32px; }
+  .ev-btn { padding: 14px 24px; font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .ev-tk-grid { grid-template-columns: 1fr; gap: 12px; padding: 0 16px; }
+  .ev-tk-inner { min-height: auto; padding: 20px 18px; }
+  .ev-tk-includes { max-height: none; font-size: 16px; }
+  .ev-tk-name { font-size: 28px; margin-bottom: 8px; }
+  .ev-tk-phases { padding-top: 12px; }
+  .ev-tk-phase { font-size: 16px; padding: 3px 0; }
+  .ev-tk-phase--active .ev-tk-phase-price { font-size: 22px; }
+  .ev-tk-buy { padding: 12px 18px; font-size: 16px; }
+  .ev-tk-bottom { padding-top: 8px; }
+  .ev-lineup-grid { grid-template-columns: 1fr; }
+  .ev-lineup-card--hl .ev-lineup-name { font-size: var(--fs-xl); }
+  .ev-trust-row { grid-template-columns: 1fr; }
+  .ev-trust-item { padding: 16px 10px; }
+  .ev-trust-icon { font-size: var(--fs-lg); margin-bottom: 8px; }
+  .ev-trust-text { font-size: 11px; }
+  .ev-hero-title { letter-spacing: -2px; }
+  .ev-section { padding: 64px 16px; }
+  .ev-section-label { margin-bottom: 12px; }
+  .ev-section-heading { margin-bottom: 28px; font-size: clamp(22px, 5vw, 32px); }
+  .ev-hero-ctas { gap: 10px; padding-bottom: 32px; }
+  .ev-btn { padding: 14px 24px; font-size: 13px; }
+  .ev-sticky-cta { display: flex; }
+  body.ev-detail-open { padding-bottom: 88px; }
+}
+
 </style>
 </head>
 <body>
@@ -7701,22 +8327,32 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      HERO
      ═══════════════════════════════════════════ -->
-<section class="hero">
-  <div class="hero-bg" id="evento-hero-bg"></div>
-  <div class="hero-content">
-    <a href="#" class="hero-back" onclick="go('eventos'); return false;">
+<section class="ev-hero">
+  <div class="ev-hero-bg" id="ev-hero-bg"></div>
+  <div class="ev-hero-content">
+    <a href="#" class="ev-hero-back" onclick="go('eventos'); return false;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Eventos
     </a>
-    <h1 class="hero-title" id="evento-hero-title"></h1>
-    <div class="hero-sub" id="evento-hero-sub"></div>
-    <p class="hero-desc" id="evento-hero-desc"></p>
-    <div class="hero-meta" id="evento-hero-meta">
-      <!-- Populated by openEvent() -->
+    <h1 class="ev-hero-title" id="ev-title"></h1>
+    <div class="ev-hero-sub" id="ev-sub"></div>
+    <p class="ev-hero-desc" id="ev-desc"></p>
+    <div class="ev-hero-meta" id="ev-hero-meta">
+      <div class="ev-hero-meta-item">
+        <div class="icon">📅</div>
+        <div id="ev-date"></div>
+      </div>
+      <a class="ev-hero-meta-item" id="ev-location-link" href="#" target="_blank" rel="noopener" style="color:inherit;">
+        <div class="icon">📍</div>
+        <div id="ev-location"></div>
+      </a>
+      <div class="ev-hero-meta-item">
+        <div class="icon">🕐</div>
+        <div id="ev-time"></div>
+      </div>
     </div>
-    <div class="hero-ctas">
-      <button class="btn btn-primary" id="evento-cta-buy" onclick="document.getElementById('evento-tickets').scrollIntoView({behavior:'smooth'})">Comprar entradas →</button>
-      <a class="btn btn-outline" id="evento-cal-btn" href="#" target="_blank" rel="noopener">Agregar al calendario</a>
+    <div class="ev-hero-ctas" id="ev-ctas">
+      <!-- JS fills: btn-primary (Comprar) OR btn-sold (SOLD OUT) + btn-outline (Calendario) -->
     </div>
   </div>
 </section>
@@ -7725,23 +8361,24 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      TICKETS
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-tickets"></div>
-<section class="section" id="evento-tickets">
-  <div class="section-label">Entradas</div>
-  <h2 class="section-heading">Elige tu <em>experiencia</em></h2>
-
-  <div class="tk-grid" id="evento-tk-grid">
-    <!-- Populated by openEvent() -->
+<div class="ev-divider"></div>
+<section class="ev-section">
+  <div class="ev-section-label">Entradas</div>
+  <h2 class="ev-section-heading">Elige tu <em>experiencia</em></h2>
+  <div class="ev-tk-grid-wrap" id="ev-tk-wrap">
+    <div class="ev-tk-grid" id="ev-tk-grid">
+      <!-- JS genera cada card con buildTicketCard(tier) -->
+    </div>
   </div>
 
   <!-- Marketplace CTA -->
-  <div class="mp-banner d-none" id="evento-mp-banner">
-    <div class="mp-info">
-      <div class="mp-title">Busca en el marketplace de reventa</div>
-      <div class="mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
+  <div class="ev-mp-banner" id="ev-mp-banner">
+    <div class="ev-mp-info">
+      <div class="ev-mp-title">Busca en el marketplace de reventa</div>
+      <div class="ev-mp-desc">Fans verificados revendiendo entradas. Precio justo, identidad verificada, transferencia segura.</div>
     </div>
-    <div class="mp-action">
-      <button class="btn btn-primary" onclick="go('marketplace')">Buscar en reventa →</button>
+    <div class="ev-mp-action">
+      <button class="ev-btn ev-btn-primary" id="ev-mp-btn">Buscar en reventa →</button>
     </div>
   </div>
 </section>
@@ -7750,12 +8387,12 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      LINEUP
      ═══════════════════════════════════════════ -->
-<div class="divider d-none" id="evento-divider-lineup"></div>
-<section class="section d-none" id="evento-lineup-section">
-  <div class="section-label">Lineup</div>
-  <h2 class="section-heading">Artistas <em>confirmados</em></h2>
-  <div class="lineup-grid" id="evento-lineup-grid">
-    <!-- Populated by openEvent() -->
+<div class="ev-divider" id="ev-divider-lineup"></div>
+<section class="ev-section" id="ev-lineup-section">
+  <div class="ev-section-label">Lineup</div>
+  <h2 class="ev-section-heading">Artistas <em>confirmados</em></h2>
+  <div class="ev-lineup-grid" id="ev-lineup-grid">
+    <!-- JS genera cada card con buildLineupCard(artist) -->
   </div>
 </section>
 
@@ -7763,19 +8400,23 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      EVENT INFO
      ═══════════════════════════════════════════ -->
-<div class="divider d-none" id="evento-divider-info"></div>
-<section class="section d-none" id="evento-info-section">
-  <div class="section-label">Info del evento</div>
-  <h2 class="section-heading">Todo lo que <em>necesitas saber</em></h2>
-
-  <div class="info-list" id="evento-info-list">
-    <!-- Populated by openEvent() -->
-  </div>
-
-  <div class="info-prohibited d-none" id="evento-prohibited">
-    <div class="info-prohibited-title">No ingresan</div>
-    <div class="info-prohibited-items" id="evento-prohibited-items">
-      <!-- Populated by openEvent() -->
+<div class="ev-divider" id="ev-divider-info"></div>
+<section class="ev-section" id="ev-info-section">
+  <div class="ev-section-label">Info del evento</div>
+  <h2 class="ev-section-heading">Todo lo que <em>necesitas saber</em></h2>
+  <div class="ev-info-box">
+    <div>
+      <div class="ev-info-group-title">Detalles</div>
+      <div class="ev-info-list" id="ev-info-details">
+        <!-- JS genera chips: { icon, text } -->
+      </div>
+    </div>
+    <div class="ev-info-divider"></div>
+    <div>
+      <div class="ev-info-group-title">No ingresan</div>
+      <div class="ev-info-prohibited-items" id="ev-info-prohibited">
+        <!-- JS genera tags: string[] -->
+      </div>
     </div>
   </div>
 </section>
@@ -7784,12 +8425,12 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      ABOUT
      ═══════════════════════════════════════════ -->
-<div class="divider d-none" id="evento-divider-about"></div>
-<section class="section d-none" id="evento-about-section">
-  <div class="section-label">Sobre el evento</div>
-  <h2 class="section-heading">Una noche <em>sin compromisos</em></h2>
-  <div id="evento-about-content">
-    <!-- Populated by openEvent() -->
+<div class="ev-divider" id="ev-divider-about"></div>
+<section class="ev-section" id="ev-about-section" style="text-align:center;">
+  <div class="ev-section-label">Sobre el evento</div>
+  <h2 class="ev-section-heading" id="ev-about-heading"></h2>
+  <div id="ev-about">
+    <!-- JS genera <p class="ev-about-text">…</p> por cada párrafo -->
   </div>
 </section>
 
@@ -7797,56 +8438,69 @@ a[onclick]:active,
 <!-- ═══════════════════════════════════════════
      VENUE
      ═══════════════════════════════════════════ -->
-<div class="divider d-none" id="evento-divider-venue"></div>
-<section class="section d-none" id="evento-venue-section">
-  <div class="venue-block">
-    <div class="venue-info">
-      <div class="section-label">Venue</div>
-      <div class="venue-name" id="evento-venue-name"></div>
-      <div class="venue-addr" id="evento-venue-addr"></div>
-      <div class="venue-chips" id="evento-venue-chips">
-        <!-- Populated by openEvent() -->
+<div class="ev-divider" id="ev-divider-venue"></div>
+<section class="ev-section" id="ev-venue-section">
+  <div class="ev-venue-block">
+    <div class="ev-venue-info">
+      <div class="ev-section-label" style="text-align:left;">Venue</div>
+      <div class="ev-venue-name" id="ev-venue-name"></div>
+      <div class="ev-venue-addr" id="ev-venue-addr"></div>
+      <div class="ev-venue-chips" id="ev-venue-chips">
+        <!-- JS genera chips: string[] -->
       </div>
     </div>
-    <div class="venue-map" id="evento-venue-map">
-      <!-- Populated with Google Maps iframe -->
+    <div class="ev-venue-map" id="ev-venue-map">
+      <!-- JS genera link a Google Maps -->
     </div>
   </div>
 </section>
 
 
 <!-- ═══════════════════════════════════════════
-     TRUST
+     TRUST (estático — igual para todo evento)
      ═══════════════════════════════════════════ -->
-<div class="divider" id="evento-divider-trust"></div>
-<section class="section">
-  <div class="trust-row">
-    <div class="trust-item">
-      <div class="trust-icon">✅</div>
-      <div class="trust-text">Entrada vinculada<br>a tu DNI</div>
+<div class="ev-divider"></div>
+<section class="ev-section">
+  <div class="ev-trust-row">
+    <div class="ev-trust-item">
+      <div class="ev-trust-icon">✅</div>
+      <div class="ev-trust-text">Entrada vinculada<br>a tu DNI</div>
     </div>
-    <div class="trust-item">
-      <div class="trust-icon">🔄</div>
-      <div class="trust-text">Reventa segura<br>Marketplace</div>
+    <div class="ev-trust-item">
+      <div class="ev-trust-icon">🔄</div>
+      <div class="ev-trust-text">Reventa segura<br>P2P</div>
     </div>
-    <div class="trust-item">
-      <div class="trust-icon">🪪</div>
-      <div class="trust-text">Verificación<br>en puerta</div>
+    <div class="ev-trust-item">
+      <div class="ev-trust-icon">🪪</div>
+      <div class="ev-trust-text">Verificación<br>en puerta</div>
     </div>
-    <div class="trust-item">
-      <div class="trust-icon">💬</div>
-      <div class="trust-text">Soporte en<br>menos de 24h</div>
+    <div class="ev-trust-item">
+      <div class="ev-trust-icon">💬</div>
+      <div class="ev-trust-text">Soporte en<br>menos de 24h</div>
     </div>
   </div>
 </section>
 
 
 <!-- ═══════════════════════════════════════════
-     FOOTER
+     STICKY MOBILE CTA
      ═══════════════════════════════════════════ -->
-<div class="site-footer">
-  <div class="site-footer-logo">LEZGO</div>
-  <div class="site-footer-copy">© 2026 Lezgo. Tickets verificados con tu identidad.</div>
+<div class="ev-sticky-cta" id="ev-sticky-cta">
+  <div class="ev-sticky-cta-content">
+    <div class="ev-sticky-cta-price" id="ev-sticky-cta-price">Desde S/ 0</div>
+    <button class="ev-sticky-cta-btn" id="ev-sticky-cta-btn" onclick="pmOpen()">
+      Comprar entradas
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER (estático)
+     ═══════════════════════════════════════════ -->
+<div class="ev-footer">
+  <div class="ev-footer-logo">L E Z G O</div>
+  <div class="ev-footer-copy">Tickets verificados con tu identidad.</div>
 </div>
 
 </div>
@@ -9303,22 +9957,371 @@ a[onclick]:active,
   }
 
   // ── Event page routing: ALL events → evento-v2.html ──
+  /* ══════════════════════════════════════════
+     EVENT DETAIL RENDERING (evento-v2.html ported inline)
+     ══════════════════════════════════════════ */
+
+  const prettify = s => s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  const defaultProhibited = [
+    'Cámaras profesionales', 'Bebidas externas',
+    'Armas / objetos punzantes', 'Sustancias ilegales',
+    'Mascotas', 'Menores de edad'
+  ];
+  const fallbackImages = [
+    'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80',
+    'https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=800&q=80',
+    'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
+    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80'
+  ];
+
+  function getActivePhase(t) {
+    if (!t.phases || !t.phases.length) return { price: t.price || 0, name: '' };
+    const now = new Date();
+    let dateActiveIdx = 0;
+    for (let i = 0; i < t.phases.length; i++) {
+      const rd = t.phases[i].releaseDate;
+      if (rd && new Date(rd) <= now) dateActiveIdx = i;
+    }
+    let soldActiveIdx = 0;
+    let soldSoFar = t.sold || 0;
+    for (let i = 0; i < t.phases.length; i++) {
+      if (soldSoFar < (t.phases[i].quantity || 0)) { soldActiveIdx = i; break; }
+      soldSoFar -= (t.phases[i].quantity || 0);
+      if (i === t.phases.length - 1) soldActiveIdx = i;
+    }
+    const activeIdx = Math.max(dateActiveIdx, soldActiveIdx);
+    return t.phases[activeIdx];
+  }
+
+  function getPhaseStates(t) {
+    if (!t.phases || !t.phases.length) return [];
+    const now = new Date();
+    let dateActiveIdx = 0;
+    for (let i = 0; i < t.phases.length; i++) {
+      const rd = t.phases[i].releaseDate;
+      if (rd && new Date(rd) <= now) dateActiveIdx = i;
+    }
+    let soldActiveIdx = 0;
+    let soldSoFar = t.sold || 0;
+    for (let i = 0; i < t.phases.length; i++) {
+      if (soldSoFar < (t.phases[i].quantity || 0)) { soldActiveIdx = i; break; }
+      soldSoFar -= (t.phases[i].quantity || 0);
+      if (i === t.phases.length - 1) soldActiveIdx = i;
+    }
+    const activeIdx = Math.max(dateActiveIdx, soldActiveIdx);
+    const tierSold = t.sold >= t.capacity;
+
+    return t.phases.map((phase, i) => {
+      let state = 'future';
+      if (tierSold) { state = 'past'; }
+      else if (i < activeIdx) { state = 'past'; }
+      else if (i === activeIdx) { state = 'active'; }
+      return { ...phase, state };
+    });
+  }
+
+  function buildTicketCard(t, eventName, index) {
+    const tierSold = t.sold >= t.capacity;
+    const hasResale = tierSold;
+    const tierSlug = (t.id || t.name.toLowerCase().replace(/\s+/g, '-'));
+    const hasPhases = t.phases && Array.isArray(t.phases) && t.phases.length > 0;
+    const activePhase = getActivePhase(t);
+    const currentPrice = activePhase.price || t.price || 0;
+
+    let cardClass = 'ev-tk-card';
+    let onclick = '';
+    if (!tierSold) {
+      cardClass += ' ev-tk-card--avail';
+      onclick = ` onclick="pmOpen();pmQtyChange('${t.id}',1)"`;
+    } else if (hasResale) {
+      cardClass += ' ev-tk-card--sold';
+      onclick = ` onclick="go('marketplace')"`;
+    } else {
+      cardClass += ' ev-tk-card--dead';
+    }
+
+    const tierGrad = hasPhases ? 'ev-tk-tier-' + ((index % 4) + 1) : 'ev-tk-tier-basic';
+    const innerClass = tierSold ? 'ev-tk-inner ev-tk-sold' : `ev-tk-inner ${tierGrad}`;
+
+    let overlay = '';
+    if (!tierSold) {
+      overlay = `
+        <div class="ev-tk-overlay">
+          <div class="ev-tk-overlay-icon">🎫</div>
+          <div class="ev-tk-overlay-text">Comprar entrada</div>
+          <div class="ev-tk-overlay-hint">${t.name} · ${activePhase.name || 'Full Price'}</div>
+        </div>`;
+    } else if (hasResale) {
+      overlay = `
+        <div class="ev-tk-overlay">
+          <div class="ev-tk-overlay-icon">🔄</div>
+          <div class="ev-tk-overlay-text">Buscar en Marketplace</div>
+          <div class="ev-tk-overlay-hint">${t.name} · reventa verificada</div>
+        </div>`;
+    }
+
+    const includes = (t.includes || []).map(i => `<li>${i}</li>`).join('');
+    const phasesWithState = getPhaseStates(t);
+    const phasesHtml = phasesWithState.map(p => `
+      <div class="ev-tk-phase ev-tk-phase--${p.state}">
+        <div class="ev-tk-phase-left">
+          <div class="ev-tk-phase-dot"></div>
+          <span class="ev-tk-phase-name">${p.name}</span>
+        </div>
+        <span class="ev-tk-phase-price">S/ ${p.price.toLocaleString()}</span>
+      </div>`).join('');
+
+    let bottom = '';
+    if (!tierSold) {
+      bottom = `<button class="ev-tk-buy" onclick="event.stopPropagation();pmOpen();pmQtyChange('${t.id}',1)">Comprar</button>`;
+    } else if (hasResale) {
+      bottom = `<div class="ev-tk-sold-all">AGOTADO — Ver en reventa</div>`;
+    } else {
+      bottom = `<div class="ev-tk-sold-all">AGOTADO</div>`;
+    }
+
+    return `
+      <div class="${cardClass}"${onclick}>
+        ${overlay}
+        <div class="${innerClass}">
+          <div class="ev-tk-header">
+            <div class="ev-tk-name">${t.name}</div>
+            ${includes ? `<ul class="ev-tk-includes">${includes}</ul>` : ''}
+          </div>
+          ${phasesHtml ? `<div class="ev-tk-phases">${phasesHtml}</div>` : `
+            <div class="ev-tk-price-simple">S/ ${currentPrice.toLocaleString()}</div>
+          `}
+          <div class="ev-tk-bottom">${bottom}</div>
+        </div>
+      </div>`;
+  }
+
+  function buildLineupCard(name, index) {
+    const isHeadliner = index === 0;
+    const hlClass = isHeadliner ? ' ev-lineup-card--hl' : '';
+    const imageUrl = fallbackImages[index % fallbackImages.length];
+    const role = isHeadliner ? 'Headliner' : (index < 3 ? 'Main' : 'Support');
+    const roomNum = (index % 3) + 1;
+    const genres = ['Techno', 'DnB', 'House'];
+    const tags = [genres[index % genres.length], isHeadliner ? 'Berlin' : 'Local'];
+
+    return `
+      <div class="ev-lineup-card${hlClass}">
+        <div class="ev-lineup-card-img" style="background-image:url('${imageUrl}')"></div>
+        <div class="ev-lineup-card-overlay"></div>
+        <div class="ev-lineup-card-content">
+          <div class="ev-lineup-name">${name}</div>
+          <div class="ev-lineup-role">${role} · Room ${roomNum}</div>
+          <div class="ev-lineup-tags">
+            ${tags.map(t => `<span class="ev-lineup-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        ${isHeadliner ? '<div class="ev-lineup-badge">HEADLINER</div>' : ''}
+      </div>`;
+  }
+
+  function buildCalendarUrl(ev) {
+    const startDate = (ev.date || '').replace(/-/g, '');
+    const startTime = (ev.timeStart || '22:00').replace(':', '') + '00';
+    const endTime = (ev.timeEnd || '05:00').replace(':', '') + '00';
+    const eventTitle = ev.name + (ev.subtitle ? ' · ' + ev.subtitle : '');
+    const location = (ev.venue || '') + (ev.location ? ', ' + ev.location : '');
+
+    return `https://www.google.com/calendar/render?action=TEMPLATE` +
+      `&text=${encodeURIComponent(eventTitle)}` +
+      `&dates=${startDate}T${startTime}/${startDate}T${endTime}` +
+      `&location=${encodeURIComponent(location)}` +
+      `&details=${encodeURIComponent(ev.description || '')}`;
+  }
+
+  function renderEvent(ev) {
+    const isSoldOut = ev.status === 'sold-out';
+    const evTags = Array.isArray(ev.tags) ? ev.tags : [];
+    const meta = ev.meta || {};
+    const vs = ev.visibleSections || {};
+
+    const toggleSection = (sectionId, dividerId, visible) => {
+      const sec = document.getElementById(sectionId);
+      const div = document.getElementById(dividerId);
+      if (sec) sec.style.display = visible ? '' : 'none';
+      if (div) div.style.display = visible ? '' : 'none';
+    };
+
+    // HERO
+    const imgUrl = ev.image || 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=1600&q=80';
+    document.getElementById('ev-hero-bg').style.backgroundImage = `url('${imgUrl}')`;
+    document.getElementById('ev-title').textContent = ev.name || '';
+    document.getElementById('ev-sub').textContent = ev.subtitle || '';
+    document.getElementById('ev-desc').textContent = ev.description || '';
+
+    // Date
+    const dateObj = new Date(ev.date + 'T12:00:00');
+    const dateLabel = ev.dateLabel || dateObj.toLocaleDateString('es', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+    document.getElementById('ev-date').textContent = dateLabel;
+
+    // Location
+    let venueLabel = ev.venue || '';
+    if (ev.location) venueLabel += ', ' + ev.location;
+    if (ev.distrito) venueLabel += ' — ' + ev.distrito;
+    document.getElementById('ev-location').textContent = venueLabel;
+    document.getElementById('ev-location-link').href =
+      'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venueLabel);
+
+    // Time
+    document.getElementById('ev-time').textContent =
+      (ev.timeStart || '22:00') + ' — ' + (ev.timeEnd || '05:00');
+
+    // HERO CTAs
+    const ctaBox = document.getElementById('ev-ctas');
+    const calendarUrl = buildCalendarUrl(ev);
+
+    if (isSoldOut) {
+      ctaBox.innerHTML = `
+        <button class="ev-btn ev-btn-sold" onclick="go('marketplace')">AGOTADO — Buscar en reventa →</button>
+        <a class="ev-btn ev-btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
+      `;
+    } else {
+      ctaBox.innerHTML = `
+        <button class="ev-btn ev-btn-primary" onclick="pmOpen()">Comprar entradas</button>
+        <a class="ev-btn ev-btn-outline" href="${calendarUrl}" target="_blank" rel="noopener">Agregar al calendario</a>
+      `;
+    }
+
+    // TICKETS
+    const tkGrid = document.getElementById('ev-tk-grid');
+    if (ev.tickets && ev.tickets.length > 0) {
+      tkGrid.innerHTML = ev.tickets.map((t, i) => buildTicketCard(t, ev.name, i)).join('');
+    }
+
+    // Marketplace banner
+    document.getElementById('ev-mp-banner').style.display = isSoldOut ? '' : 'none';
+
+    // LINEUP
+    const hasLineup = Array.isArray(ev.lineup) && ev.lineup.length > 0;
+    const showLineup = hasLineup && vs.lineup !== false;
+    toggleSection('ev-lineup-section', 'ev-divider-lineup', showLineup);
+    if (hasLineup) {
+      document.getElementById('ev-lineup-grid').innerHTML =
+        ev.lineup.map((name, i) => buildLineupCard(name, i)).join('');
+    }
+
+    // INFO DETAILS
+    const detailsList = document.getElementById('ev-info-details');
+    let infoHtml = '';
+
+    const genreTags = evTags.filter(t =>
+      ['techno','dark-techno','hard-techno','melodic-techno','house','deep-house',
+       'minimal','dnb','ambient','electronica','breaks','acid','progressive',
+       'tech-house','trance'].includes(t)
+    );
+    if (genreTags.length > 0) infoHtml += `<div class="ev-info-chip"><span>🎵</span> ${genreTags.map(prettify).join(' / ')}</div>`;
+
+    const ageTags = evTags.filter(t => ['18+','21+','all-ages'].includes(t));
+    if (ageTags.length > 0) infoHtml += `<div class="ev-info-chip"><span>🪪</span> ${ageTags[0]}</div>`;
+
+    const settingTags = evTags.filter(t => ['indoor','outdoor','open-air','mixed'].includes(t));
+    if (settingTags.length > 0) infoHtml += `<div class="ev-info-chip"><span>🏛️</span> ${prettify(settingTags[0])}</div>`;
+
+    if (meta.alcohol) infoHtml += `<div class="ev-info-chip"><span>🍸</span> Barra disponible</div>`;
+    if (meta.multiStage) infoHtml += `<div class="ev-info-chip"><span>🔊</span> Multi-room</div>`;
+    if (!meta.reentry) infoHtml += `<div class="ev-info-chip"><span>🚫</span> No reingreso</div>`;
+
+    detailsList.innerHTML = infoHtml;
+
+    const showTags = vs.tags !== false && infoHtml.length > 0;
+    toggleSection('ev-info-section', 'ev-divider-info', showTags);
+
+    // Prohibited items
+    const prohibitedItems = ev.prohibitedItems || defaultProhibited;
+    document.getElementById('ev-info-prohibited').innerHTML =
+      prohibitedItems.map(p => `<div class="ev-info-prohibited-tag">🚫 ${p}</div>`).join('');
+
+    // ABOUT
+    const showAbout = vs.about !== false && (ev.description || ev.descriptionLong);
+    toggleSection('ev-about-section', 'ev-divider-about', showAbout);
+    if (showAbout) {
+      document.getElementById('ev-about-heading').innerHTML = ev.name || '';
+      const aboutContainer = document.getElementById('ev-about');
+      let aboutHtml = '';
+      if (ev.description) aboutHtml += `<p class="ev-about-text">${ev.description}</p>`;
+      if (ev.descriptionLong) aboutHtml += `<p class="ev-about-text">${ev.descriptionLong}</p>`;
+      aboutContainer.innerHTML = aboutHtml;
+    }
+
+    // VENUE
+    const showVenue = vs.venue !== false && ev.venue;
+    toggleSection('ev-venue-section', 'ev-divider-venue', showVenue);
+    if (showVenue) {
+      document.getElementById('ev-venue-name').textContent = ev.venue || '';
+      let addrHtml = ev.address || '';
+      if (ev.location) addrHtml += (addrHtml ? ', ' : '') + ev.location;
+      document.getElementById('ev-venue-addr').innerHTML = addrHtml;
+
+      const venueChips = document.getElementById('ev-venue-chips');
+      let chipsHtml = '';
+      const setting = evTags.find(t => ['indoor','outdoor','open-air','mixed'].includes(t));
+      if (setting) chipsHtml += `<div class="ev-venue-chip">${prettify(setting)}</div>`;
+      if (meta.crowdSize) chipsHtml += `<div class="ev-venue-chip">Capacidad: ${meta.crowdSize.toLocaleString()}</div>`;
+      if (meta.multiStage) chipsHtml += `<div class="ev-venue-chip">Multi-stage</div>`;
+      chipsHtml += '<div class="ev-venue-chip">Verificación en puerta</div>';
+      venueChips.innerHTML = chipsHtml;
+
+      const mapQuery = encodeURIComponent((ev.venue || '') + ' ' + (ev.location || ''));
+      const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + mapQuery;
+      document.getElementById('ev-venue-map').innerHTML = `
+        <a href="${mapsUrl}" target="_blank" rel="noopener" class="ev-venue-map-link">
+          <div style="font-size: var(--fs-3xl);">📍</div>
+          <div style="color: var(--text);font-size: var(--fs-base);font-weight:700;">Ver ubicación en Google Maps</div>
+          <div style="color:var(--text-mid);font-size: var(--fs-sm);">${ev.venue || ''}${ev.location ? ', ' + ev.location : ''}</div>
+        </a>
+      `;
+    }
+
+    // PURCHASE MODAL SETUP
+    if (ev.tickets && typeof pmTicketCatalog !== 'undefined') {
+      pmTicketCatalog = {};
+      ev.tickets.forEach(t => {
+        const activePhase = getActivePhase(t);
+        const currentPrice = activePhase.price || t.price || 0;
+        const phaseName = activePhase.name ? ' (' + activePhase.name + ')' : '';
+        pmTicketCatalog[t.id] = { name: t.name + phaseName, price: currentPrice, priceLabel: currentPrice === 0 ? 'GRATIS' : 'S/' + currentPrice, capacity: t.capacity, sold: t.sold };
+      });
+      pmTicketQty = {};
+      ev.tickets.forEach(t => pmTicketQty[t.id] = 0);
+      if (typeof pmBuildTicketList === 'function') pmBuildTicketList();
+    }
+
+    window._currentEvent = ev;
+
+    // Update sticky mobile CTA
+    if (ev.tickets && ev.tickets.length > 0 && !isSoldOut) {
+      const lowestPrice = Math.min(...ev.tickets.map(t => {
+        const activePhase = getActivePhase(t);
+        return activePhase.price || t.price || 0;
+      }));
+      const priceLabel = lowestPrice === 0 ? 'GRATIS' : 'Desde S/ ' + lowestPrice.toLocaleString();
+      document.getElementById('ev-sticky-cta-price').textContent = priceLabel;
+    } else if (isSoldOut) {
+      document.getElementById('ev-sticky-cta').style.display = 'none';
+    }
+  }
+
   function openEvent(eventId) {
     const ev = allEvents.find(e => e._id === eventId);
     if (ev) {
-      // Pasar data del evento via sessionStorage para que v2 no necesite re-fetch
-      try { sessionStorage.setItem('lezgo_event', JSON.stringify(ev)); } catch(e) {}
-      // Clean URL: use slug field if available, otherwise use _id
+      window._currentEvent = ev;
+      renderEvent(ev);
+      go('evento');
+      // Set up URL with slug
       var slug = ev.slug || ev._id;
-      window.location.href = '/' + slug;
+      history.pushState({ view: 'evento', eventId: eventId }, '', '/' + slug);
       return;
     }
     // Fallback: si no se encuentra, ir a eventos
     go('eventos');
   }
-
-  // [DEAD CODE REMOVED: Old inline event renderer - all events now use evento-v2.html]
-  // (Removed ~350 lines of legacy openEvent inline rendering code)
 
 
   // Helper function for marketplace navigation
@@ -11692,6 +12695,34 @@ a[onclick]:active,
 
   // On page load: read hash and navigate
   (function initHashRoute() {
+    // Check pathname for slug (e.g., /whp-lima)
+    const pathname = location.pathname;
+    if (pathname && pathname !== '/' && !pathname.endsWith('.html')) {
+      const slug = pathname.replace(/^\//, '').split('/')[0];
+      if (slug) {
+        // Try to find event by slug or _id
+        const foundEvent = allEvents.find(e => e.slug === slug || e._id === slug);
+        if (foundEvent) {
+          setTimeout(function() { openEvent(foundEvent._id); }, 300);
+          return;
+        }
+        // Try to fetch from Firestore if not found in allEvents
+        if (typeof db !== 'undefined' && db) {
+          db.collection('events').where('slug', '==', slug).limit(1).get()
+            .then(snap => {
+              if (!snap.empty) {
+                const doc = snap.docs[0];
+                const ev = { ...doc.data(), _id: doc.id };
+                openEvent(ev._id);
+              }
+            })
+            .catch(err => log.error('Firestore slug lookup error:', err));
+        }
+        return;
+      }
+    }
+
+    // Fall back to hash-based routing
     const hash = location.hash.replace('#', '');
     if (hash && hash !== 'eventos') {
       // Handle #evento/eventId format
