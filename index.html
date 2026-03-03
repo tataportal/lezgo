@@ -8787,12 +8787,13 @@ a[onclick]:active,
     }
   }
 
-  // Apply demo auth once DOM is ready
+  // In DEMO_MODE start logged-out so user can test full auth flow
   if (DEMO_MODE) {
+    window._demoLoggedOut = true;
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', demoApplyAuth);
+      document.addEventListener('DOMContentLoaded', function() { updateUIForAuth(false); });
     } else {
-      demoApplyAuth();
+      updateUIForAuth(false);
     }
   }
 
