@@ -4694,6 +4694,21 @@ body::after {
 .rm-resale-badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 700; background: var(--green-15); color: #00FF85; border: 1px solid var(--green-30); letter-spacing: 0.05em; text-transform: uppercase; margin-left: 8px; }
 .mt-ticket-status-resale-purchase { background: var(--green-15); color: #00FF85; border-color: var(--green-30); }
 
+/* Resale modal – desktop sizing */
+@media (min-width: 768px) {
+  .rm-overlay { align-items: center; }
+  .rm-sheet {
+    max-width: 580px; border-radius: 16px; border: 1px solid var(--alpha-light);
+    border-top: 2px solid var(--acid);
+    transform: translateY(40px) scale(0.96); opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s;
+    max-height: 85vh;
+  }
+  .rm-overlay.rm-open .rm-sheet { transform: translateY(0) scale(1); opacity: 1; }
+  .rm-body { padding: 28px 36px; }
+  .rm-header { padding: 24px 36px 18px; }
+}
+
 /* Countdown timer */
 .ev-countdown {
   display: flex; align-items: center; gap: 6px;
