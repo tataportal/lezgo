@@ -65,8 +65,9 @@
 }
 
 .ev-card__badge--featured {
-  background: var(--acid);
-  color: var(--bg);
+  background: rgba(229,255,0,0.08);
+  color: var(--acid);
+  border: 1px solid var(--acid);
 }
 
 .ev-card__content {
@@ -110,19 +111,6 @@
 }
 
 .ev-card__price {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ev-card__price-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.ev-card__price-value {
   font-size: 20px;
   font-weight: 800;
   color: var(--acid);

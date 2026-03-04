@@ -144,6 +144,13 @@
   font-weight: 700;
   letter-spacing: -0.5px;
 }
+.section-more {
+  font-size: var(--fs-base);
+  font-weight: 500;
+  color: var(--acid);
+  cursor: pointer;
+}
+.section-more:hover { text-decoration: underline; }
 
 /* ═══════════════════════════════════════════
    ID BANNER — Ported from monolith
@@ -406,9 +413,20 @@
    ══════════════════════════════════════ */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   margin-bottom: 64px;
+}
+/* Force 4-col max on wide screens */
+@media (min-width: 1200px) {
+  .events-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  /* Center when fewer than 4 items */
+  .events-grid--centered {
+    grid-template-columns: repeat(3, minmax(280px, 340px));
+    justify-content: center;
+  }
 }
 
 /* ── States ── */
@@ -434,7 +452,7 @@
    RESPONSIVE — Ported from monolith breakpoints
    ═══════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .events-grid { grid-template-columns: repeat(3, 1fr); }
+  .events-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 }
 
 @media (max-width: 768px) {

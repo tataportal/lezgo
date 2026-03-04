@@ -26,6 +26,23 @@ export function formatDateES(dateStr: string | Date): string {
   return formatter.format(date).replace(/^\w/, (c) => c.toUpperCase());
 }
 
+/** Short date: "03 Mayo 2026" — matches monolith formatDateLabel */
+export function formatDateShort(dateStr: string | Date): string {
+  const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
+  if (isNaN(date.getTime())) return 'Fecha inválida';
+  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const dd = date.getDate() < 10 ? '0' + date.getDate() : '' + date.getDate();
+  return dd + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+}
+
+/** Even shorter: "11 Marzo" — for promo cards */
+export function formatDateVeryShort(dateStr: string | Date): string {
+  const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
+  if (isNaN(date.getTime())) return '';
+  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  return date.getDate() + ' ' + months[date.getMonth()];
+}
+
 export function formatPrice(price: number): string {
   if (price == null || isNaN(price)) return 'S/ 0.00';
   return `S/ ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;

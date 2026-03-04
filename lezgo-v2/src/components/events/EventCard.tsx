@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Event } from '../../lib/types';
-import { formatDateES, formatPriceShort, getActivePhase, toDate } from '../../lib/helpers';
+import { formatDateShort, formatPriceShort, getActivePhase, toDate } from '../../lib/helpers';
 import './EventCard.css';
 
 interface EventCardProps {
@@ -15,10 +15,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     navigate(`/evento/${event.id}`);
   };
 
-  // Get lowest price from active phase in tiers
   const getLowestPrice = (): number | null => {
     let lowest: number | null = null;
-
     for (const tier of (event.tiers || [])) {
       const activePhase = getActivePhase(tier);
       if (activePhase) {
@@ -27,7 +25,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         }
       }
     }
-
     return lowest;
   };
 
@@ -36,10 +33,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     ? { backgroundImage: `url(${event.image})` }
     : { background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' };
 
-  // Badge logic — matches monolith
+  // Badge logic — matches monolith: sold-out = hot red, featured = nuevo acid border
   const getBadge = () => {
-    if (event.status === 'sold-out') return { text: 'AGOTADO', className: 'ev-card__badge--sold-out' };
-    if (event.featured) return { text: 'DESTACADO', className: 'ev-card__badge--featured' };
+    if (event.status === 'sold-out') return { text: 'Agotado', className: 'ev-card__badge--sold-out' };
+    if (event.featured) return { text: 'Destacado', className: 'ev-card__badge--featured' };
     return null;
   };
 
@@ -57,7 +54,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
       <div className="ev-card__content">
         {/* Date first, then name, then venue — matches monolith order */}
-        <div className="ev-card__date">{formatDateES(toDate(event.date))}</div>
+        <div className="ev-card__date">{formatDateShort(toDate(event.date))}</div>
         <div className="ev-card__title">{event.name}</div>
         <div className="ev-card__venue">
           {event.venue || ''}
@@ -65,17 +62,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
 
         <div className="ev-card__footer">
-          <div className="ev-card__price">
-            {lowestPrice !== null ? (
-              <span className="ev-card__price-value">{formatPriceShort(lowestPrice)}</span>
-            ) : (
-              <span className="ev-card__price-value">---</span>
-            )}
-          </div>
-
-          <div className="ev-card__verified">
-            LEZGO ✓
-          </div>
+          <span className="ev-card__price">
+            {lowestPrice !== null ? formatPriceShort(lowestPrice) : '---'}
+          </span>
+          <span className="ev-card__verified">☺ Verificado</span>
         </div>
       </div>
     </div>

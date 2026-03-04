@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { formatDateES, formatPriceShort, getActivePhase, toDate } from '../lib/helpers';
+import { formatDateES, formatDateVeryShort, formatPriceShort, getActivePhase, toDate } from '../lib/helpers';
 import './HomePage.css';
 
 const MARQUEE_ITEMS = [
@@ -37,11 +37,12 @@ export default function HomePage() {
     });
     const promo = sorted.slice(0, 2);
 
-    // Remaining events for the two grids
+    // Remaining events: sort by date, split into two halves
     const rest = remaining.filter((e) => !promo.find((p) => p.id === e.id));
-    const midpoint = Math.ceil(rest.length / 2);
-    const upcoming = rest.slice(0, midpoint);
-    const more = rest.slice(midpoint);
+    const sortedRest = rest.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+    const half = Math.ceil(sortedRest.length / 2);
+    const upcoming = sortedRest.slice(0, half);
+    const more = sortedRest.slice(half);
 
     return { featuredEvent: featured, promoEvents: promo, upcomingEvents: upcoming, moreEvents: more };
   }, [events]);
@@ -85,7 +86,6 @@ export default function HomePage() {
       {/* ── Marquee — Ported from monolith ── */}
       <div className="home-marquee">
         <div className="home-marquee__track">
-          {/* Double the items for seamless loop */}
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span key={i} className="home-marquee__item">{item}</span>
           ))}
@@ -110,8 +110,10 @@ export default function HomePage() {
 
             <h1 className="home-hero__title">{featuredEvent.name}</h1>
 
-            {featuredEvent.subtitle && (
-              <div className="home-hero__subtitle">{featuredEvent.subtitle}</div>
+            {(featuredEvent.subtitle || featuredEvent.description) && (
+              <div className="home-hero__subtitle">
+                {featuredEvent.subtitle || featuredEvent.description}
+              </div>
             )}
 
             <div className="home-hero__meta">
@@ -177,9 +179,15 @@ export default function HomePage() {
             </div>
             <div className="home-promo__grid">
               {promoEvents.map((event) => {
-                const lowestPrice = getLowestPrice(event);
+                const price = getLowestPrice(event);
                 const isSold = event.status === 'sold-out';
                 const tag = isSold ? 'AGOTADO' : (event.genre || 'EVENTO');
+                // Monolith format: "11 Marzo · venue, location — Desde S/ 0"
+                const dateStr = formatDateVeryShort(toDate(event.date));
+                const sub = dateStr
+                  + (event.venue ? ` · ${event.venue}` : '')
+                  + (event.location ? `, ${event.location}` : '')
+                  + (price !== null ? ` — ${formatPriceShort(price)}` : '');
                 return (
                   <div
                     key={event.id}
@@ -197,11 +205,11 @@ export default function HomePage() {
                     <div className="promo-card__overlay" />
                     <div className="promo-card__body">
                       <span className="promo-card__tag">{tag}</span>
-                      <h3 className="promo-card__name">{event.name}</h3>
-                      <p className="promo-card__info">
-                        {formatDateES(toDate(event.date))}
-                        {lowestPrice !== null ? ` · Desde ${formatPriceShort(lowestPrice)}` : ''}
-                      </p>
+                      <h3 className="promo-card__name">
+                        {event.name}
+                        {event.subtitle ? ` — ${event.subtitle}` : ''}
+                      </h3>
+                      <p className="promo-card__info">{sub}</p>
                     </div>
                   </div>
                 );
@@ -219,13 +227,14 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* ── Próximos eventos — 4-col grid ── */}
+        {/* ── Próximos eventos ── */}
         {upcomingEvents.length > 0 && (
           <>
             <div className="section-head">
               <h2 className="section-title">Próximos eventos</h2>
+              <span className="section-more">Ver todos →</span>
             </div>
-            <div className="events-grid">
+            <div className={`events-grid${upcomingEvents.length < 4 ? ' events-grid--centered' : ''}`}>
               {upcomingEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
@@ -233,13 +242,14 @@ export default function HomePage() {
           </>
         )}
 
-        {/* ── Más en Lima — 4-col grid ── */}
+        {/* ── Más en Lima ── */}
         {moreEvents.length > 0 && (
           <>
             <div className="section-head">
               <h2 className="section-title">Más en Lima</h2>
+              <span className="section-more">Ver todos →</span>
             </div>
-            <div className="events-grid">
+            <div className={`events-grid${moreEvents.length < 4 ? ' events-grid--centered' : ''}`}>
               {moreEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
