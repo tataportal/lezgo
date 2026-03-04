@@ -54,12 +54,47 @@ export async function getEvents(
   }
 
   const q = query(collection(db, EVENTS_COLLECTION), ...constraints);
-  const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Event));
+  try {
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    } as Event));
+  } catch (err: any) {
+    // If composite index is missing, fallback to unordered query
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing, falling back to simple query. Create the index for better performance.');
+      const fallbackQ = query(collection(db, EVENTS_COLLECTION));
+      const querySnapshot = await getDocs(fallbackQ);
+      let events = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Event));
+
+      // Apply filters in memory
+      if (filters?.status) {
+        events = events.filter((e) => e.status === filters.status);
+      }
+      if (filters?.genre) {
+        events = events.filter((e) => e.genre === filters.genre);
+      }
+      if (filters?.featured !== undefined) {
+        events = events.filter((e) => e.featured === filters.featured);
+      }
+      // Sort by date desc
+      events.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date as any).getTime() : 0;
+        const dateB = b.date ? new Date(b.date as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      if (filters?.limit) {
+        events = events.slice(0, filters.limit);
+      }
+      return events;
+    }
+    throw err;
+  }
 }
 
 /**
@@ -83,18 +118,28 @@ export async function getEventById(eventId: string): Promise<Event | null> {
  * Get all events organized by a specific user
  */
 export async function getEventsByOrganizer(organizerId: string): Promise<Event[]> {
-  const q = query(
-    collection(db, EVENTS_COLLECTION),
-    where('organizer', '==', organizerId),
-    orderBy('createdAt', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Event));
+  try {
+    const q = query(
+      collection(db, EVENTS_COLLECTION),
+      where('organizer', '==', organizerId),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    } as Event));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      const fallbackQ = query(collection(db, EVENTS_COLLECTION), where('organizer', '==', organizerId));
+      const querySnapshot = await getDocs(fallbackQ);
+      return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Event));
+    }
+    throw err;
+  }
 }
 
 /**
@@ -202,25 +247,55 @@ export async function getFeaturedEvents(limitCount?: number): Promise<Event[]> {
   }
 
   const q = query(collection(db, EVENTS_COLLECTION), ...constraints);
-  const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Event));
+  try {
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    } as Event));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for featured events query, using fallback.');
+      const fallbackQ = query(collection(db, EVENTS_COLLECTION));
+      const querySnapshot = await getDocs(fallbackQ);
+      let events = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Event));
+      events = events.filter((e) => e.featured && e.status === 'published');
+      events.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date as any).getTime() : 0;
+        const dateB = b.date ? new Date(b.date as any).getTime() : 0;
+        return dateA - dateB;
+      });
+      if (limitCount) events = events.slice(0, limitCount);
+      return events;
+    }
+    throw err;
+  }
 }
 
 /**
  * Search events by name or genre
  */
 export async function searchEvents(searchTerm: string): Promise<Event[]> {
-  const q = query(
-    collection(db, EVENTS_COLLECTION),
-    where('status', '==', 'published'),
-    orderBy('date', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
+  let querySnapshot;
+  try {
+    const q = query(
+      collection(db, EVENTS_COLLECTION),
+      where('status', '==', 'published'),
+      orderBy('date', 'desc')
+    );
+    querySnapshot = await getDocs(q);
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      const fallbackQ = query(collection(db, EVENTS_COLLECTION));
+      querySnapshot = await getDocs(fallbackQ);
+    } else {
+      throw err;
+    }
+  }
 
   const events = querySnapshot.docs.map((doc) => ({
     id: doc.id,
