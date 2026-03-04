@@ -1,0 +1,434 @@
+.about-page {
+  background: var(--bg);
+  color: #fff;
+  min-height: 100vh;
+}
+
+.hero-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: var(--acid);
+}
+
+.hero-section > p {
+  font-size: 1.25rem;
+  color: #999;
+  margin-bottom: 3rem;
+}
+
+.ticket-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.ticket-card {
+  width: 200px;
+  padding: 2rem;
+  border-radius: 1rem;
+  position: relative;
+  border: 2px solid;
+}
+
+.ticket-card.fake {
+  background: rgba(255, 77, 77, 0.05);
+  border-color: var(--red);
+}
+
+.ticket-card.real {
+  background: rgba(0, 255, 133, 0.05);
+  border-color: var(--green);
+}
+
+.ticket-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 0.75rem;
+  background: var(--red);
+  color: #fff;
+}
+
+.ticket-badge.verified {
+  background: var(--green);
+}
+
+.ticket-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ticket-qr {
+  font-size: 3rem;
+}
+
+.ticket-info {
+  width: 100%;
+  text-align: center;
+}
+
+.ticket-price-fake,
+.ticket-price-real {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.ticket-price-fake {
+  color: var(--red);
+  text-decoration: line-through;
+}
+
+.ticket-price-real {
+  color: var(--green);
+}
+
+.ticket-label {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.comparison-arrow {
+  font-size: 2rem;
+  color: var(--acid);
+}
+
+.tabs-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.tabs-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #222;
+}
+
+.tab-btn {
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  color: #999;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  color: var(--acid);
+  border-bottom-color: var(--acid);
+}
+
+.tab-btn:hover {
+  color: #fff;
+}
+
+.tab-content {
+  padding-bottom: 4rem;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.step-card {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.step-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-card {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.feature-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--acid);
+}
+
+.feature-desc {
+  color: #999;
+  line-height: 1.6;
+}
+
+.commitments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.commitment-card {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.commitment-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.commitment-desc {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.faq-section {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faq-item {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+  background: rgba(229, 255, 0, 0.05);
+}
+
+.faq-toggle {
+  color: var(--acid);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.faq-answer {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  color: #999;
+  line-height: 1.6;
+  border-top: 1px solid #222;
+}
+
+.phases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.phase-card {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.phase-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--acid);
+  margin-bottom: 1rem;
+}
+
+.phase-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.phase-item {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.email-section {
+  background: var(--bg-raised);
+  padding: 3rem 2rem;
+  text-align: center;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 1rem;
+  margin: 2rem auto;
+}
+
+.email-section h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.email-form {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.email-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  background: var(--bg);
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.email-form input::placeholder {
+  color: #666;
+}
+
+.email-form input:focus {
+  outline: none;
+  border-color: var(--acid);
+}
+
+.email-form button {
+  padding: 0.75rem 1.5rem;
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.email-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(229, 255, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section > p {
+    font-size: 1rem;
+  }
+
+  .ticket-comparison {
+    gap: 1rem;
+  }
+
+  .ticket-card {
+    width: 160px;
+    padding: 1.5rem;
+  }
+
+  .tabs-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .tab-content {
+    padding-bottom: 2rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .steps-grid,
+  .features-grid,
+  .commitments-grid,
+  .phases-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .email-form {
+    flex-direction: column;
+  }
+
+  .email-form input,
+  .email-form button {
+    width: 100%;
+  }
+}

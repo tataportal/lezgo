@@ -1,0 +1,511 @@
+.deck-page {
+  background: var(--bg);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.marquee-banner {
+  background: var(--acid);
+  color: var(--bg);
+  padding: 1rem;
+  overflow: hidden;
+  font-weight: bold;
+  font-size: 1.25rem;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.deck-header {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.toggles {
+  display: flex;
+  gap: 2rem;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-raised);
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #222;
+}
+
+.toggle-btn {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background: var(--acid);
+  color: var(--bg);
+  border-radius: 0.35rem;
+}
+
+.toggle-btn:hover:not(.active) {
+  color: #fff;
+}
+
+.hero-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-section p {
+  font-size: 1.25rem;
+  color: #999;
+  margin-bottom: 3rem;
+}
+
+.ticket-comparison-deck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0 3rem 0;
+  flex-wrap: wrap;
+}
+
+.ticket-fake,
+.ticket-real {
+  width: 150px;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  position: relative;
+}
+
+.ticket-fake {
+  background: rgba(255, 77, 77, 0.05);
+  border: 2px solid var(--red);
+}
+
+.ticket-real {
+  background: rgba(0, 255, 133, 0.05);
+  border: 2px solid var(--green);
+}
+
+.ticket-label-deck {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background: var(--red);
+  color: #fff;
+}
+
+.ticket-label-deck.verified-deck {
+  background: var(--green);
+}
+
+.ticket-content-deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qr-fake,
+.qr-real {
+  font-size: 2.5rem;
+}
+
+.price-fake {
+  color: var(--red);
+  text-decoration: line-through;
+  font-weight: bold;
+}
+
+.price-real {
+  color: var(--green);
+  font-weight: bold;
+}
+
+.comparison-vs {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--acid);
+}
+
+.contact-btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: var(--acid);
+  color: var(--bg);
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.contact-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(229, 255, 0, 0.3);
+}
+
+.section-deck {
+  padding: 4rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-deck h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.section-deck p {
+  font-size: 1.1rem;
+  color: #999;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.problem-section {
+  border-top: 1px solid #222;
+}
+
+.solution-section {
+  border-top: 1px solid #222;
+}
+
+.tech-details,
+.features-tech {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.stat-card,
+.feature-box {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.stat-number,
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-number {
+  font-weight: bold;
+  color: var(--acid);
+}
+
+.stat-label,
+.feature-label {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.how-works {
+  border-top: 1px solid #222;
+}
+
+.flow-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.flow-track h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.flow-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--acid);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  width: 80px;
+}
+
+.flow-arrow {
+  font-size: 1.5rem;
+  color: var(--acid);
+  font-weight: bold;
+}
+
+.business-model {
+  border-top: 1px solid #222;
+}
+
+.fee-structure {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.fee-card {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.fee-label {
+  color: #999;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.fee-amount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--green);
+}
+
+.revenue-projection {
+  margin-top: 2rem;
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.revenue-projection p {
+  margin: 0.5rem 0;
+}
+
+.traction {
+  border-top: 1px solid #222;
+}
+
+.traction-simple {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.milestone {
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-raised);
+  border-radius: 0.75rem;
+  border: 1px solid #222;
+}
+
+.milestone-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.milestone-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.traction-tech {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.metric {
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.metric-label {
+  color: #999;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--acid);
+}
+
+.team-section {
+  border-top: 1px solid #222;
+}
+
+.team-card {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: var(--bg-raised);
+  border: 1px solid #222;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 500px;
+  margin-top: 2rem;
+}
+
+.team-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--acid), var(--green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--bg);
+  flex-shrink: 0;
+}
+
+.team-info {
+  flex: 1;
+}
+
+.team-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.team-role {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.deck-footer {
+  padding: 3rem 2rem;
+  text-align: center;
+  border-top: 1px solid #222;
+}
+
+.deck-footer h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.footer-email {
+  display: inline-block;
+  color: var(--acid);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.footer-email:hover {
+  transform: translateY(-2px);
+}
+
+.footer-text {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section p {
+    font-size: 1rem;
+  }
+
+  .section-deck h2 {
+    font-size: 1.75rem;
+  }
+
+  .toggles {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .flow-steps {
+    gap: 0.5rem;
+  }
+
+  .flow-arrow {
+    font-size: 1rem;
+  }
+
+  .step-title {
+    font-size: 0.8rem;
+    width: 60px;
+  }
+
+  .team-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

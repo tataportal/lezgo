@@ -1,0 +1,684 @@
+:root {
+  --acid: #E5FF00;
+  --bg: #0A0A0A;
+  --bg-raised: #111111;
+  --text: #FFFFFF;
+  --text-muted: #999999;
+  --border: #222222;
+  --green: #00FF85;
+  --orange: #FFA500;
+  --red: #FF4D4D;
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.mt-header {
+  margin-bottom: 32px;
+}
+
+.mt-greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mt-greeting-text {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text);
+}
+
+.mt-bell-icon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mt-bell-icon:hover {
+  border-color: var(--acid);
+  background-color: rgba(229, 255, 0, 0.05);
+}
+
+/* Tabs */
+.mt-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.mt-tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mt-tab:hover {
+  color: var(--text);
+}
+
+.mt-tab.active {
+  color: var(--acid);
+  border-bottom-color: var(--acid);
+}
+
+.mt-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background-color: var(--border);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.mt-tab.active .mt-tab-badge {
+  background-color: var(--acid);
+  color: var(--bg);
+}
+
+/* Tab Content */
+.mt-tab-content {
+  animation: mt-fade-in 0.2s ease-out;
+}
+
+@keyframes mt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mt-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+/* Tickets */
+.mt-tickets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mt-ticket-card {
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.mt-ticket-card:hover {
+  border-color: var(--acid);
+  box-shadow: 0 8px 24px rgba(229, 255, 0, 0.1);
+}
+
+.mt-ticket-card--past {
+  opacity: 0.75;
+}
+
+.mt-ticket-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.mt-ticket-image {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--acid), #FF4D4D);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mt-ticket-image--past {
+  background: linear-gradient(135deg, var(--text-muted), var(--border));
+}
+
+.mt-ticket-image-placeholder {
+  font-size: 32px;
+}
+
+.mt-ticket-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mt-ticket-event {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mt-ticket-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 4px 0;
+}
+
+.mt-ticket-tier {
+  font-size: 14px;
+  color: var(--acid);
+  font-weight: 600;
+  margin: 0;
+}
+
+.mt-ticket-status {
+  flex-shrink: 0;
+}
+
+/* Ticket Details */
+.mt-ticket-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.mt-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mt-detail-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mt-detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Ticket Actions */
+.mt-ticket-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.mt-ticket-expand {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  transition: color 0.2s ease;
+}
+
+.mt-ticket-expand:hover {
+  color: var(--text);
+}
+
+.mt-ticket-menu {
+  position: relative;
+}
+
+.mt-menu-trigger {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px;
+  transition: color 0.2s ease;
+}
+
+.mt-menu-trigger:hover {
+  color: var(--text);
+}
+
+.mt-menu-items {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+}
+
+.mt-ticket-menu:hover .mt-menu-items {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mt-menu-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mt-menu-item:hover {
+  background-color: var(--bg);
+  color: var(--acid);
+}
+
+.mt-menu-item:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Badges */
+.mt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mt-badge--green {
+  background-color: rgba(0, 255, 133, 0.2);
+  color: var(--green);
+}
+
+.mt-badge--orange {
+  background-color: rgba(255, 165, 0, 0.2);
+  color: var(--orange);
+}
+
+.mt-badge--gray {
+  background-color: rgba(153, 153, 153, 0.2);
+  color: var(--text-muted);
+}
+
+/* Resale */
+.mt-resale-listings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mt-resale-card {
+  background-color: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.mt-resale-card:hover {
+  border-color: var(--acid);
+  box-shadow: 0 8px 24px rgba(229, 255, 0, 0.1);
+}
+
+.mt-resale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mt-resale-info {
+  flex: 1;
+}
+
+.mt-resale-event {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--text);
+}
+
+.mt-resale-tier {
+  font-size: 14px;
+  color: var(--acid);
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.mt-resale-date {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mt-resale-price {
+  text-align: right;
+}
+
+.mt-resale-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.mt-resale-amount {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.mt-resale-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Modal */
+.mt-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 20px;
+  animation: mt-fade-in 0.2s ease-out;
+}
+
+.mt-modal {
+  background-color: var(--bg-raised);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  animation: mt-slide-up 0.3s ease-out;
+}
+
+@keyframes mt-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mt-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mt-modal-close:hover {
+  color: var(--text);
+}
+
+.mt-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: var(--text);
+}
+
+.mt-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mt-modal-input {
+  padding: 12px 16px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.mt-modal-input:focus {
+  outline: none;
+  border-color: var(--acid);
+  background-color: rgba(229, 255, 0, 0.03);
+}
+
+.mt-modal-textarea {
+  padding: 12px 16px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.mt-modal-textarea:focus {
+  outline: none;
+  border-color: var(--acid);
+  background-color: rgba(229, 255, 0, 0.03);
+}
+
+.mt-modal-input::placeholder,
+.mt-modal-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.mt-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.mt-modal-row--total {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.mt-modal-label {
+  color: var(--text-muted);
+}
+
+.mt-modal-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mt-modal-value--highlight {
+  color: var(--acid);
+  font-size: 16px;
+}
+
+.mt-resale-modal-info {
+  padding: 12px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.mt-resale-modal-fees {
+  padding: 12px;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.mt-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Buttons */
+.mt-button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  flex: 1;
+}
+
+.mt-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mt-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.mt-button--primary {
+  background-color: var(--acid);
+  color: var(--bg);
+  font-weight: 700;
+}
+
+.mt-button--primary:hover:not(:disabled) {
+  background-color: #f0ff19;
+  box-shadow: 0 8px 24px rgba(229, 255, 0, 0.2);
+}
+
+.mt-button--secondary {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.mt-button--secondary:hover:not(:disabled) {
+  border-color: var(--acid);
+  color: var(--acid);
+  background-color: rgba(229, 255, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .page-container {
+    padding: 16px;
+  }
+
+  .mt-greeting-text {
+    font-size: 24px;
+  }
+
+  .mt-tabs {
+    gap: 4px;
+  }
+
+  .mt-tab {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .mt-ticket-header {
+    flex-wrap: wrap;
+  }
+
+  .mt-ticket-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .mt-ticket-image-placeholder {
+    font-size: 24px;
+  }
+
+  .mt-ticket-details {
+    grid-template-columns: 1fr;
+  }
+
+  .mt-modal {
+    max-width: 100%;
+  }
+
+  .mt-button {
+    padding: 11px 14px;
+    font-size: 13px;
+  }
+}
