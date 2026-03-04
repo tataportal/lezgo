@@ -29,7 +29,7 @@ export default function ScannerPage() {
         if (evts.length > 0) {
           setSelectedEventId(evts[0].id);
         }
-      });
+      }).catch((err) => console.error('Error loading events:', err));
     }
   }, [user?.uid]);
 
@@ -40,7 +40,7 @@ export default function ScannerPage() {
         const used = tickets.filter((t) => t.status === 'used').length;
         setUsedCount(used);
         setTotalSold(tickets.length);
-      });
+      }).catch((err) => console.error('Error loading tickets:', err));
     }
   }, [selectedEventId]);
 
@@ -118,9 +118,9 @@ export default function ScannerPage() {
               onChange={(e) => setSelectedEventId(e.target.value)}
             >
               <option value="">Cargar evento...</option>
-              {events.map((event) => (
+              {(events ?? []).map((event) => (
                 <option key={event.id} value={event.id}>
-                  {event.name}
+                  {event.name || 'Evento sin nombre'}
                 </option>
               ))}
             </select>
@@ -202,9 +202,9 @@ export default function ScannerPage() {
               <div className="result-message">{result.message}</div>
               {result.ticket && (
                 <div className="result-details">
-                  <div className="result-name">{result.ticket.userName}</div>
-                  <div className="result-event">{result.ticket.eventName}</div>
-                  <div className="result-tier">{result.ticket.ticketName}</div>
+                  <div className="result-name">{result.ticket.userName || 'Usuario'}</div>
+                  <div className="result-event">{result.ticket.eventName || 'Evento'}</div>
+                  <div className="result-tier">{result.ticket.ticketName || 'Entrada'}</div>
                 </div>
               )}
             </div>

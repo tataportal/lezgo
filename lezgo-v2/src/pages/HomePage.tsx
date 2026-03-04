@@ -83,7 +83,7 @@ export default function HomePage() {
                 {formatDateES(toDate(featuredEvent.date))}
               </span>
               <span className="home-hero__venue">
-                {featuredEvent.venue} • {featuredEvent.location}
+                {featuredEvent.venue || ''}{featuredEvent.venue && featuredEvent.location ? ' • ' : ''}{featuredEvent.location || ''}
               </span>
             </div>
 

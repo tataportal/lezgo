@@ -9,8 +9,8 @@ export default function Footer() {
         </div>
         <div className="lz-footer-links">
           <Link to="/conocenos">Conócenos</Link>
-          <Link to="/privacy">Privacidad</Link>
-          <Link to="/terms">Términos</Link>
+          <Link to="/conocenos">Privacidad</Link>
+          <Link to="/conocenos">Términos</Link>
         </div>
         <div className="lz-footer-copy">
           &copy; {new Date().getFullYear()} Lezgo. Tickets verificados con tu identidad.

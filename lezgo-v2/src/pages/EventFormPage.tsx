@@ -106,29 +106,40 @@ export default function EventFormPage() {
         return;
       }
 
-      const dateStr = toDate(event.date).toISOString().split('T')[0];
+      const dateStr = event.date ? toDate(event.date).toISOString().split('T')[0] : '';
       setFormData({
-        name: event.name || '',
-        subtitle: event.subtitle || '',
+        name: event.name ?? '',
+        subtitle: event.subtitle ?? '',
         date: dateStr,
-        timeStart: event.dateLabel?.split(' ')[0] || '20:00',
-        timeEnd: '23:00',
-        venue: event.venue || '',
-        location: event.location || '',
-        address: event.address || '',
-        image: event.image || '',
-        heroVideo: event.heroVideo || '',
-        description: event.description || '',
-        descriptionLong: event.descriptionLong || '',
-        genre: event.genre || '',
-        lineup: event.lineup || [],
-        tags: event.tags || [],
-        prohibitedItems: event.prohibitedItems || [],
-        tiers: event.tiers || [],
-        status: event.status || 'draft',
-        featured: event.featured || false,
-        visibleSections: event.visibleSections || { lineup: true, venue: true, prohibitedItems: true },
-        meta: event.meta || { crowdSize: 'medium', multiStage: false, alcohol: false, reentry: false, outdoor: false, ageRestriction: '18+' },
+        timeStart: event.dateLabel?.split(' ')[0] ?? '20:00',
+        timeEnd: event.dateLabel?.split(' ')[1] ?? '23:00',
+        venue: event.venue ?? '',
+        location: event.location ?? '',
+        address: event.address ?? '',
+        image: event.image ?? '',
+        heroVideo: event.heroVideo ?? '',
+        description: event.description ?? '',
+        descriptionLong: event.descriptionLong ?? '',
+        genre: event.genre ?? '',
+        lineup: Array.isArray(event.lineup) ? event.lineup : [],
+        tags: Array.isArray(event.tags) ? event.tags : [],
+        prohibitedItems: Array.isArray(event.prohibitedItems) ? event.prohibitedItems : [],
+        tiers: Array.isArray(event.tiers) ? event.tiers : [],
+        status: (event.status as 'draft' | 'published' | 'sold-out' | 'past') ?? 'draft',
+        featured: event.featured ?? false,
+        visibleSections: event.visibleSections ? {
+          lineup: event.visibleSections.lineup ?? true,
+          venue: event.visibleSections.venue ?? true,
+          prohibitedItems: event.visibleSections.prohibitedItems ?? true,
+        } : { lineup: true, venue: true, prohibitedItems: true },
+        meta: event.meta ? {
+          crowdSize: event.meta.crowdSize ?? 'medium',
+          multiStage: event.meta.multiStage ?? false,
+          alcohol: event.meta.alcohol ?? false,
+          reentry: event.meta.reentry ?? false,
+          outdoor: event.meta.outdoor ?? false,
+          ageRestriction: event.meta.ageRestriction ?? '18+',
+        } : { crowdSize: 'medium', multiStage: false, alcohol: false, reentry: false, outdoor: false, ageRestriction: '18+' },
       });
     } catch (error) {
       console.error('Error loading event:', error);
@@ -274,28 +285,30 @@ export default function EventFormPage() {
   };
 
   const addPhaseToTier = (tierId: string) => {
+    const tier = formData.tiers.find((t) => t.id === tierId);
+    const phases = tier?.phases ?? [];
     const newPhase: EventPhase = {
-      name: `Fase ${formData.tiers.find((t) => t.id === tierId)?.phases.length || 0 + 1}`,
+      name: `Fase ${phases.length + 1}`,
       price: 60,
       active: false,
     };
     updateTier(tierId, {
-      phases: [...(formData.tiers.find((t) => t.id === tierId)?.phases || []), newPhase],
+      phases: [...phases, newPhase],
     });
   };
 
   const removePhaseFromTier = (tierId: string, phaseIndex: number) => {
     const tier = formData.tiers.find((t) => t.id === tierId);
-    if (tier) {
-      const newPhases = tier.phases.filter((_, i) => i !== phaseIndex);
+    if (tier && tier.phases) {
+      const newPhases = (tier.phases ?? []).filter((_, i) => i !== phaseIndex);
       updateTier(tierId, { phases: newPhases });
     }
   };
 
   const updatePhaseInTier = (tierId: string, phaseIndex: number, updates: Partial<EventPhase>) => {
     const tier = formData.tiers.find((t) => t.id === tierId);
-    if (tier) {
-      const newPhases = tier.phases.map((phase, i) =>
+    if (tier && tier.phases) {
+      const newPhases = (tier.phases ?? []).map((phase, i) =>
         i === phaseIndex ? { ...phase, ...updates } : phase
       );
       updateTier(tierId, { phases: newPhases });
@@ -543,7 +556,7 @@ export default function EventFormPage() {
           <div className="form-section">
             <h2 className="section-title">Etiquetas</h2>
             <div className="dynamic-list">
-              {formData.tags.map((tag, index) => (
+              {(formData.tags ?? []).map((tag, index) => (
                 <div key={index} className="dynamic-item">
                   <input
                     type="text"
@@ -570,7 +583,7 @@ export default function EventFormPage() {
           <div className="form-section">
             <h2 className="section-title">Tipos de Entrada *</h2>
             <div className="tiers-list">
-              {formData.tiers.map((tier) => (
+              {(formData.tiers ?? []).map((tier) => (
                 <div key={tier.id} className="tier-card">
                   <div className="tier-header">
                     <h3>Tipo de Entrada</h3>
@@ -608,7 +621,7 @@ export default function EventFormPage() {
                   <div className="phases-section">
                     <h4>Fases de Venta</h4>
                     <div className="phases-list">
-                      {tier.phases.map((phase, phaseIndex) => (
+                      {(tier.phases ?? []).map((phase, phaseIndex) => (
                         <div key={phaseIndex} className="phase-row">
                           <div className="phase-grid">
                             <div className="form-group">
@@ -646,7 +659,7 @@ export default function EventFormPage() {
                               </label>
                             </div>
                           </div>
-                          {tier.phases.length > 1 && (
+                          {(tier.phases ?? []).length > 1 && (
                             <button
                               type="button"
                               className="btn-remove-phase"
@@ -678,7 +691,7 @@ export default function EventFormPage() {
           <div className="form-section">
             <h2 className="section-title">Alineación Artística</h2>
             <div className="dynamic-list">
-              {formData.lineup.map((artist, index) => (
+              {(formData.lineup ?? []).map((artist, index) => (
                 <div key={index} className="dynamic-item">
                   <input
                     type="text"
@@ -705,7 +718,7 @@ export default function EventFormPage() {
           <div className="form-section">
             <h2 className="section-title">Artículos Prohibidos</h2>
             <div className="dynamic-list">
-              {formData.prohibitedItems.map((item, index) => (
+              {(formData.prohibitedItems ?? []).map((item, index) => (
                 <div key={index} className="dynamic-item">
                   <input
                     type="text"

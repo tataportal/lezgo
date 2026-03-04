@@ -42,6 +42,16 @@ export async function listForResale(
 
   const ticket = ticketSnap.data() as Ticket;
 
+  // Guard against missing ticket data
+  if (!ticket?.eventId || !ticket?.ticketName) {
+    throw new Error(`Ticket ${ticketId} is missing required data`);
+  }
+
+  // Validate asking price
+  if (!input.askingPrice || input.askingPrice <= 0) {
+    throw new Error('Asking price must be greater than 0');
+  }
+
   // Calculate fee
   const fee = input.askingPrice * RESALE_FEE_PERCENTAGE;
   const netToSeller = input.askingPrice - fee;
@@ -49,17 +59,17 @@ export async function listForResale(
   // Create resale listing
   const resaleData = {
     ticketId,
-    eventId: ticket.eventId,
-    eventName: ticket.eventName,
-    eventDate: ticket.eventDate,
-    eventDateLabel: ticket.eventDateLabel,
-    eventVenue: ticket.eventVenue,
-    ticketTier: ticket.ticketName,
-    originalPrice: ticket.originalPrice,
+    eventId: ticket.eventId ?? '',
+    eventName: ticket.eventName ?? '',
+    eventDate: ticket.eventDate ?? null,
+    eventDateLabel: ticket.eventDateLabel ?? '',
+    eventVenue: ticket.eventVenue ?? '',
+    ticketTier: ticket.ticketName ?? '',
+    originalPrice: ticket.originalPrice ?? 0,
     askingPrice: input.askingPrice,
     sellerId,
-    sellerName: ticket.userName,
-    sellerEmail: ticket.userEmail,
+    sellerName: ticket.userName ?? '',
+    sellerEmail: ticket.userEmail ?? '',
     image: input.image || '',
     status: 'listed' as const,
     fee,
@@ -250,7 +260,19 @@ export async function getResaleStats(eventId: string): Promise<{
     };
   }
 
-  const prices = listings.map((l) => l.askingPrice);
+  const prices = listings
+    .map((l) => l.askingPrice ?? 0)
+    .filter((price) => price > 0);
+
+  if (prices.length === 0) {
+    return {
+      activeListings: 0,
+      averagePrice: 0,
+      minPrice: 0,
+      maxPrice: 0,
+    };
+  }
+
   const averagePrice = prices.reduce((a, b) => a + b, 0) / prices.length;
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
@@ -276,10 +298,11 @@ export async function searchResaleListings(
   const listings = await getEventResaleListings(eventId);
 
   return listings.filter((listing) => {
-    if (filters?.maxPrice && listing.askingPrice > filters.maxPrice) {
+    const askingPrice = listing.askingPrice ?? 0;
+    if (filters?.maxPrice && askingPrice > filters.maxPrice) {
       return false;
     }
-    if (filters?.minPrice && listing.askingPrice < filters.minPrice) {
+    if (filters?.minPrice && askingPrice < filters.minPrice) {
       return false;
     }
     return true;

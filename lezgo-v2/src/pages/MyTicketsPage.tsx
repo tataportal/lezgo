@@ -11,7 +11,9 @@ type Tab = 'proximas' | 'pasadas' | 'reventa';
 const formatPrice = (n: number) => `S/ ${n.toLocaleString('es-PE')}`;
 
 const formatDate = (dateStr: any) => {
+  if (!dateStr) return 'N/A';
   const date = dateStr instanceof Date ? dateStr : dateStr.toDate?.() || new Date(dateStr);
+  if (isNaN(date.getTime())) return 'N/A';
   return date.toLocaleDateString('es-PE', {
     weekday: 'short',
     day: 'numeric',
@@ -20,7 +22,9 @@ const formatDate = (dateStr: any) => {
 };
 
 const formatDateLong = (dateStr: any) => {
+  if (!dateStr) return 'N/A';
   const date = dateStr instanceof Date ? dateStr : dateStr.toDate?.() || new Date(dateStr);
+  if (isNaN(date.getTime())) return 'N/A';
   return date.toLocaleDateString('es-PE', {
     weekday: 'long',
     day: 'numeric',
@@ -238,12 +242,12 @@ export default function MyTicketsPage() {
                     <div className="mt-ticket-details">
                       <div className="mt-detail">
                         <span className="mt-detail-label">Venue</span>
-                        <span className="mt-detail-value">{ticket.eventVenue}</span>
+                        <span className="mt-detail-value">{ticket.eventVenue || 'N/A'}</span>
                       </div>
                       <div className="mt-detail">
                         <span className="mt-detail-label">Hora</span>
                         <span className="mt-detail-value">
-                          {ticket.eventTimeStart} - {ticket.eventTimeEnd}
+                          {ticket.eventTimeStart || '—'} - {ticket.eventTimeEnd || '—'}
                         </span>
                       </div>
                       <div className="mt-detail">
@@ -281,7 +285,7 @@ export default function MyTicketsPage() {
                         <button
                           className="mt-menu-item"
                           onClick={() =>
-                            openResaleModal(ticket.id, ticket.originalPrice)
+                            openResaleModal(ticket.id, ticket.originalPrice ?? ticket.price ?? 0)
                           }
                         >
                           💰 Publicar en reventa
@@ -382,9 +386,9 @@ export default function MyTicketsPage() {
                 <div key={resale.id} className="mt-resale-card">
                   <div className="mt-resale-header">
                     <div className="mt-resale-info">
-                      <h3 className="mt-resale-event">{resale.eventName}</h3>
-                      <p className="mt-resale-tier">{resale.ticketTier}</p>
-                      <p className="mt-resale-date">{formatDate(resale.eventDate)}</p>
+                      <h3 className="mt-resale-event">{resale.eventName || 'Evento'}</h3>
+                      <p className="mt-resale-tier">{resale.ticketTier || 'Entrada'}</p>
+                      <p className="mt-resale-date">{resale.eventDate ? formatDate(resale.eventDate) : 'N/A'}</p>
                     </div>
                     <div className="mt-resale-price">
                       <span className="mt-resale-label">Precio</span>

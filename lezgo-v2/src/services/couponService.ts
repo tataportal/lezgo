@@ -33,7 +33,7 @@ export async function validateCoupon(code: string): Promise<CouponValidationResu
     const couponData = couponSnap.data() as Coupon;
 
     // Check if coupon is active
-    if (!couponData.active) {
+    if (!couponData?.active) {
       return {
         valid: false,
         error: 'Coupon is not active',
@@ -41,11 +41,11 @@ export async function validateCoupon(code: string): Promise<CouponValidationResu
     }
 
     // Check expiration date
-    const expiresAt = couponData.expiresAt;
+    const expiresAt = couponData?.expiresAt;
     const now = new Date();
     const expiresAtDate = expiresAt instanceof Timestamp ? expiresAt.toDate() : expiresAt;
 
-    if (expiresAtDate < now) {
+    if (expiresAtDate && expiresAtDate < now) {
       return {
         valid: false,
         error: 'Coupon has expired',
@@ -53,7 +53,9 @@ export async function validateCoupon(code: string): Promise<CouponValidationResu
     }
 
     // Check usage limit
-    if (couponData.usedCount >= couponData.maxUses) {
+    const usedCount = couponData?.usedCount ?? 0;
+    const maxUses = couponData?.maxUses ?? 0;
+    if (usedCount >= maxUses) {
       return {
         valid: false,
         error: 'Coupon usage limit reached',
@@ -62,7 +64,7 @@ export async function validateCoupon(code: string): Promise<CouponValidationResu
 
     return {
       valid: true,
-      discount: couponData.discount,
+      discount: couponData?.discount ?? 0,
     };
   } catch (error) {
     return {
@@ -217,13 +219,15 @@ export async function getCouponStats(code: string): Promise<{
       return null;
     }
 
-    const remaining = coupon.maxUses - coupon.usedCount;
-    const usagePercentage = (coupon.usedCount / coupon.maxUses) * 100;
+    const maxUses = coupon.maxUses ?? 1;
+    const usedCount = coupon.usedCount ?? 0;
+    const remaining = maxUses - usedCount;
+    const usagePercentage = maxUses > 0 ? (usedCount / maxUses) * 100 : 0;
 
     return {
-      code: coupon.code,
-      usedCount: coupon.usedCount,
-      maxUses: coupon.maxUses,
+      code: coupon.code ?? '',
+      usedCount,
+      maxUses,
       remaining,
       usagePercentage,
     };

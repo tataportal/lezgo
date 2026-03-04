@@ -73,7 +73,8 @@ export default function MarketplacePage() {
       startOfWeek.setDate(now.getDate() - now.getDay());
 
       result = result.filter((r) => {
-        const eventDate = r.eventDate ? toDate(r.eventDate) : new Date();
+        if (!r.eventDate) return false;
+        const eventDate = toDate(r.eventDate);
         if (dateFilter === 'semana') {
           const endOfWeek = new Date(startOfWeek);
           endOfWeek.setDate(startOfWeek.getDate() + 7);
@@ -92,8 +93,8 @@ export default function MarketplacePage() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter((r) =>
-        r.eventName?.toLowerCase().includes(query) ||
-        r.ticketTier?.toLowerCase().includes(query)
+        (r.eventName?.toLowerCase?.() || '').includes(query) ||
+        (r.ticketTier?.toLowerCase?.() || '').includes(query)
       );
     }
 
@@ -105,10 +106,14 @@ export default function MarketplacePage() {
     // Sorting
     if (sortBy === 'fecha') {
       result.sort(
-        (a, b) => toDate(b.createdAt).getTime() - toDate(a.createdAt).getTime()
+        (a, b) => {
+          const aDate = a.createdAt ? toDate(a.createdAt) : new Date(0);
+          const bDate = b.createdAt ? toDate(b.createdAt) : new Date(0);
+          return bDate.getTime() - aDate.getTime();
+        }
       );
     } else if (sortBy === 'precio') {
-      result.sort((a, b) => a.askingPrice - b.askingPrice);
+      result.sort((a, b) => (a.askingPrice ?? 0) - (b.askingPrice ?? 0));
     }
 
     return result;
@@ -217,10 +222,12 @@ export default function MarketplacePage() {
           ) : (
             <div className="mp-listings-grid">
               {filteredListings.map((resale) => {
-                const isDiscounted = resale.askingPrice < resale.originalPrice;
-                const discount = Math.round(
-                  ((resale.originalPrice - resale.askingPrice) / resale.originalPrice) * 100
-                );
+                const isDiscounted = (resale.askingPrice ?? 0) < (resale.originalPrice ?? 0);
+                const discount = resale.originalPrice && resale.originalPrice > 0
+                  ? Math.round(
+                      (((resale.originalPrice ?? 0) - (resale.askingPrice ?? 0)) / resale.originalPrice) * 100
+                    )
+                  : 0;
 
                 return (
                   <div
@@ -235,20 +242,22 @@ export default function MarketplacePage() {
                       <img src={resale.image} alt={resale.eventName} />
                     </div>
                     <div className="mp-card-content">
-                      <h3 className="mp-card-event">{resale.eventName}</h3>
-                      <p className="mp-card-tier">{resale.ticketTier}</p>
+                      <h3 className="mp-card-event">{resale.eventName || 'Evento'}</h3>
+                      <p className="mp-card-tier">{resale.ticketTier || 'Entrada'}</p>
                       <p className="mp-card-date">
-                        {toDate(resale.eventDate).toLocaleDateString('es-PE', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+                        {resale.eventDate
+                          ? toDate(resale.eventDate).toLocaleDateString('es-PE', {
+                              month: 'short',
+                              day: 'numeric',
+                            })
+                          : 'Sin fecha'}
                       </p>
                       <div className="mp-card-pricing">
-                        <span className="mp-card-original">{formatPrice(resale.originalPrice)}</span>
-                        <span className="mp-card-asking">{formatPrice(resale.askingPrice)}</span>
+                        <span className="mp-card-original">{formatPrice(resale.originalPrice ?? 0)}</span>
+                        <span className="mp-card-asking">{formatPrice(resale.askingPrice ?? 0)}</span>
                       </div>
                       <div className="mp-card-seller">
-                        <span className="mp-seller-name">{resale.sellerName}</span>
+                        <span className="mp-seller-name">{resale.sellerName || 'Vendedor'}</span>
                         <span className="mp-seller-badge">✓</span>
                       </div>
                     </div>

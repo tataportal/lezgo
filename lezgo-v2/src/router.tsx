@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import App from './App';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy load all pages for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -19,15 +20,17 @@ const DeckPage = lazy(() => import('./pages/DeckPage'));
 
 function SuspenseWrap({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense
-      fallback={
-        <div className="loading-screen">
-          <div className="loading-spinner" />
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense
+        fallback={
+          <div className="loading-screen">
+            <div className="loading-spinner" />
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 

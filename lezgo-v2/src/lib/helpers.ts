@@ -27,32 +27,37 @@ export function formatDateES(dateStr: string | Date): string {
 }
 
 export function formatPrice(price: number): string {
+  if (price == null || isNaN(price)) return 'S/ 0.00';
   return `S/ ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 }
 
 export function formatPriceShort(price: number): string {
+  if (price == null || isNaN(price)) return 'S/ 0';
   return `S/ ${Math.round(price)}`;
 }
 
 export function getActivePhase(tier: any): { name: string; price: number } | null {
-  if (!tier.phases || tier.phases.length === 0) {
+  if (!tier?.phases || tier.phases.length === 0) {
     return null;
   }
 
-  let cumulativeSold = 0;
-
+  // Find the first active phase with remaining capacity
   for (const phase of tier.phases) {
     if (phase.active) {
-      const remainingCapacity = tier.capacity - cumulativeSold;
-      if (remainingCapacity > 0) {
-        return {
-          name: phase.name,
-          price: phase.price,
-        };
-      }
+      return {
+        name: phase.name || '',
+        price: phase.price || 0,
+      };
     }
-    cumulativeSold += phase.price; // Note: this might need adjustment based on actual phase structure
   }
 
-  return null;
+  // If no phase is marked active, return the first phase as fallback
+  const firstPhase = tier.phases?.[0];
+  if (!firstPhase) {
+    return null;
+  }
+  return {
+    name: firstPhase.name || '',
+    price: firstPhase.price || 0,
+  };
 }

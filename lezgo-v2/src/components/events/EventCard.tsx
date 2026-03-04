@@ -62,8 +62,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <div className="ev-card__meta">
           <span className="ev-card__date">{formatDateES(toDate(event.date))}</span>
           <span className="ev-card__venue">
-            {event.venue}
-            <span className="ev-card__location"> • {event.location}</span>
+            {event.venue || ''}
+            {event.venue && event.location ? <span className="ev-card__location"> • {event.location}</span> : event.location ? <span className="ev-card__location">{event.location}</span> : null}
           </span>
         </div>
 

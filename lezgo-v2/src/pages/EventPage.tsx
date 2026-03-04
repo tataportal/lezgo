@@ -13,7 +13,11 @@ export default function EventPage() {
 
   const handleBuyTickets = () => {
     if (!event) return;
-    navigate(`/evento/${event.id}`);
+    // Scroll to tiers section instead of navigating to the same page
+    const tiersSection = document.querySelector('.ev-detail-tiers');
+    if (tiersSection) {
+      tiersSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleResale = () => {
@@ -69,10 +73,10 @@ export default function EventPage() {
 
           <div className="ev-detail-hero__info">
             <span className="ev-detail-hero__date">
-              {formatDateES(toDate(event.date))}
+              {event.date ? formatDateES(toDate(event.date)) : ''}
             </span>
             <span className="ev-detail-hero__venue">
-              {event.venue} • {event.location}
+              {event.venue || ''}{event.venue && event.location ? ' • ' : ''}{event.location || ''}
             </span>
           </div>
         </div>
@@ -265,12 +269,12 @@ export default function EventPage() {
             <h2 className="ev-detail-venue__title">Lugar</h2>
 
             <div className="ev-detail-venue__info">
-              <div className="ev-detail-venue__name">{event.venue}</div>
-              <div className="ev-detail-venue__address">{event.address || event.location}</div>
+              <div className="ev-detail-venue__name">{event.venue || 'Lugar no especificado'}</div>
+              <div className="ev-detail-venue__address">{event.address || event.location || ''}</div>
 
               <a
                 href={`https://www.google.com/maps/search/${encodeURIComponent(
-                  `${event.venue}, ${event.address || event.location}`
+                  `${event.venue || 'evento'}, ${event.address || event.location || ''}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

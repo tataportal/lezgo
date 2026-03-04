@@ -128,6 +128,9 @@ export async function purchaseTickets(
 
       if (tierQuantity && tierQuantity.quantity > 0) {
         // Check capacity
+        if (tier.capacity == null || tier.sold == null) {
+          throw new Error(`Tier ${tier.name} has missing capacity information`);
+        }
         const available = tier.capacity - tier.sold;
         if (tierQuantity.quantity > available) {
           throw new Error(
@@ -165,19 +168,19 @@ export async function purchaseTickets(
 
       const couponData = couponSnap.data();
 
-      if (!couponData.active) {
+      if (!couponData?.active) {
         throw new Error('Coupon is not active');
       }
 
-      if (couponData.usedCount >= couponData.maxUses) {
+      if ((couponData?.usedCount ?? 0) >= (couponData?.maxUses ?? 0)) {
         throw new Error('Coupon usage limit reached');
       }
 
-      if (couponData.expiresAt.toDate() < new Date()) {
+      if (couponData?.expiresAt && couponData.expiresAt.toDate() < new Date()) {
         throw new Error('Coupon has expired');
       }
 
-      couponDiscount = totalPrice * couponData.discount;
+      couponDiscount = totalPrice * (couponData?.discount ?? 0);
       discountApplied = couponDiscount;
 
       // Increment coupon usage
