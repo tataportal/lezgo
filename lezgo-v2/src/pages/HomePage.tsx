@@ -1,59 +1,75 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
 import { formatDateES, formatPriceShort, getActivePhase, toDate } from '../lib/helpers';
 import './HomePage.css';
 
+const MARQUEE_ITEMS = [
+  '✓ VERIFICADO CON ID',
+  '☺ MARKETPLACE',
+  '✓ CERO ESTAFAS',
+  '☺ TU ID = TU ENTRADA',
+  '✓ REVENTA SEGURA',
+  '☺ ESCANEA Y ENTRA',
+];
+
 export default function HomePage() {
   const navigate = useNavigate();
   const { events, loading, error } = useEvents({ status: 'published' });
+  const [searchText, setSearchText] = useState('');
 
   const { featuredEvent, promoEvents, upcomingEvents, moreEvents } = useMemo(() => {
     if (!events || events.length === 0) {
       return { featuredEvent: null, promoEvents: [], upcomingEvents: [], moreEvents: [] };
     }
 
-    // Get featured event (first featured event or first event if none featured)
     const featured = events.find((e) => e.featured) || events[0];
-
-    // Get remaining events
     const remaining = events.filter((e) => e.id !== featured.id);
 
-    // First 2 remaining go to promo cards
-    const promo = remaining.slice(0, 2);
+    // Promo: prioritize featured, then sold-out, then by date (top 2)
+    const sorted = remaining.slice().sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      if (a.status === 'sold-out' && b.status !== 'sold-out') return -1;
+      if (a.status !== 'sold-out' && b.status === 'sold-out') return 1;
+      return a.date < b.date ? -1 : 1;
+    });
+    const promo = sorted.slice(0, 2);
 
-    // Rest split into upcoming and more
-    const rest = remaining.slice(2);
+    // Remaining events for the two grids
+    const rest = remaining.filter((e) => !promo.find((p) => p.id === e.id));
     const midpoint = Math.ceil(rest.length / 2);
     const upcoming = rest.slice(0, midpoint);
     const more = rest.slice(midpoint);
 
-    return {
-      featuredEvent: featured,
-      promoEvents: promo,
-      upcomingEvents: upcoming,
-      moreEvents: more,
-    };
+    return { featuredEvent: featured, promoEvents: promo, upcomingEvents: upcoming, moreEvents: more };
   }, [events]);
 
   const handleNavigateEvent = (eventId: string) => {
     navigate(`/evento/${eventId}`);
   };
 
-  // Get lowest price from an event's active tiers
   const getLowestPrice = (event: typeof featuredEvent): number | null => {
     if (!event) return null;
     let lowest: number | null = null;
     for (const tier of event.tiers || []) {
       const activePhase = getActivePhase(tier);
-      if (activePhase) {
-        if (lowest === null || activePhase.price < lowest) {
-          lowest = activePhase.price;
-        }
+      if (activePhase && (lowest === null || activePhase.price < lowest)) {
+        lowest = activePhase.price;
       }
     }
     return lowest;
+  };
+
+  const handleSearch = () => {
+    if (searchText.trim()) {
+      navigate(`/eventos?q=${encodeURIComponent(searchText.trim())}`);
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearch();
   };
 
   if (error) {
@@ -66,21 +82,19 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      {/* Marquee Banner */}
+      {/* ── Marquee — Ported from monolith ── */}
       <div className="home-marquee">
         <div className="home-marquee__track">
-          <span className="home-marquee__text">
-            CERO ESTAFAS · TU ID = TU ENTRADA · REVENTA SEGURA · SIN BOTS ·&nbsp;
-          </span>
-          <span className="home-marquee__text">
-            CERO ESTAFAS · TU ID = TU ENTRADA · REVENTA SEGURA · SIN BOTS ·&nbsp;
-          </span>
+          {/* Double the items for seamless loop */}
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span key={i} className="home-marquee__item">{item}</span>
+          ))}
         </div>
       </div>
 
-      {/* Hero Section — Left-aligned, bottom-justified like monolith */}
+      {/* ── Hero — Ported from monolith ── */}
       {featuredEvent && (
-        <div className="home-hero">
+        <section className="home-hero" id="home-hero">
           <div
             className="home-hero__background"
             style={{
@@ -92,20 +106,18 @@ export default function HomePage() {
           <div className="home-hero__overlay" />
 
           <div className="home-hero__content">
-            <div className="home-hero__badge">
-              <span>★</span> DESTACADO
-            </div>
+            <div className="home-hero__badge">Destacado</div>
 
             <h1 className="home-hero__title">{featuredEvent.name}</h1>
 
             {featuredEvent.subtitle && (
-              <p className="home-hero__subtitle">{featuredEvent.subtitle}</p>
+              <div className="home-hero__subtitle">{featuredEvent.subtitle}</div>
             )}
 
             <div className="home-hero__meta">
               {formatDateES(toDate(featuredEvent.date))}
               {featuredEvent.venue ? ` · ${featuredEvent.venue}` : ''}
-              {featuredEvent.location ? ` · ${featuredEvent.location}` : ''}
+              {featuredEvent.location ? `, ${featuredEvent.location}` : ''}
             </div>
 
             <div className="home-hero__actions">
@@ -113,27 +125,61 @@ export default function HomePage() {
                 className="home-hero__cta"
                 onClick={() => handleNavigateEvent(featuredEvent.id)}
               >
-                Ver entradas →
+                {featuredEvent.status === 'sold-out' ? 'AGOTADO — Ver reventa →' : 'Ver entradas →'}
               </button>
-
-              {featuredEvent.organizer && (
-                <span className="home-hero__sponsor">
-                  Presentado por <span>{featuredEvent.organizer}</span>
-                </span>
-              )}
+              <div className="home-hero__sponsor">
+                {featuredEvent.organizer && featuredEvent.organizer !== 'demo-user-001' ? (
+                  <>Producido por <span>{featuredEvent.organizer}</span>. Powered by </>
+                ) : (
+                  <>Powered by </>
+                )}
+                <span>LEZGO ☺</span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Promo Cards — Full-bleed 1:1 image cards like monolith */}
-      {promoEvents.length > 0 && (
-        <section className="home-promo">
-          <div className="page-container">
-            <h2 className="home-promo__title">Destacados</h2>
+      {/* ── Search Bar — Ported from monolith ── */}
+      <div className="search-section">
+        <div className="search-bar">
+          <div className="search-field">
+            <div className="search-field-label">Ubicación</div>
+            <div className="search-field-value">Lima, Perú</div>
+          </div>
+          <div className="search-field">
+            <div className="search-field-label">Fechas</div>
+            <div className="search-field-value">Todas las fechas</div>
+          </div>
+          <div className="search-field search-field--main">
+            <div className="search-field-label">Buscar</div>
+            <input
+              className="search-input"
+              type="text"
+              placeholder="Evento, artista o lugar..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
+          </div>
+          <button className="search-btn" onClick={handleSearch}>Buscar</button>
+        </div>
+      </div>
+
+      {/* ── Content wrapper — matches monolith .content ── */}
+      <div className="home-content">
+
+        {/* ── Promo Cards — "No te los pierdas" ── */}
+        {promoEvents.length > 0 && (
+          <>
+            <div className="section-head">
+              <h2 className="section-title">No te los pierdas</h2>
+            </div>
             <div className="home-promo__grid">
               {promoEvents.map((event) => {
                 const lowestPrice = getLowestPrice(event);
+                const isSold = event.status === 'sold-out';
+                const tag = isSold ? 'AGOTADO' : (event.genre || 'EVENTO');
                 return (
                   <div
                     key={event.id}
@@ -150,54 +196,57 @@ export default function HomePage() {
                     />
                     <div className="promo-card__overlay" />
                     <div className="promo-card__body">
-                      {event.status === 'sold-out' ? (
-                        <span className="promo-card__tag">AGOTADO</span>
-                      ) : (
-                        <span className="promo-card__tag">
-                          {event.genre || 'EVENTO'}
-                        </span>
-                      )}
-                      <div className="promo-card__name">{event.name}</div>
-                      <div className="promo-card__info">
+                      <span className="promo-card__tag">{tag}</span>
+                      <h3 className="promo-card__name">{event.name}</h3>
+                      <p className="promo-card__info">
                         {formatDateES(toDate(event.date))}
                         {lowestPrice !== null ? ` · Desde ${formatPriceShort(lowestPrice)}` : ''}
-                      </div>
+                      </p>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
-        </section>
-      )}
+          </>
+        )}
 
-      {/* Upcoming Events Grid — 4-col */}
-      {upcomingEvents.length > 0 && (
-        <section className="home-upcoming">
-          <div className="page-container">
-            <h2 className="home-upcoming__title">Próximos eventos</h2>
-            <div className="home-upcoming__grid">
+        {/* ── ID Banner — Ported from monolith ── */}
+        <div className="id-banner">
+          <div className="id-banner__icon">☺</div>
+          <p>
+            Cada entrada en Lezgo está vinculada a tu DNI, carnet de extranjería o pasaporte.<br />
+            Escanea tu identificación en la puerta y entra. Cero fraude.
+          </p>
+        </div>
+
+        {/* ── Próximos eventos — 4-col grid ── */}
+        {upcomingEvents.length > 0 && (
+          <>
+            <div className="section-head">
+              <h2 className="section-title">Próximos eventos</h2>
+            </div>
+            <div className="events-grid">
               {upcomingEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          </>
+        )}
 
-      {/* More Events Grid — 4-col */}
-      {moreEvents.length > 0 && (
-        <section className="home-more">
-          <div className="page-container">
-            <h2 className="home-more__title">Más en Lima</h2>
-            <div className="home-more__grid">
+        {/* ── Más en Lima — 4-col grid ── */}
+        {moreEvents.length > 0 && (
+          <>
+            <div className="section-head">
+              <h2 className="section-title">Más en Lima</h2>
+            </div>
+            <div className="events-grid">
               {moreEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          </>
+        )}
+      </div>
 
       {/* Loading State */}
       {loading && events.length === 0 && (
@@ -210,7 +259,7 @@ export default function HomePage() {
       {/* Empty State */}
       {!loading && events.length === 0 && (
         <div className="home-empty">
-          <div className="page-container">
+          <div className="home-content">
             <h2>No hay eventos disponibles</h2>
             <p>Vuelve más tarde para ver los próximos eventos</p>
           </div>

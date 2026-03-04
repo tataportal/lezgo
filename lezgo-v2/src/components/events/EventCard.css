@@ -1,6 +1,7 @@
+/* ═══════════════════════════════════════════
+   EVENT CARDS — Ported from monolith
+   ═══════════════════════════════════════════ */
 .ev-card {
-  display: flex;
-  flex-direction: column;
   background: var(--bg-raised);
   border: 1px solid var(--border);
   overflow: hidden;
@@ -9,103 +10,103 @@
 }
 
 .ev-card:hover {
+  border-color: rgba(229,255,0,0.25);
   transform: translateY(-4px);
-  border-color: rgba(229, 255, 0, 0.3);
-  box-shadow: 0 12px 40px rgba(229, 255, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 40px rgba(229,255,0,0.08), 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .ev-card__image-wrapper {
   position: relative;
-  width: 100%;
-  padding-top: 75%; /* 4:3 ratio — taller than before */
+  height: 200px;
   overflow: hidden;
-  background: var(--gray-700);
 }
 
 .ev-card__image {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s;
 }
 
 .ev-card:hover .ev-card__image {
-  transform: scale(1.04);
+  transform: scale(1.05);
+}
+
+/* Gradient fade at bottom of image */
+.ev-card__image-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, var(--bg-raised), transparent);
 }
 
 .ev-card__badge {
   position: absolute;
   top: 12px;
-  right: 12px;
-  padding: 4px 10px;
-  font-size: 11px;
+  left: 12px;
+  padding: 3px 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
-  z-index: 10;
+  text-transform: uppercase;
+  z-index: 2;
+  background: var(--acid);
+  color: var(--bg);
 }
 
 .ev-card__badge--sold-out {
-  background: rgba(255, 77, 77, 0.25);
-  color: var(--red);
-  border: 1px solid var(--red);
+  background: #FF3366;
+  color: var(--text);
 }
 
 .ev-card__badge--featured {
-  background: rgba(229, 255, 0, 0.2);
-  color: var(--acid);
-  border: 1px solid var(--acid);
+  background: var(--acid);
+  color: var(--bg);
 }
 
 .ev-card__content {
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
 }
 
-.ev-card__title {
+.ev-card__date {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--acid);
+  margin-bottom: 0;
+}
+
+.ev-card__title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
   line-height: 1.2;
-  margin: 0;
   letter-spacing: -0.3px;
-}
-
-.ev-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 13px;
-}
-
-.ev-card__date {
-  color: var(--text-mid);
-  font-weight: 500;
+  margin: 0 0 6px 0;
 }
 
 .ev-card__venue {
-  color: var(--text-dim);
+  font-size: 18px;
+  color: #b0b0b0;
+  margin-bottom: 16px;
 }
 
 .ev-card__location {
-  color: var(--text-muted);
+  color: #999;
 }
 
 .ev-card__footer {
   display: flex;
-  align-items: flex-end;
   justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid var(--alpha-subtle);
-  margin-top: auto;
+  align-items: center;
 }
 
 .ev-card__price {
@@ -123,36 +124,32 @@
 
 .ev-card__price-value {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--acid);
 }
 
 .ev-card__verified {
-  display: flex;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 3px 8px;
+  border: 1px solid rgba(229,255,0,0.08);
+  color: var(--acid);
+  letter-spacing: 0.3px;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  background: rgba(0, 255, 133, 0.15);
-}
-
-.ev-card__verified-check {
-  font-size: 14px;
-  color: var(--green);
-  font-weight: 700;
+  gap: 4px;
 }
 
 @media (max-width: 768px) {
-  .ev-card__content {
-    padding: 12px;
-  }
+  .ev-card__title { font-size: 20px; }
+  .ev-card__date { font-size: 15px; }
+  .ev-card__venue { font-size: 15px; }
+  .ev-card__image-wrapper { height: 160px; }
+}
 
-  .ev-card__title {
-    font-size: 15px;
-  }
-
-  .ev-card__price-value {
-    font-size: 17px;
-  }
+@media (max-width: 480px) {
+  .ev-card__content { padding: 16px; }
+  .ev-card__title { font-size: 18px; }
+  .ev-card__price-value { font-size: 17px; }
+  .ev-card__image-wrapper { height: 140px; }
 }
