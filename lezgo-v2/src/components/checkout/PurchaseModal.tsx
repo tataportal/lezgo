@@ -50,11 +50,13 @@ function getActivePhase(tier: EventTier): EventPhase | null {
 }
 
 export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
-  const { user, profile } = useAuth();
+  const { user, profile, loginWithGoogle, sendMagicLink } = useAuth();
   const [step, setStep] = useState<PurchaseStep>(0);
   const [quantities, setQuantities] = useState<{ [tierId: string]: number }>({});
   const [name, setName] = useState('');
   const [dni, setDni] = useState('');
+  const [magicEmail, setMagicEmail] = useState('');
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
@@ -86,6 +88,36 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
   // Step 0: Login
   if (step === 0 && open && !user) {
+    const handleGoogleLogin = async () => {
+      try {
+        setLoading(true);
+        await loginWithGoogle();
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Error al iniciar sesión';
+        toast.error(msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleMagicLink = async () => {
+      if (!magicEmail.trim()) {
+        toast.error('Ingresa tu email');
+        return;
+      }
+      try {
+        setLoading(true);
+        await sendMagicLink(magicEmail);
+        setMagicLinkSent(true);
+        toast.success('Link mágico enviado a tu email');
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Error al enviar link';
+        toast.error(msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     return (
       <div className="pm-overlay" onClick={onClose}>
         <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
@@ -93,14 +125,38 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
           <div className="pm-content">
             <h2 className="pm-title">Inicia sesión</h2>
             <p className="pm-subtitle">Necesitas estar registrado para comprar entradas</p>
-            <div className="pm-auth-buttons">
-              <button className="pm-button pm-button--google">
-                🔍 Continuar con Google
-              </button>
-              <button className="pm-button pm-button--magic">
-                ✨ Link mágico
-              </button>
-            </div>
+
+            {!magicLinkSent ? (
+              <div className="pm-auth-buttons">
+                <button
+                  className="pm-button pm-button--google"
+                  onClick={handleGoogleLogin}
+                  disabled={loading}
+                >
+                  🔍 Continuar con Google
+                </button>
+                <div style={{ textAlign: 'center', color: '#666', margin: '12px 0' }}>o</div>
+                <input
+                  type="email"
+                  placeholder="Tu email"
+                  value={magicEmail}
+                  onChange={(e) => setMagicEmail(e.target.value)}
+                  className="pm-input"
+                  style={{ marginBottom: '8px' }}
+                />
+                <button
+                  className="pm-button pm-button--magic"
+                  onClick={handleMagicLink}
+                  disabled={loading || !magicEmail.trim()}
+                >
+                  ✨ Enviar link mágico
+                </button>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>
+                <p>Revisa tu email para el link de acceso</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

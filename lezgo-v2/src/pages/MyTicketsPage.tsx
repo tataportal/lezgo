@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserActiveTickets, useUserPastTickets } from '../hooks/useTickets';
-import { getResaleListingsBySeller } from '../services/resaleService';
+import { getResaleListingsBySeller, listForResale } from '../services/resaleService';
+import { transferTicket } from '../services/ticketService';
 import type { Resale } from '../lib/types';
 import toast from 'react-hot-toast';
 import './MyTicketsPage.css';
@@ -124,7 +125,11 @@ export default function MyTicketsPage() {
 
     setTransferModal({ ...transferModal, loading: true });
     try {
-      // TODO: Implement transfer logic with ticketService.transferTicket
+      await transferTicket(
+        transferModal.ticketId,
+        transferModal.recipientEmail, // toUserId — uses email as identifier
+        transferModal.recipientEmail
+      );
       toast.success('Entrada transferida exitosamente');
       setTransferModal({
         open: false,
@@ -134,21 +139,30 @@ export default function MyTicketsPage() {
         loading: false,
       });
     } catch (error) {
-      toast.error('Error al transferir entrada');
-    } finally {
+      const msg = error instanceof Error ? error.message : 'Error al transferir entrada';
+      toast.error(msg);
       setTransferModal({ ...transferModal, loading: false });
     }
   };
 
   const handleResalePublish = async () => {
-    if (!resaleModal.ticketId) {
+    if (!resaleModal.ticketId || !user) {
       toast.error('Error: ticket no especificado');
+      return;
+    }
+
+    if (resaleModal.askingPrice <= 0) {
+      toast.error('El precio debe ser mayor a 0');
       return;
     }
 
     setResaleModal({ ...resaleModal, loading: true });
     try {
-      // TODO: Implement resale listing logic with resaleService.listForResale
+      await listForResale(
+        resaleModal.ticketId,
+        { ticketId: resaleModal.ticketId, askingPrice: resaleModal.askingPrice, image: '' },
+        user.uid
+      );
       toast.success('Entrada publicada en reventa');
       setResaleModal({
         open: false,
@@ -158,8 +172,8 @@ export default function MyTicketsPage() {
         loading: false,
       });
     } catch (error) {
-      toast.error('Error al publicar en reventa');
-    } finally {
+      const msg = error instanceof Error ? error.message : 'Error al publicar en reventa';
+      toast.error(msg);
       setResaleModal({ ...resaleModal, loading: false });
     }
   };

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEventById } from '../hooks/useEvents';
 import { formatDateES, formatPrice, getActivePhase, toDate } from '../lib/helpers';
+import { PurchaseModal } from '../components/checkout/PurchaseModal';
 import './EventPage.css';
 
 export default function EventPage() {
@@ -9,7 +10,6 @@ export default function EventPage() {
   const navigate = useNavigate();
   const { event, loading, error } = useEventById(eventId || '');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
 
   const handleBuyTickets = () => {
     if (!event) return;
@@ -24,8 +24,7 @@ export default function EventPage() {
     navigate('/reventa');
   };
 
-  const handleTierBuy = (tierId: string) => {
-    setSelectedTierId(tierId);
+  const handleTierBuy = (_tierId: string) => {
     setShowPurchaseModal(true);
   };
 
@@ -309,28 +308,12 @@ export default function EventPage() {
         </button>
       </div>
 
-      {/* Purchase Modal Placeholder */}
-      {showPurchaseModal && (
-        <div className="ev-detail-modal-overlay" onClick={() => setShowPurchaseModal(false)}>
-          <div className="ev-detail-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="ev-detail-modal__header">
-              <h3>Comprar entradas</h3>
-              <button
-                className="ev-detail-modal__close"
-                onClick={() => setShowPurchaseModal(false)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="ev-detail-modal__body">
-              <p>Componente de compra de entradas - próximamente disponible</p>
-              {selectedTierId && (
-                <p>Tier seleccionado: {selectedTierId}</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Purchase Modal */}
+      <PurchaseModal
+        event={event}
+        open={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+      />
     </div>
   );
 };
