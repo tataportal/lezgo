@@ -19,7 +19,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const getLowestPrice = (): number | null => {
     let lowest: number | null = null;
 
-    for (const tier of event.tiers) {
+    for (const tier of (event.tiers || [])) {
       const activePhase = getActivePhase(tier);
       if (activePhase) {
         if (lowest === null || activePhase.price < lowest) {

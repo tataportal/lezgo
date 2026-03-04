@@ -69,7 +69,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   // Calculate totals
   const subtotal = useMemo(() => {
     if (!event) return 0;
-    return event.tiers.reduce((sum, tier) => {
+    return (event.tiers || []).reduce((sum, tier) => {
       const qty = quantities[tier.id] || 0;
       const activePhase = getActivePhase(tier);
       return sum + (activePhase?.price || 0) * qty;
@@ -175,7 +175,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
         userEmail: user.email || '',
         userDni: dni,
         userName: name,
-        quantities: event.tiers
+        quantities: (event.tiers || [])
           .filter((tier) => (quantities[tier.id] || 0) > 0)
           .map((tier) => ({
             tierId: tier.id,
@@ -215,7 +215,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
             <p className="pm-subtitle">{event.name}</p>
 
             <div className="pm-tiers">
-              {event.tiers.map((tier) => {
+              {(event.tiers || []).map((tier) => {
                 const activePhase = getActivePhase(tier);
                 const available = tier.capacity - tier.sold;
                 const currentQty = quantities[tier.id] || 0;

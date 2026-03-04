@@ -36,7 +36,7 @@ export default function OrganizerPage() {
           const revenue = tickets
             .filter((t) => t.status === 'active' || t.status === 'transferred')
             .reduce((sum, t) => sum + t.price, 0);
-          const capacity = event.tiers.reduce((sum, tier) => sum + tier.capacity, 0);
+          const capacity = (event.tiers || []).reduce((sum, tier) => sum + tier.capacity, 0);
 
           return { event, ticketsSold, revenue, capacity };
         });
@@ -236,7 +236,7 @@ export default function OrganizerPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {event.tiers.map((tier) => {
+                          {(event.tiers || []).map((tier) => {
                             const tierRevenue = tier.sold * (tier.phases[0]?.price || 0);
                             return (
                               <tr key={tier.id}>

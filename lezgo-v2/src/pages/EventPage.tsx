@@ -97,7 +97,7 @@ export default function EventPage() {
           <h2 className="ev-detail-tiers__title">Entradas disponibles</h2>
 
           <div className="ev-detail-tiers__list">
-            {event.tiers.map((tier) => {
+            {(event.tiers || []).map((tier) => {
               const activePhase = getActivePhase(tier);
               const remaining = Math.max(0, tier.capacity - tier.sold);
 
@@ -286,11 +286,11 @@ export default function EventPage() {
       {/* Sticky Mobile CTA */}
       <div className="ev-detail-mobile-cta">
         <div className="ev-detail-mobile-cta__price">
-          {event.tiers[0] && getActivePhase(event.tiers[0]) && (
+          {(event.tiers || [])[0] && getActivePhase((event.tiers || [])[0]) && (
             <>
               <span className="ev-detail-mobile-cta__price-label">Desde</span>
               <span className="ev-detail-mobile-cta__price-value">
-                {formatPrice(getActivePhase(event.tiers[0])?.price || 0)}
+                {formatPrice(getActivePhase((event.tiers || [])[0])?.price || 0)}
               </span>
             </>
           )}
