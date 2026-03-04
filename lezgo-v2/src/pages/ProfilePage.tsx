@@ -203,7 +203,8 @@ const getTierLabel = (tier: 'none' | 'bronze' | 'silver' | 'gold'): string => {
   return labels[tier] || 'Bloqueado';
 };
 
-const getInitials = (name: string): string => {
+const getInitials = (name: string | undefined): string => {
+  if (!name) return 'U';
   return name
     .split(' ')
     .map((word) => word[0])
@@ -239,12 +240,12 @@ export default function ProfilePage() {
   // Calculate badges based on tickets
   useEffect(() => {
     const calculateBadgeData = (): BadgeCalculationData => {
-      const uniqueDistricts = new Set(tickets.map((t) => t.eventLocation)).size;
+      const uniqueDistricts = new Set(tickets.map((t) => t.eventLocation).filter(Boolean)).size;
       const technoTickets = tickets.filter((t) => t.ticketType === 'techno').length;
       const presaleTickets = tickets.filter((t) => t.couponCode === 'PRESALE').length;
-      const vipTickets = tickets.filter((t) => t.ticketName.includes('VIP')).length;
+      const vipTickets = tickets.filter((t) => t.ticketName?.includes('VIP')).length;
       const completedResales = tickets.filter((t) => t.status === 'transferred').length;
-      const totalSpent = tickets.reduce((sum, t) => sum + t.price, 0);
+      const totalSpent = tickets.reduce((sum, t) => sum + (t.price || 0), 0);
 
       return {
         totalTickets: tickets.length,
@@ -320,7 +321,7 @@ export default function ProfilePage() {
     return null;
   }
 
-  const totalSpent = tickets.reduce((sum, t) => sum + t.price, 0);
+  const totalSpent = tickets.reduce((sum, t) => sum + (t.price || 0), 0);
   const completedResales = tickets.filter((t) => t.status === 'transferred').length;
 
   return (
@@ -393,7 +394,7 @@ export default function ProfilePage() {
             <p className="profile-email">{profile.email}</p>
 
             <p className="profile-member-since">
-              Miembro desde {formatDate(profile.createdAt)}
+              Miembro desde {profile.createdAt ? formatDate(profile.createdAt) : 'N/A'}
             </p>
           </div>
         </div>

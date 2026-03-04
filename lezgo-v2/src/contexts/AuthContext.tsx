@@ -79,7 +79,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
-            setProfile(userDoc.data() as UserProfile);
+            const data = userDoc.data();
+            if (data) {
+              setProfile(data as UserProfile);
+            }
           } else {
             const newProfile: UserProfile = {
               email: firebaseUser.email || '',

@@ -115,7 +115,7 @@ export async function purchaseTickets(
     }
 
     const eventData = eventSnap.data();
-    const tiers = eventData.tiers;
+    const tiers = eventData.tiers || [];
 
     // Validate inventory and calculate price
     let totalPrice = 0;
@@ -136,7 +136,7 @@ export async function purchaseTickets(
         }
 
         // Get current price from active phase
-        const activePhase = tier.phases.find((phase: any) => phase.active);
+        const activePhase = tier.phases?.find((phase: any) => phase.active);
         if (!activePhase) {
           throw new Error(`No active phase for tier ${tier.name}`);
         }
@@ -198,7 +198,7 @@ export async function purchaseTickets(
         const tier = tiers.find((t: any) => t.id === tierQuantity.tierId);
         if (!tier) continue;
 
-        const activePhase = tier.phases.find((phase: any) => phase.active);
+        const activePhase = tier.phases?.find((phase: any) => phase.active);
         const ticketPrice = activePhase?.price || 0;
 
         for (let i = 0; i < tierQuantity.quantity; i++) {

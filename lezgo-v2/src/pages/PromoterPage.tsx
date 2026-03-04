@@ -18,15 +18,15 @@ function EventCard({ event }: EventCardProps) {
       style={{ cursor: 'pointer' }}
     >
       <div className="event-image">
-        <img src={event.image} alt={event.name} />
-        <div className="event-status">{event.status}</div>
+        <img src={event.image || ''} alt={event.name || ''} />
+        <div className="event-status">{event.status || ''}</div>
       </div>
       <div className="event-details">
-        <h3>{event.name}</h3>
-        <p className="event-subtitle">{event.subtitle}</p>
+        <h3>{event.name || ''}</h3>
+        <p className="event-subtitle">{event.subtitle || ''}</p>
         <div className="event-meta">
-          <span className="event-date">{event.dateLabel}</span>
-          <span className="event-venue">{event.venue}</span>
+          <span className="event-date">{event.dateLabel || ''}</span>
+          <span className="event-venue">{event.venue || ''}</span>
         </div>
       </div>
     </div>

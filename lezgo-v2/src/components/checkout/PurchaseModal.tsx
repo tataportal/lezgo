@@ -27,6 +27,7 @@ const formatDate = (dateStr: any) => {
 };
 
 function getActivePhase(tier: EventTier): EventPhase | null {
+  if (!tier.phases || tier.phases.length === 0) return null;
   let cumulativeSold = 0;
   for (const phase of tier.phases) {
     if (phase.active) {

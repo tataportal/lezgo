@@ -155,11 +155,11 @@ export default function ResaleCheckoutModal({
 
             <div className="rcm-listing-card">
               <div className="rcm-card-image">
-                <img src={resale.image} alt={resale.eventName} />
+                <img src={resale.image || ''} alt={resale.eventName || ''} />
               </div>
 
               <div className="rcm-card-details">
-                <h3 className="rcm-event-name">{resale.eventName}</h3>
+                <h3 className="rcm-event-name">{resale.eventName || 'Event'}</h3>
                 <p className="rcm-event-meta">
                   {toDate(resale.eventDate).toLocaleDateString('es-PE', {
                     weekday: 'long',

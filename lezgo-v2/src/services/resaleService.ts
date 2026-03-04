@@ -60,7 +60,7 @@ export async function listForResale(
     sellerId,
     sellerName: ticket.userName,
     sellerEmail: ticket.userEmail,
-    image: input.image,
+    image: input.image || '',
     status: 'listed' as const,
     fee,
     netToSeller,

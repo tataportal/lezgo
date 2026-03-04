@@ -223,9 +223,9 @@ export default function MyTicketsPage() {
                       <div className="mt-ticket-image-placeholder">🎵</div>
                     </div>
                     <div className="mt-ticket-info">
-                      <h3 className="mt-ticket-event">{ticket.eventName}</h3>
-                      <p className="mt-ticket-date">{formatDate(ticket.eventDate)}</p>
-                      <p className="mt-ticket-tier">{ticket.ticketName}</p>
+                      <h3 className="mt-ticket-event">{ticket.eventName || 'Evento'}</h3>
+                      <p className="mt-ticket-date">{ticket.eventDate ? formatDate(ticket.eventDate) : 'N/A'}</p>
+                      <p className="mt-ticket-tier">{ticket.ticketName || 'Entrada'}</p>
                     </div>
                     <div className="mt-ticket-status">
                       <span className={`mt-badge mt-badge--${ticket.status === 'resale-listed' ? 'orange' : 'green'}`}>
@@ -248,7 +248,7 @@ export default function MyTicketsPage() {
                       </div>
                       <div className="mt-detail">
                         <span className="mt-detail-label">DNI</span>
-                        <span className="mt-detail-value">{maskDni(ticket.userDni)}</span>
+                        <span className="mt-detail-value">{ticket.userDni ? maskDni(ticket.userDni) : 'N/A'}</span>
                       </div>
                       <div className="mt-detail">
                         <span className="mt-detail-label">Precio</span>
@@ -316,9 +316,9 @@ export default function MyTicketsPage() {
                       <div className="mt-ticket-image-placeholder">🎵</div>
                     </div>
                     <div className="mt-ticket-info">
-                      <h3 className="mt-ticket-event">{ticket.eventName}</h3>
-                      <p className="mt-ticket-date">{formatDate(ticket.eventDate)}</p>
-                      <p className="mt-ticket-tier">{ticket.ticketName}</p>
+                      <h3 className="mt-ticket-event">{ticket.eventName || 'Evento'}</h3>
+                      <p className="mt-ticket-date">{ticket.eventDate ? formatDate(ticket.eventDate) : 'N/A'}</p>
+                      <p className="mt-ticket-tier">{ticket.ticketName || 'Entrada'}</p>
                     </div>
                     <div className="mt-ticket-status">
                       <span className="mt-badge mt-badge--gray">
@@ -331,17 +331,17 @@ export default function MyTicketsPage() {
                     <div className="mt-ticket-details">
                       <div className="mt-detail">
                         <span className="mt-detail-label">Venue</span>
-                        <span className="mt-detail-value">{ticket.eventVenue}</span>
+                        <span className="mt-detail-value">{ticket.eventVenue || 'N/A'}</span>
                       </div>
                       <div className="mt-detail">
                         <span className="mt-detail-label">Fecha del evento</span>
                         <span className="mt-detail-value">
-                          {formatDateLong(ticket.eventDate)}
+                          {ticket.eventDate ? formatDateLong(ticket.eventDate) : 'N/A'}
                         </span>
                       </div>
                       <div className="mt-detail">
                         <span className="mt-detail-label">DNI</span>
-                        <span className="mt-detail-value">{maskDni(ticket.userDni)}</span>
+                        <span className="mt-detail-value">{ticket.userDni ? maskDni(ticket.userDni) : 'N/A'}</span>
                       </div>
                     </div>
                   )}

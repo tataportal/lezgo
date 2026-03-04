@@ -237,7 +237,7 @@ export default function OrganizerPage() {
                         </thead>
                         <tbody>
                           {(event.tiers || []).map((tier) => {
-                            const tierRevenue = tier.sold * (tier.phases[0]?.price || 0);
+                            const tierRevenue = tier.sold * (tier.phases?.[0]?.price || 0);
                             return (
                               <tr key={tier.id}>
                                 <td className="tier-name">{tier.name}</td>

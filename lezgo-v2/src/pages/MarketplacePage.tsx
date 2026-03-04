@@ -73,7 +73,7 @@ export default function MarketplacePage() {
       startOfWeek.setDate(now.getDate() - now.getDay());
 
       result = result.filter((r) => {
-        const eventDate = toDate(r.eventDate);
+        const eventDate = r.eventDate ? toDate(r.eventDate) : new Date();
         if (dateFilter === 'semana') {
           const endOfWeek = new Date(startOfWeek);
           endOfWeek.setDate(startOfWeek.getDate() + 7);
@@ -92,8 +92,8 @@ export default function MarketplacePage() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter((r) =>
-        r.eventName.toLowerCase().includes(query) ||
-        r.ticketTier.toLowerCase().includes(query)
+        r.eventName?.toLowerCase().includes(query) ||
+        r.ticketTier?.toLowerCase().includes(query)
       );
     }
 

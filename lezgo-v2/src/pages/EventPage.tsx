@@ -43,8 +43,8 @@ export default function EventPage() {
   }
 
   const isSoldOut = event.status === 'sold-out';
-  const hasLineup = event.visibleSections.lineup && event.lineup && event.lineup.length > 0;
-  const hasVenue = event.visibleSections.venue;
+  const hasLineup = event.visibleSections?.lineup && event.lineup && event.lineup.length > 0;
+  const hasVenue = event.visibleSections?.venue;
 
   return (
     <div className="ev-detail">
@@ -135,11 +135,11 @@ export default function EventPage() {
                       </div>
                     </div>
 
-                    {tier.phases.length > 1 && (
+                    {(tier.phases?.length ?? 0) > 1 && (
                       <div className="ev-detail-tier-card__phases">
                         <span className="ev-detail-tier-card__phases-label">Fases:</span>
                         <div className="ev-detail-tier-card__phases-list">
-                          {tier.phases.map((phase, idx) => (
+                          {(tier.phases || []).map((phase, idx) => (
                             <span
                               key={idx}
                               className={`ev-detail-tier-card__phase-badge ${
@@ -168,7 +168,7 @@ export default function EventPage() {
         </section>
 
         {/* Event Info Chips */}
-        {(event.meta.crowdSize || event.genre || event.meta.ageRestriction || event.meta.outdoor !== undefined || event.meta.alcohol !== undefined || event.meta.reentry !== undefined || event.meta.multiStage) && (
+        {(event.meta?.crowdSize || event.genre || event.meta?.ageRestriction || event.meta?.outdoor !== undefined || event.meta?.alcohol !== undefined || event.meta?.reentry !== undefined || event.meta?.multiStage) && (
           <section className="ev-detail-chips">
             <div className="ev-detail-chips__grid">
               {event.genre && (
@@ -178,48 +178,48 @@ export default function EventPage() {
                 </div>
               )}
 
-              {event.meta.ageRestriction && (
+              {event.meta?.ageRestriction && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Edad mínima</span>
-                  <span className="ev-detail-chip__value">{event.meta.ageRestriction}</span>
+                  <span className="ev-detail-chip__value">{event.meta?.ageRestriction}</span>
                 </div>
               )}
 
-              {event.meta.crowdSize && (
+              {event.meta?.crowdSize && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Aforo</span>
-                  <span className="ev-detail-chip__value">{event.meta.crowdSize}</span>
+                  <span className="ev-detail-chip__value">{event.meta?.crowdSize}</span>
                 </div>
               )}
 
-              {event.meta.outdoor !== undefined && (
+              {event.meta?.outdoor !== undefined && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Ubicación</span>
                   <span className="ev-detail-chip__value">
-                    {event.meta.outdoor ? 'Aire libre' : 'Cubierto'}
+                    {event.meta?.outdoor ? 'Aire libre' : 'Cubierto'}
                   </span>
                 </div>
               )}
 
-              {event.meta.alcohol !== undefined && (
+              {event.meta?.alcohol !== undefined && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Alcohol</span>
                   <span className="ev-detail-chip__value">
-                    {event.meta.alcohol ? 'Permitido' : 'Prohibido'}
+                    {event.meta?.alcohol ? 'Permitido' : 'Prohibido'}
                   </span>
                 </div>
               )}
 
-              {event.meta.reentry !== undefined && (
+              {event.meta?.reentry !== undefined && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Reentrada</span>
                   <span className="ev-detail-chip__value">
-                    {event.meta.reentry ? 'Permitida' : 'No permitida'}
+                    {event.meta?.reentry ? 'Permitida' : 'No permitida'}
                   </span>
                 </div>
               )}
 
-              {event.meta.multiStage && (
+              {event.meta?.multiStage && (
                 <div className="ev-detail-chip">
                   <span className="ev-detail-chip__label">Escenarios</span>
                   <span className="ev-detail-chip__value">Múltiples</span>
@@ -234,7 +234,7 @@ export default function EventPage() {
           <section className="ev-detail-lineup">
             <h2 className="ev-detail-lineup__title">Artistas</h2>
             <div className="ev-detail-lineup__grid">
-              {event.lineup.map((artist, idx) => (
+              {(event.lineup || []).map((artist, idx) => (
                 <div key={idx} className="ev-detail-artist-card">
                   <div className="ev-detail-artist-card__placeholder" />
                   <div className="ev-detail-artist-card__name">{artist}</div>

@@ -306,8 +306,8 @@ export async function searchEvents(searchTerm: string): Promise<Event[]> {
 
   return events.filter(
     (event) =>
-      event.name.toLowerCase().includes(lowerSearchTerm) ||
-      event.genre.toLowerCase().includes(lowerSearchTerm) ||
-      event.lineup.some((artist) => artist.toLowerCase().includes(lowerSearchTerm))
+      event.name?.toLowerCase().includes(lowerSearchTerm) ||
+      event.genre?.toLowerCase().includes(lowerSearchTerm) ||
+      (event.lineup || []).some((artist) => artist.toLowerCase().includes(lowerSearchTerm))
   );
 }
