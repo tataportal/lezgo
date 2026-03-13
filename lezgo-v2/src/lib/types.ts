@@ -13,6 +13,7 @@ export interface EventTier {
   capacity: number;
   sold: number;
   phases: EventPhase[];
+  includes?: string[];
 }
 
 export interface EventMeta {
@@ -28,6 +29,8 @@ export interface EventVisibleSections {
   lineup: boolean;
   venue: boolean;
   prohibitedItems: boolean;
+  tags?: boolean;
+  about?: boolean;
 }
 
 export type EventStatus = 'draft' | 'published' | 'sold-out' | 'past';
@@ -42,6 +45,8 @@ export interface Event {
   location: string;
   address: string;
   image: string;
+  timeStart?: string;
+  timeEnd?: string;
   heroVideo: string;
   description: string;
   descriptionLong: string;

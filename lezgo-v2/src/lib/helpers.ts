@@ -53,6 +53,12 @@ export function formatPriceShort(price: number): string {
   return `S/ ${Math.round(price)}`;
 }
 
+export function getEventImage(eventId: string, image?: string): string {
+  if (image && image.startsWith('http')) return image;
+  if (image) return image;
+  return `https://picsum.photos/seed/${eventId}/800/500`;
+}
+
 export function getActivePhase(tier: any): { name: string; price: number } | null {
   if (!tier?.phases || tier.phases.length === 0) {
     return null;
