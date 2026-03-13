@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from '../../i18n';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="lz-footer">
       <div className="lz-footer-inner">
@@ -8,12 +11,12 @@ export default function Footer() {
           <span className="lz-logo">LEZGO</span>
         </div>
         <div className="lz-footer-links">
-          <Link to="/conocenos">Conócenos</Link>
-          <Link to="/conocenos">Privacidad</Link>
-          <Link to="/conocenos">Términos</Link>
+          <Link to="/conocenos">{t.footer.about}</Link>
+          <Link to="/conocenos">{t.footer.privacy}</Link>
+          <Link to="/conocenos">{t.footer.terms}</Link>
         </div>
         <div className="lz-footer-copy">
-          &copy; {new Date().getFullYear()} Lezgo. Tickets verificados con tu identidad.
+          &copy; {new Date().getFullYear()} Lezgo. {t.footer.tagline}
         </div>
       </div>
     </footer>

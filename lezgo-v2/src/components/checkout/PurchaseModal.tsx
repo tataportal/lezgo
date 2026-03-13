@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { validateCoupon } from '../../services/couponService';
 import { purchaseTickets } from '../../services/ticketService';
+import { useTranslation } from '../../i18n';
 import type { Event, EventTier, EventPhase } from '../../lib/types';
 import toast from 'react-hot-toast';
 import './PurchaseModal.css';
@@ -51,9 +52,11 @@ function getActivePhase(tier: EventTier): EventPhase | null {
 
 export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   const { user, profile, loginWithGoogle, sendMagicLink } = useAuth();
+  const { t } = useTranslation();
   const [step, setStep] = useState<PurchaseStep>(0);
   const [quantities, setQuantities] = useState<{ [tierId: string]: number }>({});
   const [name, setName] = useState('');
+  const [idType, setIdType] = useState<'dni' | 'ce' | 'pasaporte'>('dni');
   const [dni, setDni] = useState('');
   const [magicEmail, setMagicEmail] = useState('');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
@@ -93,7 +96,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
         setLoading(true);
         await loginWithGoogle();
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error al iniciar sesión';
+        const msg = err instanceof Error ? err.message : t.purchase.errorLogin;
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -102,16 +105,16 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
     const handleMagicLink = async () => {
       if (!magicEmail.trim()) {
-        toast.error('Ingresa tu email');
+        toast.error(t.purchase.errorEmail);
         return;
       }
       try {
         setLoading(true);
         await sendMagicLink(magicEmail);
         setMagicLinkSent(true);
-        toast.success('Link mágico enviado a tu email');
+        toast.success(t.purchase.linkSent);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error al enviar link';
+        const msg = err instanceof Error ? err.message : t.purchase.errorSendLink;
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -123,8 +126,8 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
         <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
           <button className="pm-close" onClick={onClose}>✕</button>
           <div className="pm-content">
-            <h2 className="pm-title">Inicia sesión</h2>
-            <p className="pm-subtitle">Necesitas estar registrado para comprar entradas</p>
+            <h2 className="pm-title">{t.purchase.loginTitle}</h2>
+            <p className="pm-subtitle">{t.purchase.loginDesc}</p>
 
             {!magicLinkSent ? (
               <div className="pm-auth-buttons">
@@ -133,12 +136,12 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                   onClick={handleGoogleLogin}
                   disabled={loading}
                 >
-                  🔍 Continuar con Google
+                  {t.purchase.googleBtn}
                 </button>
-                <div style={{ textAlign: 'center', color: '#666', margin: '12px 0' }}>o</div>
+                <div style={{ textAlign: 'center', color: '#666', margin: '12px 0' }}>{t.purchase.or}</div>
                 <input
                   type="email"
-                  placeholder="Tu email"
+                  placeholder={t.purchase.emailPlaceholder}
                   value={magicEmail}
                   onChange={(e) => setMagicEmail(e.target.value)}
                   className="pm-input"
@@ -149,12 +152,12 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                   onClick={handleMagicLink}
                   disabled={loading || !magicEmail.trim()}
                 >
-                  ✨ Enviar link mágico
+                  {t.purchase.sendMagicLink}
                 </button>
               </div>
             ) : (
               <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>
-                <p>Revisa tu email para el link de acceso</p>
+                <p>{t.purchase.checkEmail}</p>
               </div>
             )}
           </div>
@@ -187,7 +190,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
-      toast.error('Ingresa un código de cupón');
+      toast.error(t.purchase.couponLabel);
       return;
     }
 
@@ -197,12 +200,12 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
       if (result.valid && result.discount) {
         setCouponDiscount(result.discount);
         setCouponApplied(true);
-        toast.success('Cupón aplicado correctamente');
+        toast.success(t.purchase.couponApplied);
       } else {
-        toast.error(result.error || 'Cupón inválido');
+        toast.error(result.error || t.purchase.couponInvalid);
       }
     } catch (error) {
-      toast.error('Error al validar cupón');
+      toast.error(t.purchase.couponError);
     } finally {
       setLoading(false);
     }
@@ -268,7 +271,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
           </div>
 
           <div className="pm-content">
-            <h2 className="pm-title">Selecciona entradas</h2>
+            <h2 className="pm-title">{t.purchase.selectTickets}</h2>
             <p className="pm-subtitle">{event.name}</p>
 
             <div className="pm-tiers">
@@ -283,7 +286,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                       <h3 className="pm-tier-name">{tier.name}</h3>
                       <p className="pm-tier-price">{formatPrice(activePhase?.price || 0)}</p>
                       <p className="pm-tier-available">
-                        {available > 0 ? `${available} disponibles` : 'Agotadas'}
+                        {available > 0 ? `${available} ${t.purchase.available}` : t.purchase.soldOutLabel}
                       </p>
                     </div>
                     {available > 0 && (
@@ -315,14 +318,14 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 className="pm-button pm-button--secondary"
                 onClick={() => setStep(0)}
               >
-                Atrás
+                {t.common.back}
               </button>
               <button
                 className="pm-button pm-button--primary"
                 onClick={() => setStep(2)}
                 disabled={totalQty === 0}
               >
-                Continuar
+                {t.common.continue}
               </button>
             </div>
           </div>
@@ -345,26 +348,43 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
           </div>
 
           <div className="pm-content">
-            <h2 className="pm-title">Verificación de identidad</h2>
-            <p className="pm-subtitle">Completa tus datos</p>
+            <h2 className="pm-title">{t.purchase.verifyTitle}</h2>
+            <p className="pm-subtitle">{t.purchase.verifyDesc}</p>
 
             <div className="pm-form">
               <input
                 type="text"
-                placeholder="Tu nombre completo"
+                placeholder={t.purchase.fullNamePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="pm-input"
               />
+              <select
+                value={idType}
+                onChange={(e) => { setIdType(e.target.value as 'dni' | 'ce' | 'pasaporte'); setDni(''); }}
+                className="pm-input pm-select"
+              >
+                <option value="dni">{t.purchase.dniLabel}</option>
+                <option value="ce">{t.purchase.carnetLabel}</option>
+                <option value="pasaporte">{t.purchase.passportLabel}</option>
+              </select>
               <input
                 type="text"
-                placeholder="DNI (8 dígitos)"
+                placeholder={
+                  idType === 'dni' ? t.purchase.dniPlaceholder :
+                  idType === 'ce' ? t.purchase.carnetPlaceholder :
+                  t.purchase.passportPlaceholder
+                }
                 value={dni}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 8);
-                  setDni(val);
+                  if (idType === 'pasaporte') {
+                    setDni(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12));
+                  } else {
+                    const maxLen = idType === 'dni' ? 8 : 9;
+                    setDni(e.target.value.replace(/\D/g, '').slice(0, maxLen));
+                  }
                 }}
-                maxLength={8}
+                maxLength={idType === 'pasaporte' ? 12 : idType === 'ce' ? 9 : 8}
                 className="pm-input"
               />
             </div>
@@ -374,14 +394,14 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 className="pm-button pm-button--secondary"
                 onClick={() => setStep(1)}
               >
-                Atrás
+                {t.common.back}
               </button>
               <button
                 className="pm-button pm-button--primary"
                 onClick={() => setStep(3)}
-                disabled={!name.trim() || dni.length !== 8}
+                disabled={!name.trim() || (idType === 'dni' ? dni.length !== 8 : idType === 'ce' ? dni.length !== 9 : dni.length < 5)}
               >
-                Continuar
+                {t.common.continue}
               </button>
             </div>
           </div>
@@ -404,14 +424,14 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
           </div>
 
           <div className="pm-content">
-            <h2 className="pm-title">Cupón y resumen</h2>
+            <h2 className="pm-title">{t.purchase.couponTitle}</h2>
 
             <div className="pm-coupon-section">
-              <h3 className="pm-section-title">Cupón de descuento</h3>
+              <h3 className="pm-section-title">{t.purchase.couponLabel}</h3>
               <div className="pm-coupon-input-group">
                 <input
                   type="text"
-                  placeholder="Ingresa código de cupón"
+                  placeholder={t.purchase.couponPlaceholder}
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                   disabled={couponApplied}
@@ -423,7 +443,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                     onClick={handleApplyCoupon}
                     disabled={loading || !couponCode.trim()}
                   >
-                    {loading ? 'Validando...' : 'Aplicar'}
+                    {loading ? t.purchase.validating : t.purchase.apply}
                   </button>
                 )}
                 {couponApplied && (
@@ -435,42 +455,42 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                       setCouponDiscount(0);
                     }}
                   >
-                    Remover
+                    {t.purchase.remove}
                   </button>
                 )}
               </div>
             </div>
 
             <div className="pm-summary">
-              <h3 className="pm-section-title">Resumen de compra</h3>
+              <h3 className="pm-section-title">{t.purchase.orderSummary}</h3>
               <div className="pm-summary-row">
-                <span>Subtotal</span>
+                <span>{t.purchase.subtotal}</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
               {discount > 0 && (
                 <div className="pm-summary-row pm-summary-row--discount">
-                  <span>Descuento ({(couponDiscount * 100).toFixed(0)}%)</span>
+                  <span>{t.purchase.discount} ({(couponDiscount * 100).toFixed(0)}%)</span>
                   <span>-{formatPrice(discount)}</span>
                 </div>
               )}
               {subtotal > 0 && discount < subtotal && (
                 <>
                   <div className="pm-summary-row pm-summary-row--fees">
-                    <span>Plataforma (3.3%)</span>
+                    <span>{t.purchase.feePlatform}</span>
                     <span>{formatPrice((subtotal - discount) * 0.033)}</span>
                   </div>
                   <div className="pm-summary-row pm-summary-row--fees">
-                    <span>Verificación (2.1%)</span>
+                    <span>{t.purchase.feeVerification}</span>
                     <span>{formatPrice((subtotal - discount) * 0.021)}</span>
                   </div>
                   <div className="pm-summary-row pm-summary-row--fees">
-                    <span>Procesamiento (2.9%)</span>
+                    <span>{t.purchase.feeProcessing}</span>
                     <span>{formatPrice((subtotal - discount) * 0.029)}</span>
                   </div>
                 </>
               )}
               <div className="pm-summary-row pm-summary-row--total">
-                <span>Total</span>
+                <span>{t.purchase.total}</span>
                 <span>{formatPrice(total)}</span>
               </div>
             </div>
@@ -480,14 +500,14 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 className="pm-button pm-button--secondary"
                 onClick={() => setStep(2)}
               >
-                Atrás
+                {t.common.back}
               </button>
               <button
                 className="pm-button pm-button--primary"
                 onClick={handlePurchase}
                 disabled={loading}
               >
-                {loading ? 'Procesando...' : 'Comprar entradas'}
+                {loading ? t.common.processing : t.purchase.buyTickets}
               </button>
             </div>
           </div>
@@ -511,26 +531,26 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
           <div className="pm-content pm-content--centered">
             <div className="pm-success-icon">✓</div>
-            <h2 className="pm-title">¡Compra confirmada!</h2>
-            <p className="pm-subtitle">Tus entradas han sido generadas exitosamente</p>
+            <h2 className="pm-title">{t.purchase.confirmTitle}</h2>
+            <p className="pm-subtitle">{t.purchase.confirmDesc}</p>
 
             <div className="pm-confirmation-details">
               <div className="pm-detail">
-                <span className="pm-detail-label">Evento</span>
+                <span className="pm-detail-label">{t.purchase.eventLabel}</span>
                 <span className="pm-detail-value">{event.name}</span>
               </div>
               <div className="pm-detail">
-                <span className="pm-detail-label">Fecha</span>
+                <span className="pm-detail-label">{t.purchase.dateLabel}</span>
                 <span className="pm-detail-value">{formatDate(event.date)}</span>
               </div>
               <div className="pm-detail">
-                <span className="pm-detail-label">Entradas</span>
+                <span className="pm-detail-label">{t.purchase.ticketsLabel}</span>
                 <span className="pm-detail-value">
-                  {Object.values(quantities).reduce((a, b) => a + b, 0)} entradas
+                  {Object.values(quantities).reduce((a, b) => a + b, 0)} {t.myTickets.tickets}
                 </span>
               </div>
               <div className="pm-detail">
-                <span className="pm-detail-label">Total pagado</span>
+                <span className="pm-detail-label">{t.purchase.totalPaid}</span>
                 <span className="pm-detail-value pm-detail-value--highlight">{formatPrice(total)}</span>
               </div>
             </div>
@@ -540,7 +560,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 className="pm-button pm-button--primary"
                 onClick={onClose}
               >
-                Ir a mis entradas
+                {t.purchase.goToTickets}
               </button>
             </div>
           </div>

@@ -1,297 +1,397 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../i18n';
 import toast from 'react-hot-toast';
 import './AuthPage.css';
 
 type AuthTab = 'login' | 'register';
-type RegisterStep = 'contact' | 'dni' | 'success';
 
-const GOOGLE_ICON = '🔍';
-const MAGIC_LINK_ICON = '✨';
-const CHECKMARK_ICON = '✅';
-const MAIL_ICON = '📬';
+/* Google SVG icon — same as monolith */
+const GoogleIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24">
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+    <path d="M5.84 14.09a6.97 6.97 0 0 1 0-4.17V7.07H2.18A11.96 11.96 0 0 0 0 12c0 1.94.46 3.77 1.28 5.41l3.56-2.84.01-.48z" fill="#FBBC05"/>
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+  </svg>
+);
 
 export default function AuthPage() {
   const navigate = useNavigate();
-  const { user, loading, loginWithGoogle, sendMagicLink } = useAuth();
+  const { t } = useTranslation();
+  const { user, loading, loginWithGoogle, sendMagicLink, updateProfile } = useAuth();
+
   const [tab, setTab] = useState<AuthTab>('login');
-  const [registerStep, setRegisterStep] = useState<RegisterStep>('contact');
+  const [regStep, setRegStep] = useState(1); // 1=account, 2=dni, 3=photo+success
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [idType, setIdType] = useState<'dni' | 'ce' | 'pasaporte'>('dni');
   const [dni, setDni] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [sentEmail, setSentEmail] = useState('');
+  const [linkSent, setLinkSent] = useState(false);
+  const [photoCaptured, setPhotoCaptured] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
-  // Redirect if user is already logged in
   useEffect(() => {
     if (!loading && user) {
-      navigate('/perfil');
+      // If user just registered via Google, advance to step 2
+      if (tab === 'register' && regStep === 1) {
+        setRegStep(2);
+        if (user.displayName) setName(user.displayName);
+        return;
+      }
+      // If on login tab or already past step 1, go to profile
+      if (tab === 'login') {
+        navigate('/perfil');
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, tab, regStep]);
 
   if (loading) {
     return (
-      <div className="auth-container">
+      <div className="auth-view">
+        <div className="auth-logo">{t.auth.logo}</div>
         <div className="auth-card">
-          <div className="auth-loading">Cargando...</div>
+          <div className="auth-body" style={{ textAlign: 'center', padding: '60px 32px' }}>
+            <div className="auth-spinner" />
+            <div className="auth-loading-text">{t.common.loading}</div>
+          </div>
         </div>
       </div>
     );
   }
 
+  /* ── Handlers ── */
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       await loginWithGoogle();
-      toast.success('¡Bienvenido a LEZGO!');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al iniciar sesión';
-      toast.error(errorMessage);
+      if (tab === 'login') {
+        toast.success(t.auth.welcomeToast);
+      }
+    } catch (err: unknown) {
+      const error = err as { code?: string; message?: string };
+      if (error.code !== 'auth/popup-closed-by-user') {
+        toast.error(error.message || t.auth.errorLogin);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email) {
-      toast.error('Ingresa tu correo');
+  const handleMagicLink = async () => {
+    if (!email || !email.includes('@')) {
+      toast.error(t.auth.errorEmail);
       return;
     }
-
     try {
       setIsLoading(true);
       await sendMagicLink(email);
-      setSentEmail(email);
-      setEmailSent(true);
-      toast.success('Link mágico enviado');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al enviar link';
-      toast.error(errorMessage);
+      setLinkSent(true);
+      toast.success(t.auth.linkSent);
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      toast.error(error.message || t.auth.errorSendLink);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRegisterDni = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name || !dni) {
-      toast.error('Completa todos los campos');
+  const handleRegStep2 = () => {
+    if (!name.trim()) {
+      toast.error(t.auth.errorName);
       return;
     }
-
-    if (dni.length !== 8 || !/^\d+$/.test(dni)) {
-      toast.error('DNI debe tener 8 dígitos');
+    const dniValid =
+      idType === 'dni' ? dni.length === 8 && /^\d+$/.test(dni) :
+      idType === 'ce' ? dni.length === 9 && /^\d+$/.test(dni) :
+      dni.length >= 5 && /^[a-zA-Z0-9]+$/.test(dni);
+    if (!dni.trim() || !dniValid) {
+      toast.error(
+        idType === 'dni' ? t.auth.errorDni :
+        idType === 'ce' ? t.auth.errorCarnet :
+        t.auth.errorPassport
+      );
       return;
     }
+    setRegStep(3);
+  };
 
-    setRegisterStep('success');
-  }; return (
-    <div className="auth-container">
+  const handleFinishRegister = async () => {
+    if (!user) { toast.error(t.auth.errorNoAccount); return; }
+    try {
+      setVerifying(true);
+      await updateProfile({ displayName: name.trim(), dni: dni.trim() });
+      // Simulate verification delay like monolith
+      setTimeout(() => {
+        setVerifying(false);
+        setShowSuccess(true);
+      }, 1500);
+    } catch {
+      toast.error(t.auth.errorRegister);
+      setVerifying(false);
+    }
+  };
+
+  const switchTab = (t: AuthTab) => {
+    setTab(t);
+    setRegStep(1);
+    setEmail('');
+    setName('');
+    setDni('');
+    setLinkSent(false);
+    setPhotoCaptured(false);
+    setShowSuccess(false);
+    setVerifying(false);
+  };
+
+  /* ── Steps bar for register ── */
+  const StepsBar = () => (
+    <div className="auth-steps-bar">
+      {[1, 2, 3].map(s => (
+        <span
+          key={s}
+          className={s < regStep ? 'done' : s === regStep ? 'active' : ''}
+        />
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="auth-view">
+      <div className="auth-logo" onClick={() => navigate('/inicio')}>{t.auth.logo}</div>
+
       <div className="auth-card">
-        {/* Logo */}
-        <div className="auth-logo">LEZGO</div>
-
-        {/* Tabs */}
+        {/* ── Tabs ── */}
         <div className="auth-tabs">
           <button
             className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
-            onClick={() => {
-              setTab('login');
-              setRegisterStep('contact');
-              setEmail('');
-              setName('');
-              setDni('');
-              setEmailSent(false);
-              setSentEmail('');
-            }}
+            onClick={() => switchTab('login')}
           >
-            Iniciar sesión
+            {t.auth.loginTab}
           </button>
           <button
             className={`auth-tab ${tab === 'register' ? 'active' : ''}`}
-            onClick={() => {
-              setTab('register');
-              setRegisterStep('contact');
-              setEmail('');
-              setName('');
-              setDni('');
-              setEmailSent(false);
-              setSentEmail('');
-            }}
+            onClick={() => switchTab('register')}
           >
-            Crear cuenta
+            {t.auth.registerTab}
           </button>
         </div>
 
-        {/* Login Tab */}
-        {tab === 'login' && (
-          <div className="auth-content">
-            {!emailSent ? (
-              <>
-                <button
-                  className="auth-button auth-button--google"
-                  onClick={handleGoogleLogin}
-                  disabled={isLoading}
-                >
-                  <span className="auth-button-icon">{GOOGLE_ICON}</span>
-                  Continuar con Google
-                </button>
+        <div className="auth-body">
+          {/* ════════════════════════════════════════
+             LOGIN PANEL
+             ════════════════════════════════════════ */}
+          {tab === 'login' && (
+            <>
+              <div className="auth-title">{t.auth.welcomeBack}</div>
+              <div className="auth-sub">{t.auth.loginDesc}</div>
 
-                <div className="auth-divider">
-                  <span>o</span>
+              <button className="auth-btn-google" onClick={handleGoogleLogin} disabled={isLoading}>
+                <GoogleIcon />
+                {t.auth.googleBtn}
+              </button>
+
+              <div className="auth-divider"><span>{t.auth.orEmail}</span></div>
+
+              <label className="auth-label">{t.auth.emailLabel}</label>
+              <input
+                className="auth-input"
+                type="email"
+                placeholder={t.auth.emailPlaceholder}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
+                disabled={isLoading}
+              />
+              <button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
+                {t.auth.sendMagicLink}
+              </button>
+
+              {linkSent && (
+                <div className="auth-link-sent">
+                  <div className="auth-link-sent-icon">{t.auth.linkSentIcon}</div>
+                  <strong>{t.auth.linkSentTitle}</strong><br />
+                  {t.auth.linkSentDesc}<br />
+                  <span className="auth-link-sent-sub">{t.auth.linkSentAutoLogin}</span>
                 </div>
+              )}
 
-                <form onSubmit={handleMagicLink}>
+              <div className="auth-switch">
+                {t.auth.noAccount}{' '}
+                <a onClick={() => switchTab('register')}>{t.auth.createHere}</a>
+              </div>
+            </>
+          )}
+
+          {/* ════════════════════════════════════════
+             REGISTER PANEL
+             ════════════════════════════════════════ */}
+          {tab === 'register' && (
+            <>
+              <StepsBar />
+
+              {/* ── Step 1: Create account ── */}
+              {regStep === 1 && !showSuccess && (
+                <div className="auth-step active">
+                  <div className="auth-title">{t.auth.createAccount}</div>
+                  <div className="auth-sub">{t.auth.createDesc}</div>
+
+                  <button className="auth-btn-google" onClick={handleGoogleLogin} disabled={isLoading}>
+                    <GoogleIcon />
+                    {t.auth.googleBtn}
+                  </button>
+
+                  <div className="auth-divider"><span>{t.auth.orEmail}</span></div>
+
+                  <label className="auth-label">{t.auth.emailLabel}</label>
                   <input
-                    type="email"
-                    placeholder="tu@correo.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     className="auth-input"
+                    type="email"
+                    placeholder={t.auth.emailPlaceholder}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
                     disabled={isLoading}
                   />
-                  <button
-                    type="submit"
-                    className="auth-button auth-button--primary"
-                    disabled={isLoading}
-                  >
-                    Enviar link mágico {MAGIC_LINK_ICON}
+                  <button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
+                    {t.auth.sendMagicLink}
                   </button>
-                </form>
-              </>
-            ) : (
-              <div className="auth-confirmation">
-                <div className="auth-confirmation-icon">{MAIL_ICON}</div>
-                <h3>Revisa tu correo</h3>
-                <p>Hemos enviado un link mágico a:</p>
-                <p className="auth-confirmation-email">{sentEmail}</p>
-                <button
-                  className="auth-button auth-button--ghost"
-                  onClick={() => {
-                    setEmailSent(false);
-                    setEmail('');
-                  }}
-                >
-                  Usar otro correo
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Register Tab */}
-        {tab === 'register' && (
-          <div className="auth-content">
-            {registerStep === 'contact' && !emailSent ? (
-              <>
-                <button
-                  className="auth-button auth-button--google"
-                  onClick={handleGoogleLogin}
-                  disabled={isLoading}
-                >
-                  <span className="auth-button-icon">{GOOGLE_ICON}</span>
-                  Continuar con Google
-                </button>
+                  {linkSent && (
+                    <div className="auth-link-sent">
+                      <div className="auth-link-sent-icon">{t.auth.linkSentIcon}</div>
+                      <strong>{t.auth.linkSentTitle}</strong><br />
+                      {t.auth.linkSentDesc}<br />
+                      <span className="auth-link-sent-sub">{t.auth.linkSentRegisterDesc}</span>
+                    </div>
+                  )}
 
-                <div className="auth-divider">
-                  <span>o</span>
+                  <div className="auth-switch">
+                    {t.auth.hasAccount}{' '}
+                    <a onClick={() => switchTab('login')}>{t.auth.loginHere}</a>
+                  </div>
                 </div>
+              )}
 
-                <form onSubmit={handleMagicLink}>
+              {/* ── Step 2: DNI + Name ── */}
+              {regStep === 2 && !showSuccess && (
+                <div className="auth-step active">
+                  <div className="auth-title">{t.auth.verifyTitle}</div>
+                  <div className="auth-sub">{t.auth.verifyDesc}</div>
+
+                  <label className="auth-label">{t.auth.fullName}</label>
                   <input
-                    type="email"
-                    placeholder="tu@correo.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     className="auth-input"
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="submit"
-                    className="auth-button auth-button--primary"
-                    disabled={isLoading}
-                  >
-                    Enviar link mágico {MAGIC_LINK_ICON}
-                  </button>
-                </form>
-              </>
-            ) : registerStep === 'contact' && emailSent ? (
-              <div className="auth-confirmation">
-                <div className="auth-confirmation-icon">{MAIL_ICON}</div>
-                <h3>Revisa tu correo</h3>
-                <p>Hemos enviado un link mágico a:</p>
-                <p className="auth-confirmation-email">{sentEmail}</p>
-                <p className="auth-confirmation-info">
-                  Una vez confirmes tu correo, completa tu perfil en la siguiente pantalla.
-                </p>
-                <button
-                  className="auth-button auth-button--ghost"
-                  onClick={() => {
-                    setEmailSent(false);
-                    setEmail('');
-                  }}
-                >
-                  Usar otro correo
-                </button>
-              </div>
-            ) : registerStep === 'dni' ? (
-              <>
-                <h3 className="auth-step-title">Verificar identidad</h3>
-                <form onSubmit={handleRegisterDni}>
-                  <input
                     type="text"
-                    placeholder="Tu nombre completo"
+                    placeholder={t.auth.fullNamePlaceholder}
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="auth-input"
-                    disabled={isLoading}
+                    onChange={e => setName(e.target.value)}
                   />
-                  <input
-                    type="text"
-                    placeholder="DNI (8 dígitos)"
-                    value={dni}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '').slice(0, 8);
-                      setDni(value);
-                    }}
-                    className="auth-input"
-                    disabled={isLoading}
-                    maxLength={8}
-                  />
-                  <button
-                    type="submit"
-                    className="auth-button auth-button--primary"
-                    disabled={isLoading}
+
+                  <label className="auth-label">{t.auth.docType}</label>
+                  <select
+                    className="auth-input auth-select"
+                    value={idType}
+                    onChange={e => { setIdType(e.target.value as 'dni' | 'ce' | 'pasaporte'); setDni(''); }}
                   >
-                    Verificar identidad
+                    <option value="dni">{t.auth.dni}</option>
+                    <option value="ce">{t.auth.carnet}</option>
+                    <option value="pasaporte">{t.auth.passport}</option>
+                  </select>
+
+                  <label className="auth-label">
+                    {idType === 'dni' ? t.auth.dniNumber : idType === 'ce' ? t.auth.carnetNumber : t.auth.passportNumber}
+                  </label>
+                  <input
+                    className="auth-input"
+                    type="text"
+                    placeholder={idType === 'dni' ? t.auth.dniPlaceholder : idType === 'ce' ? t.auth.carnetPlaceholder : t.auth.passportPlaceholder}
+                    maxLength={idType === 'pasaporte' ? 12 : idType === 'ce' ? 9 : 8}
+                    value={dni}
+                    onChange={e => {
+                      if (idType === 'pasaporte') {
+                        setDni(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12));
+                      } else {
+                        const maxLen = idType === 'dni' ? 8 : 9;
+                        setDni(e.target.value.replace(/\D/g, '').slice(0, maxLen));
+                      }
+                    }}
+                  />
+
+                  <div className="auth-security-note">
+                    {t.auth.dniSafe}
+                  </div>
+
+                  <button className="auth-btn" style={{ marginTop: 16 }} onClick={handleRegStep2}>
+                    {t.auth.nextPhoto}
                   </button>
-                </form>
-              </>
-            ) : (
-              <div className="auth-confirmation">
-                <div className="auth-confirmation-icon auth-confirmation-icon--success">
-                  {CHECKMARK_ICON}
+                  <button className="auth-btn-ghost" onClick={() => setRegStep(1)}>
+                    {t.auth.goBack}
+                  </button>
                 </div>
-                <h3>Identidad verificada</h3>
-                <p>¡Bienvenido a LEZGO, {name}!</p>
-                <p className="auth-confirmation-info">
-                  Tu cuenta ha sido creada exitosamente. Ahora puedes explorar eventos y comprar entradas.
-                </p>
-                <button
-                  className="auth-button auth-button--primary"
-                  onClick={() => navigate('/inicio')}
-                >
-                  Ir a eventos
-                </button>
-              </div>
-            )}
+              )}
+
+              {/* ── Step 3: Photo + Success ── */}
+              {regStep === 3 && !showSuccess && (
+                <div className="auth-step active">
+                  {!verifying ? (
+                    <>
+                      <div className="auth-title">{t.auth.photoTitle}</div>
+                      <div className="auth-sub">{t.auth.photoDesc}</div>
+
+                      <div
+                        className={`auth-photo-box ${photoCaptured ? 'captured' : ''}`}
+                        onClick={() => setPhotoCaptured(true)}
+                      >
+                        <span>{photoCaptured ? '🤳' : '📷'}</span>
+                        <div className="auth-photo-overlay">{t.auth.takePhoto}</div>
+                      </div>
+
+                      <button className="auth-btn" onClick={handleFinishRegister}>
+                        {t.auth.takePhotoRegister}
+                      </button>
+                      <button className="auth-btn-ghost" onClick={() => setRegStep(2)}>
+                        {t.auth.goBack}
+                      </button>
+                    </>
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                      <div className="auth-spinner" />
+                      <div className="auth-loading-text">{t.auth.verifying}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Success state ── */}
+              {showSuccess && (
+                <div className="auth-step active">
+                  <div className="auth-success-icon">{t.auth.successIcon}</div>
+                  <div className="auth-success-title">{t.auth.successTitle}</div>
+                  <div className="auth-success-sub">
+                    {t.auth.successDesc}
+                  </div>
+                  <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                    <div className="auth-verified-badge">{t.auth.successBadge}</div>
+                  </div>
+                  <button className="auth-btn" onClick={() => navigate('/inicio')}>
+                    {t.auth.exploreEvents}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ── Legal ── */}
+          <div className="auth-legal">
+            {t.auth.termsPrefix}{' '}
+            <a href="/conocenos" target="_blank">{t.auth.termsLink}</a> {t.auth.andText}{' '}
+            <a href="/conocenos" target="_blank">{t.auth.privacyLink}</a> {t.auth.termsSuffix}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../../i18n';
 import type { Event } from '../../lib/types';
-import { formatDateShort, formatPriceShort, getActivePhase, toDate } from '../../lib/helpers';
+import { formatDateShort, formatPriceShort, getActivePhase, getEventImage, toDate } from '../../lib/helpers';
 import './EventCard.css';
 
 interface EventCardProps {
@@ -10,9 +11,10 @@ interface EventCardProps {
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleClick = () => {
-    navigate(`/evento/${event.id}`);
+    navigate(`/evento/${event.slug || event.id}`);
   };
 
   const getLowestPrice = (): number | null => {
@@ -29,14 +31,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   const lowestPrice = getLowestPrice();
-  const backgroundStyle: React.CSSProperties = event.image
-    ? { backgroundImage: `url(${event.image})` }
-    : { background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' };
+  const img = getEventImage(event.id, event.image);
+  const backgroundStyle: React.CSSProperties = { backgroundImage: `url(${img})` };
 
   // Badge logic — matches monolith: sold-out = hot red, featured = nuevo acid border
   const getBadge = () => {
-    if (event.status === 'sold-out') return { text: 'Agotado', className: 'ev-card__badge--sold-out' };
-    if (event.featured) return { text: 'Destacado', className: 'ev-card__badge--featured' };
+    if (event.status === 'sold-out') return { text: t.common.soldOut, className: 'ev-card__badge--sold-out' };
+    if (event.featured) return { text: t.common.published === 'Publicado' ? 'Destacado' : t.common.published, className: 'ev-card__badge--featured' };
     return null;
   };
 
@@ -65,7 +66,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <span className="ev-card__price">
             {lowestPrice !== null ? formatPriceShort(lowestPrice) : '---'}
           </span>
-          <span className="ev-card__verified">☺ Verificado</span>
+          <span className="ev-card__verified">☺ {t.common.verified}</span>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { getEventById, createEvent, updateEvent } from '../services/eventService';
+import { useTranslation } from '../i18n';
 import type { EventTier, EventPhase, EventMeta, EventVisibleSections } from '../lib/types';
 import { toDate } from '../lib/helpers';
 import { Timestamp } from 'firebase/firestore';
@@ -47,6 +48,7 @@ const generateTierId = (): string => {
 export default function EventFormPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get('id');
   const isEditMode = Boolean(eventId);
@@ -101,7 +103,7 @@ export default function EventFormPage() {
     try {
       const event = await getEventById(id);
       if (!event) {
-        toast.error('Evento no encontrado');
+        toast.error(t.eventForm.errorNotFound);
         navigate('/organizer');
         return;
       }
@@ -127,23 +129,34 @@ export default function EventFormPage() {
         tiers: Array.isArray(event.tiers) ? event.tiers : [],
         status: (event.status as 'draft' | 'published' | 'sold-out' | 'past') ?? 'draft',
         featured: event.featured ?? false,
-        visibleSections: event.visibleSections ? {
-          lineup: event.visibleSections.lineup ?? true,
-          venue: event.visibleSections.venue ?? true,
-          prohibitedItems: event.visibleSections.prohibitedItems ?? true,
-        } : { lineup: true, venue: true, prohibitedItems: true },
-        meta: event.meta ? {
-          crowdSize: event.meta.crowdSize ?? 'medium',
-          multiStage: event.meta.multiStage ?? false,
-          alcohol: event.meta.alcohol ?? false,
-          reentry: event.meta.reentry ?? false,
-          outdoor: event.meta.outdoor ?? false,
-          ageRestriction: event.meta.ageRestriction ?? '18+',
-        } : { crowdSize: 'medium', multiStage: false, alcohol: false, reentry: false, outdoor: false, ageRestriction: '18+' },
+        visibleSections: event.visibleSections
+          ? {
+              lineup: event.visibleSections.lineup ?? true,
+              venue: event.visibleSections.venue ?? true,
+              prohibitedItems: event.visibleSections.prohibitedItems ?? true,
+            }
+          : { lineup: true, venue: true, prohibitedItems: true },
+        meta: event.meta
+          ? {
+              crowdSize: event.meta.crowdSize ?? 'medium',
+              multiStage: event.meta.multiStage ?? false,
+              alcohol: event.meta.alcohol ?? false,
+              reentry: event.meta.reentry ?? false,
+              outdoor: event.meta.outdoor ?? false,
+              ageRestriction: event.meta.ageRestriction ?? '18+',
+            }
+          : {
+              crowdSize: 'medium',
+              multiStage: false,
+              alcohol: false,
+              reentry: false,
+              outdoor: false,
+              ageRestriction: '18+',
+            },
       });
     } catch (error) {
       console.error('Error loading event:', error);
-      toast.error('Error cargando el evento');
+      toast.error(t.eventForm.errorLoad);
     } finally {
       setInitialLoading(false);
     }
@@ -278,9 +291,7 @@ export default function EventFormPage() {
   const updateTier = (tierId: string, updates: Partial<EventTier>) => {
     setFormData((prev) => ({
       ...prev,
-      tiers: prev.tiers.map((tier) =>
-        tier.id === tierId ? { ...tier, ...updates } : tier
-      ),
+      tiers: prev.tiers.map((tier) => (tier.id === tierId ? { ...tier, ...updates } : tier)),
     }));
   };
 
@@ -319,12 +330,12 @@ export default function EventFormPage() {
     e.preventDefault();
 
     if (!user) {
-      toast.error('Debes estar autenticado');
+      toast.error(t.eventForm.errorAuth);
       return;
     }
 
     if (!formData.name || !formData.date || !formData.venue || formData.tiers.length === 0) {
-      toast.error('Por favor completa todos los campos requeridos');
+      toast.error(t.eventForm.errorRequired);
       return;
     }
 
@@ -332,6 +343,11 @@ export default function EventFormPage() {
 
     try {
       const dateObj = new Date(formData.date);
+      if (isNaN(dateObj.getTime())) {
+        toast.error(t.eventForm.errorDate);
+        setLoading(false);
+        return;
+      }
       const timestamp = Timestamp.fromDate(dateObj);
 
       const eventInput = {
@@ -360,16 +376,16 @@ export default function EventFormPage() {
 
       if (isEditMode && eventId) {
         await updateEvent(eventId, eventInput);
-        toast.success('Evento actualizado exitosamente');
+        toast.success(t.eventForm.successUpdate);
       } else {
         await createEvent(eventInput, user.uid);
-        toast.success('Evento creado exitosamente');
+        toast.success(t.eventForm.successCreate);
       }
 
       navigate('/organizer');
     } catch (error) {
       console.error('Error saving event:', error);
-      toast.error('Error al guardar el evento');
+      toast.error(t.eventForm.errorSave);
     } finally {
       setLoading(false);
     }
@@ -384,516 +400,613 @@ export default function EventFormPage() {
   }
 
   return (
-    <div className="event-form-page">
-      <div className="form-container">
-        <h1 className="form-title">{isEditMode ? 'Editar Evento' : 'Crear Nuevo Evento'}</h1>
+    <div className="ef-view">
+      <div className="ef-header">
+        <h1>{isEditMode ? t.eventForm.editEvent : t.eventForm.newEvent}</h1>
+        <button type="button" className="ef-back" onClick={() => navigate('/organizer')}>
+          {t.eventForm.backDashboard}
+        </button>
+      </div>
 
-        <form onSubmit={handleSubmit} className="event-form">
-          {/* Basic Info Section */}
-          <div className="form-section">
-            <h2 className="section-title">Información Básica</h2>
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="name">Nombre del Evento *</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Nombre del evento"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="subtitle">Subtítulo</label>
-                <input
-                  type="text"
-                  id="subtitle"
-                  name="subtitle"
-                  value={formData.subtitle}
-                  onChange={handleChange}
-                  placeholder="Subtítulo opcional"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="date">Fecha *</label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="timeStart">Hora Inicio</label>
-                <input
-                  type="time"
-                  id="timeStart"
-                  name="timeStart"
-                  value={formData.timeStart}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="timeEnd">Hora Fin</label>
-                <input
-                  type="time"
-                  id="timeEnd"
-                  name="timeEnd"
-                  value={formData.timeEnd}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="genre">Género</label>
-                <input
-                  type="text"
-                  id="genre"
-                  name="genre"
-                  value={formData.genre}
-                  onChange={handleChange}
-                  placeholder="p.ej. Techno, House"
-                />
-              </div>
+      <div className="ef-preview-banner">
+        <div className="ef-preview-banner-icon">📋</div>
+        <div className="ef-preview-banner-text">
+          Previsualizando evento. <a href="#preview">Ver evento público</a>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        {/* ── Información Básica ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.basicInfo}</h2>
+
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="name" className="ef-label">
+                {t.eventForm.eventName}
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="ef-input"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder={t.eventForm.eventNamePlaceholder}
+              />
             </div>
+            <div className="ef-field">
+              <label htmlFor="subtitle" className="ef-label">
+                {t.eventForm.subtitle}
+              </label>
+              <input
+                type="text"
+                id="subtitle"
+                name="subtitle"
+                className="ef-input"
+                value={formData.subtitle}
+                onChange={handleChange}
+                placeholder={t.eventForm.subtitlePlaceholder}
+              />
+            </div>
+          </div>
 
-            <div className="form-group full-width">
-              <label htmlFor="venue">Lugar *</label>
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="genre" className="ef-label">
+                {t.eventForm.genre}
+              </label>
+              <input
+                type="text"
+                id="genre"
+                name="genre"
+                className="ef-input"
+                value={formData.genre}
+                onChange={handleChange}
+                required
+                placeholder={t.eventForm.genrePlaceholder}
+              />
+            </div>
+            <div className="ef-field">
+              <label htmlFor="status" className="ef-label">
+                {t.eventForm.status}
+              </label>
+              <select id="status" name="status" className="ef-select" value={formData.status} onChange={handleChange}>
+                <option value="draft">{t.common.draft}</option>
+                <option value="published">{t.common.published}</option>
+                <option value="sold-out">{t.common.soldOut}</option>
+                <option value="past">{t.common.past}</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="ef-field full">
+            <label htmlFor="description" className="ef-label">
+              {t.eventForm.shortDesc}
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              className="ef-textarea"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              placeholder={t.eventForm.shortDescPlaceholder}
+              rows={3}
+            />
+          </div>
+
+          <div className="ef-field full">
+            <label htmlFor="descriptionLong" className="ef-label">
+              {t.eventForm.longDesc}
+            </label>
+            <textarea
+              id="descriptionLong"
+              name="descriptionLong"
+              className="ef-textarea"
+              value={formData.descriptionLong}
+              onChange={handleChange}
+              placeholder={t.eventForm.longDescPlaceholder}
+              rows={5}
+            />
+          </div>
+        </div>
+
+        {/* ── Fecha y Lugar ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.dateAndVenue}</h2>
+
+          <div className="ef-row-3">
+            <div className="ef-field">
+              <label htmlFor="date" className="ef-label">
+                {t.eventForm.date}
+              </label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                className="ef-input"
+                value={formData.date}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="ef-field">
+              <label htmlFor="timeStart" className="ef-label">
+                {t.eventForm.timeStart}
+              </label>
+              <input
+                type="time"
+                id="timeStart"
+                name="timeStart"
+                className="ef-input"
+                value={formData.timeStart}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="ef-field">
+              <label htmlFor="timeEnd" className="ef-label">
+                {t.eventForm.timeEnd}
+              </label>
+              <input
+                type="time"
+                id="timeEnd"
+                name="timeEnd"
+                className="ef-input"
+                value={formData.timeEnd}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="venue" className="ef-label">
+                {t.eventForm.venueName}
+              </label>
               <input
                 type="text"
                 id="venue"
                 name="venue"
+                className="ef-input"
                 value={formData.venue}
                 onChange={handleChange}
                 required
-                placeholder="Nombre del lugar"
+                placeholder={t.eventForm.venueNamePlaceholder}
               />
             </div>
-
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="location">Ciudad</label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  placeholder="p.ej. Lima"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="address">Dirección</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Dirección completa"
-                />
-              </div>
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="description">Descripción</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
+            <div className="ef-field">
+              <label htmlFor="location" className="ef-label">
+                {t.eventForm.district}
+              </label>
+              <input
+                type="text"
+                id="location"
+                name="location"
+                className="ef-input"
+                value={formData.location}
                 onChange={handleChange}
-                placeholder="Descripción corta del evento"
-                rows={3}
-              />
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="descriptionLong">Descripción Larga</label>
-              <textarea
-                id="descriptionLong"
-                name="descriptionLong"
-                value={formData.descriptionLong}
-                onChange={handleChange}
-                placeholder="Descripción detallada"
-                rows={5}
+                required
+                placeholder={t.eventForm.districtPlaceholder}
               />
             </div>
           </div>
 
-          {/* Media Section */}
-          <div className="form-section">
-            <h2 className="section-title">Medios</h2>
-            <div className="form-grid">
-              <div className="form-group full-width">
-                <label htmlFor="image">URL de Imagen</label>
-                <input
-                  type="url"
-                  id="image"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                />
-              </div>
-              <div className="form-group full-width">
-                <label htmlFor="heroVideo">URL de Video Hero</label>
-                <input
-                  type="url"
-                  id="heroVideo"
-                  name="heroVideo"
-                  value={formData.heroVideo}
-                  onChange={handleChange}
-                  placeholder="https://ejemplo.com/video.mp4"
-                />
-              </div>
+          <div className="ef-field full">
+            <label htmlFor="address" className="ef-label">
+              {t.eventForm.address}
+            </label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              className="ef-input"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder={t.eventForm.addressPlaceholder}
+            />
+          </div>
+        </div>
+
+        {/* ── Media ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.media}</h2>
+
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="image" className="ef-label">
+                {t.eventForm.heroImageUrl}
+              </label>
+              <input
+                type="url"
+                id="image"
+                name="image"
+                className="ef-input"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder={t.eventForm.heroImagePlaceholder}
+              />
+            </div>
+            <div className="ef-field">
+              <label htmlFor="heroVideo" className="ef-label">
+                {t.eventForm.youtubeId}
+              </label>
+              <input
+                type="text"
+                id="heroVideo"
+                name="heroVideo"
+                className="ef-input"
+                value={formData.heroVideo}
+                onChange={handleChange}
+                placeholder="dQw4w9WgXcQ"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Tags Section */}
-          <div className="form-section">
-            <h2 className="section-title">Etiquetas</h2>
-            <div className="dynamic-list">
-              {(formData.tags ?? []).map((tag, index) => (
-                <div key={index} className="dynamic-item">
-                  <input
-                    type="text"
-                    value={tag}
-                    onChange={(e) => handleTagChange(index, e.target.value)}
-                    placeholder="Etiqueta"
-                  />
-                  <button
-                    type="button"
-                    className="btn-remove"
-                    onClick={() => removeTag(index)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-              <button type="button" className="btn-add" onClick={addTag}>
-                + Agregar Etiqueta
+        {/* ── Lineup ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.lineupSection}</h2>
+
+          {(formData.lineup ?? []).map((artist, index) => (
+            <div key={index} className="ef-artist-row">
+              <input
+                type="text"
+                className="ef-input"
+                value={artist}
+                onChange={(e) => handleLineupChange(index, e.target.value)}
+                placeholder={t.eventForm.artistPlaceholder}
+              />
+              <button
+                type="button"
+                className="ef-remove-btn"
+                onClick={() => removeLineup(index)}
+                title="Eliminar artista"
+              >
+                ×
               </button>
             </div>
+          ))}
+          <button type="button" className="ef-add-btn" onClick={addLineup}>
+            {t.eventForm.addArtist}
+          </button>
+        </div>
+
+        {/* ── Tags ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.tagsSection}</h2>
+
+          {(formData.tags ?? []).map((tag, index) => (
+            <div key={index} className="ef-artist-row">
+              <input
+                type="text"
+                className="ef-input"
+                value={tag}
+                onChange={(e) => handleTagChange(index, e.target.value)}
+                placeholder={t.eventForm.tagPlaceholder}
+              />
+              <button
+                type="button"
+                className="ef-remove-btn"
+                onClick={() => removeTag(index)}
+                title="Eliminar tag"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button type="button" className="ef-add-btn" onClick={addTag}>
+            {t.eventForm.addTag}
+          </button>
+        </div>
+
+        {/* ── Info del Evento ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.eventInfoSection}</h2>
+
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="crowdSize" className="ef-label">
+                {t.eventForm.crowdSize}
+              </label>
+              <select
+                id="crowdSize"
+                name="crowdSize"
+                className="ef-select"
+                value={formData.meta.crowdSize}
+                onChange={handleMetaChange}
+              >
+                {t.eventForm.crowdSizes.map((size, idx) => (
+                  <option key={idx} value={['small', 'medium', 'large', 'mega'][idx]}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="ef-field">
+              <label htmlFor="ageRestriction" className="ef-label">
+                {t.eventForm.minAge}
+              </label>
+              <select
+                id="ageRestriction"
+                name="ageRestriction"
+                className="ef-select"
+                value={formData.meta.ageRestriction}
+                onChange={handleMetaChange}
+              >
+                {t.eventForm.ages.map((age, idx) => (
+                  <option key={idx} value={['all', '16+', '18+', '21+'][idx]}>
+                    {age}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Ticket Tiers Section */}
-          <div className="form-section">
-            <h2 className="section-title">Tipos de Entrada *</h2>
-            <div className="tiers-list">
-              {(formData.tiers ?? []).map((tier) => (
-                <div key={tier.id} className="tier-card">
-                  <div className="tier-header">
-                    <h3>Tipo de Entrada</h3>
-                    <button
-                      type="button"
-                      className="btn-remove-tier"
-                      onClick={() => removeTier(tier.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+          <div className="ef-row">
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="multiStage"
+                checked={formData.meta.multiStage}
+                onChange={handleMetaChange}
+              />
+              {t.eventForm.multiStage}
+            </label>
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="alcohol"
+                checked={formData.meta.alcohol}
+                onChange={handleMetaChange}
+              />
+              {t.eventForm.barAvailable}
+            </label>
+          </div>
 
-                  <div className="tier-grid">
-                    <div className="form-group">
-                      <label>Nombre</label>
-                      <input
-                        type="text"
-                        value={tier.name}
-                        onChange={(e) => updateTier(tier.id, { name: e.target.value })}
-                        placeholder="p.ej. General"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Capacidad</label>
-                      <input
-                        type="number"
-                        value={tier.capacity}
-                        onChange={(e) => updateTier(tier.id, { capacity: parseInt(e.target.value, 10) })}
-                        min="1"
-                      />
-                    </div>
-                  </div>
+          <div className="ef-row">
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="reentry"
+                checked={formData.meta.reentry}
+                onChange={handleMetaChange}
+              />
+              {t.eventForm.reentryAllowed}
+            </label>
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="outdoor"
+                checked={formData.meta.outdoor}
+                onChange={handleMetaChange}
+              />
+              {t.eventForm.outdoor}
+            </label>
+          </div>
+        </div>
 
-                  {/* Phases */}
-                  <div className="phases-section">
-                    <h4>Fases de Venta</h4>
-                    <div className="phases-list">
-                      {(tier.phases ?? []).map((phase, phaseIndex) => (
-                        <div key={phaseIndex} className="phase-row">
-                          <div className="phase-grid">
-                            <div className="form-group">
-                              <label>Nombre de Fase</label>
-                              <input
-                                type="text"
-                                value={phase.name}
-                                onChange={(e) =>
-                                  updatePhaseInTier(tier.id, phaseIndex, { name: e.target.value })
-                                }
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>Precio (S/)</label>
-                              <input
-                                type="number"
-                                value={phase.price}
-                                onChange={(e) =>
-                                  updatePhaseInTier(tier.id, phaseIndex, { price: parseFloat(e.target.value) })
-                                }
-                                min="0"
-                                step="0.01"
-                              />
-                            </div>
-                            <div className="form-group checkbox">
-                              <label>
-                                <input
-                                  type="checkbox"
-                                  checked={phase.active}
-                                  onChange={(e) =>
-                                    updatePhaseInTier(tier.id, phaseIndex, { active: e.target.checked })
-                                  }
-                                />
-                                Activo
-                              </label>
-                            </div>
-                          </div>
-                          {(tier.phases ?? []).length > 1 && (
-                            <button
-                              type="button"
-                              className="btn-remove-phase"
-                              onClick={() => removePhaseFromTier(tier.id, phaseIndex)}
-                            >
-                              Quitar Fase
-                            </button>
-                          )}
+        {/* ── No ingresan ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.prohibited}</h2>
+
+          {(formData.prohibitedItems ?? []).map((item, index) => (
+            <div key={index} className="ef-artist-row">
+              <input
+                type="text"
+                className="ef-input"
+                value={item}
+                onChange={(e) => handleProhibitedItemChange(index, e.target.value)}
+                placeholder={t.eventForm.prohibitedPlaceholder}
+              />
+              <button
+                type="button"
+                className="ef-remove-btn"
+                onClick={() => removeProhibitedItem(index)}
+                title="Eliminar artículo"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          <button type="button" className="ef-add-btn" onClick={addProhibitedItem}>
+            {t.eventForm.addProhibited}
+          </button>
+        </div>
+
+        {/* ── Tickets ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.ticketsSection}</h2>
+
+          {(formData.tiers ?? []).map((tier, tierIndex) => (
+            <div key={tier.id} className="ef-tier">
+              <div className="ef-tier-header">
+                <div className="ef-tier-num">{t.eventForm.tierLabel} {tierIndex + 1}</div>
+                <button
+                  type="button"
+                  className="ef-remove-btn"
+                  onClick={() => removeTier(tier.id)}
+                  title="Eliminar tier"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="ef-row">
+                <div className="ef-field">
+                  <label className="ef-label">{t.eventForm.tierLabel}</label>
+                  <input
+                    type="text"
+                    className="ef-input"
+                    value={tier.name}
+                    onChange={(e) => updateTier(tier.id, { name: e.target.value })}
+                    placeholder={t.eventForm.tierNamePlaceholder}
+                  />
+                </div>
+                <div className="ef-field">
+                  <label className="ef-label">{t.eventForm.capacityLabel}</label>
+                  <input
+                    type="number"
+                    className="ef-input"
+                    value={tier.capacity}
+                    onChange={(e) => updateTier(tier.id, { capacity: parseInt(e.target.value, 10) })}
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              {/* ── Phases ── */}
+              <div style={{ marginTop: '16px' }}>
+                <div className="ef-phase-labels">
+                  <span>{t.eventForm.phaseName}</span>
+                  <span>{t.eventForm.phasePrice}</span>
+                  <span>{t.eventForm.phaseActive}</span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                {(tier.phases ?? []).map((phase, phaseIndex) => (
+                  <div key={phaseIndex} className="ef-phase-row">
+                    <input
+                      type="text"
+                      className="ef-input"
+                      value={phase.name}
+                      onChange={(e) => updatePhaseInTier(tier.id, phaseIndex, { name: e.target.value })}
+                      placeholder={t.eventForm.phaseNamePlaceholder}
+                    />
+                    <input
+                      type="number"
+                      className="ef-input"
+                      value={phase.price}
+                      onChange={(e) => updatePhaseInTier(tier.id, phaseIndex, { price: parseFloat(e.target.value) })}
+                      min="0"
+                      step="0.01"
+                    />
+                    <label className="ef-toggle-label" style={{ margin: 0, background: 'transparent' }}>
+                      <input
+                        type="checkbox"
+                        checked={phase.active}
+                        onChange={(e) => updatePhaseInTier(tier.id, phaseIndex, { active: e.target.checked })}
+                      />
+                    </label>
+                    {(tier.phases ?? []).length > 1 && (
+                      <button
+                        type="button"
+                        className="ef-remove-btn"
+                        onClick={() => removePhaseFromTier(tier.id, phaseIndex)}
+                        title="Eliminar fase"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  className="ef-add-btn"
+                  onClick={() => addPhaseToTier(tier.id)}
+                  style={{ marginTop: '12px' }}
+                >
+                  {t.eventForm.addPhase}
+                </button>
+              </div>
+
+              {/* ── Margin Breakdown ── */}
+              <div className="ef-margin">
+                <div className="ef-margin-title">{t.eventForm.revenueSummary}</div>
+                {(tier.phases ?? [])
+                  .filter((p) => p.active)
+                  .map((phase, idx) => {
+                    const revenue = phase.price * tier.capacity;
+                    const fee = revenue * 0.08;
+                    const net = revenue - fee;
+                    return (
+                      <div key={idx}>
+                        <div className="ef-margin-row">
+                          <span className="label">{phase.name} (${phase.price} × {tier.capacity})</span>
+                          <span className="value">S/ {revenue.toFixed(2)}</span>
                         </div>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      className="btn-add-phase"
-                      onClick={() => addPhaseToTier(tier.id)}
-                    >
-                      + Agregar Fase
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <button type="button" className="btn-add-tier" onClick={addTier}>
-                + Agregar Tipo de Entrada
-              </button>
-            </div>
-          </div>
-
-          {/* Lineup Section */}
-          <div className="form-section">
-            <h2 className="section-title">Alineación Artística</h2>
-            <div className="dynamic-list">
-              {(formData.lineup ?? []).map((artist, index) => (
-                <div key={index} className="dynamic-item">
-                  <input
-                    type="text"
-                    value={artist}
-                    onChange={(e) => handleLineupChange(index, e.target.value)}
-                    placeholder="Nombre del artista"
-                  />
-                  <button
-                    type="button"
-                    className="btn-remove"
-                    onClick={() => removeLineup(index)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-              <button type="button" className="btn-add" onClick={addLineup}>
-                + Agregar Artista
-              </button>
-            </div>
-          </div>
-
-          {/* Prohibited Items Section */}
-          <div className="form-section">
-            <h2 className="section-title">Artículos Prohibidos</h2>
-            <div className="dynamic-list">
-              {(formData.prohibitedItems ?? []).map((item, index) => (
-                <div key={index} className="dynamic-item">
-                  <input
-                    type="text"
-                    value={item}
-                    onChange={(e) => handleProhibitedItemChange(index, e.target.value)}
-                    placeholder="Artículo prohibido"
-                  />
-                  <button
-                    type="button"
-                    className="btn-remove"
-                    onClick={() => removeProhibitedItem(index)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-              <button type="button" className="btn-add" onClick={addProhibitedItem}>
-                + Agregar Artículo
-              </button>
-            </div>
-          </div>
-
-          {/* Meta Options Section */}
-          <div className="form-section">
-            <h2 className="section-title">Opciones Adicionales</h2>
-            <div className="checkboxes-grid">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="multiStage"
-                  checked={formData.meta.multiStage}
-                  onChange={handleMetaChange}
-                />
-                Múltiples Escenarios
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="alcohol"
-                  checked={formData.meta.alcohol}
-                  onChange={handleMetaChange}
-                />
-                Se Vende Alcohol
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="reentry"
-                  checked={formData.meta.reentry}
-                  onChange={handleMetaChange}
-                />
-                Reentrada Permitida
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="outdoor"
-                  checked={formData.meta.outdoor}
-                  onChange={handleMetaChange}
-                />
-                Aire Libre
-              </label>
-            </div>
-
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="crowdSize">Tamaño Estimado de Público</label>
-                <select
-                  id="crowdSize"
-                  name="crowdSize"
-                  value={formData.meta.crowdSize}
-                  onChange={handleMetaChange}
-                >
-                  <option value="small">{'Pequeño (< 500)'}</option>
-                  <option value="medium">{'Medio (500 - 2000)'}</option>
-                  <option value="large">{'Grande (2000 - 5000)'}</option>
-                  <option value="mega">{'Mega (> 5000)'}</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="ageRestriction">Restricción de Edad</label>
-                <select
-                  id="ageRestriction"
-                  name="ageRestriction"
-                  value={formData.meta.ageRestriction}
-                  onChange={handleMetaChange}
-                >
-                  <option value="all">Todas las edades</option>
-                  <option value="16+">16+</option>
-                  <option value="18+">18+</option>
-                  <option value="21+">21+</option>
-                </select>
+                        <div className="ef-margin-row">
+                          <span className="label">{t.eventForm.commission}</span>
+                          <span className="value">S/ {fee.toFixed(2)}</span>
+                        </div>
+                        <div className="ef-margin-row total">
+                          <span className="label">{t.eventForm.net}</span>
+                          <span className="value">S/ {net.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
+          ))}
+
+          <button type="button" className="ef-add-btn" onClick={addTier}>
+            {t.eventForm.addTier}
+          </button>
+        </div>
+
+        {/* ── Secciones Visibles ── */}
+        <div className="ef-section">
+          <h2 className="ef-section-title">{t.eventForm.visibleSections}</h2>
+
+          <div className="ef-row">
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="lineup"
+                checked={formData.visibleSections.lineup}
+                onChange={handleVisibleSectionsChange}
+              />
+              {t.eventForm.showLineup}
+            </label>
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="venue"
+                checked={formData.visibleSections.venue}
+                onChange={handleVisibleSectionsChange}
+              />
+              {t.eventForm.showVenue}
+            </label>
           </div>
 
-          {/* Visible Sections */}
-          <div className="form-section">
-            <h2 className="section-title">Secciones Visibles</h2>
-            <div className="checkboxes-grid">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="lineup"
-                  checked={formData.visibleSections.lineup}
-                  onChange={handleVisibleSectionsChange}
-                />
-                Mostrar Alineación
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="venue"
-                  checked={formData.visibleSections.venue}
-                  onChange={handleVisibleSectionsChange}
-                />
-                Mostrar Lugar
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="prohibitedItems"
-                  checked={formData.visibleSections.prohibitedItems}
-                  onChange={handleVisibleSectionsChange}
-                />
-                Mostrar Artículos Prohibidos
-              </label>
-            </div>
+          <div className="ef-row">
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="prohibitedItems"
+                checked={formData.visibleSections.prohibitedItems}
+                onChange={handleVisibleSectionsChange}
+              />
+              {t.eventForm.showProhibited}
+            </label>
+            <label className="ef-toggle-label">
+              <input
+                type="checkbox"
+                name="featured"
+                checked={formData.featured}
+                onChange={handleChange}
+              />
+              {t.eventForm.featuredEvent}
+            </label>
           </div>
+        </div>
 
-          {/* Status */}
-          <div className="form-section">
-            <h2 className="section-title">Estado</h2>
-            <div className="form-grid">
-              <div className="form-group">
-                <label htmlFor="status">Estado del Evento</label>
-                <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                >
-                  <option value="draft">Borrador</option>
-                  <option value="published">Publicado</option>
-                  <option value="sold-out">Agotado</option>
-                  <option value="past">Pasado</option>
-                </select>
-              </div>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleChange}
-                />
-                Destacado
-              </label>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <div className="form-actions">
-            <button type="button" className="btn-cancel" onClick={() => navigate('/organizer')}>
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="btn-submit"
-              disabled={loading}
-            >
-              {loading ? 'Guardando...' : isEditMode ? 'Actualizar Evento' : 'Crear Evento'}
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* ── Actions ── */}
+        <div className="ef-actions">
+          <button type="button" className="ef-btn-cancel" onClick={() => navigate('/organizer')}>
+            {t.common.cancel}
+          </button>
+          <button type="submit" className="ef-btn-save" disabled={loading}>
+            {loading ? t.common.saving : isEditMode ? t.eventForm.updateEvent : t.eventForm.saveEvent}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

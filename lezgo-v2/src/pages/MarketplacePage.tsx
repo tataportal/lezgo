@@ -1,33 +1,25 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../i18n';
 import { getResaleListings } from '../services/resaleService';
-import { toDate, formatPrice } from '../lib/helpers';
+import { toDate } from '../lib/helpers';
 import type { Resale } from '../lib/types';
 import ResaleCheckoutModal from '../components/checkout/ResaleCheckoutModal';
 import './MarketplacePage.css';
 
-type DateFilter = 'todas' | 'semana' | 'mes';
-type SortBy = 'fecha' | 'precio';
 type OfertaFilter = 'todos' | 'oferta';
-
-const LIMA_DISTRICTS = [
-  'Todos',
-  'Barranco',
-  'Miraflores',
-  'San Isidro',
-  'Surco',
-  'Cercado de Lima',
-  'Chorrillos',
-];
+type SortBy = 'fecha' | 'precio';
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [listings, setListings] = useState<Resale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [locationFilter, setLocationFilter] = useState('Todos');
-  const [dateFilter, setDateFilter] = useState<DateFilter>('todas');
+  const limaDistricts = t.marketplace.districts;
+  const [locationFilter, setLocationFilter] = useState(limaDistricts[0]);
+  const [locDropdown, setLocDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [ofertaFilter, setOfertaFilter] = useState<OfertaFilter>('todos');
   const [sortBy, setSortBy] = useState<SortBy>('fecha');
@@ -35,7 +27,6 @@ export default function MarketplacePage() {
   const [selectedResale, setSelectedResale] = useState<Resale | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Fetch listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -50,74 +41,49 @@ export default function MarketplacePage() {
         setLoading(false);
       }
     };
-
     fetchListings();
   }, []);
 
-  // Filter and sort listings
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = () => setLocDropdown(false);
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, []);
+
   const filteredListings = useMemo(() => {
     let result = [...listings];
 
-    // Location filter
-    if (locationFilter !== 'Todos') {
-      result = result.filter((r) => {
-        const eventLocation = r.eventVenue || '';
-        return eventLocation.includes(locationFilter);
-      });
+    if (locationFilter !== limaDistricts[0]) {
+      result = result.filter((r) => (r.eventVenue || '').includes(locationFilter));
     }
 
-    // Date filter
-    if (dateFilter !== 'todas') {
-      const now = new Date();
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-
-      result = result.filter((r) => {
-        if (!r.eventDate) return false;
-        const eventDate = toDate(r.eventDate);
-        if (dateFilter === 'semana') {
-          const endOfWeek = new Date(startOfWeek);
-          endOfWeek.setDate(startOfWeek.getDate() + 7);
-          return eventDate >= startOfWeek && eventDate <= endOfWeek;
-        } else if (dateFilter === 'mes') {
-          return (
-            eventDate.getFullYear() === now.getFullYear() &&
-            eventDate.getMonth() === now.getMonth()
-          );
-        }
-        return true;
-      });
-    }
-
-    // Search query
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((r) =>
-        (r.eventName?.toLowerCase?.() || '').includes(query) ||
-        (r.ticketTier?.toLowerCase?.() || '').includes(query)
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (r) =>
+          (r.eventName?.toLowerCase() || '').includes(q) ||
+          (r.ticketTier?.toLowerCase() || '').includes(q) ||
+          (r.eventVenue?.toLowerCase() || '').includes(q)
       );
     }
 
-    // Oferta filter (show only discounted tickets)
     if (ofertaFilter === 'oferta') {
       result = result.filter((r) => r.askingPrice < r.originalPrice);
     }
 
-    // Sorting
     if (sortBy === 'fecha') {
-      result.sort(
-        (a, b) => {
-          const aDate = a.createdAt ? toDate(a.createdAt) : new Date(0);
-          const bDate = b.createdAt ? toDate(b.createdAt) : new Date(0);
-          return bDate.getTime() - aDate.getTime();
-        }
-      );
-    } else if (sortBy === 'precio') {
+      result.sort((a, b) => {
+        const aD = a.createdAt ? toDate(a.createdAt) : new Date(0);
+        const bD = b.createdAt ? toDate(b.createdAt) : new Date(0);
+        return bD.getTime() - aD.getTime();
+      });
+    } else {
       result.sort((a, b) => (a.askingPrice ?? 0) - (b.askingPrice ?? 0));
     }
 
     return result;
-  }, [listings, locationFilter, dateFilter, searchQuery, ofertaFilter, sortBy]);
+  }, [listings, locationFilter, searchQuery, ofertaFilter, sortBy]);
 
   const handleListingClick = (resale: Resale) => {
     setSelectedResale(resale);
@@ -126,172 +92,223 @@ export default function MarketplacePage() {
 
   return (
     <>
-      <div className="marketplace-page">
+      <div className="mp">
         {/* Header */}
-        <div className="mp-header">
-          <div className="mp-label">// Marketplace</div>
-          <h1 className="mp-title">Reventa entre fans verificados.</h1>
-          <p className="mp-description">
-            Compra y vende entradas de forma segura en nuestra plataforma. Todos los vendedores
-            están verificados para garantizar transacciones confiables.
-          </p>
+        <div className="mp-top">
+          <div className="mp-intro">
+            <div className="mp-label">// Marketplace</div>
+            <h2 className="mp-title">
+              {t.marketplace.title}<br />fans <span className="text-acid">{t.marketplace.titleHighlight}</span>
+            </h2>
+            <p className="mp-text">
+              {t.marketplace.desc1}
+            </p>
+            <p className="mp-text">
+              {t.marketplace.desc2}
+            </p>
+          </div>
         </div>
 
         {/* Search Bar */}
         <div className="mp-search-bar">
-          <select
-            className="mp-select"
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
+          {/* Location Dropdown */}
+          <div
+            className="mp-search-field"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLocDropdown(!locDropdown);
+            }}
           >
-            {LIMA_DISTRICTS.map((district) => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
-          </select>
+            <div className="search-field-label">{t.marketplace.location}</div>
+            <div className="search-field-value">{locationFilter}</div>
+            <div className={`mp-dropdown ${locDropdown ? 'open' : ''}`}>
+              {limaDistricts.map((d) => (
+                <div
+                  key={d}
+                  className={`mp-dropdown-item ${locationFilter === d ? 'selected' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLocationFilter(d);
+                    setLocDropdown(false);
+                  }}
+                >
+                  <span className="dot" />
+                  {d}
+                </div>
+              ))}
+            </div>
+          </div>
 
-          <select
-            className="mp-select"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-          >
-            <option value="todas">Todas</option>
-            <option value="semana">Esta semana</option>
-            <option value="mes">Este mes</option>
-          </select>
+          {/* Search text */}
+          <div className="mp-search-field mp-search-field-main" style={{ borderRight: 'none' }}>
+            <div className="search-field-label">{t.common.search}</div>
+            <input
+              className="mp-search-text-input"
+              type="text"
+              placeholder={t.marketplace.searchPlaceholder}
+              autoComplete="off"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Busca por evento o categoría..."
-            className="mp-search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <button className="search-btn">{t.common.search}</button>
         </div>
 
-        {/* Filter Pills and Sort Buttons */}
-        <div className="mp-filters">
-          <div className="mp-filter-pills">
+        {/* Filters */}
+        <div className="mp-filters-row">
+          <div className="mp-filters-left">
             <button
-              className={`mp-pill ${ofertaFilter === 'todos' ? 'active' : ''}`}
+              className={`mp-filter ${ofertaFilter === 'todos' ? 'active' : ''}`}
               onClick={() => setOfertaFilter('todos')}
             >
-              Todos
+              {t.marketplace.all}
             </button>
             <button
-              className={`mp-pill ${ofertaFilter === 'oferta' ? 'active' : ''}`}
+              className={`mp-filter ${ofertaFilter === 'oferta' ? 'active' : ''}`}
               onClick={() => setOfertaFilter('oferta')}
             >
-              Oferta
+              {t.marketplace.deals}
             </button>
           </div>
-
-          <div className="mp-sort-buttons">
+          <div className="mp-filters-right">
             <button
-              className={`mp-sort-btn ${sortBy === 'fecha' ? 'active' : ''}`}
+              className={`mp-sort ${sortBy === 'fecha' ? 'active' : ''}`}
               onClick={() => setSortBy('fecha')}
             >
-              Fecha
+              {t.marketplace.sortDate}
             </button>
             <button
-              className={`mp-sort-btn ${sortBy === 'precio' ? 'active' : ''}`}
+              className={`mp-sort ${sortBy === 'precio' ? 'active' : ''}`}
               onClick={() => setSortBy('precio')}
             >
-              Precio
+              {t.marketplace.sortPrice}
             </button>
           </div>
         </div>
 
-        {/* Listings Grid */}
-        <div className="mp-content">
+        {/* Listings */}
+        <div className="mp-listings">
           {loading ? (
             <div className="mp-empty">
-              <p>Cargando listados...</p>
+              <p>{t.marketplace.loadingListings}</p>
             </div>
           ) : error ? (
             <div className="mp-empty">
-              <p>Error: {error}</p>
+              <p>{t.common.error}: {error}</p>
             </div>
           ) : filteredListings.length === 0 ? (
             <div className="mp-empty">
               <div className="mp-empty-emoji">🎫</div>
-              <h3>No hay entradas disponibles</h3>
-              <p>Intenta cambiar tus filtros de búsqueda</p>
+              <h3>{t.marketplace.noListings}</h3>
+              <p>{t.marketplace.noListingsDesc}</p>
             </div>
           ) : (
-            <div className="mp-listings-grid">
-              {filteredListings.map((resale) => {
-                const isDiscounted = (resale.askingPrice ?? 0) < (resale.originalPrice ?? 0);
-                const discount = resale.originalPrice && resale.originalPrice > 0
-                  ? Math.round(
-                      (((resale.originalPrice ?? 0) - (resale.askingPrice ?? 0)) / resale.originalPrice) * 100
-                    )
+            filteredListings.map((r) => {
+              const eventDate = r.eventDate ? toDate(r.eventDate) : null;
+              const dayNum = eventDate ? eventDate.getDate() : '';
+              const monthStr = eventDate
+                ? eventDate.toLocaleDateString('es', { month: 'short' }).toUpperCase()
+                : '';
+              const discount =
+                r.originalPrice > r.askingPrice
+                  ? Math.round((1 - r.askingPrice / r.originalPrice) * 100)
                   : 0;
+              const priceDiff =
+                r.askingPrice < r.originalPrice
+                  ? 'below'
+                  : r.askingPrice > r.originalPrice
+                    ? 'above'
+                    : '';
 
-                return (
+              return (
+                <div
+                  key={r.id}
+                  className="mp-listing"
+                  onClick={() => handleListingClick(r)}
+                >
+                  {/* Date */}
+                  <div className="mp-listing-date">
+                    <div className="mp-listing-date-day">{dayNum}</div>
+                    <div className="mp-listing-date-month">{monthStr}</div>
+                  </div>
+
+                  {/* Image */}
                   <div
-                    key={resale.id}
-                    className="mp-listing-card"
-                    onClick={() => handleListingClick(resale)}
+                    className="mp-listing-img"
+                    style={
+                      r.image
+                        ? { backgroundImage: `url(${r.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                        : { background: 'linear-gradient(135deg,#1a1a2e,#16213e)' }
+                    }
                   >
-                    {isDiscounted && (
-                      <div className="mp-card-badge">-{discount}%</div>
-                    )}
-                    <div className="mp-card-image">
-                      <img src={resale.image} alt={resale.eventName} />
+                    {!r.image && '🎧'}
+                  </div>
+
+                  {/* Info */}
+                  <div className="mp-listing-info">
+                    <div className="mp-listing-event">{r.eventName || 'Evento'}</div>
+                    <div className="mp-listing-meta">
+                      {r.eventDateLabel || ''} · {r.ticketTier || 'Entrada'}
                     </div>
-                    <div className="mp-card-content">
-                      <h3 className="mp-card-event">{resale.eventName || 'Evento'}</h3>
-                      <p className="mp-card-tier">{resale.ticketTier || 'Entrada'}</p>
-                      <p className="mp-card-date">
-                        {resale.eventDate
-                          ? toDate(resale.eventDate).toLocaleDateString('es-PE', {
-                              month: 'short',
-                              day: 'numeric',
-                            })
-                          : 'Sin fecha'}
-                      </p>
-                      <div className="mp-card-pricing">
-                        <span className="mp-card-original">{formatPrice(resale.originalPrice ?? 0)}</span>
-                        <span className="mp-card-asking">{formatPrice(resale.askingPrice ?? 0)}</span>
-                      </div>
-                      <div className="mp-card-seller">
-                        <span className="mp-seller-name">{resale.sellerName || 'Vendedor'}</span>
-                        <span className="mp-seller-badge">✓</span>
-                      </div>
+                    <div className="mp-listing-seller">
+                      <span className="verified-dot">✓</span>
+                      {r.sellerName || t.marketplace.anonymous} · {r.eventVenue || ''}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Price */}
+                  <div className="mp-listing-right">
+                    <div className="mp-listing-prices">
+                      {r.originalPrice !== r.askingPrice && (
+                        <span className="mp-listing-original">S/{r.originalPrice}</span>
+                      )}
+                      <span className={`mp-listing-price ${priceDiff}`}>
+                        S/{r.askingPrice}
+                      </span>
+                    </div>
+                    {discount > 0 ? (
+                      <span className="mp-listing-tag mp-tag-below">-{discount}%</span>
+                    ) : r.askingPrice === r.originalPrice ? (
+                      <span className="mp-listing-tag mp-tag-face">{t.marketplace.originalPrice}</span>
+                    ) : null}
+                    <button
+                      className="mp-listing-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleListingClick(r);
+                      }}
+                    >
+                      {t.common.search} →
+                    </button>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mp-cta-section">
-          <h3>¿Tienes una entrada que ya no usarás?</h3>
-          <button
-            className="mp-cta-button"
-            onClick={() => navigate('/mis-entradas')}
-          >
-            Vende tu entrada
+        {/* Note */}
+        <div className="mp-note">
+          <strong>{t.marketplace.howItWorks}</strong> {t.marketplace.howItWorksDesc}
+        </div>
+
+        {/* Sell CTA */}
+        <div className="mp-sell-cta">
+          <p>{t.marketplace.haveTicket}</p>
+          <button className="btn-acid" onClick={() => navigate('/mis-entradas')}>
+            {t.marketplace.sellMyTicket}
           </button>
         </div>
 
-        {/* Note Box */}
-        <div className="mp-note-box">
-          <h4>Cómo funciona la reventa</h4>
-          <ul>
-            <li>Todos los vendedores están verificados con DNI</li>
-            <li>Las entradas se transfieren automáticamente después del pago</li>
-            <li>Cobramos una comisión del 5% en cada venta</li>
-            <li>Cada transacción está protegida por nuestra plataforma</li>
-          </ul>
+        {/* Footer */}
+        <div className="mp-footer">
+          <div className="mp-footer-logo">LEZGO</div>
+          <div className="mp-footer-copy">{t.footer.copy}</div>
         </div>
       </div>
 
-      {/* Resale Checkout Modal */}
       <ResaleCheckoutModal
         resale={selectedResale}
         open={modalOpen}

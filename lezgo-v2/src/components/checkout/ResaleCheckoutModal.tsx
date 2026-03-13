@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { purchaseResale } from '../../services/resaleService';
 import { toDate, formatPrice } from '../../lib/helpers';
+import { useTranslation } from '../../i18n';
 import type { Resale } from '../../lib/types';
 import toast from 'react-hot-toast';
 import './ResaleCheckoutModal.css';
@@ -22,8 +23,10 @@ export default function ResaleCheckoutModal({
   onClose,
 }: ResaleCheckoutModalProps) {
   const { user, profile, loginWithGoogle, sendMagicLink } = useAuth();
+  const { t } = useTranslation();
   const [step, setStep] = useState<ResaleCheckoutStep>(0);
   const [dni, setDni] = useState('');
+  const [idType, setIdType] = useState<'dni' | 'ce' | 'pasaporte'>('dni');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
@@ -54,7 +57,7 @@ export default function ResaleCheckoutModal({
         setLoading(true);
         await loginWithGoogle();
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error al iniciar sesión';
+        const msg = err instanceof Error ? err.message : t.resaleCheckout.errorLogin;
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -63,7 +66,7 @@ export default function ResaleCheckoutModal({
 
     const handleMagicLink = async () => {
       if (!email.trim()) {
-        toast.error('Ingresa tu email');
+        toast.error(t.resaleCheckout.errorEmail);
         return;
       }
 
@@ -71,9 +74,9 @@ export default function ResaleCheckoutModal({
         setLoading(true);
         await sendMagicLink(email);
         setMagicLinkSent(true);
-        toast.success('Link mágico enviado a tu email');
+        toast.success(t.resaleCheckout.successMagicLink);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error al enviar link';
+        const msg = err instanceof Error ? err.message : t.resaleCheckout.errorSendLink;
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -85,8 +88,8 @@ export default function ResaleCheckoutModal({
         <div className="rcm-modal" onClick={(e) => e.stopPropagation()}>
           <button className="rcm-close" onClick={onClose}>✕</button>
           <div className="rcm-content">
-            <h2 className="rcm-title">Inicia sesión</h2>
-            <p className="rcm-subtitle">Necesitas estar registrado para comprar</p>
+            <h2 className="rcm-title">{t.resaleCheckout.loginTitle}</h2>
+            <p className="rcm-subtitle">{t.resaleCheckout.loginDesc}</p>
 
             {!magicLinkSent ? (
               <>
@@ -96,12 +99,12 @@ export default function ResaleCheckoutModal({
                     onClick={handleGoogleLogin}
                     disabled={loading}
                   >
-                    🔍 Continuar con Google
+                    🔍 {t.resaleCheckout.googleBtn}
                   </button>
-                  <div className="rcm-divider">o</div>
+                  <div className="rcm-divider">{t.resaleCheckout.divider}</div>
                   <input
                     type="email"
-                    placeholder="Tu email"
+                    placeholder={t.resaleCheckout.emailPlaceholder}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="rcm-input"
@@ -111,13 +114,13 @@ export default function ResaleCheckoutModal({
                     onClick={handleMagicLink}
                     disabled={loading || !email.trim()}
                   >
-                    ✨ Enviar link mágico
+                    ✨ {t.resaleCheckout.magicLinkBtn}
                   </button>
                 </div>
               </>
             ) : (
               <div className="rcm-message">
-                <p>Revisa tu email para el link de acceso</p>
+                <p>{t.resaleCheckout.checkEmail}</p>
               </div>
             )}
           </div>
@@ -151,7 +154,7 @@ export default function ResaleCheckoutModal({
           </div>
 
           <div className="rcm-content">
-            <h2 className="rcm-title">Revisa el listado</h2>
+            <h2 className="rcm-title">{t.resaleCheckout.reviewTitle}</h2>
 
             <div className="rcm-listing-card">
               <div className="rcm-card-image">
@@ -175,13 +178,13 @@ export default function ResaleCheckoutModal({
 
                 <div className="rcm-pricing">
                   <div className="rcm-price-row">
-                    <span>Precio original</span>
+                    <span>{t.resaleCheckout.originalPrice}</span>
                     <span className="rcm-price-original">
                       {formatPrice(resale.originalPrice)}
                     </span>
                   </div>
                   <div className="rcm-price-row rcm-price-row--asking">
-                    <span>Precio de venta</span>
+                    <span>{t.resaleCheckout.askingPrice}</span>
                     <span className="rcm-price-asking">
                       {formatPrice(resale.askingPrice)}
                     </span>
@@ -189,7 +192,7 @@ export default function ResaleCheckoutModal({
                 </div>
 
                 <div className="rcm-seller-info">
-                  <span className="rcm-seller-label">Vendedor verificado</span>
+                  <span className="rcm-seller-label">{t.resaleCheckout.sellerVerified}</span>
                   <div className="rcm-seller">
                     <span className="rcm-seller-name">{resale.sellerName}</span>
                     <span className="rcm-seller-badge">✓</span>
@@ -203,13 +206,13 @@ export default function ResaleCheckoutModal({
                 className="rcm-button rcm-button--secondary"
                 onClick={onClose}
               >
-                Cancelar
+                {t.common.cancel}
               </button>
               <button
                 className="rcm-button rcm-button--primary"
                 onClick={() => setStep(2)}
               >
-                Continuar
+                {t.common.next}
               </button>
             </div>
           </div>
@@ -220,7 +223,7 @@ export default function ResaleCheckoutModal({
 
   // Step 2: DNI Verification
   if (step === 2) {
-    const isFormValid = name.trim() && dni.length === 8;
+    const isFormValid = name.trim() && (idType === 'dni' ? dni.length === 8 : idType === 'ce' ? dni.length === 9 : dni.length >= 5);
 
     return (
       <div className="rcm-overlay" onClick={onClose}>
@@ -234,29 +237,46 @@ export default function ResaleCheckoutModal({
           </div>
 
           <div className="rcm-content">
-            <h2 className="rcm-title">Verificación de identidad</h2>
-            <p className="rcm-subtitle">Necesitamos validar tu identidad</p>
+            <h2 className="rcm-title">{t.resaleCheckout.verifyTitle}</h2>
+            <p className="rcm-subtitle">{t.resaleCheckout.verifyDesc}</p>
 
             <div className="rcm-form">
               <input
                 type="text"
-                placeholder="Tu nombre completo"
+                placeholder={t.resaleCheckout.fullNamePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="rcm-input"
               />
+              <select
+                value={idType}
+                onChange={(e) => { setIdType(e.target.value as 'dni' | 'ce' | 'pasaporte'); setDni(''); }}
+                className="rcm-input rcm-select"
+              >
+                <option value="dni">{t.resaleCheckout.idTypeDni}</option>
+                <option value="ce">{t.resaleCheckout.idTypeCe}</option>
+                <option value="pasaporte">{t.resaleCheckout.idTypePassport}</option>
+              </select>
               <input
                 type="text"
-                placeholder="DNI (8 dígitos)"
+                placeholder={
+                  idType === 'dni' ? t.resaleCheckout.dniPlaceholder :
+                  idType === 'ce' ? t.resaleCheckout.cePlaceholder :
+                  t.resaleCheckout.passportPlaceholder
+                }
                 value={dni}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 8);
-                  setDni(val);
+                  if (idType === 'pasaporte') {
+                    setDni(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12));
+                  } else {
+                    const maxLen = idType === 'dni' ? 8 : 9;
+                    setDni(e.target.value.replace(/\D/g, '').slice(0, maxLen));
+                  }
                 }}
-                maxLength={8}
+                maxLength={idType === 'pasaporte' ? 12 : idType === 'ce' ? 9 : 8}
                 className="rcm-input"
               />
-              <p className="rcm-form-hint">Tu información está protegida y encriptada</p>
+              <p className="rcm-form-hint">{t.resaleCheckout.formHint}</p>
             </div>
 
             <div className="rcm-actions">
@@ -264,14 +284,14 @@ export default function ResaleCheckoutModal({
                 className="rcm-button rcm-button--secondary"
                 onClick={() => setStep(1)}
               >
-                Atrás
+                {t.common.back}
               </button>
               <button
                 className="rcm-button rcm-button--primary"
                 onClick={() => setStep(3)}
                 disabled={!isFormValid}
               >
-                Continuar
+                {t.common.next}
               </button>
             </div>
           </div>
@@ -284,7 +304,7 @@ export default function ResaleCheckoutModal({
   if (step === 3) {
     const handlePurchase = async () => {
       if (!user?.email) {
-        toast.error('Error: email no disponible');
+        toast.error(t.resaleCheckout.errorEmail);
         return;
       }
 
@@ -296,10 +316,10 @@ export default function ResaleCheckoutModal({
           buyerEmail: user.email,
         });
 
-        toast.success('¡Entrada comprada exitosamente!');
+        toast.success(t.resaleCheckout.purchaseSuccess);
         setStep(4);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error en la compra';
+        const msg = err instanceof Error ? err.message : t.resaleCheckout.errorPurchase;
         toast.error(msg);
       } finally {
         setLoading(false);
@@ -318,11 +338,11 @@ export default function ResaleCheckoutModal({
           </div>
 
           <div className="rcm-content">
-            <h2 className="rcm-title">Resumen de compra</h2>
+            <h2 className="rcm-title">{t.resaleCheckout.summaryTitle}</h2>
 
             <div className="rcm-summary">
               <div className="rcm-summary-section">
-                <h3 className="rcm-section-title">Entrada</h3>
+                <h3 className="rcm-section-title">{t.resaleCheckout.ticketLabel}</h3>
                 <div className="rcm-summary-row">
                   <span>{resale.eventName}</span>
                   <span>{resale.ticketTier}</span>
@@ -330,32 +350,32 @@ export default function ResaleCheckoutModal({
               </div>
 
               <div className="rcm-summary-section">
-                <h3 className="rcm-section-title">Precio</h3>
+                <h3 className="rcm-section-title">{t.resaleCheckout.priceLabel}</h3>
                 <div className="rcm-summary-row">
-                  <span>Precio de venta</span>
+                  <span>{t.resaleCheckout.askingPrice}</span>
                   <span>{formatPrice(resale.askingPrice)}</span>
                 </div>
                 <div className="rcm-summary-row rcm-summary-row--fee">
-                  <span>Comisión (5%)</span>
+                  <span>{t.resaleCheckout.feeLabel}</span>
                   <span>{formatPrice(platformFee)}</span>
                 </div>
                 <div className="rcm-summary-row rcm-summary-row--total">
-                  <span>Total a pagar</span>
+                  <span>{t.resaleCheckout.totalLabel}</span>
                   <span>{formatPrice(total)}</span>
                 </div>
               </div>
 
               <div className="rcm-summary-section">
-                <h3 className="rcm-section-title">Vendedor</h3>
+                <h3 className="rcm-section-title">{t.resaleCheckout.sellerLabel}</h3>
                 <div className="rcm-summary-seller">
                   <span className="rcm-summary-seller-name">{resale.sellerName}</span>
-                  <span className="rcm-summary-seller-badge">✓ Verificado</span>
+                  <span className="rcm-summary-seller-badge">✓ {t.resaleCheckout.verified}</span>
                 </div>
               </div>
             </div>
 
             <div className="rcm-info-box">
-              <p>Después de completar tu compra, la entrada se transferirá automáticamente a tu cuenta.</p>
+              <p>{t.resaleCheckout.infoMessage}</p>
             </div>
 
             <div className="rcm-actions">
@@ -364,14 +384,14 @@ export default function ResaleCheckoutModal({
                 onClick={() => setStep(2)}
                 disabled={loading}
               >
-                Atrás
+                {t.common.back}
               </button>
               <button
                 className="rcm-button rcm-button--primary"
                 onClick={handlePurchase}
                 disabled={loading}
               >
-                {loading ? 'Procesando...' : 'Comprar entrada'}
+                {loading ? t.resaleCheckout.processing : t.resaleCheckout.buyBtn}
               </button>
             </div>
           </div>
@@ -395,16 +415,16 @@ export default function ResaleCheckoutModal({
 
           <div className="rcm-content rcm-content--centered">
             <div className="rcm-success-icon">✓</div>
-            <h2 className="rcm-title">¡Compra confirmada!</h2>
-            <p className="rcm-subtitle">Tu entrada ha sido transferida a tu cuenta</p>
+            <h2 className="rcm-title">{t.resaleCheckout.confirmTitle}</h2>
+            <p className="rcm-subtitle">{t.resaleCheckout.confirmDesc}</p>
 
             <div className="rcm-confirmation-details">
               <div className="rcm-detail">
-                <span className="rcm-detail-label">Evento</span>
+                <span className="rcm-detail-label">{t.resaleCheckout.eventLabel}</span>
                 <span className="rcm-detail-value">{resale.eventName}</span>
               </div>
               <div className="rcm-detail">
-                <span className="rcm-detail-label">Fecha</span>
+                <span className="rcm-detail-label">{t.resaleCheckout.dateLabel}</span>
                 <span className="rcm-detail-value">
                   {toDate(resale.eventDate).toLocaleDateString('es-PE', {
                     month: 'short',
@@ -413,7 +433,7 @@ export default function ResaleCheckoutModal({
                 </span>
               </div>
               <div className="rcm-detail">
-                <span className="rcm-detail-label">Total pagado</span>
+                <span className="rcm-detail-label">{t.resaleCheckout.totalPaidLabel}</span>
                 <span className="rcm-detail-value rcm-detail-value--highlight">
                   {formatPrice(total)}
                 </span>
@@ -425,7 +445,7 @@ export default function ResaleCheckoutModal({
                 className="rcm-button rcm-button--primary"
                 onClick={onClose}
               >
-                Ir a mis entradas
+                {t.resaleCheckout.goToTickets}
               </button>
             </div>
           </div>

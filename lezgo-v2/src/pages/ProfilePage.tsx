@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserTickets } from '../hooks/useTickets';
+import { useTranslation } from '../i18n';
 import toast from 'react-hot-toast';
 import './ProfilePage.css';
 
+/* ── Badge system ── */
 interface Badge {
   id: string;
   emoji: string;
@@ -13,11 +15,11 @@ interface Badge {
   tier: 'none' | 'bronze' | 'silver' | 'gold';
   progress: number;
   maxProgress: number;
-  calculateTier: (data: BadgeCalculationData) => 'none' | 'bronze' | 'silver' | 'gold';
-  calculateProgress: (data: BadgeCalculationData) => { current: number; max: number };
+  calculateTier: (d: BadgeCalc) => 'none' | 'bronze' | 'silver' | 'gold';
+  calculateProgress: (d: BadgeCalc) => { current: number; max: number };
 }
 
-interface BadgeCalculationData {
+interface BadgeCalc {
   totalTickets: number;
   totalSpent: number;
   completedResales: number;
@@ -29,456 +31,185 @@ interface BadgeCalculationData {
 }
 
 const BADGES: Badge[] = [
-  {
-    id: 'party-animal',
-    emoji: '🎧',
-    name: 'Fiestero',
-    description: 'Asiste a eventos',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.totalTickets >= 30) return 'gold';
-      if (data.totalTickets >= 15) return 'silver';
-      if (data.totalTickets >= 5) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.totalTickets >= 30) return { current: 30, max: 30 };
-      if (data.totalTickets >= 15) return { current: data.totalTickets, max: 30 };
-      return { current: data.totalTickets, max: 5 };
-    },
-  },
-  {
-    id: 'early-adopter',
-    emoji: '⚡',
-    name: 'Early Adopter',
-    description: 'Primeros 1000 usuarios',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => (data.isEarlyAdopter ? 'gold' : 'none'),
-    calculateProgress: (data) => ({ current: data.isEarlyAdopter ? 1 : 0, max: 1 }),
-  },
-  {
-    id: 'bass-monster',
-    emoji: '🔊',
-    name: 'Bass Monster',
-    description: 'Techno events attended',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.technoTickets >= 30) return 'gold';
-      if (data.technoTickets >= 15) return 'silver';
-      if (data.technoTickets >= 5) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.technoTickets >= 30) return { current: 30, max: 30 };
-      if (data.technoTickets >= 15) return { current: data.technoTickets, max: 30 };
-      return { current: data.technoTickets, max: 5 };
-    },
-  },
-  {
-    id: 'presale-hunter',
-    emoji: '🎯',
-    name: 'Preventa Hunter',
-    description: 'Compras en preventa',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.presaleTickets >= 30) return 'gold';
-      if (data.presaleTickets >= 15) return 'silver';
-      if (data.presaleTickets >= 5) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.presaleTickets >= 30) return { current: 30, max: 30 };
-      if (data.presaleTickets >= 15) return { current: data.presaleTickets, max: 30 };
-      return { current: data.presaleTickets, max: 5 };
-    },
-  },
-  {
-    id: 'lima-explorer',
-    emoji: '🧭',
-    name: 'Lima Explorer',
-    description: 'Distritos visitados',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.uniqueDistricts >= 10) return 'gold';
-      if (data.uniqueDistricts >= 6) return 'silver';
-      if (data.uniqueDistricts >= 3) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.uniqueDistricts >= 10) return { current: 10, max: 10 };
-      if (data.uniqueDistricts >= 6) return { current: data.uniqueDistricts, max: 10 };
-      return { current: data.uniqueDistricts, max: 3 };
-    },
-  },
-  {
-    id: 'resale-pro',
-    emoji: '🤝',
-    name: 'Resale Pro',
-    description: 'Reventas completadas',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.completedResales >= 25) return 'gold';
-      if (data.completedResales >= 10) return 'silver';
-      if (data.completedResales >= 3) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.completedResales >= 25) return { current: 25, max: 25 };
-      if (data.completedResales >= 10) return { current: data.completedResales, max: 25 };
-      return { current: data.completedResales, max: 3 };
-    },
-  },
-  {
-    id: 'vip-status',
-    emoji: '💎',
-    name: 'VIP Status',
-    description: 'Compras VIP',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.vipTickets >= 25) return 'gold';
-      if (data.vipTickets >= 10) return 'silver';
-      if (data.vipTickets >= 3) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      if (data.vipTickets >= 25) return { current: 25, max: 25 };
-      if (data.vipTickets >= 10) return { current: data.vipTickets, max: 25 };
-      return { current: data.vipTickets, max: 3 };
-    },
-  },
-  {
-    id: 'big-spender',
-    emoji: '💰',
-    name: 'Big Spender',
-    description: 'Dinero gastado',
-    tier: 'none',
-    progress: 0,
-    maxProgress: 0,
-    calculateTier: (data) => {
-      if (data.totalSpent >= 5000) return 'gold';
-      if (data.totalSpent >= 2000) return 'silver';
-      if (data.totalSpent >= 500) return 'bronze';
-      return 'none';
-    },
-    calculateProgress: (data) => {
-      const spent = Math.floor(data.totalSpent);
-      if (spent >= 5000) return { current: 5000, max: 5000 };
-      if (spent >= 2000) return { current: spent, max: 5000 };
-      return { current: spent, max: 500 };
-    },
-  },
+  { id:'party-animal', emoji:'🎧', name:'Fiestero', description:'Asiste a eventos', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.totalTickets>=30?'gold':d.totalTickets>=15?'silver':d.totalTickets>=5?'bronze':'none',
+    calculateProgress: d => d.totalTickets>=30?{current:30,max:30}:d.totalTickets>=15?{current:d.totalTickets,max:30}:{current:d.totalTickets,max:5}},
+  { id:'early-adopter', emoji:'⚡', name:'Early Adopter', description:'Primeros 1000 usuarios', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.isEarlyAdopter?'gold':'none',
+    calculateProgress: d => ({current:d.isEarlyAdopter?1:0,max:1})},
+  { id:'bass-monster', emoji:'🔊', name:'Bass Monster', description:'Techno events', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.technoTickets>=30?'gold':d.technoTickets>=15?'silver':d.technoTickets>=5?'bronze':'none',
+    calculateProgress: d => d.technoTickets>=30?{current:30,max:30}:d.technoTickets>=15?{current:d.technoTickets,max:30}:{current:d.technoTickets,max:5}},
+  { id:'presale-hunter', emoji:'🎯', name:'Preventa Hunter', description:'Compras en preventa', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.presaleTickets>=30?'gold':d.presaleTickets>=15?'silver':d.presaleTickets>=5?'bronze':'none',
+    calculateProgress: d => d.presaleTickets>=30?{current:30,max:30}:d.presaleTickets>=15?{current:d.presaleTickets,max:30}:{current:d.presaleTickets,max:5}},
+  { id:'lima-explorer', emoji:'🧭', name:'Lima Explorer', description:'Distritos visitados', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.uniqueDistricts>=10?'gold':d.uniqueDistricts>=6?'silver':d.uniqueDistricts>=3?'bronze':'none',
+    calculateProgress: d => d.uniqueDistricts>=10?{current:10,max:10}:d.uniqueDistricts>=6?{current:d.uniqueDistricts,max:10}:{current:d.uniqueDistricts,max:3}},
+  { id:'resale-pro', emoji:'🤝', name:'Resale Pro', description:'Reventas completadas', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.completedResales>=25?'gold':d.completedResales>=10?'silver':d.completedResales>=3?'bronze':'none',
+    calculateProgress: d => d.completedResales>=25?{current:25,max:25}:d.completedResales>=10?{current:d.completedResales,max:25}:{current:d.completedResales,max:3}},
+  { id:'vip-status', emoji:'💎', name:'VIP Status', description:'Compras VIP', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.vipTickets>=25?'gold':d.vipTickets>=10?'silver':d.vipTickets>=3?'bronze':'none',
+    calculateProgress: d => d.vipTickets>=25?{current:25,max:25}:d.vipTickets>=10?{current:d.vipTickets,max:25}:{current:d.vipTickets,max:3}},
+  { id:'big-spender', emoji:'💰', name:'Big Spender', description:'Dinero gastado', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.totalSpent>=5000?'gold':d.totalSpent>=2000?'silver':d.totalSpent>=500?'bronze':'none',
+    calculateProgress: d => {const s=Math.floor(d.totalSpent);return s>=5000?{current:5000,max:5000}:s>=2000?{current:s,max:5000}:{current:s,max:500}}},
 ];
 
-const getTierColor = (tier: 'none' | 'bronze' | 'silver' | 'gold'): string => {
-  const colors: Record<string, string> = {
-    bronze: '#CD7F32',
-    silver: '#C0C0C0',
-    gold: '#FFD700',
-    none: '#444444',
-  };
-  return colors[tier] || '#444444';
-};
+const tierLabelHelper = (t: string, profileT: any) => ({bronze: profileT.levels.bronze, silver: profileT.levels.silver, gold: profileT.levels.gold, none: profileT.levels.locked}[t] || profileT.levels.locked);
+const tierClass = (t: string) => ({bronze:'bronce',silver:'plata',gold:'oro',none:'locked'}[t] || 'locked');
 
-const getTierLabel = (tier: 'none' | 'bronze' | 'silver' | 'gold'): string => {
-  const labels: Record<string, string> = {
-    bronze: 'Bronce',
-    silver: 'Plata',
-    gold: 'Oro',
-    none: 'Bloqueado',
-  };
-  return labels[tier] || 'Bloqueado';
-};
-
-const getInitials = (name: string | undefined): string => {
+const getInitials = (name?: string) => {
   if (!name) return 'U';
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 };
 
-const formatDate = (date: unknown): string => {
-  if (!date) return 'N/A';
+const formatMemberDate = (date: unknown) => {
+  if (!date) return '';
   try {
-    const timestamp = date as { seconds?: number; toDate?: () => Date };
-    const jsDate = timestamp.toDate?.() || new Date((timestamp.seconds ?? 0) * 1000);
-    return jsDate.toLocaleDateString('es-PE', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return 'N/A';
-  }
+    const ts = date as { seconds?: number; toDate?: () => Date };
+    const d = ts.toDate?.() || new Date((ts.seconds ?? 0) * 1000);
+    return d.toLocaleDateString('es-PE', { year: 'numeric', month: 'long' });
+  } catch { return ''; }
 };
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user, profile, loading, logout, updateProfile, isPromoter } = useAuth();
   const { tickets } = useUserTickets(user?.uid || '');
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(profile?.displayName || '');
   const [isSaving, setIsSaving] = useState(false);
   const [badges, setBadges] = useState<Badge[]>(BADGES);
 
-  // Calculate badges based on tickets
   useEffect(() => {
-    const calculateBadgeData = (): BadgeCalculationData => {
-      const uniqueDistricts = new Set(tickets.map((t) => t.eventLocation).filter(Boolean)).size;
-      const technoTickets = tickets.filter((t) => t.ticketType === 'techno').length;
-      const presaleTickets = tickets.filter((t) => t.couponCode === 'PRESALE').length;
-      const vipTickets = tickets.filter((t) => t.ticketName?.includes('VIP')).length;
-      const completedResales = tickets.filter((t) => t.status === 'transferred').length;
-      const totalSpent = tickets.reduce((sum, t) => sum + (t.price || 0), 0);
-
-      return {
-        totalTickets: tickets.length,
-        totalSpent,
-        completedResales,
-        technoTickets,
-        presaleTickets,
-        vipTickets,
-        uniqueDistricts,
-        isEarlyAdopter: false, // Would need to check from server
-      };
+    const data: BadgeCalc = {
+      totalTickets: tickets.length,
+      totalSpent: tickets.reduce((s, t) => s + (t.price || 0), 0),
+      completedResales: tickets.filter(t => t.status === 'transferred').length,
+      technoTickets: tickets.filter(t => t.ticketType === 'techno').length,
+      presaleTickets: tickets.filter(t => t.couponCode === 'PRESALE').length,
+      vipTickets: tickets.filter(t => t.ticketName?.includes('VIP')).length,
+      uniqueDistricts: new Set(tickets.map(t => t.eventLocation).filter(Boolean)).size,
+      isEarlyAdopter: false,
     };
-
-    const data = calculateBadgeData();
-    const updatedBadges = BADGES.map((badge) => {
-      const tier = badge.calculateTier(data);
-      const progress = badge.calculateProgress(data);
-      return {
-        ...badge,
-        tier,
-        progress: progress.current,
-        maxProgress: progress.max,
-      };
-    });
-
-    setBadges(updatedBadges);
+    setBadges(BADGES.map(b => ({
+      ...b,
+      tier: b.calculateTier(data),
+      progress: b.calculateProgress(data).current,
+      maxProgress: b.calculateProgress(data).max,
+    })));
   }, [tickets]);
 
-  // Redirect if not logged in
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
+    if (!loading && !user) navigate('/auth');
   }, [user, loading, navigate]);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/auth');
-      toast.success('Sesión cerrada');
-    } catch (error) {
-      toast.error('Error al cerrar sesión');
-    }
+    try { await logout(); navigate('/auth'); toast.success(t.profile.loggedOut); }
+    catch { toast.error(t.profile.errorLogout); }
   };
 
   const handleSaveName = async () => {
-    if (!editedName.trim()) {
-      toast.error('El nombre no puede estar vacío');
-      return;
-    }
-
+    if (!editedName.trim()) { toast.error(t.profile.errorEmptyName); return; }
     try {
       setIsSaving(true);
       await updateProfile({ displayName: editedName });
       setIsEditing(false);
-      toast.success('Nombre actualizado');
-    } catch (error) {
-      toast.error('Error al actualizar nombre');
-    } finally {
-      setIsSaving(false);
-    }
+      toast.success(t.profile.nameUpdated);
+    } catch { toast.error(t.profile.errorUpdateName); }
+    finally { setIsSaving(false); }
   };
 
-  if (loading) {
-    return (
-      <div className="profile-container">
-        <div className="profile-loading">Cargando perfil...</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="pf"><div style={{textAlign:'center',padding:'60px 20px',color:'#888'}}>{t.profile.loading}</div></div>;
+  if (!user || !profile) return null;
 
-  if (!user || !profile) {
-    return null;
-  }
-
-  const totalSpent = tickets.reduce((sum, t) => sum + (t.price || 0), 0);
-  const completedResales = tickets.filter((t) => t.status === 'transferred').length;
+  const totalSpent = tickets.reduce((s, t) => s + (t.price || 0), 0);
+  const completedResales = tickets.filter(t => t.status === 'transferred').length;
 
   return (
-    <div className="profile-container">
-      <div className="profile-content">
-        {/* Header Section */}
-        <div className="profile-header">
-          <div className="profile-avatar">
-            {profile.photoURL ? (
-              <img src={profile.photoURL} alt={profile.displayName} />
-            ) : (
-              <span className="profile-avatar-initials">{getInitials(profile.displayName)}</span>
-            )}
-          </div>
+    <div className="pf">
+      {/* Header */}
+      <div className="pf-header">
+        <div className="pf-avatar">
+          <div className="pf-verified-ring" />
+          {profile.photoURL
+            ? <img src={profile.photoURL} alt={profile.displayName} />
+            : <span>{getInitials(profile.displayName)}</span>}
+        </div>
 
-          <div className="profile-header-info">
-            <div className="profile-name-section">
-              {isEditing ? (
-                <div className="profile-name-edit">
-                  <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    className="profile-name-input"
-                    disabled={isSaving}
-                    autoFocus
-                  />
-                  <button
-                    className="profile-name-save"
-                    onClick={handleSaveName}
-                    disabled={isSaving}
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    className="profile-name-cancel"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setEditedName(profile.displayName);
-                    }}
-                    disabled={isSaving}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <div className="profile-name-display">
-                  <h1 className="profile-name">
-                    {profile.displayName || 'Usuario'}
-                  </h1>
-                  <button
-                    className="profile-name-edit-btn"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Editar
-                  </button>
-                </div>
-              )}
+        <div className="pf-info">
+          {isEditing ? (
+            <div className="pf-name-edit">
+              <input className="pf-name-input" value={editedName} onChange={e => setEditedName(e.target.value)} disabled={isSaving} autoFocus />
+              <button className="pf-name-save" onClick={handleSaveName} disabled={isSaving}>{t.common.save}</button>
+              <button className="pf-name-cancel" onClick={() => { setIsEditing(false); setEditedName(profile.displayName); }} disabled={isSaving}>{t.common.cancel}</button>
             </div>
-
-            <div className="profile-status">
-              {profile.dni && (
-                <span className="profile-verified">
-                  <span className="profile-verified-icon">✓</span>
-                  Identidad verificada
-                </span>
-              )}
-            </div>
-
-            <p className="profile-email">{profile.email}</p>
-
-            <p className="profile-member-since">
-              Miembro desde {profile.createdAt ? formatDate(profile.createdAt) : 'N/A'}
-            </p>
-          </div>
-        </div>
-
-        {/* Stats Row */}
-        <div className="profile-stats">
-          <div className="profile-stat">
-            <div className="profile-stat-value">{tickets.length}</div>
-            <div className="profile-stat-label">Eventos</div>
-          </div>
-          <div className="profile-stat">
-            <div className="profile-stat-value">S/ {totalSpent.toLocaleString('es-PE')}</div>
-            <div className="profile-stat-label">Total gastado</div>
-          </div>
-          <div className="profile-stat">
-            <div className="profile-stat-value">{completedResales}</div>
-            <div className="profile-stat-label">Reventas completadas</div>
-          </div>
-        </div>
-
-        {/* Badges Section */}
-        <div className="profile-badges-section">
-          <h2 className="profile-section-title">Insignias</h2>
-          <div className="profile-badges-grid">
-            {badges.map((badge) => (
-              <div key={badge.id} className="profile-badge-card">
-                <div className="profile-badge-emoji">{badge.emoji}</div>
-                <h3 className="profile-badge-name">{badge.name}</h3>
-                <p className="profile-badge-description">{badge.description}</p>
-
-                {badge.tier !== 'none' && (
-                  <div className="profile-badge-progress">
-                    <div
-                      className="profile-badge-progress-bar"
-                      style={{
-                        background: getTierColor(badge.tier),
-                      }}
-                    >
-                      <div
-                        className="profile-badge-progress-fill"
-                        style={{
-                          width: `${(badge.progress / badge.maxProgress) * 100}%`,
-                          backgroundColor: getTierColor(badge.tier),
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="profile-badge-tier"
-                      style={{
-                        color: getTierColor(badge.tier),
-                      }}
-                    >
-                      {getTierLabel(badge.tier)}
-                    </span>
-                  </div>
-                )}
-
-                {badge.tier === 'none' && (
-                  <div className="profile-badge-locked">
-                    <span>Bloqueado</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="profile-actions">
-          {isPromoter && (
-            <button
-              className="profile-action-link"
-              onClick={() => navigate('/organizador')}
-            >
-              Panel de Organizador →
-            </button>
+          ) : (
+            <h1>{profile.displayName || t.profile.user} {profile.dni && <span className="pf-check">✓</span>}</h1>
           )}
-          <button
-            className="profile-action-button profile-action-button--logout"
-            onClick={handleLogout}
-          >
-            Cerrar sesión
-          </button>
+
+          <div className="pf-meta">
+            {profile.dni && <>{t.profile.identityVerified} <span>DNI</span> · </>}
+            {t.profile.memberSince} <span>{formatMemberDate(profile.createdAt)}</span>
+          </div>
+
+          <div className="pf-email" style={{fontSize:14,color:'#888',margin:'4px 0'}}>{profile.email}</div>
+
+          <div className="pf-stats-row">
+            <div className="pf-stat"><strong>{tickets.length}</strong> {t.profile.events}</div>
+            <div className="pf-stat"><strong>S/{totalSpent.toLocaleString('es-PE')}</strong> {t.profile.spent}</div>
+            <div className="pf-stat"><strong>{completedResales}</strong> {t.profile.resales}</div>
+          </div>
         </div>
+
+        {!isEditing && (
+          <button className="pf-edit-btn" onClick={() => setIsEditing(true)}>{t.profile.editProfile}</button>
+        )}
+      </div>
+
+      {/* Badges */}
+      <div className="pf-section">
+        <div className="pf-section-head">
+          <div className="pf-section-title">{t.profile.badges}</div>
+          <span className="pf-section-more">{t.profile.viewAllBadges}</span>
+        </div>
+        <div className="pf-badges">
+          {badges.map(b => (
+            <div key={b.id} className={`pf-badge ${b.tier === 'none' ? 'locked' : ''}`}>
+              <div className="pf-badge-icon">{b.emoji}</div>
+              <div className="pf-badge-name">{b.name}</div>
+              <div className="pf-badge-desc">{b.description}</div>
+              <div className={`pf-badge-tier ${tierClass(b.tier)}`}>{tierLabelHelper(b.tier, t.profile)}</div>
+              <div className="pf-badge-progress">
+                <div
+                  className={`pf-badge-progress-fill ${tierClass(b.tier)}`}
+                  style={{ width: `${b.maxProgress > 0 ? (b.progress / b.maxProgress) * 100 : 0}%` }}
+                />
+              </div>
+              <div className="pf-badge-count">{b.progress}/{b.maxProgress}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Organizer CTA */}
+      {isPromoter && (
+        <div className="pf-organizer-cta">
+          <div className="pf-cta-label">{t.profile.organizerMode}</div>
+          <button onClick={() => navigate('/organizer')}>{t.profile.dashboardBtn}</button>
+        </div>
+      )}
+
+      {/* Logout */}
+      <button className="pf-logout-btn" onClick={handleLogout}>{t.profile.logoutBtn}</button>
+
+      {/* Footer */}
+      <div className="pf-footer">
+        <div className="pf-footer-logo">LEZGO</div>
+        <div className="pf-footer-copy">{t.footer.copy}</div>
       </div>
     </div>
   );

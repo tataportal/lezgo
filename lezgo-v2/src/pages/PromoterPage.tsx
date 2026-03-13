@@ -1,41 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEvents } from '../services/eventService';
+import { useTranslation } from '../i18n';
 import type { Event } from '../lib/types';
 import './PromoterPage.css';
 
-interface EventCardProps {
+interface PromoCardProps {
   event: Event;
 }
 
-function EventCard({ event }: EventCardProps) {
+function PromoCard({ event }: PromoCardProps) {
   const navigate = useNavigate();
 
   return (
     <div
-      className="event-card"
+      className="promo-card"
       onClick={() => navigate(`/evento/${event.slug}`)}
-      style={{ cursor: 'pointer' }}
     >
-      <div className="event-image">
+      <div className="promo-card-img">
         <img src={event.image || ''} alt={event.name || ''} />
-        <div className="event-status">{event.status || ''}</div>
       </div>
-      <div className="event-details">
+      <div className="promo-card-body">
+        <div className="promo-tag">{event.status || ''}</div>
         <h3>{event.name || ''}</h3>
-        <p className="event-subtitle">{event.subtitle || ''}</p>
-        <div className="event-meta">
-          <span className="event-date">{event.dateLabel || ''}</span>
-          <span className="event-venue">{event.venue || ''}</span>
-        </div>
+        <p>{event.subtitle || ''}</p>
+        <p>{event.dateLabel || ''}</p>
       </div>
     </div>
   );
 }
 
 export default function PromoterPage() {
-  const { promoterName } = useParams<{ promoterName: string }>();
+  const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +44,7 @@ export default function PromoterPage() {
         // Load all events and filter by organizer name
         const allEvents = await getEvents({ status: 'published' });
         const filtered = allEvents.filter(
-          (event) => event.organizer === promoterName
+          (event) => event.organizer === name
         );
         setEvents(filtered);
       } catch (error) {
@@ -56,50 +54,52 @@ export default function PromoterPage() {
       }
     };
 
-    if (promoterName) {
+    if (name) {
       loadEvents();
     }
-  }, [promoterName]);
+  }, [name]);
 
   return (
-    <div className="promoter-page">
-      <button className="back-link" onClick={() => navigate('/eventos')}>
-        ← Volver a eventos
+    <div className="pf">
+      <button className="pf-back" onClick={() => navigate('/')}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        {t.promoter.backToEvents}
       </button>
 
-      <div className="promoter-header">
-        <div className="promoter-avatar">
-          <div className="avatar-circle">
-            {promoterName?.charAt(0).toUpperCase()}
-          </div>
-          <div className="verified-ring"></div>
+      <div className="pf-header">
+        <div className="pf-avatar">
+          <div className="pf-verified-ring"></div>
+          {name?.charAt(0).toUpperCase()}
         </div>
-        <div className="promoter-info">
-          <div className="promoter-name">
-            {promoterName}
-            <span className="checkmark">✓</span>
-          </div>
-          <div className="promoter-status">
-            Productor verificado · {events.length} evento{events.length !== 1 ? 's' : ''}
+        <div className="pf-info">
+          <h1>
+            {name}
+            <span className="pf-check">✓</span>
+          </h1>
+          <div className="pf-meta">
+            {t.promoter.verified} <span>{events.length} {events.length !== 1 ? t.promoter.eventPlural : t.promoter.eventSingular}</span>
           </div>
         </div>
       </div>
 
-      <div className="promoter-content">
-        {loading ? (
-          <div className="loading">Cargando eventos...</div>
-        ) : events.length > 0 ? (
-          <div className="events-grid">
+      {loading ? (
+        <div className="pf-loading">{t.promoter.loadingEvents}</div>
+      ) : events.length > 0 ? (
+        <>
+          <h2 className="promotor-events-title">{t.promoter.theirEvents}</h2>
+          <div className="promotor-events-grid">
             {events.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <PromoCard key={event.id} event={event} />
             ))}
           </div>
-        ) : (
-          <div className="no-events">
-            <p>No hay eventos publicados de este productor.</p>
-          </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className="pf-empty">
+          <p>{t.promoter.noEvents}</p>
+        </div>
+      )}
     </div>
   );
 }

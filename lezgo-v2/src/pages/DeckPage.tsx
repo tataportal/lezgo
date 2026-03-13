@@ -310,7 +310,7 @@ export default function DeckPage() {
         <a href="mailto:tata@frensonly.club" className="footer-email">
           {t.contactEmail}
         </a>
-        <p className="footer-text">LEZGO • Lima, Peru • 2024</p>
+        <p className="footer-text">LEZGO • Lima, Peru • {new Date().getFullYear()}</p>
       </footer>
     </div>
   );

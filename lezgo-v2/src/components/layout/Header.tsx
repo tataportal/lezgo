@@ -1,9 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTranslation } from '../../i18n';
 import { useState } from 'react';
+import LanguageToggle from './LanguageToggle';
 
 export default function Header() {
   const { user, profile, logout } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -20,32 +23,33 @@ export default function Header() {
             className={`lz-nav-link ${isActive('/') ? 'active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            Eventos
+            {t.nav.events}
           </Link>
           <Link
             to="/reventa"
             className={`lz-nav-link ${isActive('/reventa') ? 'active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            Reventa
+            {t.nav.resale}
           </Link>
           <Link
             to="/conocenos"
             className={`lz-nav-link ${isActive('/conocenos') ? 'active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            Conócenos
+            {t.nav.about}
           </Link>
         </nav>
 
         <div className="lz-header-actions">
+          <LanguageToggle />
           {user ? (
             <>
               <Link to="/mis-entradas" className="lz-btn lz-btn-ghost">
-                Mis Entradas
+                {t.nav.myTickets}
               </Link>
               <button onClick={logout} className="lz-btn lz-btn-ghost">
-                Salir
+                {t.nav.logout}
               </button>
               <Link to="/perfil" className="lz-avatar-link">
                 {profile?.photoURL ? (
@@ -60,10 +64,10 @@ export default function Header() {
           ) : (
             <>
               <Link to="/auth" className="lz-btn lz-btn-ghost">
-                Iniciar sesión
+                {t.nav.login}
               </Link>
               <Link to="/auth?tab=register" className="lz-btn lz-btn-primary">
-                Crear cuenta
+                {t.nav.register}
               </Link>
             </>
           )}
