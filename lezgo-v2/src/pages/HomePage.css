@@ -209,11 +209,14 @@
   z-index: 0;
 }
 
-/* Hero video wrap */
+/* Hero video wrap — matches v2 dist exactly */
 .hero-video-wrap {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  filter: brightness(0.45) saturate(1.3) contrast(1.1);
+  transform: scale(1.02);
+  animation: hero-breathe 8s ease-in-out infinite;
   z-index: 0;
 }
 .hero-video-wrap iframe {
