@@ -126,6 +126,7 @@ export default function HomePage() {
           <HeroVideoWrap
             eventId={featuredEvent.id}
             image={featuredEvent.image}
+            genre={featuredEvent.genre}
             heroVideo={featuredEvent.heroVideo || 'UEzJ-Ckl7co'}
             heroVideoStart={28}
             heroVideoEnd={115}
@@ -224,7 +225,7 @@ export default function HomePage() {
                     <div
                       className="promo-card__image"
                       style={{
-                        backgroundImage: `url(${getEventImage(event.id, event.image)})`,
+                        backgroundImage: `url(${getEventImage(event.id, event.image, event.genre)})`,
                       }}
                     />
                     <div className="promo-card__overlay" />
@@ -343,17 +344,18 @@ export default function HomePage() {
 interface HeroVideoWrapProps {
   eventId: string;
   image?: string;
+  genre?: string;
   heroVideo?: string;
   heroVideoStart?: number; // seconds — start playback here
   heroVideoEnd?: number; // seconds — loop back to start at this point
 }
 
-function HeroVideoWrap({ eventId, image, heroVideo, heroVideoStart = 0, heroVideoEnd }: HeroVideoWrapProps) {
+function HeroVideoWrap({ eventId, image, genre, heroVideo, heroVideoStart = 0, heroVideoEnd }: HeroVideoWrapProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
-  const bgImg = getEventImage(eventId, image);
+  const bgImg = getEventImage(eventId, image, genre);
 
   useEffect(() => {
     if (!heroVideo || !wrapRef.current) return;
@@ -515,7 +517,7 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
                   <div
                     className="dl-event-img"
                     style={{
-                      backgroundImage: `url(${getEventImage(ev.id, ev.image)})`,
+                      backgroundImage: `url(${getEventImage(ev.id, ev.image, ev.genre)})`,
                     }}
                   />
                   <div className="dl-event-info">
