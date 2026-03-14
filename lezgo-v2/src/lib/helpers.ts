@@ -65,7 +65,7 @@ const genreImages: Record<string, string> = {
   'multi-genre': 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80',
   'minimal / micro house': 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&q=80',
 };
-const defaultImg = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80';
+const defaultImg = '/hero-bg.jpg';
 
 export function getEventImage(_eventId: string, image?: string, genre?: string): string {
   if (image && image.startsWith('http')) return image;
