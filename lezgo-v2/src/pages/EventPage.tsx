@@ -42,7 +42,7 @@ export default function EventPage() {
   const vs = event.visibleSections || {};
   const meta = event.meta || {};
   const evTags: string[] = Array.isArray(event.tags) ? event.tags : [];
-  const imgUrl = getEventImage(event.id, event.image, event.genre);
+  const imgUrl = getEventImage(event.image);
 
   // Date
   const dateObj = toDate(event.date);

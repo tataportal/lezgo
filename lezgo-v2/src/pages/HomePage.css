@@ -205,17 +205,6 @@
   overflow: hidden;
 }
 
-.home-hero__background {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center 30%;
-  filter: brightness(0.45) saturate(1.3) contrast(1.1);
-  transform: scale(1.02);
-  animation: hero-breathe 8s ease-in-out infinite;
-  z-index: 0;
-}
-
 /* Hero video wrap — matches v2 dist exactly */
 .hero-video-wrap {
   position: absolute;
@@ -233,13 +222,6 @@
   transform: translate(-50%, -50%);
   border: 0;
   pointer-events: none;
-}
-.hero-video-wrap video {
-  position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
 }
 .hero-video-wrap .hero-bg-img {
   position: absolute;

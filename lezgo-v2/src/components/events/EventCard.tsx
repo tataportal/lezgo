@@ -31,7 +31,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   const lowestPrice = getLowestPrice();
-  const img = getEventImage(event.id, event.image, event.genre);
+  const img = getEventImage(event.image);
   const backgroundStyle: React.CSSProperties = { backgroundImage: `url(${img})` };
 
   // Badge logic — matches monolith: sold-out = hot red, featured = nuevo acid border
