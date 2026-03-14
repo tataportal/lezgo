@@ -41,6 +41,13 @@
   gap: 8px;
 }
 
+.home-marquee__item .acid-smiley {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+}
+
 @keyframes marq {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

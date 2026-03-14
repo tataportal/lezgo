@@ -114,8 +114,18 @@ export default function HomePage() {
       {/* ── Marquee — Ported from monolith ── */}
       <div className="home-marquee">
         <div className="home-marquee__track">
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="home-marquee__item">{item}</span>
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span key={i} className="home-marquee__item">
+              <span className="acid-smiley">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="8.5" cy="10" r="1.5" fill="currentColor"/>
+                  <circle cx="15.5" cy="10" r="1.5" fill="currentColor"/>
+                  <path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+                </svg>
+              </span>
+              {item}
+            </span>
           ))}
         </div>
       </div>
