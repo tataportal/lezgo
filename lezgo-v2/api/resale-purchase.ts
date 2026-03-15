@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyAuth } from './lib/auth';
-import { getAdminDb } from './lib/firebase-admin';
-import { rateLimit, RATE_LIMITS } from './lib/rate-limit';
+import { verifyAuth } from './lib/auth.js';
+import { getAdminDb } from './lib/firebase-admin.js';
+import { rateLimit, RATE_LIMITS } from './lib/rate-limit.js';
 import { FieldValue } from 'firebase-admin/firestore';
-import { cors } from './lib/cors';
+import { cors } from './lib/cors.js';
 
 /**
  * POST /api/resale-purchase

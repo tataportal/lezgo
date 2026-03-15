@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyPromoter } from './lib/auth';
-import { getAdminDb } from './lib/firebase-admin';
-import { rateLimit, RATE_LIMITS } from './lib/rate-limit';
-import { cors } from './lib/cors';
+import { verifyPromoter } from './lib/auth.js';
+import { getAdminDb } from './lib/firebase-admin.js';
+import { rateLimit, RATE_LIMITS } from './lib/rate-limit.js';
+import { cors } from './lib/cors.js';
 
 /**
  * POST /api/organizer-analytics

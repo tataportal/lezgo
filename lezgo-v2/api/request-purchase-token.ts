@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyAuth } from './lib/auth';
-import { rateLimit, RATE_LIMITS } from './lib/rate-limit';
-import { generatePurchaseToken } from './lib/purchase-token';
-import { cors } from './lib/cors';
+import { verifyAuth } from './lib/auth.js';
+import { rateLimit, RATE_LIMITS } from './lib/rate-limit.js';
+import { generatePurchaseToken } from './lib/purchase-token.js';
+import { cors } from './lib/cors.js';
 
 /**
  * POST /api/request-purchase-token

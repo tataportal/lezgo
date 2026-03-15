@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyPromoter } from './lib/auth';
-import { getAdminDb } from './lib/firebase-admin';
+import { verifyPromoter } from './lib/auth.js';
+import { getAdminDb } from './lib/firebase-admin.js';
 import { FieldValue } from 'firebase-admin/firestore';
-import { rateLimit, RATE_LIMITS } from './lib/rate-limit';
-import { cors } from './lib/cors';
+import { rateLimit, RATE_LIMITS } from './lib/rate-limit.js';
+import { cors } from './lib/cors.js';
 
 /**
  * POST /api/create-event
