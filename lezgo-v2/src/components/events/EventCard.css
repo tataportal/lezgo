@@ -2,7 +2,7 @@
    EVENT CARDS — Ported from monolith
    ═══════════════════════════════════════════ */
 .ev-card {
-  background: var(--bg-raised);
+  background: var(--bg);
   border: 1px solid var(--border);
   overflow: hidden;
   cursor: pointer;
@@ -10,9 +10,9 @@
 }
 
 .ev-card:hover {
-  border-color: rgba(229,255,0,0.25);
+  border-color: var(--acid-glow);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(229,255,0,0.08), 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px var(--acid-muted), 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .ev-card__image-wrapper {
@@ -42,7 +42,7 @@
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(to top, var(--bg-raised), transparent);
+  background: linear-gradient(to top, var(--bg), transparent);
 }
 
 .ev-card__badge {
@@ -50,8 +50,8 @@
   top: 12px;
   left: 12px;
   padding: 3px 10px;
-  font-size: var(--fs-xs);
-  font-weight: 700;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-caption);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   z-index: 2;
@@ -60,12 +60,12 @@
 }
 
 .ev-card__badge--sold-out {
-  background: #FF3366;
+  background: var(--pink);
   color: var(--text);
 }
 
 .ev-card__badge--featured {
-  background: rgba(229,255,0,0.08);
+  background: var(--acid-muted);
   color: var(--acid);
   border: 1px solid var(--acid);
 }
@@ -88,7 +88,7 @@
 .ev-card__title {
   font-size: 26px;
   font-weight: 800;
-  color: #fff;
+  color: var(--text);
   line-height: 1.2;
   letter-spacing: -0.3px;
   margin: 0 0 6px 0;
@@ -96,12 +96,12 @@
 
 .ev-card__venue {
   font-size: 18px;
-  color: #b0b0b0;
+  color: var(--text-muted);
   margin-bottom: 16px;
 }
 
 .ev-card__location {
-  color: #999;
+  color: var(--text-muted);
 }
 
 .ev-card__footer {
@@ -117,10 +117,10 @@
 }
 
 .ev-card__verified {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-caption);
   font-weight: 600;
   padding: 3px 8px;
-  border: 1px solid rgba(229,255,0,0.08);
+  border: 1px solid var(--acid-muted);
   color: var(--acid);
   letter-spacing: 0.3px;
   display: inline-flex;

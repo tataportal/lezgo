@@ -163,7 +163,7 @@ export default function AboutPage() {
               </div>
               <div className="cf-ticket-qr">
                 <div className="cf-qr-mini" />
-                <span>{t.about.invalidQr}</span>
+                <span>{t.about.invalidId}</span>
               </div>
             </div>
 

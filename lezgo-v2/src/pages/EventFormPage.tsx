@@ -6,7 +6,8 @@ import { getEventById, createEvent, updateEvent } from '../services/eventService
 import { useTranslation } from '../i18n';
 import type { EventTier, EventPhase, EventMeta, EventVisibleSections } from '../lib/types';
 import { toDate } from '../lib/helpers';
-import { Timestamp } from 'firebase/firestore';
+import { FEES } from '../lib/constants';
+import { Timestamp } from 'firebase/firestore/lite';
 import './EventFormPage.css';
 
 interface FormEvent {
@@ -42,7 +43,7 @@ const generateSlug = (name: string): string => {
 };
 
 const generateTierId = (): string => {
-  return `tier_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `tier_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 };
 
 export default function EventFormPage() {
@@ -411,7 +412,7 @@ export default function EventFormPage() {
       <div className="ef-preview-banner">
         <div className="ef-preview-banner-icon">📋</div>
         <div className="ef-preview-banner-text">
-          Previsualizando evento. <a href="#preview">Ver evento público</a>
+          {t.eventForm.previewBanner} <a href="#preview">{t.eventForm.previewLink}</a>
         </div>
       </div>
 
@@ -664,7 +665,7 @@ export default function EventFormPage() {
                 type="button"
                 className="ef-remove-btn"
                 onClick={() => removeLineup(index)}
-                title="Eliminar artista"
+                title={t.eventForm.removeArtist}
               >
                 ×
               </button>
@@ -692,7 +693,7 @@ export default function EventFormPage() {
                 type="button"
                 className="ef-remove-btn"
                 onClick={() => removeTag(index)}
-                title="Eliminar tag"
+                title={t.eventForm.removeTag}
               >
                 ×
               </button>
@@ -806,7 +807,7 @@ export default function EventFormPage() {
                 type="button"
                 className="ef-remove-btn"
                 onClick={() => removeProhibitedItem(index)}
-                title="Eliminar artículo"
+                title={t.eventForm.removeProhibited}
               >
                 ×
               </button>
@@ -829,7 +830,7 @@ export default function EventFormPage() {
                   type="button"
                   className="ef-remove-btn"
                   onClick={() => removeTier(tier.id)}
-                  title="Eliminar tier"
+                  title={t.eventForm.removeTier}
                 >
                   ×
                 </button>
@@ -897,7 +898,7 @@ export default function EventFormPage() {
                         type="button"
                         className="ef-remove-btn"
                         onClick={() => removePhaseFromTier(tier.id, phaseIndex)}
-                        title="Eliminar fase"
+                        title={t.eventForm.removePhase}
                       >
                         ×
                       </button>
@@ -922,7 +923,7 @@ export default function EventFormPage() {
                   .filter((p) => p.active)
                   .map((phase, idx) => {
                     const revenue = phase.price * tier.capacity;
-                    const fee = revenue * 0.08;
+                    const fee = revenue * FEES.DIRECT_TOTAL;
                     const net = revenue - fee;
                     return (
                       <div key={idx}>

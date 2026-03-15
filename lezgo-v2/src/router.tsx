@@ -17,6 +17,9 @@ const ScannerPage = lazy(() => import('./pages/ScannerPage'));
 const EventFormPage = lazy(() => import('./pages/EventFormPage'));
 const PromoterPage = lazy(() => import('./pages/PromoterPage'));
 const DeckPage = lazy(() => import('./pages/DeckPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function SuspenseWrap({ children }: { children: React.ReactNode }) {
   return (
@@ -106,6 +109,23 @@ export const router = createBrowserRouter([
       {
         path: 'deck',
         element: <SuspenseWrap><DeckPage /></SuspenseWrap>,
+      },
+      {
+        path: 'privacidad',
+        element: <SuspenseWrap><PrivacyPage /></SuspenseWrap>,
+      },
+      {
+        path: 'terminos',
+        element: <SuspenseWrap><TermsPage /></SuspenseWrap>,
+      },
+      {
+        // /inicio redirects to homepage (used by AuthPage, AboutPage, MyTicketsPage)
+        path: 'inicio',
+        element: <SuspenseWrap><HomePage /></SuspenseWrap>,
+      },
+      {
+        path: '*',
+        element: <SuspenseWrap><NotFoundPage /></SuspenseWrap>,
       },
     ],
   },

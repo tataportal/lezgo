@@ -1,0 +1,59 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── USERS ──
+    // Users can only read/write their own profile.
+    // They can NEVER change their role, email, or createdAt from the client.
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.role == 'fan'
+        && request.resource.data.keys().hasAll(['email', 'displayName', 'role']);
+      allow update: if request.auth != null && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email', 'createdAt']);
+    }
+
+    // ── EVENTS ──
+    // Public read. Writes only via Admin SDK (API routes).
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if false; // Only via admin SDK
+    }
+
+    // ── TICKETS ──
+    // Users can only read their own tickets.
+    // All writes go through admin SDK (purchase, transfer, scan).
+    match /tickets/{ticketId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow write: if false; // Only via admin SDK
+    }
+
+    // ── RESALE ──
+    // Listed resale items are public read (marketplace).
+    // All writes go through admin SDK.
+    match /resale/{resaleId} {
+      allow read: if true;
+      allow write: if false; // Only via admin SDK
+    }
+
+    // ── COUPONS ──
+    // No client access. All operations via admin SDK.
+    match /coupons/{couponId} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // ── PURCHASE COUNTS ──
+    // Counter documents for identity-based purchase limits. Admin SDK only.
+    match /purchaseCounts/{counterId} {
+      allow read, write: if false;
+    }
+
+    // ── DEFAULT: deny everything else ──
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

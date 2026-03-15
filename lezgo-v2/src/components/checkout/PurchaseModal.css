@@ -1,37 +1,17 @@
-:root {
-  --acid: #E5FF00;
-  --bg: #0A0A0A;
-  --bg-raised: #111111;
-  --text: #FFFFFF;
-  --text-muted: #999999;
-  --border: #222222;
-  --green: #00FF85;
-  --red: #FF4D4D;
-}
-
 .pm-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--dark-85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 400;
   padding: 20px;
-  animation: pm-fade-in 0.2s ease-out;
-}
-
-@keyframes pm-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  animation: fade-in 0.2s ease-out;
 }
 
 .pm-modal {
-  background-color: var(--bg-raised);
+  background-color: var(--bg);
   border-radius: 16px;
   border: 1px solid var(--border);
   width: 100%;
@@ -41,22 +21,11 @@
   padding: 40px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   position: relative;
-  animation: pm-slide-up 0.3s ease-out;
+  animation: slide-up 0.3s ease-out;
 }
 
 .pm-modal--large {
   max-width: 560px;
-}
-
-@keyframes pm-slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .pm-close {
@@ -156,7 +125,7 @@
 
 .pm-tier-card:hover {
   border-color: var(--acid);
-  background-color: rgba(229, 255, 0, 0.03);
+  background-color: var(--acid-03);
 }
 
 .pm-tier-info {
@@ -187,7 +156,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--bg-raised);
+  background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 4px;
@@ -247,11 +216,21 @@
 .pm-input:focus {
   outline: none;
   border-color: var(--acid);
-  background-color: rgba(229, 255, 0, 0.03);
+  background-color: var(--acid-03);
 }
 
 .pm-input::placeholder {
   color: var(--text-muted);
+}
+
+.pm-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
 /* Coupon Section */
@@ -279,7 +258,7 @@
 .pm-coupon-input {
   flex: 1;
   padding: 10px 12px;
-  background-color: var(--bg-raised);
+  background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
@@ -430,8 +409,8 @@
 }
 
 .pm-button--primary:hover:not(:disabled) {
-  background-color: #f0ff19;
-  box-shadow: 0 8px 24px rgba(229, 255, 0, 0.2);
+  filter: brightness(0.88);
+  box-shadow: 0 8px 24px var(--acid-20);
 }
 
 .pm-button--secondary {
@@ -443,21 +422,21 @@
 .pm-button--secondary:hover:not(:disabled) {
   border-color: var(--acid);
   color: var(--acid);
-  background-color: rgba(229, 255, 0, 0.05);
+  background-color: var(--acid-05);
 }
 
 .pm-button--danger {
-  background-color: var(--red);
-  color: white;
+  background-color: var(--pink);
+  color: var(--color-white);
 }
 
 .pm-button--danger:hover:not(:disabled) {
-  background-color: #ff6666;
+  filter: brightness(1.15);
 }
 
 .pm-button--google {
-  background-color: white;
-  color: #222222;
+  background-color: var(--color-white);
+  color: var(--border);
   font-weight: 600;
 }
 
@@ -473,7 +452,7 @@
 
 .pm-button--magic:hover:not(:disabled) {
   border-color: var(--acid);
-  background-color: rgba(229, 255, 0, 0.03);
+  background-color: var(--acid-03);
 }
 
 .pm-button--sm {

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getEvents } from '../services/eventService';
 import { useTranslation } from '../i18n';
 import type { Event } from '../lib/types';
+import './ProfilePage.css';
 import './PromoterPage.css';
 
 interface PromoCardProps {
@@ -18,7 +19,7 @@ function PromoCard({ event }: PromoCardProps) {
       onClick={() => navigate(`/evento/${event.slug}`)}
     >
       <div className="promo-card-img">
-        <img src={event.image || ''} alt={event.name || ''} />
+        <img src={event.image || ''} alt={event.name || ''} loading="lazy" />
       </div>
       <div className="promo-card-body">
         <div className="promo-tag">{event.status || ''}</div>
@@ -62,7 +63,7 @@ export default function PromoterPage() {
   return (
     <div className="pf">
       <button className="pf-back" onClick={() => navigate('/')}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
         {t.promoter.backToEvents}

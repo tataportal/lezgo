@@ -12,8 +12,8 @@ export default function Footer() {
         </div>
         <div className="lz-footer-links">
           <Link to="/conocenos">{t.footer.about}</Link>
-          <Link to="/conocenos">{t.footer.privacy}</Link>
-          <Link to="/conocenos">{t.footer.terms}</Link>
+          <Link to="/privacidad">{t.footer.privacy}</Link>
+          <Link to="/terminos">{t.footer.terms}</Link>
         </div>
         <div className="lz-footer-copy">
           &copy; {new Date().getFullYear()} Lezgo. {t.footer.tagline}

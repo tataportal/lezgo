@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
+import { sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../lib/constants';
 import toast from 'react-hot-toast';
 import './AuthPage.css';
 
@@ -23,16 +24,14 @@ export default function AuthPage() {
   const { user, loading, loginWithGoogle, sendMagicLink, updateProfile } = useAuth();
 
   const [tab, setTab] = useState<AuthTab>('login');
-  const [regStep, setRegStep] = useState(1); // 1=account, 2=dni, 3=photo+success
+  const [regStep, setRegStep] = useState(1); // 1=account, 2=dni+success
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [idType, setIdType] = useState<'dni' | 'ce' | 'pasaporte'>('dni');
+  const [idType, setIdType] = useState<IdType>('dni');
   const [dni, setDni] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
-  const [photoCaptured, setPhotoCaptured] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -82,7 +81,7 @@ export default function AuthPage() {
   };
 
   const handleMagicLink = async () => {
-    if (!email || !email.includes('@')) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error(t.auth.errorEmail);
       return;
     }
@@ -99,16 +98,12 @@ export default function AuthPage() {
     }
   };
 
-  const handleRegStep2 = () => {
+  const handleFinishRegister = async () => {
     if (!name.trim()) {
       toast.error(t.auth.errorName);
       return;
     }
-    const dniValid =
-      idType === 'dni' ? dni.length === 8 && /^\d+$/.test(dni) :
-      idType === 'ce' ? dni.length === 9 && /^\d+$/.test(dni) :
-      dni.length >= 5 && /^[a-zA-Z0-9]+$/.test(dni);
-    if (!dni.trim() || !dniValid) {
+    if (!isValidId(dni, idType)) {
       toast.error(
         idType === 'dni' ? t.auth.errorDni :
         idType === 'ce' ? t.auth.errorCarnet :
@@ -116,22 +111,15 @@ export default function AuthPage() {
       );
       return;
     }
-    setRegStep(3);
-  };
-
-  const handleFinishRegister = async () => {
     if (!user) { toast.error(t.auth.errorNoAccount); return; }
     try {
-      setVerifying(true);
+      setIsLoading(true);
       await updateProfile({ displayName: name.trim(), dni: dni.trim() });
-      // Simulate verification delay like monolith
-      setTimeout(() => {
-        setVerifying(false);
-        setShowSuccess(true);
-      }, 1500);
+      setShowSuccess(true);
     } catch {
       toast.error(t.auth.errorRegister);
-      setVerifying(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,15 +130,13 @@ export default function AuthPage() {
     setName('');
     setDni('');
     setLinkSent(false);
-    setPhotoCaptured(false);
     setShowSuccess(false);
-    setVerifying(false);
   };
 
-  /* ── Steps bar for register ── */
+  /* ── Steps bar for register (2 steps: account + identity) ── */
   const StepsBar = () => (
     <div className="auth-steps-bar">
-      {[1, 2, 3].map(s => (
+      {[1, 2].map(s => (
         <span
           key={s}
           className={s < regStep ? 'done' : s === regStep ? 'active' : ''}
@@ -295,7 +281,7 @@ export default function AuthPage() {
                   <select
                     className="auth-input auth-select"
                     value={idType}
-                    onChange={e => { setIdType(e.target.value as 'dni' | 'ce' | 'pasaporte'); setDni(''); }}
+                    onChange={e => { setIdType(e.target.value as IdType); setDni(''); }}
                   >
                     <option value="dni">{t.auth.dni}</option>
                     <option value="ce">{t.auth.carnet}</option>
@@ -309,60 +295,21 @@ export default function AuthPage() {
                     className="auth-input"
                     type="text"
                     placeholder={idType === 'dni' ? t.auth.dniPlaceholder : idType === 'ce' ? t.auth.carnetPlaceholder : t.auth.passportPlaceholder}
-                    maxLength={idType === 'pasaporte' ? 12 : idType === 'ce' ? 9 : 8}
+                    maxLength={ID_CONFIG[idType].maxLength}
                     value={dni}
-                    onChange={e => {
-                      if (idType === 'pasaporte') {
-                        setDni(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12));
-                      } else {
-                        const maxLen = idType === 'dni' ? 8 : 9;
-                        setDni(e.target.value.replace(/\D/g, '').slice(0, maxLen));
-                      }
-                    }}
+                    onChange={e => setDni(sanitizeIdInput(e.target.value, idType))}
                   />
 
                   <div className="auth-security-note">
                     {t.auth.dniSafe}
                   </div>
 
-                  <button className="auth-btn" style={{ marginTop: 16 }} onClick={handleRegStep2}>
-                    {t.auth.nextPhoto}
+                  <button className="auth-btn" style={{ marginTop: 16 }} onClick={handleFinishRegister} disabled={isLoading}>
+                    {isLoading ? t.common.loading : t.auth.createAccount}
                   </button>
                   <button className="auth-btn-ghost" onClick={() => setRegStep(1)}>
                     {t.auth.goBack}
                   </button>
-                </div>
-              )}
-
-              {/* ── Step 3: Photo + Success ── */}
-              {regStep === 3 && !showSuccess && (
-                <div className="auth-step active">
-                  {!verifying ? (
-                    <>
-                      <div className="auth-title">{t.auth.photoTitle}</div>
-                      <div className="auth-sub">{t.auth.photoDesc}</div>
-
-                      <div
-                        className={`auth-photo-box ${photoCaptured ? 'captured' : ''}`}
-                        onClick={() => setPhotoCaptured(true)}
-                      >
-                        <span>{photoCaptured ? '🤳' : '📷'}</span>
-                        <div className="auth-photo-overlay">{t.auth.takePhoto}</div>
-                      </div>
-
-                      <button className="auth-btn" onClick={handleFinishRegister}>
-                        {t.auth.takePhotoRegister}
-                      </button>
-                      <button className="auth-btn-ghost" onClick={() => setRegStep(2)}>
-                        {t.auth.goBack}
-                      </button>
-                    </>
-                  ) : (
-                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                      <div className="auth-spinner" />
-                      <div className="auth-loading-text">{t.auth.verifying}</div>
-                    </div>
-                  )}
                 </div>
               )}
 

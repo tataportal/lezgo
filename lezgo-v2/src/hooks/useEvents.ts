@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import {
   getEvents,
   getEventById,
+  getEventBySlug,
   getEventsByOrganizer,
   getFeaturedEvents,
   searchEvents,
@@ -63,15 +64,16 @@ interface UseEventByIdReturn {
 }
 
 /**
- * Hook to fetch a single event by ID
+ * Hook to fetch a single event by ID or slug.
+ * First tries by Firestore document ID; if not found, tries by slug.
  */
-export function useEventById(eventId: string): UseEventByIdReturn {
+export function useEventById(eventIdOrSlug: string): UseEventByIdReturn {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchEvent = useCallback(async () => {
-    if (!eventId) {
+    if (!eventIdOrSlug) {
       setEvent(null);
       setLoading(false);
       return;
@@ -80,14 +82,22 @@ export function useEventById(eventId: string): UseEventByIdReturn {
     try {
       setLoading(true);
       setError(null);
-      const data = await getEventById(eventId);
+
+      // Try by document ID first
+      let data = await getEventById(eventIdOrSlug);
+
+      // If not found, try by slug
+      if (!data) {
+        data = await getEventBySlug(eventIdOrSlug);
+      }
+
       setEvent(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch event');
     } finally {
       setLoading(false);
     }
-  }, [eventId]);
+  }, [eventIdOrSlug]);
 
   useEffect(() => {
     fetchEvent();

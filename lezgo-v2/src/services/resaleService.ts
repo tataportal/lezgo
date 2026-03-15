@@ -7,87 +7,40 @@ import {
   where,
   orderBy,
   limit,
-  addDoc,
-  updateDoc,
-  runTransaction,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '../firebase';
+import { apiFetch } from '../lib/api';
 import type {
   Resale,
   ListForResaleInput,
   PurchaseResaleInput,
-  Ticket,
 } from '../lib/types';
 
 const RESALE_COLLECTION = 'resale';
-const TICKETS_COLLECTION = 'tickets';
-
-const RESALE_FEE_PERCENTAGE = 0.1; // 10% fee
 
 /**
- * List a ticket for resale
+ * List a ticket for resale via server-side API.
+ * Server validates ownership and calculates fees.
  */
 export async function listForResale(
   ticketId: string,
   input: ListForResaleInput,
-  sellerId: string
+  _sellerId: string
 ): Promise<string> {
-  // Get ticket details
-  const ticketRef = doc(db, TICKETS_COLLECTION, ticketId);
-  const ticketSnap = await getDoc(ticketRef);
-
-  if (!ticketSnap.exists()) {
-    throw new Error(`Ticket ${ticketId} not found`);
-  }
-
-  const ticket = ticketSnap.data() as Ticket;
-
-  // Guard against missing ticket data
-  if (!ticket?.eventId || !ticket?.ticketName) {
-    throw new Error(`Ticket ${ticketId} is missing required data`);
-  }
-
-  // Validate asking price
-  if (!input.askingPrice || input.askingPrice <= 0) {
-    throw new Error('Asking price must be greater than 0');
-  }
-
-  // Calculate fee
-  const fee = input.askingPrice * RESALE_FEE_PERCENTAGE;
-  const netToSeller = input.askingPrice - fee;
-
-  // Create resale listing
-  const resaleData = {
-    ticketId,
-    eventId: ticket.eventId ?? '',
-    eventName: ticket.eventName ?? '',
-    eventDate: ticket.eventDate ?? null,
-    eventDateLabel: ticket.eventDateLabel ?? '',
-    eventVenue: ticket.eventVenue ?? '',
-    ticketTier: ticket.ticketName ?? '',
-    originalPrice: ticket.originalPrice ?? 0,
-    askingPrice: input.askingPrice,
-    sellerId,
-    sellerName: ticket.userName ?? '',
-    sellerEmail: ticket.userEmail ?? '',
-    image: input.image || '',
-    status: 'listed' as const,
-    fee,
-    netToSeller,
-    createdAt: new Date(),
-    buyerId: null,
-  };
-
-  const docRef = await addDoc(collection(db, RESALE_COLLECTION), resaleData);
-
-  // Update ticket status to resale-listed
-  await updateDoc(ticketRef, { status: 'resale-listed' });
-
-  return docRef.id;
+  const result = await apiFetch<{ resaleId: string }>('resale-list', {
+    method: 'POST',
+    body: {
+      ticketId,
+      askingPrice: input.askingPrice,
+      image: input.image || '',
+    },
+  });
+  return result.resaleId;
 }
 
 /**
- * Get all active resale listings
+ * Get all active resale listings.
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getResaleListings(
   filters?: {
@@ -96,31 +49,43 @@ export async function getResaleListings(
     limit?: number;
   }
 ): Promise<Resale[]> {
-  const constraints = [];
+  const targetStatus = filters?.status || 'listed';
 
-  if (filters?.status) {
-    constraints.push(where('status', '==', filters.status));
-  } else {
-    constraints.push(where('status', '==', 'listed'));
+  try {
+    const constraints = [];
+    constraints.push(where('status', '==', targetStatus));
+    if (filters?.eventId) {
+      constraints.push(where('eventId', '==', filters.eventId));
+    }
+    constraints.push(orderBy('createdAt', 'desc'));
+    if (filters?.limit) {
+      constraints.push(limit(filters.limit));
+    }
+
+    const q = query(collection(db, RESALE_COLLECTION), ...constraints);
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for resale query, using fallback.');
+      const fallbackQ = query(collection(db, RESALE_COLLECTION));
+      const querySnapshot = await getDocs(fallbackQ);
+      let results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+
+      results = results.filter((r) => r.status === targetStatus);
+      if (filters?.eventId) {
+        results = results.filter((r) => r.eventId === filters.eventId);
+      }
+      results.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt as any).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      if (filters?.limit) results = results.slice(0, filters.limit);
+      return results;
+    }
+    throw err;
   }
-
-  if (filters?.eventId) {
-    constraints.push(where('eventId', '==', filters.eventId));
-  }
-
-  constraints.push(orderBy('createdAt', 'desc'));
-
-  if (filters?.limit) {
-    constraints.push(limit(filters.limit));
-  }
-
-  const q = query(collection(db, RESALE_COLLECTION), ...constraints);
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Resale));
 }
 
 /**
@@ -141,103 +106,90 @@ export async function getResaleById(resaleId: string): Promise<Resale | null> {
 }
 
 /**
- * Get resale listings by seller
+ * Get resale listings by seller.
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getResaleListingsBySeller(
   sellerId: string
 ): Promise<Resale[]> {
-  const q = query(
-    collection(db, RESALE_COLLECTION),
-    where('sellerId', '==', sellerId),
-    orderBy('createdAt', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Resale));
+  try {
+    const q = query(
+      collection(db, RESALE_COLLECTION),
+      where('sellerId', '==', sellerId),
+      orderBy('createdAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for seller resale query, using fallback.');
+      const fallbackQ = query(collection(db, RESALE_COLLECTION), where('sellerId', '==', sellerId));
+      const querySnapshot = await getDocs(fallbackQ);
+      const results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+      results.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt as any).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      return results;
+    }
+    throw err;
+  }
 }
 
 /**
- * Get resale listings for a specific event
+ * Get resale listings for a specific event.
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getEventResaleListings(eventId: string): Promise<Resale[]> {
-  const q = query(
-    collection(db, RESALE_COLLECTION),
-    where('eventId', '==', eventId),
-    where('status', '==', 'listed'),
-    orderBy('askingPrice', 'asc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Resale));
+  try {
+    const q = query(
+      collection(db, RESALE_COLLECTION),
+      where('eventId', '==', eventId),
+      where('status', '==', 'listed'),
+      orderBy('askingPrice', 'asc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for event resale query, using fallback.');
+      const fallbackQ = query(collection(db, RESALE_COLLECTION));
+      const querySnapshot = await getDocs(fallbackQ);
+      let results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Resale));
+      results = results.filter((r) => r.eventId === eventId && r.status === 'listed');
+      results.sort((a, b) => (a.askingPrice ?? 0) - (b.askingPrice ?? 0));
+      return results;
+    }
+    throw err;
+  }
 }
 
 /**
- * Purchase a resale ticket with transaction
- * Updates resale status to sold and transfers ticket ownership
+ * Purchase a resale ticket via server-side API.
+ * Server handles atomic transaction and ticket transfer.
  */
 export async function purchaseResale(
   input: PurchaseResaleInput
 ): Promise<void> {
-  await runTransaction(db, async (transaction) => {
-    // Get resale listing
-    const resaleRef = doc(db, RESALE_COLLECTION, input.resaleId);
-    const resaleSnap = await transaction.get(resaleRef);
-
-    if (!resaleSnap.exists()) {
-      throw new Error(`Resale listing ${input.resaleId} not found`);
-    }
-
-    const resaleData = resaleSnap.data() as Resale;
-
-    if (resaleData.status !== 'listed') {
-      throw new Error('This ticket is no longer available');
-    }
-
-    // Get ticket
-    const ticketRef = doc(db, TICKETS_COLLECTION, resaleData.ticketId);
-    const ticketSnap = await transaction.get(ticketRef);
-
-    if (!ticketSnap.exists()) {
-      throw new Error(`Ticket ${resaleData.ticketId} not found`);
-    }
-
-    // Update resale listing
-    transaction.update(resaleRef, {
-      status: 'sold',
-      buyerId: input.buyerId,
-    });
-
-    // Transfer ticket ownership
-    transaction.update(ticketRef, {
-      status: 'active',
-      userId: input.buyerId,
-      userEmail: input.buyerEmail,
-      boughtInResale: true,
-      purchasedAt: new Date(),
-    });
+  await apiFetch('resale-purchase', {
+    method: 'POST',
+    body: { resaleId: input.resaleId },
   });
 }
 
 /**
- * Delist a resale ticket (seller cancels listing)
+ * Delist a resale ticket (seller cancels listing) via server-side API.
+ * Server validates ownership and sets status to 'cancelled' (not 'sold').
  */
 export async function delistResale(
   resaleId: string,
-  ticketId: string
+  _ticketId: string
 ): Promise<void> {
-  const resaleRef = doc(db, RESALE_COLLECTION, resaleId);
-  const ticketRef = doc(db, TICKETS_COLLECTION, ticketId);
-
-  await updateDoc(resaleRef, { status: 'sold' });
-  await updateDoc(ticketRef, { status: 'active' });
+  await apiFetch('delist-resale', {
+    method: 'POST',
+    body: { resaleId },
+  });
 }
 
 /**

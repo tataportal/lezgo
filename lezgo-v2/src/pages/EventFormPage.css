@@ -1,507 +1,554 @@
-.event-form-page {
+/* ═══════════════════════════════════════════════════════
+   EventFormPage.css — matches EventFormPage.tsx classes
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Page Wrapper ── */
+.ef-view {
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
-  padding-top: 72px;
-  padding-bottom: 40px;
-}
-
-.form-container {
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 72px 24px 60px;
 }
 
-.form-title {
-  font-size: 36px;
+/* ── Header ── */
+.ef-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.ef-header h1 {
+  font-size: 32px;
   font-weight: 800;
-  margin: 0 0 40px 0;
+  margin: 0;
+  color: var(--text);
+}
+
+.ef-back {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.ef-back:hover {
+  border-color: var(--acid);
   color: var(--acid);
 }
 
-.event-form {
+/* ── Preview Banner ── */
+.ef-preview-banner {
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  align-items: center;
+  gap: 12px;
+  background: var(--acid-06);
+  border: 1px solid var(--acid-dim);
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 32px;
 }
 
-/* ── Form Sections ── */
-.form-section {
-  background: var(--bg-raised);
+.ef-preview-banner-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ef-preview-banner-text {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.ef-preview-banner-text a {
+  color: var(--acid);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ef-preview-banner-text a:hover {
+  text-decoration: underline;
+}
+
+/* ── Sections ── */
+.ef-section {
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 28px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.section-title {
+.ef-section-title {
   font-size: 18px;
   font-weight: 700;
-  margin: 0 0 16px 0;
+  margin: 0;
   color: var(--text);
-  padding-bottom: 12px;
+  padding-bottom: 14px;
   border-bottom: 2px solid var(--border);
 }
 
-/* ── Form Grid ── */
-.form-grid {
+/* ── Row Layouts ── */
+.ef-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.form-group {
+.ef-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ── Field ── */
+.ef-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--acid);
-  background: rgba(229, 255, 0, 0.02);
-  box-shadow: 0 0 0 3px rgba(229, 255, 0, 0.1);
-}
-
-.form-group.full-width {
+.ef-field.full {
   grid-column: 1 / -1;
 }
 
-.form-group textarea {
-  resize: vertical;
-  min-height: 100px;
+/* ── Label ── */
+.ef-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
-.form-group.checkbox {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-.form-group.checkbox input {
-  width: auto;
-  cursor: pointer;
-}
-
-/* ── Dynamic Lists ── */
-.dynamic-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.dynamic-item {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: end;
-}
-
-.dynamic-item input {
+/* ── Input ── */
+.ef-input {
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 12px;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border-radius: 6px;
   font-size: 14px;
-  transition: all 0.2s ease;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.dynamic-item input:focus {
+.ef-input:focus {
   outline: none;
   border-color: var(--acid);
+  box-shadow: 0 0 0 3px var(--acid-10);
 }
 
-.btn-remove {
+.ef-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Select ── */
+.ef-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.ef-select:focus {
+  outline: none;
+  border-color: var(--acid);
+  box-shadow: 0 0 0 3px var(--acid-10);
+}
+
+.ef-select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Textarea ── */
+.ef-textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ef-textarea:focus {
+  outline: none;
+  border-color: var(--acid);
+  box-shadow: 0 0 0 3px var(--acid-10);
+}
+
+.ef-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Artist / Tag / Prohibited Item Row ── */
+.ef-artist-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ── Remove Button ── */
+.ef-remove-btn {
   background: transparent;
-  border: 1px solid var(--red);
-  color: var(--red);
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+  font-family: inherit;
 }
 
-.btn-remove:hover {
-  background: rgba(255, 77, 77, 0.1);
+.ef-remove-btn:hover {
+  background: rgba(255,51,102,0.12);
 }
 
-.btn-add {
+/* ── Add Button ── */
+.ef-add-btn {
   background: transparent;
   border: 1px dashed var(--green);
   color: var(--green);
-  padding: 10px 16px;
-  border-radius: 4px;
+  padding: 10px 18px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: inherit;
+  align-self: flex-start;
 }
 
-.btn-add:hover {
-  background: rgba(0, 255, 133, 0.05);
+.ef-add-btn:hover {
+  background: var(--green-05);
   border-style: solid;
 }
 
-/* ── Tier Cards ── */
-.tiers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.tier-card {
+/* ── Tier Card ── */
+.ef-tier {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.tier-header {
+.ef-tier-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 
-.tier-header h3 {
+.ef-tier-num {
   font-size: 14px;
   font-weight: 700;
-  margin: 0;
   color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-.btn-remove-tier {
-  background: transparent;
-  border: 1px solid var(--red);
-  color: var(--red);
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-remove-tier:hover {
-  background: rgba(255, 77, 77, 0.1);
-}
-
-.tier-grid {
+/* ── Phase Labels (column headers) ── */
+.ef-phase-labels {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr auto auto auto;
   gap: 12px;
+  align-items: center;
+  padding: 0 0 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
 }
 
-.tier-grid .form-group input {
-  padding: 8px 10px;
-  font-size: 13px;
-}
-
-/* ── Phases Section ── */
-.phases-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
-}
-
-.phases-section h4 {
-  font-size: 13px;
+.ef-phase-labels span {
+  font-size: 11px;
   font-weight: 700;
-  margin: 0 0 8px 0;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
-.phases-list {
-  display: flex;
-  flex-direction: column;
+/* ── Phase Row ── */
+.ef-phase-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
   gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(34, 34, 34, 0.5);
 }
 
-.phase-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  background: rgba(229, 255, 0, 0.02);
-  border: 1px solid var(--border);
-  border-radius: 4px;
+.ef-phase-row:last-of-type {
+  border-bottom: none;
 }
 
-.phase-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 8px;
-  align-items: end;
-}
-
-.phase-grid .form-group {
-  gap: 4px;
-}
-
-.phase-grid .form-group label {
-  font-size: 11px;
-}
-
-.phase-grid .form-group input,
-.phase-grid .form-group select {
-  padding: 6px 8px;
-  font-size: 12px;
-}
-
-.phase-grid .checkbox-label {
-  font-size: 12px;
-  gap: 6px;
-}
-
-.btn-remove-phase {
-  background: transparent;
-  border: 1px solid var(--red);
-  color: var(--red);
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: flex-end;
-}
-
-.btn-remove-phase:hover {
-  background: rgba(255, 77, 77, 0.1);
-}
-
-.btn-add-phase {
-  background: transparent;
-  border: 1px dashed var(--acid);
-  color: var(--acid);
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-add-phase:hover {
-  background: rgba(229, 255, 0, 0.05);
-  border-style: solid;
-}
-
-.btn-add-tier {
-  background: transparent;
-  border: 1px dashed var(--green);
-  color: var(--green);
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-add-tier:hover {
-  background: rgba(0, 255, 133, 0.05);
-  border-style: solid;
-}
-
-/* ── Checkboxes Grid ── */
-.checkboxes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.checkbox-label {
+/* ── Toggle / Checkbox Label ── */
+.ef-toggle-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 14px;
+  color: var(--text);
   cursor: pointer;
   user-select: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
   transition: all 0.2s ease;
 }
 
-.checkbox-label input {
+.ef-toggle-label:hover {
+  border-color: var(--acid);
+}
+
+.ef-toggle-label input[type='checkbox'] {
   width: 18px;
   height: 18px;
   cursor: pointer;
   accent-color: var(--acid);
+  flex-shrink: 0;
 }
 
-.checkbox-label:hover {
+/* ── Margin / Revenue Breakdown ── */
+.ef-margin {
+  background: var(--acid-03);
+  border: 1px solid var(--acid-10);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-top: 8px;
+}
+
+.ef-margin-title {
+  font-size: 13px;
+  font-weight: 700;
   color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 14px;
 }
 
-/* ── Form Actions ── */
-.form-actions {
+.ef-margin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.ef-margin-row .label {
+  color: var(--text-muted);
+}
+
+.ef-margin-row .value {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ef-margin-row.total {
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.ef-margin-row.total .label {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.ef-margin-row.total .value {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ── Actions ── */
+.ef-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 8px;
+  padding-bottom: 40px;
 }
 
-.btn-cancel,
-.btn-submit {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 4px;
+.ef-btn-cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 24px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
+  font-family: inherit;
 }
 
-.btn-cancel {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
+.ef-btn-cancel:hover {
+  border-color: var(--pink);
+  color: var(--pink);
 }
 
-.btn-cancel:hover {
-  border-color: var(--red);
-  color: var(--red);
-}
-
-.btn-submit {
+.ef-btn-save {
   background: var(--green);
+  border: none;
   color: var(--bg);
+  padding: 14px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-family: inherit;
 }
 
-.btn-submit:hover:not(:disabled) {
+.ef-btn-save:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 255, 133, 0.3);
+  box-shadow: 0 8px 20px var(--green-30);
 }
 
-.btn-submit:disabled {
-  opacity: 0.6;
+.ef-btn-save:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* ── Responsive ── */
+/* ═══════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════ */
+
 @media (max-width: 768px) {
-  .form-container {
-    padding: 20px 16px;
+  .ef-view {
+    padding: 60px 16px 40px;
   }
 
-  .form-title {
+  .ef-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .ef-header h1 {
     font-size: 24px;
-    margin-bottom: 24px;
   }
 
-  .form-section {
+  .ef-section {
     padding: 20px;
     gap: 16px;
   }
 
-  .form-grid {
+  .ef-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .ef-row-3 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .ef-phase-labels {
+    display: none;
+  }
+
+  .ef-phase-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .ef-actions {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .tier-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .checkboxes-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .phase-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
-    padding: 10px;
-    font-size: 14px;
+  .ef-toggle-label {
+    font-size: 13px;
+    padding: 8px 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .form-container {
-    padding: 16px 12px;
+  .ef-view {
+    padding: 52px 12px 32px;
   }
 
-  .form-title {
+  .ef-header h1 {
     font-size: 20px;
-    margin-bottom: 20px;
   }
 
-  .form-section {
+  .ef-section {
     padding: 16px;
-    gap: 12px;
+    gap: 14px;
+    border-radius: 8px;
   }
 
-  .section-title {
+  .ef-section-title {
     font-size: 16px;
-    margin-bottom: 12px;
+    padding-bottom: 10px;
   }
 
-  .btn-remove,
-  .btn-add,
-  .btn-remove-tier,
-  .btn-add-tier,
-  .btn-add-phase {
-    font-size: 11px;
-    padding: 6px 10px;
+  .ef-input,
+  .ef-select,
+  .ef-textarea {
+    padding: 10px 12px;
+    font-size: 14px;
   }
 
-  .checkbox-label {
-    font-size: 13px;
-  }
-
-  .btn-cancel,
-  .btn-submit {
-    padding: 10px 16px;
+  .ef-add-btn,
+  .ef-remove-btn {
     font-size: 12px;
+  }
+
+  .ef-btn-cancel,
+  .ef-btn-save {
+    padding: 12px 16px;
+    font-size: 13px;
   }
 }

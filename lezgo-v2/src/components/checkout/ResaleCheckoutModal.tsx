@@ -1,7 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { purchaseResale } from '../../services/resaleService';
-import { toDate, formatPrice } from '../../lib/helpers';
+import { toDate, formatPrice, LOCALE_MAP } from '../../lib/helpers';
+import { FEES, sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../../lib/constants';
 import { useTranslation } from '../../i18n';
 import type { Resale } from '../../lib/types';
 import toast from 'react-hot-toast';
@@ -15,22 +17,46 @@ interface ResaleCheckoutModalProps {
   onClose: () => void;
 }
 
-const PLATFORM_FEE_PERCENTAGE = 0.05;
-
 export default function ResaleCheckoutModal({
   resale,
   open,
   onClose,
 }: ResaleCheckoutModalProps) {
-  const { user, profile, loginWithGoogle, sendMagicLink } = useAuth();
-  const { t } = useTranslation();
+  const { user, profile, loginWithGoogle, sendMagicLink, updateProfile } = useAuth();
+  const { t, lang } = useTranslation();
+  const locale = LOCALE_MAP[lang] || 'es-PE';
+  const navigate = useNavigate();
   const [step, setStep] = useState<ResaleCheckoutStep>(0);
   const [dni, setDni] = useState('');
-  const [idType, setIdType] = useState<'dni' | 'ce' | 'pasaporte'>('dni');
+  const [idType, setIdType] = useState<IdType>('dni');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Reset all state when modal opens
+  useEffect(() => {
+    if (open) {
+      setStep(0);
+      setDni('');
+      setIdType('dni');
+      setName('');
+      setEmail('');
+      setMagicLinkSent(false);
+      setLoading(false);
+    }
+  }, [open]);
+
+  // Escape key to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [open, onClose]);
 
   if (!open || !resale) return null;
 
@@ -43,7 +69,7 @@ export default function ResaleCheckoutModal({
 
   // Calculate totals
   const platformFee = useMemo(() => {
-    return resale.askingPrice * PLATFORM_FEE_PERCENTAGE;
+    return resale.askingPrice * FEES.RESALE_BUYER;
   }, [resale.askingPrice]);
 
   const total = useMemo(() => {
@@ -86,7 +112,7 @@ export default function ResaleCheckoutModal({
     return (
       <div className="rcm-overlay" onClick={onClose}>
         <div className="rcm-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="rcm-close" onClick={onClose}>✕</button>
+          <button className="rcm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
           <div className="rcm-content">
             <h2 className="rcm-title">{t.resaleCheckout.loginTitle}</h2>
             <p className="rcm-subtitle">{t.resaleCheckout.loginDesc}</p>
@@ -145,7 +171,7 @@ export default function ResaleCheckoutModal({
     return (
       <div className="rcm-overlay" onClick={onClose}>
         <div className="rcm-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="rcm-close" onClick={onClose}>✕</button>
+          <button className="rcm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
           <div className="rcm-progress">
             <div className="rcm-dot active"></div>
             <div className="rcm-dot"></div>
@@ -158,13 +184,13 @@ export default function ResaleCheckoutModal({
 
             <div className="rcm-listing-card">
               <div className="rcm-card-image">
-                <img src={resale.image || ''} alt={resale.eventName || ''} />
+                <img src={resale.image || ''} alt={resale.eventName || ''} loading="lazy" />
               </div>
 
               <div className="rcm-card-details">
                 <h3 className="rcm-event-name">{resale.eventName || 'Event'}</h3>
                 <p className="rcm-event-meta">
-                  {toDate(resale.eventDate).toLocaleDateString('es-PE', {
+                  {toDate(resale.eventDate).toLocaleDateString(locale, {
                     weekday: 'long',
                     day: 'numeric',
                     month: 'long',
@@ -223,12 +249,12 @@ export default function ResaleCheckoutModal({
 
   // Step 2: DNI Verification
   if (step === 2) {
-    const isFormValid = name.trim() && (idType === 'dni' ? dni.length === 8 : idType === 'ce' ? dni.length === 9 : dni.length >= 5);
+    const isFormValid = name.trim() && isValidId(dni, idType);
 
     return (
       <div className="rcm-overlay" onClick={onClose}>
         <div className="rcm-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="rcm-close" onClick={onClose}>✕</button>
+          <button className="rcm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
           <div className="rcm-progress">
             <div className="rcm-dot completed"></div>
             <div className="rcm-dot active"></div>
@@ -250,7 +276,7 @@ export default function ResaleCheckoutModal({
               />
               <select
                 value={idType}
-                onChange={(e) => { setIdType(e.target.value as 'dni' | 'ce' | 'pasaporte'); setDni(''); }}
+                onChange={(e) => { setIdType(e.target.value as IdType); setDni(''); }}
                 className="rcm-input rcm-select"
               >
                 <option value="dni">{t.resaleCheckout.idTypeDni}</option>
@@ -265,15 +291,8 @@ export default function ResaleCheckoutModal({
                   t.resaleCheckout.passportPlaceholder
                 }
                 value={dni}
-                onChange={(e) => {
-                  if (idType === 'pasaporte') {
-                    setDni(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12));
-                  } else {
-                    const maxLen = idType === 'dni' ? 8 : 9;
-                    setDni(e.target.value.replace(/\D/g, '').slice(0, maxLen));
-                  }
-                }}
-                maxLength={idType === 'pasaporte' ? 12 : idType === 'ce' ? 9 : 8}
+                onChange={(e) => setDni(sanitizeIdInput(e.target.value, idType))}
+                maxLength={ID_CONFIG[idType].maxLength}
                 className="rcm-input"
               />
               <p className="rcm-form-hint">{t.resaleCheckout.formHint}</p>
@@ -288,7 +307,14 @@ export default function ResaleCheckoutModal({
               </button>
               <button
                 className="rcm-button rcm-button--primary"
-                onClick={() => setStep(3)}
+                onClick={async () => {
+                  try {
+                    await updateProfile({ displayName: name.trim(), dni: dni.trim() });
+                  } catch {
+                    // Continue even if profile update fails
+                  }
+                  setStep(3);
+                }}
                 disabled={!isFormValid}
               >
                 {t.common.next}
@@ -329,7 +355,7 @@ export default function ResaleCheckoutModal({
     return (
       <div className="rcm-overlay" onClick={onClose}>
         <div className="rcm-modal rcm-modal--large" onClick={(e) => e.stopPropagation()}>
-          <button className="rcm-close" onClick={onClose}>✕</button>
+          <button className="rcm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
           <div className="rcm-progress">
             <div className="rcm-dot completed"></div>
             <div className="rcm-dot completed"></div>
@@ -405,7 +431,7 @@ export default function ResaleCheckoutModal({
     return (
       <div className="rcm-overlay" onClick={onClose}>
         <div className="rcm-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="rcm-close" onClick={onClose}>✕</button>
+          <button className="rcm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
           <div className="rcm-progress">
             <div className="rcm-dot completed"></div>
             <div className="rcm-dot completed"></div>
@@ -426,7 +452,7 @@ export default function ResaleCheckoutModal({
               <div className="rcm-detail">
                 <span className="rcm-detail-label">{t.resaleCheckout.dateLabel}</span>
                 <span className="rcm-detail-value">
-                  {toDate(resale.eventDate).toLocaleDateString('es-PE', {
+                  {toDate(resale.eventDate).toLocaleDateString(locale, {
                     month: 'short',
                     day: 'numeric',
                   })}
@@ -443,7 +469,7 @@ export default function ResaleCheckoutModal({
             <div className="rcm-actions">
               <button
                 className="rcm-button rcm-button--primary"
-                onClick={onClose}
+                onClick={() => { onClose(); navigate('/mis-entradas'); }}
               >
                 {t.resaleCheckout.goToTickets}
               </button>

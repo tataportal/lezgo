@@ -1,6 +1,6 @@
 .deck-page {
   background: var(--bg);
-  color: #fff;
+  color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -8,10 +8,10 @@
 .marquee-banner {
   background: var(--acid);
   color: var(--bg);
-  padding: 1rem;
+  padding: 16px;
   overflow: hidden;
-  font-weight: bold;
-  font-size: 1.25rem;
+  font-weight: 700;
+  font-size: 20px;
   white-space: nowrap;
 }
 
@@ -30,86 +30,86 @@
 }
 
 .deck-header {
-  padding: 1.5rem 2rem;
+  padding: 24px 32px;
   display: flex;
   justify-content: center;
 }
 
 .toggles {
   display: flex;
-  gap: 2rem;
+  gap: 32px;
 }
 
 .toggle-group {
   display: flex;
-  gap: 0.5rem;
-  background: var(--bg-raised);
-  padding: 0.25rem;
-  border-radius: 0.5rem;
-  border: 1px solid #222;
+  gap: 8px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .toggle-btn {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   background: none;
   border: none;
-  color: #666;
+  color: var(--text-muted);
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 14px;
   transition: all 0.3s ease;
 }
 
 .toggle-btn.active {
   background: var(--acid);
   color: var(--bg);
-  border-radius: 0.35rem;
+  border-radius: 6px;
 }
 
 .toggle-btn:hover:not(.active) {
-  color: #fff;
+  color: var(--text);
 }
 
 .hero-section {
-  padding: 4rem 2rem;
+  padding: 64px 32px;
   text-align: center;
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .hero-section h1 {
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-size: 56px;
+  font-weight: 700;
+  margin-bottom: 16px;
   line-height: 1.2;
 }
 
 .hero-section p {
-  font-size: 1.25rem;
-  color: #999;
-  margin-bottom: 3rem;
+  font-size: 20px;
+  color: var(--text-muted);
+  margin-bottom: 48px;
 }
 
 .ticket-comparison-deck {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  margin: 2rem 0 3rem 0;
+  gap: 32px;
+  margin: 32px 0 48px 0;
   flex-wrap: wrap;
 }
 
 .ticket-fake,
 .ticket-real {
   width: 150px;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
+  padding: 24px;
+  border-radius: 12px;
   position: relative;
 }
 
 .ticket-fake {
-  background: rgba(255, 77, 77, 0.05);
-  border: 2px solid var(--red);
+  background: rgba(255, 51, 102, 0.05);
+  border: 2px solid var(--pink);
 }
 
 .ticket-real {
@@ -122,12 +122,12 @@
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.4rem;
-  font-size: 0.7rem;
-  font-weight: bold;
-  background: var(--red);
-  color: #fff;
+  padding: 6px 13px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--pink);
+  color: var(--text);
 }
 
 .ticket-label-deck.verified-deck {
@@ -138,122 +138,122 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .qr-fake,
 .qr-real {
-  font-size: 2.5rem;
+  font-size: 40px;
 }
 
 .price-fake {
-  color: var(--red);
+  color: var(--pink);
   text-decoration: line-through;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .price-real {
   color: var(--green);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .comparison-vs {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 700;
   color: var(--acid);
 }
 
 .contact-btn {
   display: inline-block;
-  padding: 1rem 2rem;
+  padding: 16px 32px;
   background: var(--acid);
   color: var(--bg);
   text-decoration: none;
-  border-radius: 0.5rem;
-  font-weight: bold;
+  border-radius: 8px;
+  font-weight: 700;
   transition: all 0.3s ease;
   border: none;
 }
 
 .contact-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(229, 255, 0, 0.3);
+  box-shadow: 0 10px 25px var(--acid-30);
 }
 
 .section-deck {
-  padding: 4rem 2rem;
+  padding: 64px 32px;
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .section-deck h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+  font-size: 40px;
+  margin-bottom: 24px;
+  font-weight: 700;
 }
 
 .section-deck p {
-  font-size: 1.1rem;
-  color: #999;
+  font-size: 18px;
+  color: var(--text-muted);
   line-height: 1.8;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .problem-section {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .solution-section {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .tech-details,
 .features-tech {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .stat-card,
 .feature-box {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
-  padding: 2rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
   text-align: center;
 }
 
 .stat-number,
 .feature-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 32px;
+  margin-bottom: 8px;
 }
 
 .stat-number {
-  font-weight: bold;
+  font-weight: 700;
   color: var(--acid);
 }
 
 .stat-label,
 .feature-label {
-  color: #999;
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-size: 15px;
 }
 
 .how-works {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .flow-container {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 48px;
 }
 
 .flow-track h3 {
-  font-size: 1.25rem;
-  margin-bottom: 1.5rem;
+  font-size: 20px;
+  margin-bottom: 24px;
   font-weight: 600;
 }
 
@@ -262,7 +262,7 @@
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .flow-step {
@@ -281,137 +281,137 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 12px;
 }
 
 .step-title {
-  font-size: 0.95rem;
+  font-size: 15px;
   font-weight: 600;
   width: 80px;
 }
 
 .flow-arrow {
-  font-size: 1.5rem;
+  font-size: 24px;
   color: var(--acid);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .business-model {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .fee-structure {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
+  gap: 32px;
 }
 
 .fee-card {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
-  padding: 2rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
   text-align: center;
 }
 
 .fee-label {
-  color: #999;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  font-size: 15px;
 }
 
 .fee-amount {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 40px;
+  font-weight: 700;
   color: var(--green);
 }
 
 .revenue-projection {
-  margin-top: 2rem;
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  margin-top: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
   text-align: center;
-  color: #999;
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-size: 15px;
 }
 
 .revenue-projection p {
-  margin: 0.5rem 0;
+  margin: 8px 0;
 }
 
 .traction {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .traction-simple {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .milestone {
   text-align: center;
-  padding: 2rem;
-  background: var(--bg-raised);
-  border-radius: 0.75rem;
-  border: 1px solid #222;
+  padding: 32px;
+  background: var(--bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
 }
 
 .milestone-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 40px;
+  margin-bottom: 16px;
 }
 
 .milestone-text {
-  font-size: 0.95rem;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .traction-tech {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
+  gap: 24px;
+  margin-top: 32px;
 }
 
 .metric {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
 }
 
 .metric-label {
-  color: #999;
-  font-size: 0.85rem;
-  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 12px;
 }
 
 .metric-value {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 32px;
+  font-weight: 700;
   color: var(--acid);
 }
 
 .team-section {
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .team-card {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 1rem;
-  padding: 2rem;
+  gap: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
   max-width: 500px;
-  margin-top: 2rem;
+  margin-top: 32px;
 }
 
 .team-avatar {
@@ -422,8 +422,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 32px;
+  font-weight: 700;
   color: var(--bg);
   flex-shrink: 0;
 }
@@ -434,23 +434,23 @@
 
 .team-name {
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .team-role {
-  color: #999;
-  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .deck-footer {
-  padding: 3rem 2rem;
+  padding: 48px 32px;
   text-align: center;
-  border-top: 1px solid #222;
+  border-top: 1px solid var(--border);
 }
 
 .deck-footer h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-size: 24px;
+  margin-bottom: 16px;
 }
 
 .footer-email {
@@ -458,8 +458,8 @@
   color: var(--acid);
   text-decoration: none;
   font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
+  font-size: 18px;
+  margin-bottom: 16px;
   transition: all 0.3s ease;
 }
 
@@ -468,44 +468,108 @@
 }
 
 .footer-text {
-  color: #666;
-  font-size: 0.9rem;
-  margin-top: 1rem;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 16px;
 }
 
 @media (max-width: 768px) {
   .hero-section h1 {
-    font-size: 2rem;
+    font-size: 32px;
   }
 
   .hero-section p {
-    font-size: 1rem;
+    font-size: 16px;
   }
 
   .section-deck h2 {
-    font-size: 1.75rem;
+    font-size: 28px;
   }
 
   .toggles {
-    gap: 1rem;
+    gap: 16px;
     flex-wrap: wrap;
   }
 
   .flow-steps {
-    gap: 0.5rem;
+    gap: 8px;
   }
 
   .flow-arrow {
-    font-size: 1rem;
+    font-size: 16px;
   }
 
   .step-title {
-    font-size: 0.8rem;
+    font-size: 13px;
     width: 60px;
   }
 
   .team-card {
     flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .deck-page {
+    padding: 0 16px;
+  }
+
+  .hero-section {
+    padding: 48px 16px 32px;
+  }
+
+  .hero-section h1 {
+    font-size: 26px;
+  }
+
+  .hero-section p {
+    font-size: 14px;
+  }
+
+  .section-deck {
+    padding: 32px 0;
+  }
+
+  .section-deck h2 {
+    font-size: 22px;
+  }
+
+  .ticket-comparison-deck {
+    gap: 16px;
+    flex-direction: column;
+  }
+
+  .ticket-card-deck {
+    padding: 24px 16px;
+  }
+
+  .flow-steps {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-arrow {
+    display: none;
+  }
+
+  .revenue-cards {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .team-card {
+    padding: 24px 16px;
+    gap: 16px;
+  }
+
+  .team-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .deck-cta-btn {
+    width: 100%;
     text-align: center;
   }
 }

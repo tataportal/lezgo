@@ -9,10 +9,9 @@ import {
   limit,
   startAfter,
   QueryConstraint,
-  addDoc,
-  updateDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '../firebase';
+import { apiFetch } from '../lib/api';
 import type { Event, CreateEventInput, EventStatus } from '../lib/types';
 
 const EVENTS_COLLECTION = 'events';
@@ -166,70 +165,46 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
 }
 
 /**
- * Create a new event
+ * Create a new event via server-side API.
+ * Server verifies promoter role and sanitizes data.
  */
 export async function createEvent(
   eventData: CreateEventInput,
-  organizerId: string
+  _organizerId: string
 ): Promise<string> {
-  const docRef = await addDoc(collection(db, EVENTS_COLLECTION), {
-    ...eventData,
-    organizer: organizerId,
-    createdAt: new Date(),
+  const result = await apiFetch<{ eventId: string }>('create-event', {
+    method: 'POST',
+    body: eventData,
   });
-
-  return docRef.id;
+  return result.eventId;
 }
 
 /**
- * Update an existing event
+ * Update an existing event via server-side API.
+ * Server verifies ownership and whitelists fields.
  */
 export async function updateEvent(
   eventId: string,
   updates: Partial<CreateEventInput>
 ): Promise<void> {
-  const docRef = doc(db, EVENTS_COLLECTION, eventId);
-  await updateDoc(docRef, updates);
+  await apiFetch('update-event', {
+    method: 'PUT',
+    body: { eventId, ...updates },
+  });
 }
 
 /**
- * Update event status
+ * Update event status via server-side API.
+ * Uses the update-event endpoint which verifies ownership.
  */
 export async function updateEventStatus(
   eventId: string,
   status: EventStatus
 ): Promise<void> {
-  const docRef = doc(db, EVENTS_COLLECTION, eventId);
-  await updateDoc(docRef, { status });
-}
-
-/**
- * Update event tier sold count
- */
-export async function updateEventTierSold(
-  eventId: string,
-  tierId: string,
-  soldIncrement: number
-): Promise<void> {
-  const eventRef = doc(db, EVENTS_COLLECTION, eventId);
-  const eventSnap = await getDoc(eventRef);
-
-  if (!eventSnap.exists()) {
-    throw new Error(`Event ${eventId} not found`);
-  }
-
-  const event = eventSnap.data() as Event;
-  const updatedTiers = event.tiers.map((tier) => {
-    if (tier.id === tierId) {
-      return {
-        ...tier,
-        sold: tier.sold + soldIncrement,
-      };
-    }
-    return tier;
+  await apiFetch('update-event', {
+    method: 'PUT',
+    body: { eventId, status },
   });
-
-  await updateDoc(eventRef, { tiers: updatedTiers });
 }
 
 /**

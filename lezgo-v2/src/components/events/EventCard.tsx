@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../../i18n';
 import type { Event } from '../../lib/types';
@@ -9,7 +9,7 @@ interface EventCardProps {
   event: Event;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -31,20 +31,20 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   const lowestPrice = getLowestPrice();
-  const img = getEventImage(event.image);
+  const img = getEventImage(event.id, event.image, event.genre);
   const backgroundStyle: React.CSSProperties = { backgroundImage: `url(${img})` };
 
   // Badge logic — matches monolith: sold-out = hot red, featured = nuevo acid border
   const getBadge = () => {
     if (event.status === 'sold-out') return { text: t.common.soldOut, className: 'ev-card__badge--sold-out' };
-    if (event.featured) return { text: t.common.published === 'Publicado' ? 'Destacado' : t.common.published, className: 'ev-card__badge--featured' };
+    if (event.featured) return { text: t.home?.featured || '★', className: 'ev-card__badge--featured' };
     return null;
   };
 
   const badge = getBadge();
 
   return (
-    <div className="ev-card" onClick={handleClick}>
+    <div className="ev-card" onClick={handleClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }} role="link" tabIndex={0} aria-label={event.name}>
       <div className="ev-card__image-wrapper">
         <div className="ev-card__image" style={backgroundStyle} />
 
@@ -55,7 +55,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
       <div className="ev-card__content">
         {/* Date first, then name, then venue — matches monolith order */}
-        <div className="ev-card__date">{formatDateShort(toDate(event.date))}</div>
+        <div className="ev-card__date">{formatDateShort(toDate(event.date), t.home.monthsFull)}</div>
         <div className="ev-card__title">{event.name}</div>
         <div className="ev-card__venue">
           {event.venue || ''}
@@ -72,3 +72,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     </div>
   );
 };
+
+const MemoizedEventCard = memo(EventCard);
+export default MemoizedEventCard;
+export { MemoizedEventCard as EventCard };

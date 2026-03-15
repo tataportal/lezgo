@@ -6,55 +6,75 @@ import {
   query,
   where,
   orderBy,
-  runTransaction,
-  addDoc,
-  updateDoc,
-  increment,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '../firebase';
+import { apiFetch } from '../lib/api';
+import { getRecaptchaToken } from '../lib/recaptcha';
 import type {
   Ticket,
-  PurchaseTicketInput,
-  TicketStatus,
   PurchaseResponse,
 } from '../lib/types';
 
 const TICKETS_COLLECTION = 'tickets';
 
 /**
- * Get all tickets for a specific user
+ * Get all tickets for a specific user.
+ * Falls back to in-memory sort if composite index is missing.
  */
 export async function getUserTickets(userId: string): Promise<Ticket[]> {
-  const q = query(
-    collection(db, TICKETS_COLLECTION),
-    where('userId', '==', userId),
-    orderBy('purchasedAt', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Ticket));
+  try {
+    const q = query(
+      collection(db, TICKETS_COLLECTION),
+      where('userId', '==', userId),
+      orderBy('purchasedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for getUserTickets, using fallback.');
+      const fallbackQ = query(collection(db, TICKETS_COLLECTION), where('userId', '==', userId));
+      const querySnapshot = await getDocs(fallbackQ);
+      const results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+      results.sort((a, b) => {
+        const dateA = a.purchasedAt ? new Date(a.purchasedAt as any).getTime() : 0;
+        const dateB = b.purchasedAt ? new Date(b.purchasedAt as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      return results;
+    }
+    throw err;
+  }
 }
 
 /**
- * Get all tickets for a specific event
+ * Get all tickets for a specific event.
+ * Falls back to in-memory sort if composite index is missing.
  */
 export async function getTicketsByEvent(eventId: string): Promise<Ticket[]> {
-  const q = query(
-    collection(db, TICKETS_COLLECTION),
-    where('eventId', '==', eventId),
-    orderBy('purchasedAt', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Ticket));
+  try {
+    const q = query(
+      collection(db, TICKETS_COLLECTION),
+      where('eventId', '==', eventId),
+      orderBy('purchasedAt', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for getTicketsByEvent, using fallback.');
+      const fallbackQ = query(collection(db, TICKETS_COLLECTION), where('eventId', '==', eventId));
+      const querySnapshot = await getDocs(fallbackQ);
+      const results = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+      results.sort((a, b) => {
+        const dateA = a.purchasedAt ? new Date(a.purchasedAt as any).getTime() : 0;
+        const dateB = b.purchasedAt ? new Date(b.purchasedAt as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      return results;
+    }
+    throw err;
+  }
 }
 
 /**
@@ -75,268 +95,144 @@ export async function getTicketById(ticketId: string): Promise<Ticket | null> {
 }
 
 /**
- * Get all active tickets for a user at a specific event
+ * Get all active tickets for a user at a specific event.
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getUserEventTickets(
   userId: string,
   eventId: string
 ): Promise<Ticket[]> {
-  const q = query(
-    collection(db, TICKETS_COLLECTION),
-    where('userId', '==', userId),
-    where('eventId', '==', eventId),
-    where('status', 'in', ['active', 'transferred'])
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Ticket));
+  try {
+    const q = query(
+      collection(db, TICKETS_COLLECTION),
+      where('userId', '==', userId),
+      where('eventId', '==', eventId),
+      where('status', 'in', ['active', 'transferred'])
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for getUserEventTickets, using fallback.');
+      const fallbackQ = query(collection(db, TICKETS_COLLECTION), where('userId', '==', userId));
+      const querySnapshot = await getDocs(fallbackQ);
+      return querySnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() } as Ticket))
+        .filter((t) => t.eventId === eventId && ['active', 'transferred'].includes(t.status));
+    }
+    throw err;
+  }
 }
 
 /**
- * Purchase tickets with Firestore transaction
- * Handles inventory check, ticket creation, and coupon validation
+ * Purchase tickets via server-side API.
+ * Server validates inventory, prices, coupon, and user profile.
+ * Client sends: eventId, quantities, optional couponCode, reCAPTCHA token.
+ *
+ * Security layers applied:
+ * - Layer 1: Rate limiting (server-side)
+ * - Layer 2: reCAPTCHA v3 token (client → server → Google)
+ * - Layer 4: Device fingerprint (sent via apiFetch headers)
+ * - Layer 5: Identity-based limits (server-side)
  */
 export async function purchaseTickets(
-  input: PurchaseTicketInput
-): Promise<PurchaseResponse> {
-  const { eventId, quantities, couponCode } = input;
-
-  const result = await runTransaction(db, async (transaction) => {
-    // Get the event
-    const eventRef = doc(db, 'events', eventId);
-    const eventSnap = await transaction.get(eventRef);
-
-    if (!eventSnap.exists()) {
-      throw new Error(`Event ${eventId} not found`);
-    }
-
-    const eventData = eventSnap.data();
-    const tiers = eventData.tiers || [];
-
-    // Validate inventory and calculate price
-    let totalPrice = 0;
-    let discountApplied = 0;
-    const quantityMap = new Map(quantities.map((q) => [q.tierId, q]));
-    const updatedTiers = [];
-
-    for (const tier of tiers) {
-      const tierQuantity = quantityMap.get(tier.id);
-
-      if (tierQuantity && tierQuantity.quantity > 0) {
-        // Check capacity
-        if (tier.capacity == null || tier.sold == null) {
-          throw new Error(`Tier ${tier.name} has missing capacity information`);
-        }
-        const available = tier.capacity - tier.sold;
-        if (tierQuantity.quantity > available) {
-          throw new Error(
-            `Not enough tickets available for tier ${tier.name}. Available: ${available}, Requested: ${tierQuantity.quantity}`
-          );
-        }
-
-        // Get current price from active phase
-        const activePhase = tier.phases?.find((phase: any) => phase.active);
-        if (!activePhase) {
-          throw new Error(`No active phase for tier ${tier.name}`);
-        }
-
-        totalPrice += activePhase.price * tierQuantity.quantity;
-
-        // Update sold count
-        updatedTiers.push({
-          ...tier,
-          sold: tier.sold + tierQuantity.quantity,
-        });
-      } else {
-        updatedTiers.push(tier);
-      }
-    }
-
-    // Validate and apply coupon if provided
-    let couponDiscount = 0;
-    if (couponCode) {
-      const couponRef = doc(db, 'coupons', couponCode);
-      const couponSnap = await transaction.get(couponRef);
-
-      if (!couponSnap.exists()) {
-        throw new Error(`Coupon ${couponCode} not found`);
-      }
-
-      const couponData = couponSnap.data();
-
-      if (!couponData?.active) {
-        throw new Error('Coupon is not active');
-      }
-
-      if ((couponData?.usedCount ?? 0) >= (couponData?.maxUses ?? 0)) {
-        throw new Error('Coupon usage limit reached');
-      }
-
-      if (couponData?.expiresAt && couponData.expiresAt.toDate() < new Date()) {
-        throw new Error('Coupon has expired');
-      }
-
-      couponDiscount = totalPrice * (couponData?.discount ?? 0);
-      discountApplied = couponDiscount;
-
-      // Increment coupon usage
-      transaction.update(couponRef, {
-        usedCount: increment(1),
-      });
-    }
-
-    // Update event with new tier information
-    transaction.update(eventRef, { tiers: updatedTiers });
-
-    // Create ticket documents
-    const ticketIds: string[] = [];
-    const ticketCollectionRef = collection(db, TICKETS_COLLECTION);
-
-    for (const tierQuantity of quantities) {
-      if (tierQuantity.quantity > 0) {
-        const tier = tiers.find((t: any) => t.id === tierQuantity.tierId);
-        if (!tier) continue;
-
-        const activePhase = tier.phases?.find((phase: any) => phase.active);
-        const ticketPrice = activePhase?.price || 0;
-
-        for (let i = 0; i < tierQuantity.quantity; i++) {
-          const ticketData = {
-            ticketId: `${eventId}-${tierQuantity.tierId}-${Date.now()}-${i}`,
-            eventId: input.eventId,
-            eventName: input.eventName,
-            eventDate: input.eventDate,
-            eventDateLabel: input.eventDateLabel,
-            eventTimeStart: input.eventTimeStart,
-            eventTimeEnd: input.eventTimeEnd,
-            eventVenue: input.eventVenue,
-            eventLocation: input.eventLocation,
-            ticketType: tier.id,
-            ticketName: tierQuantity.tierName,
-            originalPrice: ticketPrice,
-            price: ticketPrice - couponDiscount / tierQuantity.quantity,
-            couponCode: couponCode || '',
-            couponDiscount: couponDiscount / tierQuantity.quantity,
-            userId: input.userId,
-            userEmail: input.userEmail,
-            userDni: input.userDni,
-            userName: input.userName,
-            status: 'active' as TicketStatus,
-            usedAt: null,
-            purchasedAt: new Date(),
-            transferredAt: null,
-            transferredFrom: null,
-            boughtInResale: false,
-          };
-
-          const ticketDocRef = await addDoc(ticketCollectionRef, ticketData);
-          ticketIds.push(ticketDocRef.id);
-        }
-      }
-    }
-
-    return {
-      ticketIds,
-      totalPrice,
-      discountApplied,
-    };
-  });
-
-  return result;
-}
-
-/**
- * Update ticket status
- */
-export async function updateTicketStatus(
-  ticketId: string,
-  status: TicketStatus
-): Promise<void> {
-  const docRef = doc(db, TICKETS_COLLECTION, ticketId);
-  const updateData: any = { status };
-
-  if (status === 'used') {
-    updateData.usedAt = new Date();
+  input: {
+    eventId: string;
+    quantities: { tierId: string; tierName: string; quantity: number }[];
+    couponCode?: string;
   }
+): Promise<PurchaseResponse> {
+  // Layer 2: Get reCAPTCHA token (null if not configured)
+  const recaptchaToken = await getRecaptchaToken('purchase');
 
-  await updateDoc(docRef, updateData);
-}
-
-/**
- * Mark ticket as used (scanned at event)
- */
-export async function markTicketAsUsed(ticketId: string): Promise<void> {
-  const docRef = doc(db, TICKETS_COLLECTION, ticketId);
-  await updateDoc(docRef, {
-    status: 'used',
-    usedAt: new Date(),
+  return apiFetch<PurchaseResponse>('purchase-tickets', {
+    method: 'POST',
+    body: {
+      eventId: input.eventId,
+      quantities: input.quantities,
+      couponCode: input.couponCode,
+      recaptchaToken,
+    },
   });
 }
 
 /**
- * Transfer ticket to another user
+ * Transfer ticket to another user via server-side API.
+ * Server validates ownership, looks up recipient, and performs the transfer.
  */
 export async function transferTicket(
   ticketId: string,
-  toUserId: string,
+  _toUserId: string,
   toEmail: string
 ): Promise<void> {
-  const docRef = doc(db, TICKETS_COLLECTION, ticketId);
-  const ticketSnap = await getDoc(docRef);
-
-  if (!ticketSnap.exists()) {
-    throw new Error(`Ticket ${ticketId} not found`);
-  }
-
-  const currentTicket = ticketSnap.data() as Ticket;
-
-  await updateDoc(docRef, {
-    status: 'transferred',
-    userId: toUserId,
-    userEmail: toEmail,
-    transferredAt: new Date(),
-    transferredFrom: currentTicket.userId,
+  await apiFetch('transfer-ticket', {
+    method: 'POST',
+    body: { ticketId, recipientEmail: toEmail },
   });
 }
 
 /**
- * Get user's active tickets (not used or transferred)
+ * Get user's active tickets (not used).
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getUserActiveTickets(userId: string): Promise<Ticket[]> {
-  const q = query(
-    collection(db, TICKETS_COLLECTION),
-    where('userId', '==', userId),
-    where('status', 'in', ['active', 'transferred']),
-    orderBy('eventDate', 'asc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Ticket));
+  try {
+    const q = query(
+      collection(db, TICKETS_COLLECTION),
+      where('userId', '==', userId),
+      where('status', 'in', ['active', 'transferred']),
+      orderBy('eventDate', 'asc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for getUserActiveTickets, using fallback.');
+      const fallbackQ = query(collection(db, TICKETS_COLLECTION), where('userId', '==', userId));
+      const querySnapshot = await getDocs(fallbackQ);
+      const results = querySnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() } as Ticket))
+        .filter((t) => ['active', 'transferred'].includes(t.status));
+      results.sort((a, b) => {
+        const dateA = a.eventDate ? new Date(a.eventDate as any).getTime() : 0;
+        const dateB = b.eventDate ? new Date(b.eventDate as any).getTime() : 0;
+        return dateA - dateB;
+      });
+      return results;
+    }
+    throw err;
+  }
 }
 
 /**
- * Get used/past tickets for a user
+ * Get used/past tickets for a user.
+ * Falls back to in-memory filtering if composite index is missing.
  */
 export async function getUserPastTickets(userId: string): Promise<Ticket[]> {
-  const q = query(
-    collection(db, TICKETS_COLLECTION),
-    where('userId', '==', userId),
-    where('status', '==', 'used'),
-    orderBy('eventDate', 'desc')
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Ticket));
+  try {
+    const q = query(
+      collection(db, TICKETS_COLLECTION),
+      where('userId', '==', userId),
+      where('status', '==', 'used'),
+      orderBy('eventDate', 'desc')
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Ticket));
+  } catch (err: any) {
+    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
+      console.warn('Firestore index missing for getUserPastTickets, using fallback.');
+      const fallbackQ = query(collection(db, TICKETS_COLLECTION), where('userId', '==', userId));
+      const querySnapshot = await getDocs(fallbackQ);
+      const results = querySnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() } as Ticket))
+        .filter((t) => t.status === 'used');
+      results.sort((a, b) => {
+        const dateA = a.eventDate ? new Date(a.eventDate as any).getTime() : 0;
+        const dateB = b.eventDate ? new Date(b.eventDate as any).getTime() : 0;
+        return dateB - dateA;
+      });
+      return results;
+    }
+    throw err;
+  }
 }

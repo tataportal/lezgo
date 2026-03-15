@@ -1,604 +1,901 @@
+/* ═══════════════════════════════════════════════════
+   EventPage.css — Matches class names in EventPage.tsx
+   ═══════════════════════════════════════════════════ */
+
 .ev-detail {
   background: var(--bg);
-}
-
-/* ── Hero Section ── */
-.ev-detail-hero {
-  position: relative;
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  margin-top: 72px;
-}
-
-.ev-detail-hero__background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: -2;
-}
-
-.ev-detail-hero__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(10, 10, 10, 0.9) 100%);
-  z-index: -1;
-}
-
-.ev-detail-hero__content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  max-width: 700px;
-  padding: var(--sp-10);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-6);
-}
-
-.ev-detail-hero__title {
-  font-size: clamp(40px, 5vw, 64px);
-  font-weight: var(--fw-black);
   color: var(--text);
-  line-height: 1.1;
-  margin: 0;
-}
-
-.ev-detail-hero__subtitle {
-  font-size: var(--fs-lg);
-  color: var(--text-mid);
-  margin: 0;
-  font-weight: var(--fw-regular);
-}
-
-.ev-detail-hero__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  font-size: var(--fs-base);
-}
-
-.ev-detail-hero__date {
-  color: var(--acid);
-  font-weight: var(--fw-semibold);
-  text-transform: capitalize;
-}
-
-.ev-detail-hero__venue {
-  color: var(--text-dim);
-  font-weight: var(--fw-regular);
-}
-
-/* ── CTA Section ── */
-.ev-detail-cta {
-  padding: var(--sp-8) 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: var(--sp-10);
-}
-
-.ev-detail-cta__button {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  padding: var(--sp-4) var(--sp-8);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-bold);
-  cursor: pointer;
-}
-
-.ev-detail-cta__button--secondary {
-  background: transparent;
-  border: 2px solid var(--red);
-  color: var(--red);
-}
-
-.ev-detail-cta__button--secondary:hover {
-  background: var(--red);
-  color: var(--gray-950);
-  transform: translateY(-2px);
-}
-
-/* ── Ticket Tiers ── */
-.ev-detail-tiers {
-  padding: var(--sp-10) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.ev-detail-tiers__title {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin-bottom: var(--sp-8);
-}
-
-.ev-detail-tiers__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-6);
-}
-
-.ev-detail-tier-card {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
-  padding: var(--sp-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.ev-detail-tier-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--sp-4);
-}
-
-.ev-detail-tier-card__name-wrap {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-}
-
-.ev-detail-tier-card__name {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin: 0;
-}
-
-.ev-detail-tier-card__phase {
-  background: var(--acid-12);
-  color: var(--acid);
-  padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--radius-btn);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.ev-detail-tier-card__price {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--acid);
-  text-align: right;
-}
-
-.ev-detail-tier-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.ev-detail-tier-card__availability {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--fs-sm);
-}
-
-.ev-detail-tier-card__availability-label {
-  color: var(--text-muted);
-}
-
-.ev-detail-tier-card__availability-value {
-  color: var(--text);
-  font-weight: var(--fw-semibold);
-}
-
-.ev-detail-tier-card__progress {
-  width: 100%;
-}
-
-.ev-detail-tier-card__progress-bar {
-  width: 100%;
-  height: 6px;
-  background: var(--gray-700);
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-}
-
-.ev-detail-tier-card__progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--acid), var(--green));
-  border-radius: var(--radius-pill);
-  transition: width 0.3s ease;
-}
-
-.ev-detail-tier-card__phases {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-.ev-detail-tier-card__phases-label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: var(--fw-semibold);
-}
-
-.ev-detail-tier-card__phases-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.ev-detail-tier-card__phase-badge {
-  background: var(--gray-700);
-  color: var(--text-dim);
-  padding: var(--sp-1) var(--sp-3);
-  border-radius: var(--radius-btn);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-}
-
-.ev-detail-tier-card__phase-badge--active {
-  background: var(--acid-12);
-  color: var(--acid);
-  border: 1px solid var(--acid-20);
-}
-
-.ev-detail-tier-card__button {
-  width: 100%;
-  padding: var(--sp-3) var(--sp-6);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-bold);
-}
-
-.ev-detail-tier-card__button:disabled {
-  background: var(--gray-700);
-  color: var(--text-muted);
-  cursor: not-allowed;
-}
-
-/* ── Info Chips ── */
-.ev-detail-chips {
-  padding: var(--sp-10) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.ev-detail-chips__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--sp-4);
-}
-
-.ev-detail-chip {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
-  padding: var(--sp-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-.ev-detail-chip__label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: var(--fw-semibold);
-}
-
-.ev-detail-chip__value {
-  font-size: var(--fs-base);
-  color: var(--text);
-  font-weight: var(--fw-semibold);
-}
-
-/* ── Lineup Section ── */
-.ev-detail-lineup {
-  padding: var(--sp-10) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.ev-detail-lineup__title {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin-bottom: var(--sp-8);
-}
-
-.ev-detail-lineup__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--sp-6);
-}
-
-.ev-detail-artist-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-3);
-}
-
-.ev-detail-artist-card__placeholder {
-  width: 100%;
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, var(--gray-700), var(--gray-600));
-  border-radius: var(--radius-btn);
-  border: 1px solid var(--border);
-}
-
-.ev-detail-artist-card__name {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text);
-  text-align: center;
-}
-
-/* ── About Section ── */
-.ev-detail-about {
-  padding: var(--sp-10) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.ev-detail-about__title {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin-bottom: var(--sp-6);
-}
-
-.ev-detail-about__description,
-.ev-detail-about__description-long {
-  font-size: var(--fs-base);
-  color: var(--text-mid);
-  line-height: 1.7;
-  margin: 0 0 var(--sp-4) 0;
-}
-
-.ev-detail-about__description-long {
-  color: var(--text-dim);
-}
-
-/* ── Venue Section ── */
-.ev-detail-venue {
-  padding: var(--sp-10) 0;
-  margin-bottom: 100px;
-}
-
-.ev-detail-venue__title {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin-bottom: var(--sp-6);
-}
-
-.ev-detail-venue__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.ev-detail-venue__name {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-}
-
-.ev-detail-venue__address {
-  font-size: var(--fs-base);
-  color: var(--text-mid);
-}
-
-.ev-detail-venue__map-link {
-  align-self: flex-start;
-}
-
-/* ── Mobile Sticky CTA ── */
-.ev-detail-mobile-cta {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-raised);
-  border-top: 1px solid var(--border);
-  padding: var(--sp-4);
-  gap: var(--sp-4);
-  align-items: center;
-  justify-content: space-between;
-  z-index: var(--z-sticky);
-}
-
-.ev-detail-mobile-cta__price {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ev-detail-mobile-cta__price-label {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.ev-detail-mobile-cta__price-value {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  color: var(--acid);
-}
-
-.ev-detail-mobile-cta__button {
-  flex-shrink: 0;
-  padding: var(--sp-3) var(--sp-6);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
-}
-
-/* ── Modal ── */
-.ev-detail-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-modal);
-  padding: var(--sp-6);
-}
-
-.ev-detail-modal {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.ev-detail-modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--sp-6);
-  border-bottom: 1px solid var(--border);
-}
-
-.ev-detail-modal__header h3 {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-  color: var(--text);
-  margin: 0;
-}
-
-.ev-detail-modal__close {
-  background: none;
-  border: none;
-  color: var(--text-dim);
-  font-size: var(--fs-lg);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.ev-detail-modal__close:hover {
-  color: var(--text);
-}
-
-.ev-detail-modal__body {
-  padding: var(--sp-6);
-}
-
-.ev-detail-modal__body p {
-  color: var(--text-mid);
-  margin: 0 0 var(--sp-4) 0;
-  font-size: var(--fs-base);
+  min-height: 100vh;
 }
 
 /* ── Error & Loading States ── */
 .ev-detail-error,
 .ev-detail-loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--sp-20);
+  padding: 80px 24px;
   min-height: 400px;
+  gap: 16px;
 }
 
 .ev-detail-error p,
 .ev-detail-loading p {
-  font-size: var(--fs-base);
-  color: var(--text-dim);
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
 .ev-detail-error p {
-  color: var(--red);
+  color: var(--pink);
 }
 
-/* ── Responsive ── */
+/* ═══ HERO ═══ */
+.ev-hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  margin-top: -72px;
+  padding-top: 72px;
+}
+
+.ev-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ev-hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.95) 100%);
+}
+
+.ev-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ev-hero-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.ev-hero-back svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.ev-hero-back:hover {
+  color: var(--acid);
+}
+
+.ev-hero-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.ev-hero-sub {
+  font-size: 18px;
+  color: var(--acid);
+  font-weight: 600;
+}
+
+.ev-hero-desc {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 600px;
+}
+
+.ev-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.ev-hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--gray-100);
+}
+
+.ev-hero-meta-item .icon {
+  font-size: 16px;
+}
+
+.ev-hero-ctas {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ── */
+.ev-btn {
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ev-btn-primary {
+  background: var(--acid);
+  color: var(--bg);
+}
+
+.ev-btn-primary:hover {
+  background: var(--acid);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--acid-20);
+}
+
+.ev-btn-outline {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--text-dim);
+}
+
+.ev-btn-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+}
+
+.ev-btn-sold {
+  background: transparent;
+  color: var(--pink);
+  border: 1px solid var(--pink);
+}
+
+.ev-btn-sold:hover {
+  background: var(--pink);
+  color: var(--bg);
+}
+
+/* ═══ DIVIDER ═══ */
+.ev-divider {
+  height: 1px;
+  background: var(--border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ═══ SECTIONS ═══ */
+.ev-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.ev-section-label {
+  font-size: 12px;
+  color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.ev-section-heading {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  margin: 0 0 32px;
+  line-height: 1.15;
+}
+
+.ev-section-heading em {
+  font-style: normal;
+  color: var(--acid);
+}
+
+/* ═══ TICKET GRID ═══ */
+.ev-tk-grid-wrap {
+  width: 100%;
+}
+
+.ev-tk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.ev-tk-card {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.ev-tk-card:hover {
+  border-color: var(--acid);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px var(--acid-08);
+}
+
+.ev-tk-card--sold {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ev-tk-card--sold:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.ev-tk-card--avail { /* available state — default card */ }
+
+.ev-tk-inner { display: flex; flex-direction: column; }
+
+.ev-tk-sold {
+  border-color: rgba(255,51,102,0.3);
+}
+
+/* ── Tier accent borders ── */
+.ev-tk-tier-1 { border-top: 3px solid var(--acid); }
+.ev-tk-tier-2 { border-top: 3px solid var(--green); }
+.ev-tk-tier-3 { border-top: 3px solid var(--blue); }
+.ev-tk-tier-4 { border-top: 3px solid var(--pink); }
+
+.ev-tk-header {
+  padding: 24px 24px 16px;
+}
+
+.ev-tk-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.ev-tk-includes {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ev-tk-includes li {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding-left: 16px;
+  position: relative;
+}
+
+.ev-tk-includes li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-size: 11px;
+}
+
+/* ── Phase Pricing ── */
+.ev-tk-phases {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ev-tk-phase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.ev-tk-phase--active {
+  background: var(--acid-08);
+  border: 1px solid var(--acid-20);
+}
+
+.ev-tk-phase--past {
+  opacity: 0.4;
+}
+
+.ev-tk-phase--future {
+  opacity: 0.5;
+}
+
+.ev-tk-phase-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev-tk-phase-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.ev-tk-phase--active .ev-tk-phase-dot {
+  background: var(--acid);
+  box-shadow: 0 0 8px var(--acid-50);
+}
+
+.ev-tk-phase--past .ev-tk-phase-dot {
+  background: var(--text-muted);
+}
+
+.ev-tk-phase-name {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.ev-tk-phase--active .ev-tk-phase-name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ev-tk-phase-price {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ev-tk-phase--active .ev-tk-phase-price {
+  color: var(--acid);
+  font-weight: 700;
+}
+
+.ev-tk-price-simple {
+  padding: 0 24px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--acid);
+}
+
+/* ── Ticket Bottom & Buy ── */
+.ev-tk-bottom {
+  padding: 16px 24px 24px;
+}
+
+.ev-tk-buy {
+  width: 100%;
+  padding: 12px;
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ev-tk-buy:hover {
+  background: var(--acid);
+  transform: translateY(-2px);
+}
+
+.ev-tk-sold-all {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--pink);
+  border: 1px solid var(--pink);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Ticket Hover Overlay ── */
+.ev-tk-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--dark-85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.ev-tk-grid > div:hover .ev-tk-overlay {
+  opacity: 1;
+}
+
+.ev-tk-overlay-icon {
+  font-size: 36px;
+}
+
+.ev-tk-overlay-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ev-tk-overlay-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ═══ MARKETPLACE BANNER ═══ */
+.ev-mp-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-top: 32px;
+}
+
+.ev-mp-info {
+  flex: 1;
+}
+
+.ev-mp-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.ev-mp-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.ev-mp-action {
+  flex-shrink: 0;
+}
+
+/* ═══ LINEUP ═══ */
+.ev-lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.ev-lineup-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.ev-lineup-card:hover {
+  transform: scale(1.03);
+}
+
+.ev-lineup-card--hl {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.ev-lineup-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, var(--border), var(--bg));
+}
+
+.ev-lineup-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--dark-85) 0%, transparent 60%);
+}
+
+.ev-lineup-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+}
+
+.ev-lineup-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ev-lineup-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--acid);
+  color: var(--bg);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══ INFO BOX ═══ */
+.ev-info-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.ev-info-group-title {
+  font-size: 13px;
+  color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.ev-info-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ev-info-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--gray-100);
+}
+
+.ev-info-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+.ev-info-prohibited-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ev-info-prohibited-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,51,102,0.08);
+  border: 1px solid rgba(255,51,102,0.2);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--pink);
+}
+
+/* ═══ ABOUT ═══ */
+.ev-about-text {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin: 0 0 16px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ═══ VENUE ═══ */
+.ev-venue-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.ev-venue-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ev-venue-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ev-venue-addr {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.ev-venue-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ev-venue-chip {
+  padding: 6px 12px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--gray-100);
+}
+
+.ev-venue-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ev-venue-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: var(--bg);
+  border: 1px solid var(--text-dim);
+  border-radius: 8px;
+  color: var(--acid);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.ev-venue-map-link:hover {
+  background: var(--border);
+  border-color: var(--acid);
+  transform: translateY(-2px);
+}
+
+/* ═══ TRUST ROW ═══ */
+.ev-trust-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.ev-trust-item {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.ev-trust-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.ev-trust-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ev-trust-text strong {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ev-trust-text span {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ═══ STICKY CTA ═══ */
+.ev-sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--dark-85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  z-index: 100;
+  display: none;
+}
+
+.ev-sticky-cta-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ev-sticky-cta-price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--acid);
+}
+
+.ev-sticky-cta-btn {
+  padding: 12px 28px;
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.ev-sticky-cta-btn:hover {
+  background: var(--acid);
+}
+
+/* ═══ FOOTER ═══ */
+.ev-footer {
+  text-align: center;
+  padding: 48px 24px;
+  border-top: 1px solid var(--border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ev-footer-logo {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--acid);
+  letter-spacing: 8px;
+  margin-bottom: 8px;
+}
+
+.ev-footer-copy {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
-  .ev-detail-hero {
-    min-height: 50vh;
+  .ev-hero {
+    min-height: 60vh;
   }
 
-  .ev-detail-hero__title {
+  .ev-hero-title {
     font-size: clamp(28px, 4vw, 40px);
   }
 
-  .ev-detail-hero__subtitle {
-    font-size: var(--fs-base);
+  .ev-hero-meta {
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .ev-detail-hero__info {
-    font-size: var(--fs-sm);
+  .ev-hero-ctas {
+    flex-direction: column;
   }
 
-  .ev-detail-venue {
-    padding-bottom: var(--sp-20);
+  .ev-hero-ctas .ev-btn {
+    width: 100%;
+    text-align: center;
   }
 
-  .ev-detail-mobile-cta {
-    display: flex;
+  .ev-tk-grid {
+    grid-template-columns: 1fr;
   }
 
-  .ev-detail-chips__grid {
+  .ev-lineup-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .ev-detail-lineup__grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  .ev-venue-block {
+    grid-template-columns: 1fr;
+  }
+
+  .ev-trust-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ev-mp-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ev-sticky-cta {
+    display: block;
+  }
+
+  .ev-section {
+    padding: 32px 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .ev-detail-hero {
-    min-height: 45vh;
+  .ev-hero {
+    min-height: 50vh;
   }
 
-  .ev-detail-hero__title {
+  .ev-hero-title {
     font-size: clamp(24px, 3vw, 32px);
   }
 
-  .ev-detail-tiers__title,
-  .ev-detail-chips__title,
-  .ev-detail-lineup__title,
-  .ev-detail-about__title,
-  .ev-detail-venue__title {
-    font-size: var(--fs-lg);
+  .ev-hero-content {
+    padding: 32px 16px;
   }
 
-  .ev-detail-tier-card {
-    padding: var(--sp-4);
+  .ev-section-heading {
+    font-size: 24px;
   }
 
-  .ev-detail-tier-card__header {
-    flex-direction: column;
-  }
-
-  .ev-detail-chips__grid {
+  .ev-trust-row {
     grid-template-columns: 1fr;
   }
 
-  .ev-detail-lineup__grid {
+  .ev-lineup-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--sp-4);
-  }
-
-  .ev-detail-mobile-cta {
-    padding: var(--sp-3);
-  }
-
-  .page-container {
-    padding: var(--sp-6) var(--sp-4);
+    gap: 8px;
   }
 }

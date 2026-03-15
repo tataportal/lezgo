@@ -9,7 +9,7 @@ import {
   signOut,
   type User,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore/lite';
 import { auth, db } from '../firebase';
 
 export interface UserProfile {
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       let email = window.localStorage.getItem('lezgoEmailForSignIn');
       if (!email) {
-        email = window.prompt('Confirma tu email para entrar:');
+        email = window.prompt('Please enter your email for confirmation');
       }
       if (email) {
         signInWithEmailLink(auth, email, window.location.href)
@@ -131,8 +131,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (data: Partial<UserProfile>) => {
     if (!user) return;
-    await setDoc(doc(db, 'users', user.uid), data, { merge: true });
-    setProfile((prev) => (prev ? { ...prev, ...data } : null));
+
+    // Whitelist: only allow safe fields to be updated from the client
+    const ALLOWED_FIELDS: (keyof UserProfile)[] = ['displayName', 'dni', 'photoURL'];
+    const sanitized: Partial<UserProfile> = {};
+    for (const key of ALLOWED_FIELDS) {
+      if (key in data) {
+        (sanitized as Record<string, unknown>)[key] = data[key];
+      }
+    }
+
+    if (Object.keys(sanitized).length === 0) return;
+
+    await setDoc(doc(db, 'users', user.uid), sanitized, { merge: true });
+    setProfile((prev) => (prev ? { ...prev, ...sanitized } : null));
   };
 
   return (

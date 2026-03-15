@@ -9,44 +9,44 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  /* ── Brand ── */
+  /* ══ BRAND ══ */
   --acid: #E5FF00;
   --acid-dim: rgba(229,255,0,0.15);
   --acid-glow: rgba(229,255,0,0.25);
   --acid-muted: rgba(229,255,0,0.08);
 
-  /* ── Status ── */
-  --red: #FF4D4D;
+  /* ══ STATUS ══ */
   --green: #00FF85;
-  --pink: #FF00FF;
-  --cyan: #00FFFF;
+  --pink: #FF3366;
+  --blue: #00D4FF;
 
-  /* ── Gray scale ── */
+  /* ══ BACKGROUNDS ══ */
+  --bg: #0A0A0A;
+
+  /* ══ BORDERS ══ */
+  --border: #222222;
+  --border-light: rgba(255,255,255,0.12);
+  --border-mid: rgba(255,255,255,0.18);
+
+  /* ══ TEXT ══ */
+  --text: #FFFFFF;
+  --text-muted: #666666;
+  --text-dim: #333333;
+
+  /* ── Gray scale (internal refs) ── */
   --gray-950: #050505;
   --gray-900: #0A0A0A;
-  --gray-850: #0f0f0f;
   --gray-800: #111111;
-  --gray-750: #161616;
   --gray-700: #1A1A1A;
   --gray-600: #222222;
   --gray-500: #333333;
-  --gray-400: #757575;
-  --gray-300: #888888;
-  --gray-200: #aaaaaa;
   --gray-100: #cccccc;
-  --gray-50: #f0f0f0;
+  --color-white: #ffffff;
 
-  /* ── Semantic aliases ── */
-  --bg: var(--gray-900);
-  --bg-raised: var(--gray-800);
-  --bg-hover: var(--gray-750);
-  --border: rgba(255,255,255,0.08);
-  --border-light: rgba(255,255,255,0.12);
-  --border-mid: rgba(255,255,255,0.18);
-  --text: var(--gray-50);
-  --text-mid: #c8c8c8;
-  --text-dim: var(--gray-300);
-  --text-muted: var(--gray-400);
+  /* ── Backward compat aliases ── */
+  --bg-raised: var(--bg);
+  --bg-hover: var(--bg);
+  --red: var(--pink);
 
   /* ── Alpha scale ── */
   --alpha-minimal: rgba(255,255,255,0.02);
@@ -79,20 +79,38 @@
   --green-08: rgba(0,255,133,0.08);
   --green-05: rgba(0,255,133,0.05);
 
-  /* ── Red opacity scale ── */
-  --red-30: rgba(255,77,77,0.3);
-  --red-15: rgba(255,77,77,0.15);
+  /* ── Pink opacity scale ── */
+  --pink-30: rgba(255,51,102,0.3);
+  --pink-15: rgba(255,51,102,0.15);
 
-  /* ── White reference ── */
-  --color-white: #ffffff;
+  /* ── Blue opacity scale ── */
+  --blue-30: rgba(0,212,255,0.3);
+  --blue-15: rgba(0,212,255,0.15);
 
-  /* ── Tier colors (borders only) ── */
-  --tier-1: rgba(59,130,246,0.5);
-  --tier-2: rgba(139,92,246,0.5);
-  --tier-3: rgba(229,255,0,0.35);
-  --tier-4: rgba(255,59,59,0.4);
+  /* ══ TYPOGRAPHY (7 styles) ══ */
+  /* display: 56px/900 — Hero titles */
+  --fs-display: 56px;
+  --fw-display: 900;
+  /* h1: 36px/800 — Page titles */
+  --fs-h1: 36px;
+  --fw-h1: 800;
+  /* h2: 24px/800 — Section headings */
+  --fs-h2: 24px;
+  --fw-h2: 800;
+  /* h3: 20px/700 — Subsections, prices */
+  --fs-h3: 20px;
+  --fw-h3: 700;
+  /* body: 15px/400 — Paragraphs, descriptions */
+  --fs-body: 15px;
+  --fw-body: 400;
+  /* body-bold: 15px/700 — Buttons, nav, CTAs */
+  --fs-body-bold: 15px;
+  --fw-body-bold: 700;
+  /* caption: 11px/700 — Labels, tags, badges, timestamps */
+  --fs-caption: 11px;
+  --fw-caption: 700;
 
-  /* ── Font weights ── */
+  /* ── Font weight aliases ── */
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
@@ -100,20 +118,26 @@
   --fw-extrabold: 800;
   --fw-black: 900;
 
-  /* ── Font sizes (8-step scale) ── */
-  --fs-xs: 13px;
+  /* ── Font size aliases (backward compat) ── */
+  --fs-xs: 11px;
   --fs-sm: 15px;
-  --fs-base: 17px;
-  --fs-lg: 22px;
-  --fs-xl: 30px;
-  --fs-2xl: 40px;
+  --fs-base: 15px;
+  --fs-lg: 20px;
+  --fs-xl: 24px;
+  --fs-2xl: 36px;
   --fs-3xl: 56px;
   --fs-4xl: 80px;
 
   /* ── Border radius ── */
   --radius-none: 0;
+  --radius-xs: 3px;
   --radius-sm: 4px;
+  --radius-md: 6px;
   --radius-btn: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
   --radius-full: 50%;
   --radius-pill: 100px;
 
@@ -152,12 +176,18 @@ body {
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.5;
-  font-size: var(--fs-base);
+  font-size: var(--fs-body);
 }
 
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 img { display: block; max-width: 100%; }
+
+/* ── Accessibility: visible focus for keyboard navigation ── */
+:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 2px;
+}
 
 /* ── Utility classes ── */
 .text-dim { color: var(--text-dim); }
@@ -193,6 +223,16 @@ img { display: block; max-width: 100%; }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Layout ── */
@@ -278,7 +318,7 @@ img { display: block; max-width: 100%; }
   display: flex;
   align-items: center;
   gap: 2px;
-  background: var(--gray-800);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-btn);
   padding: 2px;
@@ -289,8 +329,8 @@ img { display: block; max-width: 100%; }
   color: var(--text-dim);
   border: none;
   padding: 4px 8px;
-  font-size: 11px;
-  font-weight: var(--fw-semibold);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-caption);
   font-family: 'Sora', sans-serif;
   border-radius: calc(var(--radius-btn) - 2px);
   cursor: pointer;
@@ -299,7 +339,7 @@ img { display: block; max-width: 100%; }
 }
 .lz-lang-btn:hover {
   color: var(--text);
-  background: var(--gray-700);
+  background: var(--border);
 }
 .lz-lang-btn--active {
   background: var(--acid);
@@ -330,7 +370,7 @@ img { display: block; max-width: 100%; }
 }
 
 .lz-btn-primary:hover {
-  background: #d4eb00;
+  filter: brightness(0.88);
   transform: translateY(-1px);
 }
 
@@ -406,12 +446,20 @@ img { display: block; max-width: 100%; }
   color: var(--text-dim);
 }
 
+.lz-footer-brand {
+  display: flex;
+  align-items: center;
+}
+
 .lz-footer-links a:hover { color: var(--acid); }
 
 .lz-footer-copy {
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+  font-size: var(--fs-caption);
+  color: var(--text-dim);
 }
+
+/* Mobile actions: hidden on desktop, shown inside mobile nav */
+.lz-mobile-actions { display: none; }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
@@ -426,15 +474,35 @@ img { display: block; max-width: 100%; }
     padding: var(--sp-6);
     gap: var(--sp-4);
     border-bottom: 1px solid var(--border);
+    z-index: var(--z-overlay);
   }
 
   .lz-nav.lz-nav-open { display: flex; }
   .lz-mobile-toggle { display: flex; }
   .lz-header-actions { display: none; }
 
+  .lz-mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--border);
+    margin-top: var(--sp-2);
+  }
+
   .lz-footer-inner {
     flex-direction: column;
     gap: var(--sp-6);
     text-align: center;
+  }
+}
+
+/* ── Accessibility: respect reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -6,11 +6,9 @@ import {
   getUserActiveTickets,
   getUserPastTickets,
   purchaseTickets,
-  updateTicketStatus,
-  markTicketAsUsed,
   transferTicket,
 } from '../services/ticketService';
-import type { Ticket, PurchaseTicketInput, TicketStatus, PurchaseResponse } from '../lib/types';
+import type { Ticket, PurchaseTicketInput, PurchaseResponse } from '../lib/types';
 
 interface UseUserTicketsReturn {
   tickets: Ticket[];
@@ -284,42 +282,6 @@ export function usePurchaseTickets(): UsePurchaseTicketsReturn {
   };
 }
 
-interface UseMarkTicketAsUsedReturn {
-  marking: boolean;
-  error: string | null;
-  markAsUsed: (ticketId: string) => Promise<boolean>;
-}
-
-/**
- * Hook to mark a ticket as used (scanned at event)
- */
-export function useMarkTicketAsUsed(): UseMarkTicketAsUsedReturn {
-  const [marking, setMarking] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleMarkAsUsed = useCallback(async (ticketId: string): Promise<boolean> => {
-    try {
-      setMarking(true);
-      setError(null);
-      await markTicketAsUsed(ticketId);
-      return true;
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to mark ticket as used';
-      setError(errorMessage);
-      return false;
-    } finally {
-      setMarking(false);
-    }
-  }, []);
-
-  return {
-    marking,
-    error,
-    markAsUsed: handleMarkAsUsed,
-  };
-}
-
 interface UseTransferTicketReturn {
   transferring: boolean;
   error: string | null;
@@ -363,41 +325,3 @@ export function useTransferTicket(): UseTransferTicketReturn {
   };
 }
 
-interface UseUpdateTicketStatusReturn {
-  updating: boolean;
-  error: string | null;
-  updateStatus: (ticketId: string, status: TicketStatus) => Promise<boolean>;
-}
-
-/**
- * Hook to update ticket status
- */
-export function useUpdateTicketStatus(): UseUpdateTicketStatusReturn {
-  const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleUpdateStatus = useCallback(
-    async (ticketId: string, status: TicketStatus): Promise<boolean> => {
-      try {
-        setUpdating(true);
-        setError(null);
-        await updateTicketStatus(ticketId, status);
-        return true;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update ticket status';
-        setError(errorMessage);
-        return false;
-      } finally {
-        setUpdating(false);
-      }
-    },
-    []
-  );
-
-  return {
-    updating,
-    error,
-    updateStatus: handleUpdateStatus,
-  };
-}

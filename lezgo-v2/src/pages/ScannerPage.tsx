@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getEventsByOrganizer } from '../services/eventService';
-import { getTicketsByEvent, updateTicketStatus } from '../services/ticketService';
+import { apiFetch } from '../lib/api';
+import { sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../lib/constants';
 import { useTranslation } from '../i18n';
-import type { Event, Ticket } from '../lib/types';
+import type { Event } from '../lib/types';
 import './ScannerPage.css';
 
 interface ScanResult {
   status: 'approved' | 'denied' | 'already-used';
-  ticket?: Ticket;
+  data?: { userName: string; ticketName: string; eventName?: string; usedAt?: unknown };
   message: string;
 }
 
@@ -17,6 +18,7 @@ export default function ScannerPage() {
   const { t } = useTranslation();
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string>('');
+  const [scannerIdType, setScannerIdType] = useState<IdType>('dni');
   const [dniInput, setDniInput] = useState('');
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<ScanResult | null>(null);
@@ -37,26 +39,24 @@ export default function ScannerPage() {
     }
   }, [user?.uid]);
 
-  // Load ticket counts for selected event
+  // Load ticket counts for selected event via API (no PII exposure)
   useEffect(() => {
     if (selectedEventId) {
-      getTicketsByEvent(selectedEventId)
-        .then((tickets) => {
-          const used = tickets.filter((t) => t.status === 'used').length;
-          setUsedCount(used);
-          setTotalSold(tickets.length);
+      apiFetch<{ usedCount: number; totalSold: number }>(`scanner-stats?eventId=${selectedEventId}`, { method: 'GET' })
+        .then((stats) => {
+          setUsedCount(stats.usedCount);
+          setTotalSold(stats.totalSold);
         })
-        .catch((err) => console.error('Error loading tickets:', err));
+        .catch((err) => console.error('Error loading stats:', err));
     }
   }, [selectedEventId]);
 
   const handleDniChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 8);
-    setDniInput(value);
+    setDniInput(sanitizeIdInput(e.target.value, scannerIdType));
   };
 
   const handleVerify = async () => {
-    if (!dniInput || dniInput.length !== 8 || !selectedEventId) {
+    if (!dniInput || !isValidId(dniInput, scannerIdType) || !selectedEventId) {
       setResult({
         status: 'denied',
         message: t.scanner.errorInvalidDni,
@@ -66,31 +66,23 @@ export default function ScannerPage() {
 
     setScanning(true);
     try {
-      const tickets = await getTicketsByEvent(selectedEventId);
-      const matchingTicket = tickets.find(
-        (t) => t.userDni === dniInput && t.status !== 'transferred'
-      );
+      const response = await apiFetch<ScanResult>('scanner-verify', {
+        method: 'POST',
+        body: { eventId: selectedEventId, dni: dniInput, idType: scannerIdType },
+      });
 
-      if (!matchingTicket) {
-        setResult({
-          status: 'denied',
-          message: t.scanner.errorNotFound,
-        });
-      } else if (matchingTicket.status === 'used') {
-        setResult({
-          status: 'already-used',
-          message: t.scanner.errorUsed,
-        });
-      } else {
-        // Mark as used
-        await updateTicketStatus(matchingTicket.id, 'used');
+      if (response.status === 'approved') {
         setUsedCount((prev) => prev + 1);
-        setResult({
-          status: 'approved',
-          ticket: matchingTicket,
-          message: t.scanner.successApproved,
-        });
       }
+
+      setResult({
+        status: response.status,
+        data: response.data,
+        message:
+          response.status === 'approved' ? t.scanner.successApproved :
+          response.status === 'already-used' ? t.scanner.errorUsed :
+          response.message || t.scanner.errorNotFound,
+      });
     } catch (error) {
       console.error('Verification error:', error);
       setResult({
@@ -111,7 +103,7 @@ export default function ScannerPage() {
         {/* Header */}
         <header className="sc-header">
           <div className="sc-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <circle cx="8" cy="8" r="2" />
               <circle cx="16" cy="8" r="2" />
               <path d="M12 16c-2 0-4-1-4-3s2-3 4-3 4 1 4 3-2 3-4 3" />
@@ -139,7 +131,7 @@ export default function ScannerPage() {
               <option value="">{t.scanner.loadingEvent}</option>
               {(events ?? []).map((event) => (
                 <option key={event.id} value={event.id}>
-                  {event.name || 'Evento sin nombre'}
+                  {event.name || (t.scanner.unnamedEvent || 'Evento sin nombre')}
                 </option>
               ))}
             </select>
@@ -165,21 +157,31 @@ export default function ScannerPage() {
             </div>
           )}
 
-          {/* DNI Input */}
+          {/* ID Type Selector + Input */}
           <div className="sc-dni-row">
+            <select
+              className="sc-id-type-select"
+              value={scannerIdType}
+              onChange={(e) => { setScannerIdType(e.target.value as IdType); setDniInput(''); }}
+              disabled={scanning || !selectedEventId}
+            >
+              <option value="dni">{t.scanner.idTypeDni || 'DNI'}</option>
+              <option value="ce">{t.scanner.idTypeCe || 'CE'}</option>
+              <option value="pasaporte">{t.scanner.idTypePassport || 'Pasaporte'}</option>
+            </select>
             <input
               type="text"
-              inputMode="numeric"
-              placeholder={t.scanner.enterDni}
+              inputMode={ID_CONFIG[scannerIdType].digitsOnly ? 'numeric' : 'text'}
+              placeholder={(t.scanner.idType || 'Ingresa') + ' ' + (scannerIdType === 'dni' ? (t.scanner.idTypeDni || 'DNI') : scannerIdType === 'ce' ? (t.scanner.idTypeCe || 'CE') : (t.scanner.idTypePassport || 'Pasaporte'))}
               className="sc-dni-input"
               value={dniInput}
               onChange={handleDniChange}
-              maxLength={8}
+              maxLength={ID_CONFIG[scannerIdType].maxLength}
               disabled={scanning || !selectedEventId}
             />
             <button
               onClick={handleVerify}
-              disabled={scanning || !selectedEventId || dniInput.length !== 8}
+              disabled={scanning || !selectedEventId || !isValidId(dniInput, scannerIdType)}
               className="sc-dni-btn"
             >
               {scanning ? t.scanner.verifying : t.scanner.verifyBtn}
@@ -210,10 +212,10 @@ export default function ScannerPage() {
                   />
                 </svg>
               </div>
-              <div className="sc-device-label">Presentar documento frente a cámara</div>
+              <div className="sc-device-label">{t.scanner.presentDoc}</div>
               <div className="sc-device-status">
                 <span className="dot"></span>
-                Listo para verificar
+                {t.scanner.readyToVerify}
               </div>
             </div>
           </div>
@@ -279,16 +281,16 @@ export default function ScannerPage() {
             <p>{t.scanner.deniedDesc}</p>
             <div className="sc-result-detail">
               <div className="sc-result-row">
-                <span>Razón</span>
-                <span>DNI no encontrado</span>
+                <span>{t.scanner.reasonLabel}</span>
+                <span>{t.scanner.dniNotFound}</span>
               </div>
               <div className="sc-result-row">
-                <span>Código</span>
+                <span>{t.scanner.codeLabel}</span>
                 <span>ERROR_NOT_FOUND</span>
               </div>
               <div className="sc-result-row">
-                <span>Acción</span>
-                <span>Contactar soporte</span>
+                <span>{t.scanner.actionLabel}</span>
+                <span>{t.scanner.contactSupport}</span>
               </div>
             </div>
           </div>
@@ -368,25 +370,25 @@ export default function ScannerPage() {
               {result.status === 'denied' && t.scanner.accessDenied}
               {result.status === 'already-used' && t.scanner.entryUsed}
             </div>
-            {result.ticket && (
+            {result.data && (
               <>
-                <div className="scan-result-name">{result.ticket.userName || 'Usuario'}</div>
-                <div className="scan-result-detail">{result.ticket.eventName || 'Evento'}</div>
+                <div className="scan-result-name">{result.data.userName || (t.scanner.unknownUser || 'Usuario')}</div>
+                <div className="scan-result-detail">{result.data.eventName || (t.scanner.unknownEvent || 'Evento')}</div>
               </>
             )}
-            {!result.ticket && (
+            {!result.data && (
               <div className="scan-result-detail">{result.message}</div>
             )}
             <div className="scan-result-info">
-              {result.ticket && (
+              {result.data && (
                 <>
                   <div className="scan-result-row">
                     <span>{t.scanner.dniLabel}</span>
-                    <span>{dniInput}</span>
+                    <span>••••••••</span>
                   </div>
                   <div className="scan-result-row">
                     <span>{t.scanner.ticketLabel}</span>
-                    <span>{result.ticket.ticketName || 'General'}</span>
+                    <span>{result.data.ticketName || 'General'}</span>
                   </div>
                   <div className="scan-result-row">
                     <span>{t.scanner.statusLabel}</span>
@@ -394,7 +396,7 @@ export default function ScannerPage() {
                   </div>
                 </>
               )}
-              {!result.ticket && (
+              {!result.data && (
                 <div className="scan-result-row">
                   <span>{t.scanner.errorLabel}</span>
                   <span>{result.message}</span>

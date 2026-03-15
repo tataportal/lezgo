@@ -1,457 +1,1313 @@
-.organizer-page {
+/* ══════════════════════════════════════════════════════════════
+   OrganizerPage.css — Professional Analytics Dashboard
+   Dark theme with acid-yellow accents
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Main View ── */
+.og-view {
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
-  padding-top: 72px;
+  padding: 0 0 80px 0;
 }
 
 /* ── Header ── */
-.organizer-header {
-  background: linear-gradient(135deg, rgba(229, 255, 0, 0.05) 0%, rgba(0, 255, 133, 0.02) 100%);
+.og-header {
+  background: linear-gradient(135deg, var(--acid-06) 0%, rgba(0, 255, 133, 0.02) 100%);
   border-bottom: 1px solid var(--border);
-  padding: 40px 20px;
+  padding: 40px 20px 36px;
 }
 
-.organizer-header-content {
+.og-header-top {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
 }
 
-.organizer-badge {
+.og-header-top h1 {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 10px 0 6px;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.og-header-top p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.og-badge {
+  display: inline-block;
   background: var(--acid);
   color: var(--bg);
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 4px;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.organizer-title {
-  font-size: 40px;
-  font-weight: 800;
-  margin: 0;
-  flex: 1;
-}
-
-.organizer-btn-create {
+.og-btn-new {
   background: var(--green);
   color: var(--bg);
   border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
+  padding: 12px 28px;
+  border-radius: 8px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.organizer-btn-create:hover {
+.og-btn-new:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 255, 133, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 255, 133, 0.25);
 }
 
-/* ── Stats Grid ── */
-.organizer-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+.og-btn-new:active {
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Tab Bar
+   ══════════════════════════════════════════════════════════════ */
+.og-tabs {
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 0 auto;
   padding: 0 20px;
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 56px;
+  z-index: 10;
 }
 
-.stat-card {
-  background: var(--bg-raised);
+.og-tab {
+  padding: 14px 24px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.og-tab:hover {
+  color: var(--text);
+}
+
+.og-tab.active {
+  color: var(--acid);
+  border-bottom-color: var(--acid);
+}
+
+/* ── Quick Actions ── */
+.og-quick-actions {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.og-quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  padding: 24px;
+  color: var(--text);
+  padding: 10px 20px;
   border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.stat-card:hover {
+.og-quick-btn:hover {
   border-color: var(--acid);
-  background: rgba(229, 255, 0, 0.03);
+  background: var(--acid-06);
+  color: var(--acid);
 }
 
-.stat-label {
-  font-size: 12px;
+.og-quick-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Metrics Grid ── */
+.og-metrics {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.og-metric {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.og-metric:hover {
+  border-color: var(--acid-30);
+  background: var(--acid-05);
+}
+
+.og-metric-label {
+  font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   font-weight: 600;
   margin-bottom: 12px;
 }
 
-.stat-value {
-  font-size: 28px;
+.og-metric-value {
+  font-size: 30px;
   font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.og-metric-value.acid {
   color: var(--acid);
 }
 
-/* ── Events Section ── */
-.organizer-events-section {
+.og-metric-change {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Section Container ── */
+.og-section {
   max-width: 1200px;
-  margin: 60px auto 40px;
+  margin: 40px auto 0;
   padding: 0 20px;
 }
 
-.organizer-section-title {
-  font-size: 24px;
-  font-weight: 800;
-  margin: 0 0 24px 0;
-  color: var(--text);
-}
-
-.organizer-empty {
-  background: var(--bg-raised);
-  border: 2px dashed var(--border);
-  padding: 60px 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.organizer-empty p {
-  color: var(--text-muted);
-  margin: 0 0 24px 0;
-}
-
-.organizer-btn-primary {
-  background: var(--acid);
-  color: var(--bg);
-  border: none;
-  padding: 12px 28px;
-  border-radius: 4px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.organizer-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(229, 255, 0, 0.2);
-}
-
-/* ── Events List ── */
-.organizer-events-list {
+.og-section-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.event-card {
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-}
-
-.event-card:hover {
-  border-color: var(--acid);
-}
-
-.event-card-header {
-  display: grid;
-  grid-template-columns: 120px 1fr 1fr;
-  gap: 20px;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid var(--border);
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.event-card-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 4px;
-  overflow: hidden;
+.og-section-header .og-section-title {
+  margin-bottom: 0;
 }
 
-.event-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.event-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.event-card-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
+.og-section-title {
+  font-size: 22px;
+  font-weight: 800;
   color: var(--text);
-}
-
-.event-card-date {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.event-card-status {
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+}
+
+.og-section-badge {
+  display: inline-block;
+  background: rgba(0, 255, 133, 0.12);
+  color: var(--green);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Revenue Chart
+   ══════════════════════════════════════════════════════════════ */
+.og-chart-container {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 24px 16px;
+}
+
+.og-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 200px;
+}
+
+.og-bar {
+  flex: 1;
+  background: var(--acid-12);
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.og-bar:hover {
+  background: var(--acid-30);
+}
+
+.og-bar.highlight {
+  background: var(--acid);
+}
+
+.og-bar.highlight:hover {
+  background: var(--acid);
+  opacity: 0.85;
+}
+
+.og-chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.og-chart-label {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Analytics Tab
+   ══════════════════════════════════════════════════════════════ */
+.og-analytics {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.og-analytics-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
   flex-wrap: wrap;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+.og-time-range {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
 }
 
-.status-published {
-  background: rgba(0, 255, 133, 0.2);
-  color: var(--green);
+.og-range-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
-.status-draft {
-  background: rgba(153, 153, 153, 0.2);
+.og-range-btn:hover {
+  color: var(--text);
+}
+
+.og-range-btn.active {
+  background: var(--acid);
+  color: var(--bg);
+}
+
+.og-event-filter {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.og-event-filter option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.og-analytics-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
   color: var(--text-muted);
 }
 
-.status-sold-out {
-  background: rgba(255, 77, 77, 0.2);
-  color: var(--red);
-}
-
-.status-past {
-  background: rgba(153, 153, 153, 0.15);
-  color: var(--text-muted);
-}
-
-.event-card-meta {
+/* ── Analytics Grid (2 cols) ── */
+.og-analytics-grid {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.event-card-meta-item {
+.og-analytics-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.og-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Tier Breakdown Bars ── */
+.og-tier-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.og-tier-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.og-tier-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.og-tier-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.og-tier-count {
+  font-size: 12px;
+  color: var(--acid);
+  font-weight: 500;
+}
+
+.og-tier-bar-bg {
+  height: 8px;
+  background: var(--acid-10);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.og-tier-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--acid));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* ── Peak Hours ── */
+.og-peak-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.og-peak-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.og-peak-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 50px;
+}
+
+.og-peak-row.top .og-peak-time {
+  color: var(--acid);
+}
+
+.og-peak-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: var(--acid-10);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.og-peak-bar-fill {
+  height: 100%;
+  background: var(--acid-30);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.og-peak-row.top .og-peak-bar-fill {
+  background: var(--acid);
+}
+
+.og-peak-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 30px;
+  text-align: right;
+}
+
+.og-no-data {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 32px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Consumer Behavior Segments
+   ══════════════════════════════════════════════════════════════ */
+.og-segments {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.og-segment-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.og-segment-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--acid-30), transparent);
+}
+
+.og-segment-card.highlight {
+  border-color: var(--acid-30);
+  background: var(--acid-05);
+}
+
+.og-segment-card.highlight::before {
+  background: linear-gradient(90deg, transparent, var(--acid), transparent);
+}
+
+.og-segment-card:hover {
+  border-color: var(--acid-30);
+  transform: translateY(-2px);
+}
+
+.og-segment-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.og-segment-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.og-segment-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--acid);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.og-segment-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.og-segment-pct {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--acid-30);
+}
+
+/* ── Insights Panel ── */
+.og-insights {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 24px;
+  overflow: hidden;
+}
+
+.og-insights-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.og-insights-icon {
+  font-size: 20px;
+}
+
+.og-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.og-insight {
+  padding: 20px 24px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.og-insight:last-child {
+  border-right: none;
+}
+
+.og-insight-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.og-insight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--acid);
+  margin-bottom: 8px;
+}
+
+.og-insight-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── Data Disclaimer ── */
+.og-data-disclaimer {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: 16px 24px;
+  background: rgba(0, 255, 133, 0.04);
+  border: 1px solid rgba(0, 255, 133, 0.12);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.og-generated-at {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Coupons Tab
+   ══════════════════════════════════════════════════════════════ */
+.og-coupons {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* ── Coupon Form ── */
+.og-coupon-form {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.og-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.og-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.og-form-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.og-form-field input,
+.og-form-field select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color 0.2s ease;
+}
+
+.og-form-field input:focus,
+.og-form-field select:focus {
+  outline: none;
+  border-color: var(--acid);
+}
+
+.og-form-field input::placeholder {
+  color: var(--text-muted);
+}
+
+.og-form-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.og-form-error {
+  background: rgba(255, 51, 102, 0.08);
+  border: 1px solid rgba(255, 51, 102, 0.2);
+  color: var(--pink);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.og-form-success {
+  background: rgba(0, 255, 133, 0.08);
+  border: 1px solid rgba(0, 255, 133, 0.2);
+  color: var(--green);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.og-btn-create-coupon {
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.og-btn-create-coupon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--acid-20);
+}
+
+/* ── Coupons List ── */
+.og-coupons-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.og-coupon-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.og-coupon-card:hover {
+  border-color: var(--acid-30);
+}
+
+.og-coupon-card.inactive {
+  opacity: 0.6;
+}
+
+.og-coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.og-coupon-code {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--acid);
+  letter-spacing: 1px;
+  font-family: monospace;
+}
+
+.og-coupon-status {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.og-coupon-status.active {
+  background: rgba(0, 255, 133, 0.12);
+  color: var(--green);
+}
+
+.og-coupon-status.inactive {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+.og-coupon-details {
+  padding: 16px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.og-coupon-detail {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.meta-label {
+.og-coupon-detail.full {
+  width: 100%;
+}
+
+.og-coupon-detail-label {
   font-size: 10px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   font-weight: 600;
 }
 
-.meta-value {
-  font-size: 16px;
+.og-coupon-detail-value {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.og-coupon-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px 16px;
+}
+
+.og-act-btn.ghost.danger {
+  color: var(--pink);
+  border-color: rgba(255, 51, 102, 0.2);
+}
+
+.og-act-btn.ghost.danger:hover {
+  color: var(--pink);
+  border-color: var(--pink);
+  background: rgba(255, 51, 102, 0.06);
+}
+
+/* ── Empty State ── */
+.og-empty-state {
+  background: var(--bg);
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.og-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.og-empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.og-empty-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Events List ── */
+.og-events {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Event Card ── */
+.og-event-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.og-event-card:hover {
+  border-color: var(--acid-30);
+}
+
+/* ── Event Image ── */
+.og-event-img {
+  width: 100%;
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.og-event-status {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--dark-85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--green);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(0, 255, 133, 0.2);
+}
+
+/* ── Event Body ── */
+.og-event-body {
+  padding: 16px 20px;
+}
+
+.og-event-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.og-event-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* ── Progress Bar ── */
+.og-event-progress {
+  margin-top: 4px;
+}
+
+.og-event-bar {
+  height: 6px;
+  background: var(--acid-10);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.og-event-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green) 0%, var(--acid) 100%);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.og-event-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.og-progress-pct {
+  font-size: 13px;
   font-weight: 700;
   color: var(--acid);
 }
 
-/* ── Progress Bar ── */
-.event-progress-bar {
-  height: 6px;
-  background: rgba(229, 255, 0, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-  margin: 0 20px;
+.og-capacity-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--green) 0%, var(--acid) 100%);
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-/* ── Actions ── */
-.event-card-actions {
+/* ── Event Actions ── */
+.og-event-actions {
   display: flex;
-  gap: 12px;
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 16px;
 }
 
-.action-btn {
+.og-act-btn {
   flex: 1;
-  min-width: 100px;
-  padding: 10px 16px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
+  padding: 9px 14px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.action-btn:hover {
+.og-act-btn.primary {
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+}
+
+.og-act-btn.primary:hover {
+  background: var(--acid);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--acid-20);
+}
+
+.og-act-btn.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.og-act-btn.ghost:hover {
   border-color: var(--acid);
   color: var(--acid);
+  background: var(--acid-06);
 }
 
-.edit-btn:hover {
-  background: rgba(229, 255, 0, 0.05);
-}
-
-.view-btn:hover {
-  background: rgba(0, 255, 133, 0.05);
-}
-
-.expand-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* ── Tier Details ── */
-.event-tier-details {
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  border-top: 1px solid var(--border);
-}
-
-.tier-table {
+/* ── Tier Table ── */
+.og-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
 
-.tier-table thead {
+.og-table thead {
   border-bottom: 1px solid var(--border);
 }
 
-.tier-table th {
-  padding: 12px 0;
+.og-table th {
+  padding: 10px 12px;
   text-align: left;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
   font-size: 10px;
 }
 
-.tier-table td {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.tier-name {
+.og-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: var(--text);
-  font-weight: 600;
 }
 
-.tier-sold {
-  color: var(--green);
-  font-weight: 600;
+.og-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.tier-capacity {
-  color: var(--text-muted);
+.og-table tbody tr:hover {
+  background: var(--acid-05);
 }
 
-.tier-revenue {
+.og-table td:last-child {
   color: var(--acid);
   font-weight: 600;
 }
 
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .organizer-header-content {
-    flex-direction: column;
-    align-items: flex-start;
+/* ══════════════════════════════════════════════════════════════
+   Responsive
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .og-metrics {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  .organizer-title {
+  .og-header-top h1 {
     font-size: 28px;
   }
 
-  .organizer-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .event-card-header {
-    grid-template-columns: 100px 1fr;
-    gap: 12px;
-  }
-
-  .event-card-image {
-    width: 100px;
-    height: 100px;
-  }
-
-  .event-card-meta {
+  .og-analytics-grid {
     grid-template-columns: 1fr;
-    grid-column: 1 / -1;
   }
 
-  .event-card-actions {
-    gap: 8px;
+  .og-segments {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .action-btn {
-    min-width: 80px;
-    padding: 8px 12px;
-    font-size: 11px;
+  .og-insights-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .tier-table {
-    font-size: 12px;
+  .og-insight {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .tier-table th,
-  .tier-table td {
-    padding: 8px 0;
+  .og-insight:nth-child(even) {
+    border-right: none;
+  }
+
+  .og-coupons-list {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 480px) {
-  .organizer-badge {
-    font-size: 8px;
-    padding: 4px 8px;
+@media (max-width: 640px) {
+  .og-header {
+    padding: 28px 16px;
   }
 
-  .organizer-title {
+  .og-header-top {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .og-header-top h1 {
+    font-size: 24px;
+  }
+
+  .og-badge {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .og-btn-new {
+    width: 100%;
+    text-align: center;
+  }
+
+  .og-tabs {
+    padding: 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .og-tab {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .og-quick-actions {
+    padding: 0 16px;
+    flex-direction: column;
+  }
+
+  .og-quick-btn {
+    justify-content: center;
+  }
+
+  .og-metrics {
+    grid-template-columns: 1fr !important;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .og-metric {
+    padding: 20px;
+  }
+
+  .og-metric-value {
+    font-size: 24px;
+  }
+
+  .og-section {
+    padding: 0 16px;
+  }
+
+  .og-section-title {
+    font-size: 18px;
+  }
+
+  .og-section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .og-chart {
+    height: 150px;
+  }
+
+  .og-chart-container {
+    padding: 16px 12px 12px;
+  }
+
+  .og-event-img {
+    height: 110px;
+  }
+
+  .og-event-body {
+    padding: 14px 16px;
+  }
+
+  .og-event-name {
+    font-size: 15px;
+  }
+
+  .og-event-actions {
+    flex-direction: column;
+    padding: 8px 16px 14px;
+    gap: 6px;
+  }
+
+  .og-act-btn {
+    padding: 10px 14px;
+  }
+
+  .og-table th,
+  .og-table td {
+    padding: 8px 8px;
+    font-size: 11px;
+  }
+
+  .og-table th {
+    font-size: 9px;
+  }
+
+  /* Analytics responsive */
+  .og-analytics {
+    padding: 0 16px;
+  }
+
+  .og-analytics-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .og-event-filter {
+    min-width: auto;
+  }
+
+  .og-analytics-grid {
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .og-segments {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .og-segment-value {
+    font-size: 28px;
+  }
+
+  .og-insights-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .og-insight {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .og-insight:nth-child(even) {
+    border-right: none;
+  }
+
+  .og-insight-value {
     font-size: 20px;
   }
 
-  .organizer-stats-grid {
+  .og-data-disclaimer {
+    margin: 24px 16px 0;
+  }
+
+  /* Coupons responsive */
+  .og-form-row {
     grid-template-columns: 1fr;
   }
 
-  .stat-value {
-    font-size: 22px;
+  .og-coupon-form {
+    padding: 20px 16px;
   }
 
-  .event-card-header {
-    grid-template-columns: 80px 1fr;
+  .og-coupons-list {
+    grid-template-columns: 1fr;
   }
 
-  .event-card-image {
-    width: 80px;
-    height: 80px;
-  }
-
-  .event-card-name {
-    font-size: 16px;
-  }
-
-  .action-btn {
-    font-size: 10px;
-    padding: 6px 10px;
+  .og-coupon-actions {
+    flex-direction: column;
+    gap: 6px;
   }
 }

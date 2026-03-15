@@ -1,434 +1,959 @@
-.about-page {
-  background: var(--bg);
-  color: #fff;
-  min-height: 100vh;
+/* ============================================================
+   AboutPage.css — Dark theme, bold marketing page
+   Uses design system tokens from variables.css
+   ============================================================ */
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+
+@keyframes conocenos-glitch {
+  0%, 100% { transform: translate(0); }
+  10% { transform: translate(-2px, 2px); }
+  20% { transform: translate(2px, -2px); }
+  30% { transform: translate(-1px, -1px); }
+  40% { transform: translate(1px, 1px); }
+  50% { transform: translate(0); }
 }
 
-.hero-section {
-  padding: 4rem 2rem;
-  text-align: center;
-  max-width: 1000px;
-  margin: 0 auto;
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.hero-section h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
+@keyframes float-ticket {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-12px) rotate(-3deg); }
+}
+
+@keyframes float-ticket-real {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.7; transform: scale(1.15); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanline {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* ── Acid Smiley Icon ──────────────────────────────────────── */
+
+.acid-smiley {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: middle;
   color: var(--acid);
 }
 
-.hero-section > p {
-  font-size: 1.25rem;
-  color: #999;
-  margin-bottom: 3rem;
+.acid-smiley svg {
+  width: 100%;
+  height: 100%;
 }
 
-.ticket-comparison {
+/* ── Marquee ───────────────────────────────────────────────── */
+
+.marquee {
+  overflow: hidden;
+  background: var(--acid);
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 0;
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 40px;
+  animation: marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.marquee-item .acid-smiley {
+  color: var(--bg);
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+
+.cf-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 100px 32px 80px;
+  background: var(--bg);
+  min-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
 }
 
-.ticket-card {
-  width: 200px;
-  padding: 2rem;
-  border-radius: 1rem;
-  position: relative;
-  border: 2px solid;
-}
-
-.ticket-card.fake {
-  background: rgba(255, 77, 77, 0.05);
-  border-color: var(--red);
-}
-
-.ticket-card.real {
-  background: rgba(0, 255, 133, 0.05);
-  border-color: var(--green);
-}
-
-.ticket-badge {
+.cf-glow {
   position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  font-size: 0.75rem;
-  background: var(--red);
-  color: #fff;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  animation: glow-pulse 6s ease-in-out infinite;
 }
 
-.ticket-badge.verified {
-  background: var(--green);
+.cf-glow-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--acid-08);
+  top: -100px;
+  left: -100px;
 }
 
-.ticket-content {
+.cf-glow-2 {
+  width: 400px;
+  height: 400px;
+  background: rgba(0, 255, 133, 0.06);
+  bottom: -80px;
+  right: -80px;
+  animation-delay: 3s;
+}
+
+.cf-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+}
+
+.cf-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--acid-10);
+  border: 1px solid var(--acid-25);
+  border-radius: 999px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--acid);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.cf-hero h1 {
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 24px;
+  animation: fade-in-up 0.7s ease-out 0.15s both;
+}
+
+.cf-hero h1 span {
+  display: block;
+}
+
+.outline {
+  -webkit-text-stroke: 2px var(--text);
+  color: transparent;
+}
+
+.acid-text {
+  color: var(--acid);
+  position: relative;
+  display: inline-block;
+}
+
+.cf-glitch-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.cf-glitch-pink {
+  color: var(--pink);
+  opacity: 0;
+  animation: conocenos-glitch 3s infinite 0.05s;
+  clip-path: inset(10% 0 60% 0);
+}
+
+.cf-glitch-cyan {
+  color: var(--green);
+  opacity: 0;
+  animation: conocenos-glitch 3s infinite 0.1s;
+  clip-path: inset(50% 0 20% 0);
+}
+
+.white-text {
+  color: var(--text);
+}
+
+.cf-hero-text {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 520px;
+  margin-bottom: 32px;
+  animation: fade-in-up 0.7s ease-out 0.3s both;
+}
+
+.cf-hero-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cf-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fade-in-up 0.7s ease-out 0.45s both;
+}
+
+/* ── Pill Buttons ──────────────────────────────────────────── */
+
+.conocenos-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  letter-spacing: 0.02em;
+}
+
+.conocenos-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--acid-35);
+}
+
+.conocenos-pill:active {
+  transform: translateY(0);
+}
+
+.conocenos-pill-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--text-dim);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.conocenos-pill-outline:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+  transform: translateY(-2px);
+}
+
+.conocenos-pill-outline:active {
+  transform: translateY(0);
+}
+
+/* ── Tickets (Hero Cards) ──────────────────────────────────── */
+
+.cf-tickets {
+  position: relative;
   display: flex;
   flex-direction: column;
+  gap: 24px;
   align-items: center;
-  gap: 1rem;
+  animation: fade-in-up 0.8s ease-out 0.5s both;
 }
 
-.ticket-qr {
-  font-size: 3rem;
+.cf-ticket {
+  position: relative;
+  width: 320px;
+  padding: 29px 26px 22px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.ticket-info {
+.cf-ticket-fake {
+  border-color: rgba(255, 51, 102, 0.35);
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.06) 0%, var(--bg) 60%);
+  animation: float-ticket 5s ease-in-out infinite;
+}
+
+.cf-ticket-fake:hover {
+  transform: rotate(-3deg) translateY(-6px);
+  box-shadow: 0 12px 40px rgba(255, 51, 102, 0.15);
+}
+
+.cf-ticket-real {
+  border-color: rgba(0, 255, 133, 0.35);
+  background: linear-gradient(135deg, rgba(0, 255, 133, 0.06) 0%, var(--bg) 60%);
+  animation: float-ticket-real 5s ease-in-out 0.5s infinite;
+}
+
+.cf-ticket-real:hover {
+  transform: rotate(2deg) translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 255, 133, 0.15);
+}
+
+/* Glitch scan-lines on fake ticket */
+.gline {
+  position: absolute;
+  left: 0;
   width: 100%;
-  text-align: center;
+  height: 2px;
+  pointer-events: none;
+  opacity: 0.25;
 }
 
-.ticket-price-fake,
-.ticket-price-real {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+.gline-1 {
+  background: var(--pink);
+  animation: scanline 3s linear infinite;
 }
 
-.ticket-price-fake {
-  color: var(--red);
-  text-decoration: line-through;
+.gline-2 {
+  background: rgba(255, 51, 102, 0.5);
+  animation: scanline 3s linear infinite 1s;
 }
 
-.ticket-price-real {
+.gline-3 {
+  background: rgba(255, 51, 102, 0.3);
+  animation: scanline 3s linear infinite 2s;
+}
+
+.cf-ticket-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.badge-fake {
+  background: rgba(255, 51, 102, 0.15);
+  color: var(--pink);
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.badge-verified {
+  background: rgba(0, 255, 133, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(0, 255, 133, 0.3);
+}
+
+.cf-ticket-event {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.cf-ticket-venue-sm {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.cf-ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.cf-ticket-price-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.cf-ticket-price {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.cf-ticket-fake .cf-ticket-price {
+  color: var(--pink);
+}
+
+.cf-ticket-real .cf-ticket-price {
   color: var(--green);
 }
 
-.ticket-label {
-  font-size: 0.85rem;
-  color: #999;
+.cf-ticket-qr {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
-.comparison-arrow {
-  font-size: 2rem;
-  color: var(--acid);
+.cf-qr-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: repeating-conic-gradient(var(--text-dim) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.tabs-section {
+.cf-ticket-fake .cf-qr-mini {
+  opacity: 0.35;
+}
+
+.cf-qr-inner {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(0, 255, 133, 0.5);
+}
+
+/* ── Tabs ──────────────────────────────────────────────────── */
+
+.conocenos-tabs-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--dark-85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+}
+
+.conocenos-tabs {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.tabs-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 3rem;
-  border-bottom: 1px solid #222;
+  gap: 0;
 }
 
-.tab-btn {
-  padding: 1rem 2rem;
+.conocenos-tab {
+  flex: 1;
+  padding: 16px 32px;
   background: none;
   border: none;
-  color: #999;
-  font-weight: bold;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 1rem;
   border-bottom: 3px solid transparent;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  transition: color 0.25s ease, border-color 0.25s ease;
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
-.tab-btn.active {
+.conocenos-tab:hover {
+  color: var(--text);
+}
+
+.conocenos-tab.active {
   color: var(--acid);
   border-bottom-color: var(--acid);
 }
 
-.tab-btn:hover {
-  color: #fff;
+/* ── Tab Content ───────────────────────────────────────────── */
+
+.conocenos-tab-content {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.tab-content {
-  padding-bottom: 4rem;
+.conocenos-tab-content.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.section {
-  margin-bottom: 4rem;
+/* ── Sections ──────────────────────────────────────────────── */
+
+.cf-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 32px;
 }
 
-.section h2 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  font-weight: bold;
-}
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-.step-card {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-}
-
-.step-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.step-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-.feature-card {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 1rem;
-  padding: 2rem;
-}
-
-.feature-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
+.cf-section-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--acid);
+  background: var(--acid-08);
+  border: 1px solid var(--acid-20);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
 }
 
-.feature-desc {
-  color: #999;
-  line-height: 1.6;
+.cf-section-title {
+  font-size: clamp(29px, 3.5vw, 45px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 16px;
 }
 
-.commitments-grid {
+.cf-section-text {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 640px;
+  margin-bottom: 48px;
+}
+
+/* ── Features Grid ─────────────────────────────────────────── */
+
+.cf-features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.commitment-card {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-}
-
-.commitment-title {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.commitment-desc {
-  color: #999;
-  font-size: 0.9rem;
-}
-
-.faq-section {
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.faq-item {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 0.75rem;
+.cf-feature {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
   overflow: hidden;
 }
 
-.faq-question {
+.cf-feature::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--acid), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cf-feature:hover {
+  transform: translateY(-4px);
+  border-color: var(--acid-20);
+  box-shadow: 0 8px 32px var(--dark-60);
+}
+
+.cf-feature:hover::before {
+  opacity: 1;
+}
+
+.cf-feature-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.cf-feature h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.cf-feature p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Comparison ────────────────────────────────────────────── */
+
+.cf-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.cf-compare-card {
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.cf-compare-card h3 {
+  font-size: 21px;
+  font-weight: 800;
+  margin: 0 0 24px;
+}
+
+.cf-compare-old {
+  background: linear-gradient(145deg, rgba(255, 51, 102, 0.06) 0%, var(--bg) 50%);
+  border-color: rgba(255, 51, 102, 0.2);
+}
+
+.cf-compare-old h3 {
+  color: var(--pink);
+}
+
+.cf-compare-new {
+  background: linear-gradient(145deg, rgba(0, 255, 133, 0.06) 0%, var(--bg) 50%);
+  border-color: rgba(0, 255, 133, 0.2);
+}
+
+.cf-compare-new h3 {
+  color: var(--green);
+}
+
+.cf-compare-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cf-compare-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--gray-100);
+}
+
+.cf-compare-old .cf-compare-list li::before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  color: var(--pink);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.cf-compare-new .cf-compare-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+/* ── FAQ ───────────────────────────────────────────────────── */
+
+.cf-faq-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 80px 32px;
+}
+
+.cf-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cf-faq-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+
+.cf-faq-item:hover {
+  border-color: var(--text-dim);
+}
+
+.cf-faq-question {
   width: 100%;
-  padding: 1.5rem;
+  padding: 21px 24px;
   background: none;
   border: none;
-  color: #fff;
-  font-size: 1rem;
+  color: var(--text);
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background 0.3s ease;
+  gap: 16px;
+  text-align: left;
+  transition: background 0.2s ease;
 }
 
-.faq-question:hover {
-  background: rgba(229, 255, 0, 0.05);
+.cf-faq-question:hover {
+  background: var(--acid-04);
 }
 
-.faq-toggle {
+.cf-faq-toggle {
   color: var(--acid);
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 800;
+  font-size: 21px;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  line-height: 1;
 }
 
-.faq-answer {
-  padding: 0 1.5rem 1.5rem 1.5rem;
-  color: #999;
-  line-height: 1.6;
-  border-top: 1px solid #222;
+.cf-faq-answer {
+  padding: 0 24px 21px 24px;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  margin-top: -1px;
+  animation: fade-in-up 0.25s ease-out;
 }
 
-.phases-grid {
+/* ── Phases (Organizers) ───────────────────────────────────── */
+
+.cf-phases {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
-.phase-card {
-  background: var(--bg-raised);
-  border: 1px solid #222;
-  border-radius: 1rem;
-  padding: 2rem;
+.cf-phase {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
 }
 
-.phase-title {
-  font-size: 1.2rem;
-  font-weight: bold;
+.cf-phase:hover {
+  border-color: var(--acid-20);
+}
+
+.cf-phase::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--acid);
+  border-radius: 0 3px 3px 0;
+}
+
+.cf-phase-title {
+  font-size: 18px;
+  font-weight: 800;
   color: var(--acid);
-  margin-bottom: 1rem;
+  margin-bottom: 19px;
+  letter-spacing: 0.01em;
 }
 
-.phase-items {
+.cf-phase-items {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
-.phase-item {
-  color: #999;
-  font-size: 0.95rem;
+.cf-phase-item {
+  font-size: 15px;
+  color: var(--gray-100);
+  padding-left: 19px;
+  position: relative;
+  line-height: 1.5;
 }
 
-.email-section {
-  background: var(--bg-raised);
-  padding: 3rem 2rem;
+.cf-phase-item::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--acid);
+  font-weight: 700;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+
+.cf-footer {
   text-align: center;
-  border-top: 1px solid #222;
-  border-bottom: 1px solid #222;
-  max-width: 500px;
-  margin: 0 auto;
-  border-radius: 1rem;
-  margin: 2rem auto;
-}
-
-.email-section h2 {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-}
-
-.email-form {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.email-form input {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.75rem 1rem;
+  padding: 64px 32px;
+  border-top: 1px solid var(--border);
   background: var(--bg);
-  border: 1px solid #333;
-  border-radius: 0.5rem;
-  color: #fff;
-  font-size: 1rem;
 }
 
-.email-form input::placeholder {
-  color: #666;
+.cf-footer-logo {
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--acid);
+  margin-bottom: 10px;
 }
 
-.email-form input:focus {
-  outline: none;
-  border-color: var(--acid);
+.cf-footer-copy {
+  font-size: 13px;
+  color: var(--text-muted);
 }
 
-.email-form button {
-  padding: 0.75rem 1.5rem;
-  background: var(--acid);
-  color: var(--bg);
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+/* ── Responsive ────────────────────────────────────────────── */
 
-.email-form button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(229, 255, 0, 0.3);
+@media (max-width: 1024px) {
+  .cf-hero-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 48px;
+  }
+
+  .cf-hero-text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cf-btns {
+    justify-content: center;
+  }
+
+  .cf-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cf-phases {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .hero-section {
-    padding: 2rem 1rem;
+  .cf-hero {
+    padding: 60px 20px 50px;
+    min-height: auto;
   }
 
-  .hero-section h1 {
-    font-size: 2rem;
+  .cf-hero h1 {
+    font-size: 32px;
   }
 
-  .hero-section > p {
-    font-size: 1rem;
+  .cf-hero-text {
+    font-size: 16px;
   }
 
-  .ticket-comparison {
-    gap: 1rem;
+  .cf-ticket {
+    width: 280px;
   }
 
-  .ticket-card {
-    width: 160px;
-    padding: 1.5rem;
-  }
-
-  .tabs-header {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tab-btn {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .tab-content {
-    padding-bottom: 2rem;
-  }
-
-  .section {
-    margin-bottom: 2rem;
-  }
-
-  .section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .steps-grid,
-  .features-grid,
-  .commitments-grid,
-  .phases-grid {
+  .cf-features {
     grid-template-columns: 1fr;
   }
 
-  .email-form {
-    flex-direction: column;
+  .cf-compare {
+    grid-template-columns: 1fr;
   }
 
-  .email-form input,
-  .email-form button {
+  .cf-phases {
+    grid-template-columns: 1fr;
+  }
+
+  .cf-section {
+    padding: 50px 20px;
+  }
+
+  .cf-faq-section {
+    padding: 50px 20px;
+  }
+
+  .cf-section-title {
+    font-size: 26px;
+  }
+
+  .conocenos-tabs-container {
+    padding: 0 16px;
+  }
+
+  .conocenos-tab {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  .marquee {
+    font-size: 12px;
+    padding: 8px 0;
+  }
+
+  .cf-compare-card {
+    padding: 29px;
+  }
+
+  .cf-btns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .conocenos-pill,
+  .conocenos-pill-outline {
     width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cf-hero h1 {
+    font-size: 27px;
+  }
+
+  .cf-ticket {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .cf-feature {
+    padding: 24px;
+  }
+
+  .cf-phase {
+    padding: 24px;
   }
 }

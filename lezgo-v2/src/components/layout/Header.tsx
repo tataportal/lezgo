@@ -39,6 +39,30 @@ export default function Header() {
           >
             {t.nav.about}
           </Link>
+
+          {/* Mobile-only: user actions inside nav */}
+          <div className="lz-mobile-actions">
+            {user ? (
+              <>
+                <Link to="/mis-entradas" className="lz-nav-link" onClick={() => setMobileOpen(false)}>
+                  {t.nav.myTickets}
+                </Link>
+                <Link to="/perfil" className="lz-nav-link" onClick={() => setMobileOpen(false)}>
+                  {t.nav.profile || 'Perfil'}
+                </Link>
+                <button onClick={() => { logout(); setMobileOpen(false); }} className="lz-nav-link" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', textAlign: 'left', padding: 0, fontSize: 'inherit' }}>
+                  {t.nav.logout}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/auth" className="lz-btn lz-btn-primary" style={{ width: '100%', textAlign: 'center' }} onClick={() => setMobileOpen(false)}>
+                  {t.nav.login}
+                </Link>
+              </>
+            )}
+            <LanguageToggle />
+          </div>
         </nav>
 
         <div className="lz-header-actions">

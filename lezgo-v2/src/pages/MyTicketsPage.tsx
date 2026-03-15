@@ -5,27 +5,24 @@ import { useUserActiveTickets, useUserPastTickets } from '../hooks/useTickets';
 import { getResaleListingsBySeller, listForResale } from '../services/resaleService';
 import { transferTicket } from '../services/ticketService';
 import { useTranslation } from '../i18n';
+import { getInitials, toDate, LOCALE_MAP } from '../lib/helpers';
+import { FEES } from '../lib/constants';
 import type { Resale } from '../lib/types';
 import toast from 'react-hot-toast';
 import './MyTicketsPage.css';
 
 type Tab = 'proximas' | 'pasadas' | 'reventas';
 
-const formatPrice = (n: number) => `S/${n.toLocaleString('es-PE')}`;
+const formatPrice = (n: number, locale = 'es-PE') => `S/${n.toLocaleString(locale)}`;
 
-const formatDate = (dateStr: any) => {
+const formatDate = (dateStr: unknown, locale = 'es-PE') => {
   if (!dateStr) return '';
-  const date = dateStr instanceof Date ? dateStr : dateStr.toDate?.() || new Date(dateStr);
+  const date = toDate(dateStr);
   if (isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
+  return date.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
 };
 
 const maskDni = (dni: string) => dni.slice(0, 2) + '****' + dni.slice(-2);
-
-const getInitials = (name?: string) => {
-  if (!name) return 'U';
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-};
 
 interface TransferModalState {
   open: boolean;
@@ -46,7 +43,10 @@ interface ResaleModalState {
 export default function MyTicketsPage() {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const locale = LOCALE_MAP[lang] || 'es-PE';
+  const fmtPrice = (n: number) => formatPrice(n, locale);
+  const fmtDate = (d: unknown) => formatDate(d, locale);
   const { tickets: activeTickets, loading: activeLoading } = useUserActiveTickets(user?.uid || '');
   const { tickets: pastTickets, loading: pastLoading } = useUserPastTickets(user?.uid || '');
 
@@ -64,7 +64,7 @@ export default function MyTicketsPage() {
     open: false, ticketId: null, originalPrice: 0, askingPrice: 0, loading: false,
   });
 
-  const displayName = profile?.displayName || user?.email?.split('@')[0] || 'Usuario';
+  const displayName = profile?.displayName || user?.email?.split('@')[0] || (t.myTickets.userFallback || 'Usuario');
 
   const handleResaleTabClick = async () => {
     if (!user) return;
@@ -134,7 +134,7 @@ export default function MyTicketsPage() {
   }
 
   const subtitleText = activeTickets.length > 0
-    ? `${activeTickets.length} ${activeTickets.length !== 1 ? t.myTickets.tickets : t.myTickets.ticket} ${activeTickets.length !== 1 ? t.myTickets.actives : t.myTickets.active} · DNI verificado ✓`
+    ? `${activeTickets.length} ${activeTickets.length !== 1 ? t.myTickets.tickets : t.myTickets.ticket} ${activeTickets.length !== 1 ? t.myTickets.actives : t.myTickets.active} · ${t.myTickets.dniVerified || 'DNI verificado'} ✓`
     : t.myTickets.noTickets;
 
   const renderTicketCard = (ticket: any, isPast = false) => {
@@ -163,9 +163,9 @@ export default function MyTicketsPage() {
             {!ticket.image && '🎧'}
           </div>
           <div className="mt-ticket-info">
-            <div className="mt-ticket-event">{ticket.eventName || 'Evento'}</div>
+            <div className="mt-ticket-event">{ticket.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
             <div className="mt-ticket-meta">
-              <div>{ticket.eventDateLabel || (ticket.eventDate ? formatDate(ticket.eventDate) : '')} · {ticket.ticketName || 'General'}</div>
+              <div>{ticket.eventDateLabel || (ticket.eventDate ? fmtDate(ticket.eventDate) : '')} · {ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</div>
               {statusBadge()}
             </div>
           </div>
@@ -203,11 +203,11 @@ export default function MyTicketsPage() {
             </div>
             <div className="mt-ticket-detail-row">
               <span className="mt-ticket-detail-label">{t.myTickets.ticketTypeLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.ticketName || 'General'}</span>
+              <span className="mt-ticket-detail-value">{ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</span>
             </div>
             <div className="mt-ticket-detail-row">
               <span className="mt-ticket-detail-label">{t.myTickets.priceLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.price > 0 ? formatPrice(ticket.price) : t.common.free}</span>
+              <span className="mt-ticket-detail-value">{ticket.price > 0 ? fmtPrice(ticket.price) : t.common.free}</span>
             </div>
             <div className="mt-ticket-detail-row">
               <span className="mt-ticket-detail-label">{t.myTickets.dniLinked}</span>
@@ -304,9 +304,9 @@ export default function MyTicketsPage() {
                 <div className="mt-ticket-head">
                   <div className="mt-ticket-img" style={{ background: 'linear-gradient(135deg,#1a1a2e,#16213e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2em' }}>🎧</div>
                   <div className="mt-ticket-info">
-                    <div className="mt-ticket-event">{resale.eventName || 'Evento'}</div>
+                    <div className="mt-ticket-event">{resale.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
                     <div className="mt-ticket-meta">
-                      <div>{resale.ticketTier || 'Entrada'} · {formatPrice(resale.askingPrice)}</div>
+                      <div>{resale.ticketTier || (t.myTickets.ticketFallback || 'Entrada')} · {fmtPrice(resale.askingPrice)}</div>
                       <span className="mt-ticket-status-badge mt-ticket-status-resale"><span style={{fontSize:10}}>●</span> {t.myTickets.statusResale}</span>
                     </div>
                   </div>
@@ -364,7 +364,7 @@ export default function MyTicketsPage() {
             <div className="mt-resale-modal-info">
               <div className="mt-modal-row">
                 <span className="mt-modal-label">{t.myTickets.salePrice}</span>
-                <span className="mt-modal-value">{formatPrice(resaleModal.originalPrice)}</span>
+                <span className="mt-modal-value">{fmtPrice(resaleModal.originalPrice)}</span>
               </div>
             </div>
             <div className="mt-modal-form">
@@ -380,11 +380,11 @@ export default function MyTicketsPage() {
             <div className="mt-resale-modal-fees">
               <div className="mt-modal-row">
                 <span className="mt-modal-label">{t.myTickets.lezgoFee}</span>
-                <span className="mt-modal-value">{formatPrice(resaleModal.askingPrice * 0.1)}</span>
+                <span className="mt-modal-value">{fmtPrice(resaleModal.askingPrice * FEES.RESALE_SELLER)}</span>
               </div>
               <div className="mt-modal-row mt-modal-row--total">
                 <span className="mt-modal-label">{t.myTickets.netToYou}</span>
-                <span className="mt-modal-value mt-modal-value--highlight">{formatPrice(resaleModal.askingPrice * 0.9)}</span>
+                <span className="mt-modal-value mt-modal-value--highlight">{fmtPrice(resaleModal.askingPrice * (1 - FEES.RESALE_SELLER))}</span>
               </div>
             </div>
             <div className="mt-modal-actions">

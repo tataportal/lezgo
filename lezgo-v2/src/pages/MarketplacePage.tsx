@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { getResaleListings } from '../services/resaleService';
-import { toDate } from '../lib/helpers';
+import { LOCALE_MAP, toDate } from '../lib/helpers';
 import type { Resale } from '../lib/types';
 import ResaleCheckoutModal from '../components/checkout/ResaleCheckoutModal';
 import './MarketplacePage.css';
@@ -12,7 +12,7 @@ type SortBy = 'fecha' | 'precio';
 
 export default function MarketplacePage() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [listings, setListings] = useState<Resale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function MarketplacePage() {
         const data = await getResaleListings({ status: 'listed' });
         setListings(data);
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error al cargar listados';
+        const msg = err instanceof Error ? err.message : t.marketplace.errorLoading;
         setError(msg);
       } finally {
         setLoading(false);
@@ -196,7 +196,7 @@ export default function MarketplacePage() {
             </div>
           ) : error ? (
             <div className="mp-empty">
-              <p>{t.common.error}: {error}</p>
+              <p>{t.common.error}</p>
             </div>
           ) : filteredListings.length === 0 ? (
             <div className="mp-empty">
@@ -209,7 +209,7 @@ export default function MarketplacePage() {
               const eventDate = r.eventDate ? toDate(r.eventDate) : null;
               const dayNum = eventDate ? eventDate.getDate() : '';
               const monthStr = eventDate
-                ? eventDate.toLocaleDateString('es', { month: 'short' }).toUpperCase()
+                ? eventDate.toLocaleDateString(LOCALE_MAP[lang] || LOCALE_MAP.es, { month: 'short' }).toUpperCase()
                 : '';
               const discount =
                 r.originalPrice > r.askingPrice
@@ -248,9 +248,9 @@ export default function MarketplacePage() {
 
                   {/* Info */}
                   <div className="mp-listing-info">
-                    <div className="mp-listing-event">{r.eventName || 'Evento'}</div>
+                    <div className="mp-listing-event">{r.eventName || t.myTickets.defaultEventName}</div>
                     <div className="mp-listing-meta">
-                      {r.eventDateLabel || ''} · {r.ticketTier || 'Entrada'}
+                      {r.eventDateLabel || ''} · {r.ticketTier || t.myTickets.defaultTicketType}
                     </div>
                     <div className="mp-listing-seller">
                       <span className="verified-dot">✓</span>

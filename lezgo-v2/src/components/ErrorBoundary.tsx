@@ -1,6 +1,18 @@
 import { Component } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
 
+// W1 FIX: Simple i18n for error boundary (class component can't use hooks)
+const ERROR_TEXTS: Record<string, { title: string; desc: string; reload: string }> = {
+  es: { title: 'Algo salió mal', desc: 'Hubo un error cargando esta página. Intenta recargar.', reload: 'Recargar página' },
+  en: { title: 'Something went wrong', desc: 'There was an error loading this page. Try reloading.', reload: 'Reload page' },
+  zh: { title: '出了点问题', desc: '加载此页面时出错。请尝试重新加载。', reload: '重新加载页面' },
+};
+
+function getErrorTexts() {
+  const lang = (typeof localStorage !== 'undefined' && localStorage.getItem('lezgo-lang')) || 'es';
+  return ERROR_TEXTS[lang] || ERROR_TEXTS.es;
+}
+
 interface Props {
   children: ReactNode;
 }
@@ -26,6 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      const texts = getErrorTexts();
       return (
         <div style={{
           minHeight: '60vh',
@@ -38,10 +51,10 @@ export class ErrorBoundary extends Component<Props, State> {
           textAlign: 'center',
         }}>
           <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#E5FF00' }}>
-            Algo salió mal
+            {texts.title}
           </h1>
           <p style={{ color: '#999', marginBottom: '2rem', maxWidth: '400px' }}>
-            Hubo un error cargando esta página. Intenta recargar.
+            {texts.desc}
           </p>
           <button
             onClick={() => {
@@ -59,7 +72,7 @@ export class ErrorBoundary extends Component<Props, State> {
               cursor: 'pointer',
             }}
           >
-            Recargar página
+            {texts.reload}
           </button>
         </div>
       );

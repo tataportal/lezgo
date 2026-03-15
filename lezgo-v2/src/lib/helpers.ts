@@ -2,6 +2,16 @@
  * Helper functions for date and currency formatting
  */
 
+/** Map from app language codes to BCP 47 locale strings */
+export const LOCALE_MAP: Record<string, string> = {
+  es: 'es-PE',
+  en: 'en-US',
+  zh: 'zh-CN',
+};
+
+/** Default (Spanish) month names — used as fallback when no monthsFull are provided */
+const DEFAULT_MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
 export function toDate(val: any): Date {
   if (!val) return new Date();
   if (val.toDate) return val.toDate(); // Firestore Timestamp
@@ -9,14 +19,15 @@ export function toDate(val: any): Date {
   return new Date(val);
 }
 
-export function formatDateES(dateStr: string | Date): string {
+export function formatDateES(dateStr: string | Date, lang = 'es'): string {
   const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
-  
+
   if (isNaN(date.getTime())) {
     return 'Fecha inválida';
   }
 
-  const formatter = new Intl.DateTimeFormat('es-PE', {
+  const locale = LOCALE_MAP[lang] || LOCALE_MAP.es;
+  const formatter = new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -27,38 +38,59 @@ export function formatDateES(dateStr: string | Date): string {
 }
 
 /** Short date: "03 Mayo 2026" — matches monolith formatDateLabel */
-export function formatDateShort(dateStr: string | Date): string {
+export function formatDateShort(dateStr: string | Date, monthsFull?: string[]): string {
   const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
   if (isNaN(date.getTime())) return 'Fecha inválida';
-  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const months = monthsFull || DEFAULT_MONTHS_FULL;
   const dd = date.getDate() < 10 ? '0' + date.getDate() : '' + date.getDate();
   return dd + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
 }
 
 /** Even shorter: "11 Marzo" — for promo cards */
-export function formatDateVeryShort(dateStr: string | Date): string {
+export function formatDateVeryShort(dateStr: string | Date, monthsFull?: string[]): string {
   const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
   if (isNaN(date.getTime())) return '';
-  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const months = monthsFull || DEFAULT_MONTHS_FULL;
   return date.getDate() + ' ' + months[date.getMonth()];
 }
 
 export function formatPrice(price: number): string {
   if (price == null || isNaN(price)) return 'S/ 0.00';
+  if (price === 0) return 'GRATIS';
   return `S/ ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
 }
 
 export function formatPriceShort(price: number): string {
   if (price == null || isNaN(price)) return 'S/ 0';
+  if (price === 0) return 'GRATIS';
   return `S/ ${Math.round(price)}`;
 }
 
-const defaultImg = '/hero-bg.jpg';
+/** Genre-based fallback images from Unsplash — matches monolith */
+const genreImages: Record<string, string> = {
+  'techno': 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80&auto=format',
+  'industrial techno': 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=800&q=80&auto=format',
+  'uk bass / techno': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80&auto=format',
+  'techno / house / dnb': 'https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80&auto=format',
+  'deep house / minimal': 'https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=800&q=80&auto=format',
+  'ecléctica': 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&q=80&auto=format',
+  'hard techno': 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=800&q=80&auto=format',
+  'multi-genre': 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80&auto=format',
+  'minimal / micro house': 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&q=80&auto=format',
+};
+const defaultImg = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&q=80&auto=format';
 
-export function getEventImage(image?: string): string {
+export function getEventImage(_eventId: string, image?: string, genre?: string): string {
   if (image && image.startsWith('http')) return image;
   if (image) return image;
+  if (genre) return genreImages[genre.toLowerCase()] || defaultImg;
   return defaultImg;
+}
+
+/** Extract initials from a name string (max 2 chars) */
+export function getInitials(name?: string): string {
+  if (!name) return 'U';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
 export function getActivePhase(tier: any): { name: string; price: number } | null {

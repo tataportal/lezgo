@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEventById } from '../hooks/useEvents';
-import { formatPrice, getActivePhase, getEventImage, toDate } from '../lib/helpers';
+import { formatPrice, getActivePhase, getEventImage, LOCALE_MAP, toDate } from '../lib/helpers';
 import { PurchaseModal } from '../components/checkout/PurchaseModal';
 import { useTranslation } from '../i18n';
 import './EventPage.css';
@@ -17,14 +17,14 @@ export default function EventPage() {
   const navigate = useNavigate();
   const { event, loading, error } = useEventById(eventId || '');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const handleBuyTickets = () => setShowPurchaseModal(true);
 
   if (error) {
     return (
       <div className="ev-detail-error">
-        <p>Error: {error}</p>
+        <p>{t.common.error}</p>
       </div>
     );
   }
@@ -42,13 +42,13 @@ export default function EventPage() {
   const vs = event.visibleSections || {};
   const meta = event.meta || {};
   const evTags: string[] = Array.isArray(event.tags) ? event.tags : [];
-  const imgUrl = getEventImage(event.image);
+  const imgUrl = getEventImage(event.id, event.image, event.genre);
 
   // Date
   const dateObj = toDate(event.date);
   const dateLabel =
     dateObj instanceof Date && !isNaN(dateObj.getTime())
-      ? dateObj.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+      ? dateObj.toLocaleDateString(LOCALE_MAP[lang] || LOCALE_MAP.es, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
       : '';
 
   // Location
@@ -115,7 +115,7 @@ export default function EventPage() {
         <div className="ev-hero-bg" style={{ backgroundImage: `url(${imgUrl})` }} />
         <div className="ev-hero-content">
           <a className="ev-hero-back" onClick={() => navigate(-1)}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             {t.event.backToEvents}
@@ -152,7 +152,7 @@ export default function EventPage() {
               </button>
             ) : (
               <button className="ev-btn ev-btn-primary" onClick={handleBuyTickets}>
-                {t.event.buyTickets}
+                {lowestPrice === 0 ? t.event.reserveTickets : t.event.buyTickets}
               </button>
             )}
             <button className="ev-btn ev-btn-outline">{t.event.addCalendar}</button>
@@ -225,7 +225,7 @@ export default function EventPage() {
                         <div className="ev-tk-sold-all">{t.event.soldOutTag}</div>
                       ) : (
                         <button className="ev-tk-buy" onClick={(e) => { e.stopPropagation(); handleBuyTickets(); }}>
-                          {t.event.buy}
+                          {(activePhase?.price || 0) === 0 ? t.event.reserve : t.event.buy}
                         </button>
                       )}
                     </div>
@@ -235,7 +235,7 @@ export default function EventPage() {
                   <div className="ev-tk-overlay">
                     <div className="ev-tk-overlay-icon">{isTierSold ? '🔄' : '🎫'}</div>
                     <div className="ev-tk-overlay-text">
-                      {isTierSold ? t.event.searchResale : t.event.buyTickets}
+                      {isTierSold ? t.event.searchResale : ((activePhase?.price || 0) === 0 ? t.event.reserveTickets : t.event.buyTickets)}
                     </div>
                     <div className="ev-tk-overlay-hint">
                       {isTierSold ? t.event.verifiedFans : `${remaining} ${t.event.available}`}
@@ -447,7 +447,7 @@ export default function EventPage() {
                 : ''}
             </div>
             <button className="ev-sticky-cta-btn" onClick={handleBuyTickets}>
-              {t.event.buyTickets}
+              {lowestPrice === 0 ? t.event.reserveTickets : t.event.buyTickets}
             </button>
           </div>
         </div>

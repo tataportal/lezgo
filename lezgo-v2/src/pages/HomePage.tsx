@@ -12,7 +12,7 @@ const cleanText = (s?: string) =>
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const { events, loading, error } = useEvents();
   const [searchText, setSearchText] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -104,7 +104,7 @@ export default function HomePage() {
   if (error) {
     return (
       <div className="home-error">
-        <p>Error cargando eventos: {error}</p>
+        <p>{t.home.errorLoading}</p>
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function HomePage() {
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span key={i} className="home-marquee__item">
               <span className="acid-smiley">
-                <svg viewBox="0 0 24 24" fill="none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                   <circle cx="8.5" cy="10" r="1.5" fill="currentColor"/>
                   <circle cx="15.5" cy="10" r="1.5" fill="currentColor"/>
@@ -135,6 +135,7 @@ export default function HomePage() {
         <section className="home-hero" id="home-hero">
           <HeroVideoWrap
             image={featuredEvent.image}
+            genre={featuredEvent.genre}
             heroVideo={featuredEvent.heroVideo || 'UEzJ-Ckl7co'}
             heroVideoStart={28}
             heroVideoEnd={115}
@@ -153,7 +154,7 @@ export default function HomePage() {
             )}
 
             <div className="home-hero__meta">
-              {formatDateES(toDate(featuredEvent.date))}
+              {formatDateES(toDate(featuredEvent.date), lang)}
               {featuredEvent.venue ? ` · ${featuredEvent.venue}` : ''}
               {featuredEvent.location ? `, ${featuredEvent.location}` : ''}
             </div>
@@ -219,7 +220,7 @@ export default function HomePage() {
                 const isSold = event.status === 'sold-out';
                 const tag = isSold ? t.common.soldOut : (event.genre || 'EVENTO');
                 // Monolith format: "11 Marzo · venue, location — Desde S/ 0"
-                const dateStr = formatDateVeryShort(toDate(event.date));
+                const dateStr = formatDateVeryShort(toDate(event.date), t.home.monthsFull);
                 const sub = dateStr
                   + (event.venue ? ` · ${event.venue}` : '')
                   + (event.location ? `, ${event.location}` : '')
@@ -233,7 +234,7 @@ export default function HomePage() {
                     <div
                       className="promo-card__image"
                       style={{
-                        backgroundImage: `url(${getEventImage(event.image)})`,
+                        backgroundImage: `url(${getEventImage(event.id, event.image, event.genre)})`,
                       }}
                     />
                     <div className="promo-card__overlay" />
@@ -293,11 +294,20 @@ export default function HomePage() {
 
             {/* Grid view */}
             {viewMode === 'grid' && (
-              <div className={`events-grid${(searchText.trim() ? filteredUpcoming : upcomingEvents).length < 4 ? ' events-grid--centered' : ''}`}>
-                {(searchText.trim() ? filteredUpcoming : upcomingEvents).map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
+              <>
+                {searchText.trim() && filteredUpcoming.length === 0 ? (
+                  <div className="home-empty-search">
+                    <span style={{ fontSize: '32px', marginBottom: '12px', display: 'block' }}>🔍</span>
+                    <p>{t.common.noSearchResults} &ldquo;{searchText}&rdquo;</p>
+                  </div>
+                ) : (
+                  <div className={`events-grid${(searchText.trim() ? filteredUpcoming : upcomingEvents).length < 4 ? ' events-grid--centered' : ''}`}>
+                    {(searchText.trim() ? filteredUpcoming : upcomingEvents).map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Date list view (RA-style) */}
@@ -351,17 +361,19 @@ export default function HomePage() {
 
 interface HeroVideoWrapProps {
   image?: string;
+  genre?: string;
   heroVideo?: string;
   heroVideoStart?: number; // seconds — start playback here
   heroVideoEnd?: number; // seconds — loop back to start at this point
 }
 
-function HeroVideoWrap({ image, heroVideo, heroVideoStart = 0, heroVideoEnd }: HeroVideoWrapProps) {
+function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoEnd }: HeroVideoWrapProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [muted, setMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
-  const bgImg = getEventImage(image);
+  const { t } = useTranslation();
+  const bgImg = getEventImage('', image, genre);
 
   useEffect(() => {
     if (!heroVideo || !wrapRef.current) return;
@@ -452,7 +464,7 @@ function HeroVideoWrap({ image, heroVideo, heroVideoStart = 0, heroVideoEnd }: H
         }}
       />
       {heroVideo && videoReady && (
-        <button className="hero-mute-btn" onClick={toggleMute} title={muted ? 'Unmute' : 'Mute'}>
+        <button className="hero-mute-btn" onClick={toggleMute} title={muted ? t.home.unmute : t.home.mute}>
           {muted ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
@@ -523,7 +535,7 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
                   <div
                     className="dl-event-img"
                     style={{
-                      backgroundImage: `url(${getEventImage(ev.image)})`,
+                      backgroundImage: `url(${getEventImage(ev.id, ev.image, ev.genre)})`,
                     }}
                   />
                   <div className="dl-event-info">
@@ -532,7 +544,7 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
                     )}
                     <div className="dl-event-name">{ev.name}</div>
                     <div className="dl-event-venue">
-                      <svg className="dl-event-venue-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg width="16" height="16" className="dl-event-venue-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
                         <circle cx="12" cy="10" r="3"/>
                       </svg>
@@ -560,7 +572,7 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
                       </>
                     ) : price !== null ? (
                       <>
-                        <div className="dl-event-price-label">{t.common.from}</div>
+                        {price > 0 && <div className="dl-event-price-label">{t.common.from}</div>}
                         <div className="dl-event-price">{formatPriceShort(price)}</div>
                       </>
                     ) : null}
