@@ -102,10 +102,16 @@ export default function HomePage() {
     if (e.key === 'Enter') handleSearch();
   };
 
-  if (error) {
+  // Log error for debugging but don't block render — show events if we have them
+  if (error) console.error('[HomePage] Event fetch error:', error);
+
+  if (error && events.length === 0) {
     return (
       <div className="home-error">
         <p>{t.home.errorLoading}</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}>
+          Reintentar
+        </button>
       </div>
     );
   }

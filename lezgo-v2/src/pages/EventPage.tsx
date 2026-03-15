@@ -22,9 +22,13 @@ export default function EventPage() {
   const handleBuyTickets = () => setShowPurchaseModal(true);
 
   if (error) {
+    console.error('[EventPage] Error loading event:', error, 'slug/id:', eventId);
     return (
       <div className="ev-detail-error">
         <p>{t.common.error}</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}>
+          Reintentar
+        </button>
       </div>
     );
   }

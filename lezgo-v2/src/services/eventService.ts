@@ -61,9 +61,9 @@ export async function getEvents(
       ...doc.data(),
     } as Event));
   } catch (err: any) {
-    // If composite index is missing, fallback to unordered query
-    if (err?.code === 'failed-precondition' || err?.message?.includes('index')) {
-      console.warn('Firestore index missing, falling back to simple query. Create the index for better performance.');
+    console.warn('[getEvents] Primary query failed:', err?.code, err?.message);
+    // Fallback: unordered query (handles missing indexes, etc.)
+    try {
       const fallbackQ = query(collection(db, EVENTS_COLLECTION));
       const querySnapshot = await getDocs(fallbackQ);
       let events = querySnapshot.docs.map((doc) => ({
@@ -91,8 +91,10 @@ export async function getEvents(
         events = events.slice(0, filters.limit);
       }
       return events;
+    } catch (fallbackErr: any) {
+      console.error('[getEvents] Fallback also failed:', fallbackErr?.code, fallbackErr?.message);
+      throw fallbackErr;
     }
-    throw err;
   }
 }
 
