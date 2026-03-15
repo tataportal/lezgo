@@ -6,9 +6,9 @@
 .mp {
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  padding: 60px 20px;
-  max-width: 1200px;
+  gap: var(--sp-10);
+  padding: 3.75rem var(--sp-5);
+  max-width: 75rem;
   margin: 0 auto;
   color: var(--text);
   min-height: 100vh;
@@ -18,27 +18,27 @@
 .mp-top {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .mp-intro {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 700px;
+  gap: var(--sp-3);
+  max-width: 43.75rem;
 }
 
 .mp-label {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .mp-title {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: 3rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
   margin: 0;
   line-height: 1.1;
@@ -49,7 +49,7 @@
 }
 
 .mp-text {
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
@@ -61,7 +61,7 @@
   align-items: stretch;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: visible;
   position: relative;
 }
@@ -69,12 +69,12 @@
 .mp-search-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 14px 20px;
+  gap: var(--sp-1);
+  padding: 0.875rem var(--sp-5);
   border-right: 1px solid var(--border);
   cursor: pointer;
   position: relative;
-  min-width: 170px;
+  min-width: 10.625rem;
   transition: background 0.2s ease;
 }
 
@@ -85,21 +85,21 @@
 .mp-search-field-main {
   flex: 1;
   cursor: default;
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 
 .search-field-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .search-field-value {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .mp-search-text-input {
@@ -107,7 +107,7 @@
   border: none;
   outline: none;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: inherit;
   padding: 0;
   width: 100%;
@@ -118,17 +118,17 @@
 }
 
 .search-btn {
-  padding: 14px 28px;
+  padding: 0.875rem 1.75rem;
   background: var(--acid);
   color: var(--bg);
   border: none;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background 0.2s ease;
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   white-space: nowrap;
 }
 
@@ -141,13 +141,13 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  min-width: 220px;
+  min-width: 13.75rem;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   padding: 6px 0;
   z-index: 100;
-  max-height: 280px;
+  max-height: 17.5rem;
   overflow-y: auto;
   box-shadow: 0 12px 32px var(--dark-60);
   opacity: 0;
@@ -165,9 +165,9 @@
 .mp-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  font-size: 13px;
+  gap: 0.625rem;
+  padding: 0.625rem var(--sp-4);
+  font-size: 0.8125rem;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -180,7 +180,7 @@
 
 .mp-dropdown-item.selected {
   color: var(--acid);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .dot {
@@ -201,27 +201,27 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .mp-filters-left {
   display: flex;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .mp-filters-right {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .mp-filter {
-  padding: 8px 18px;
+  padding: var(--sp-2) 1.125rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -241,13 +241,13 @@
 }
 
 .mp-sort {
-  padding: 8px 14px;
+  padding: var(--sp-2) 0.875rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -270,30 +270,30 @@
 .mp-listings {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-height: 300px;
+  gap: var(--sp-3);
+  min-height: 18.75rem;
 }
 
 /* ── Empty / Loading / Error State ── */
 .mp-empty {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--sp-5);
   color: var(--text-muted);
 }
 
 .mp-empty-emoji {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 3rem;
+  margin-bottom: var(--sp-4);
 }
 
 .mp-empty h3 {
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: var(--text);
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--sp-2) 0;
 }
 
 .mp-empty p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin: 0;
 }
@@ -302,11 +302,11 @@
 .mp-listing {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -323,40 +323,40 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 48px;
-  padding: 8px 4px;
+  min-width: 3rem;
+  padding: var(--sp-2) var(--sp-1);
   background: var(--acid-06);
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   flex-shrink: 0;
 }
 
 .mp-listing-date-day {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 1.375rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
   line-height: 1;
 }
 
 .mp-listing-date-month {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   margin-top: 2px;
 }
 
 /* Image thumbnail */
 .mp-listing-img {
-  width: 56px;
-  height: 56px;
-  border-radius: 8px;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-btn);
   overflow: hidden;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: var(--fs-xl);
   background: linear-gradient(135deg, var(--bg), var(--bg));
 }
 
@@ -365,13 +365,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
   min-width: 0;
 }
 
 .mp-listing-event {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -379,7 +379,7 @@
 }
 
 .mp-listing-meta {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
@@ -387,7 +387,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
@@ -395,13 +395,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   background: var(--green);
   color: var(--bg);
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 0.5625rem;
+  font-weight: var(--fw-bold);
   flex-shrink: 0;
 }
 
@@ -417,18 +417,18 @@
 .mp-listing-prices {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .mp-listing-original {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   text-decoration: line-through;
 }
 
 .mp-listing-price {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
 }
 
@@ -443,10 +443,10 @@
 /* Tags / badges */
 .mp-listing-tag {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
+  padding: 3px var(--sp-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -463,13 +463,13 @@
 
 /* Listing buy button */
 .mp-listing-btn {
-  padding: 8px 16px;
+  padding: var(--sp-2) var(--sp-4);
   background: transparent;
   border: 1px solid var(--acid);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   color: var(--acid);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -485,11 +485,11 @@
 
 /* ── Note Section ── */
 .mp-note {
-  padding: 20px 24px;
+  padding: var(--sp-5) var(--sp-6);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   line-height: 1.6;
 }
@@ -497,10 +497,10 @@
 .mp-note strong {
   color: var(--text);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 /* ── Sell CTA Section ── */
@@ -508,29 +508,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 40px;
+  gap: var(--sp-4);
+  padding: var(--sp-10);
   background: linear-gradient(135deg, var(--acid-06) 0%, var(--green-05) 100%);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   text-align: center;
 }
 
 .mp-sell-cta p {
-  font-size: 16px;
+  font-size: var(--fs-base);
   color: var(--text);
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .btn-acid {
-  padding: 12px 28px;
+  padding: var(--sp-3) 1.75rem;
   background: var(--acid);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: var(--radius-btn);
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -549,40 +549,40 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 32px;
+  padding-top: var(--sp-8);
   border-top: 1px solid var(--border);
 }
 
 .mp-footer-logo {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
   letter-spacing: 3px;
 }
 
 .mp-footer-copy {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .mp {
-    padding: 40px 16px;
-    gap: 28px;
+    padding: var(--sp-10) var(--sp-4);
+    gap: 1.75rem;
   }
 
   .mp-title {
-    font-size: 32px;
+    font-size: 2rem;
   }
 
   .mp-text {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .mp-search-bar {
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 0.625rem;
   }
 
   .mp-search-field {
@@ -592,7 +592,7 @@
   }
 
   .search-btn {
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 0.625rem 0.625rem;
   }
 
   .mp-filters-row {
@@ -602,11 +602,11 @@
 
   .mp-listing {
     flex-wrap: wrap;
-    gap: 12px;
+    gap: var(--sp-3);
   }
 
   .mp-listing-info {
-    min-width: 140px;
+    min-width: 8.75rem;
   }
 
   .mp-listing-right {
@@ -614,29 +614,29 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-top: 8px;
+    padding-top: var(--sp-2);
     border-top: 1px solid var(--border);
   }
 
   .mp-sell-cta {
-    padding: 24px;
+    padding: var(--sp-6);
   }
 
   .mp-footer {
     flex-direction: column;
-    gap: 8px;
+    gap: var(--sp-2);
     align-items: center;
   }
 }
 
 @media (max-width: 480px) {
   .mp {
-    padding: 24px 12px;
-    gap: 20px;
+    padding: var(--sp-6) var(--sp-3);
+    gap: var(--sp-5);
   }
 
   .mp-title {
-    font-size: 24px;
+    font-size: var(--fs-xl);
   }
 
   .mp-listing-date {
@@ -644,15 +644,15 @@
   }
 
   .mp-listing-img {
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
 
   .mp-listing-event {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .mp-listing-price {
-    font-size: 16px;
+    font-size: var(--fs-base);
   }
 }

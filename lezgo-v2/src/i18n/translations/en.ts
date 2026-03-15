@@ -42,6 +42,17 @@ const en: Translations = {
     notFoundTitle: 'Page not found',
     notFoundDesc: 'The page you are looking for does not exist or has been moved.',
     goHome: 'Go home',
+    badges: {
+      'sold-out': 'SOLD OUT',
+      'resale-available': 'RESALE AVAILABLE',
+      'last-tickets': 'LAST TICKETS',
+      'presale': 'PRESALE',
+      'free': 'FREE',
+      'today': 'TODAY',
+      'tomorrow': 'TOMORROW',
+      'hot': '🔥 HOT',
+      'exclusive': 'ONLY ON LEZGO',
+    },
   },
 
   // ── Footer ──

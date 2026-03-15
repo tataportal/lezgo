@@ -17,7 +17,7 @@
 
 .ev-card__image-wrapper {
   position: relative;
-  height: 200px;
+  height: 12.5rem;
   overflow: hidden;
 }
 
@@ -41,63 +41,40 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 3.75rem;
   background: linear-gradient(to top, var(--bg), transparent);
 }
 
-.ev-card__badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 3px 10px;
-  font-size: var(--fs-caption);
-  font-weight: var(--fw-caption);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  z-index: 2;
-  background: var(--acid);
-  color: var(--bg);
-}
-
-.ev-card__badge--sold-out {
-  background: var(--pink);
-  color: var(--text);
-}
-
-.ev-card__badge--featured {
-  background: var(--acid-muted);
-  color: var(--acid);
-  border: 1px solid var(--acid);
-}
+/* Badges are now handled by EventBadge component */
 
 .ev-card__content {
-  padding: 20px;
+  padding: var(--sp-5);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
   flex: 1;
 }
 
 .ev-card__date {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
   margin-bottom: 0;
 }
 
 .ev-card__title {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 1.625rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text);
   line-height: 1.2;
   letter-spacing: -0.3px;
-  margin: 0 0 6px 0;
+  margin: 0 0 0.375rem 0;
 }
 
 .ev-card__venue {
-  font-size: 18px;
+  font-size: 1.125rem;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .ev-card__location {
@@ -111,33 +88,33 @@
 }
 
 .ev-card__price {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
 }
 
 .ev-card__verified {
   font-size: var(--fs-caption);
-  font-weight: 600;
-  padding: 3px 8px;
+  font-weight: var(--fw-semibold);
+  padding: 0.1875rem var(--sp-2);
   border: 1px solid var(--acid-muted);
   color: var(--acid);
   letter-spacing: 0.3px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sp-1);
 }
 
 @media (max-width: 768px) {
-  .ev-card__title { font-size: 20px; }
-  .ev-card__date { font-size: 15px; }
-  .ev-card__venue { font-size: 15px; }
-  .ev-card__image-wrapper { height: 160px; }
+  .ev-card__title { font-size: var(--fs-lg); }
+  .ev-card__date { font-size: var(--fs-sm); }
+  .ev-card__venue { font-size: var(--fs-sm); }
+  .ev-card__image-wrapper { height: 10rem; }
 }
 
 @media (max-width: 480px) {
-  .ev-card__content { padding: 16px; }
-  .ev-card__title { font-size: 18px; }
-  .ev-card__price-value { font-size: 17px; }
-  .ev-card__image-wrapper { height: 140px; }
+  .ev-card__content { padding: var(--sp-4); }
+  .ev-card__title { font-size: 1.125rem; }
+  .ev-card__price-value { font-size: 1.0625rem; }
+  .ev-card__image-wrapper { height: 8.75rem; }
 }

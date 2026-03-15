@@ -175,8 +175,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // 5. Update event tiers
       transaction.update(eventRef, { tiers: updatedTiers });
 
+      // 5b. Badge numbering — if event issues numbered collectible badges
+      const badgeConfig = eventData.badgeConfig || null;
+      let nextBadgeNumber = 0;
+      if (badgeConfig) {
+        const badgeCounterRef = db.collection('badgeCounters').doc(eventId);
+        const badgeCounterSnap = await transaction.get(badgeCounterRef);
+        nextBadgeNumber = badgeCounterSnap.exists
+          ? (badgeCounterSnap.data()!.nextNumber || 1)
+          : 1;
+
+        // Validate we won't exceed total supply
+        if (nextBadgeNumber + requestedTotal - 1 > badgeConfig.totalSupply) {
+          throw new Error(
+            `Only ${badgeConfig.totalSupply - nextBadgeNumber + 1} numbered badges remaining`
+          );
+        }
+
+        // Update counter atomically
+        if (badgeCounterSnap.exists) {
+          transaction.update(badgeCounterRef, {
+            nextNumber: nextBadgeNumber + requestedTotal,
+          });
+        } else {
+          transaction.set(badgeCounterRef, {
+            eventId,
+            nextNumber: nextBadgeNumber + requestedTotal,
+          });
+        }
+      }
+
       // 6. Create ticket documents
       const ticketIds: string[] = [];
+      const badges: { ticketId: string; badgeNumber: number; badgeType: string }[] = [];
 
       for (const tierQty of quantities) {
         if (tierQty.quantity > 0) {
@@ -215,10 +246,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               transferredFrom: null,
               boughtInResale: false,
               deviceFingerprint, // Layer 4: audit trail
+              // Badge fields (numbered collectibles)
+              ...(badgeConfig ? {
+                badgeNumber: nextBadgeNumber,
+                badgeType: badgeConfig.type,
+              } : {}),
             };
 
             transaction.set(ticketRef, ticketData);
             ticketIds.push(ticketRef.id);
+
+            // Track badge assignment
+            if (badgeConfig) {
+              badges.push({
+                ticketId: ticketRef.id,
+                badgeNumber: nextBadgeNumber,
+                badgeType: badgeConfig.type,
+              });
+              nextBadgeNumber++;
+            }
           }
         }
       }
@@ -234,7 +280,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      return { ticketIds, totalPrice, discountApplied };
+      return {
+        ticketIds,
+        totalPrice,
+        discountApplied,
+        ...(badges.length > 0 ? { badges } : {}),
+      };
     });
 
     return res.status(200).json(result);

@@ -40,6 +40,18 @@ const es = {
     notFoundTitle: 'Página no encontrada',
     notFoundDesc: 'La página que buscas no existe o fue movida.',
     goHome: 'Ir al inicio',
+    // Badges
+    badges: {
+      'sold-out': 'AGOTADO',
+      'resale-available': 'REVENTA DISPONIBLE',
+      'last-tickets': 'ÚLTIMAS ENTRADAS',
+      'presale': 'PREVENTA',
+      'free': 'GRATIS',
+      'today': 'HOY',
+      'tomorrow': 'MAÑANA',
+      'hot': '🔥 HOT',
+      'exclusive': 'EXCLUSIVO EN LEZGO',
+    },
   },
 
   // ── Footer ──

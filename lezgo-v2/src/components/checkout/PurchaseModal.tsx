@@ -34,6 +34,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [earnedBadges, setEarnedBadges] = useState<{ badgeNumber: number; badgeType: string }[]>([]);
 
   // Reset all state when modal opens
   useEffect(() => {
@@ -48,6 +49,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
       setCouponCode('');
       setCouponDiscount(0);
       setCouponApplied(false);
+      setEarnedBadges([]);
       setLoading(false);
     }
   }, [open]);
@@ -233,7 +235,10 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
         couponCode: couponApplied ? couponCode : undefined,
       };
 
-      await purchaseTickets(purchaseInput);
+      const result = await purchaseTickets(purchaseInput);
+      if (result.badges && result.badges.length > 0) {
+        setEarnedBadges(result.badges.map((b: any) => ({ badgeNumber: b.badgeNumber, badgeType: b.badgeType })));
+      }
       setStep(4);
       toast.success(subtotal === 0 ? t.purchase.reserveSuccess : t.purchase.purchaseSuccess);
     } catch (error) {
@@ -567,6 +572,19 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 </span>
               </div>
             </div>
+
+            {earnedBadges.length > 0 && (
+              <div className="pm-badge-reveal">
+                <div className="pm-badge-reveal__icon">⚡</div>
+                <div className="pm-badge-reveal__title">Early Adopter Badge</div>
+                <div className="pm-badge-reveal__number">
+                  #{String(earnedBadges[0].badgeNumber).padStart(3, '0')} / 100
+                </div>
+                <div className="pm-badge-reveal__desc">
+                  Tu medalla numerada de colección
+                </div>
+              </div>
+            )}
 
             <div className="pm-actions">
               <button

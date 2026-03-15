@@ -93,6 +93,93 @@ export function getInitials(name?: string): string {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
+// ── Badge logic (pure functions) ──
+import type { BadgeDef, TicketBadgeKey, AdjectiveBadgeKey } from './constants';
+import { TICKET_BADGES, ADJECTIVE_BADGES, LAST_TICKETS_THRESHOLD } from './constants';
+import type { Event } from './types';
+
+interface EventBadges {
+  ticket: (BadgeDef & { labelKey: TicketBadgeKey }) | null;
+  adjective: (BadgeDef & { labelKey: AdjectiveBadgeKey }) | null;
+}
+
+/** Calculate the two badges (ticket-status + adjective) for an event */
+export function getEventBadges(
+  event: Event,
+  opts?: { hasResaleListings?: boolean; presaleSoldInOneDay?: boolean; isExclusive?: boolean }
+): EventBadges {
+  const now = new Date();
+  const eventDate = toDate(event.date);
+  const { hasResaleListings = false, presaleSoldInOneDay = false, isExclusive = false } = opts || {};
+
+  // ── Ticket-status badge (pick highest priority) ──
+  let ticket: EventBadges['ticket'] = null;
+
+  if (event.status === 'sold-out') {
+    if (hasResaleListings) {
+      ticket = { ...TICKET_BADGES['resale-available'], labelKey: 'resale-available' };
+    } else {
+      ticket = { ...TICKET_BADGES['sold-out'], labelKey: 'sold-out' };
+    }
+  } else {
+    // Check "last tickets" — total sold / total capacity > threshold
+    const totalSold = (event.tiers || []).reduce((s, t) => s + (t.sold || 0), 0);
+    const totalCap = (event.tiers || []).reduce((s, t) => s + (t.capacity || 0), 0);
+    if (totalCap > 0 && totalSold / totalCap >= LAST_TICKETS_THRESHOLD) {
+      ticket = { ...TICKET_BADGES['last-tickets'], labelKey: 'last-tickets' };
+    }
+
+    // Check "presale" — first active phase name contains "preventa" or "presale"
+    if (!ticket) {
+      for (const tier of event.tiers || []) {
+        const active = getActivePhase(tier);
+        if (active && /pre(venta|sale)/i.test(active.name)) {
+          ticket = { ...TICKET_BADGES['presale'], labelKey: 'presale' };
+          break;
+        }
+      }
+    }
+
+    // Check "free" — all active phases are price 0
+    if (!ticket) {
+      const activePrices = (event.tiers || [])
+        .map(t => getActivePhase(t))
+        .filter(Boolean)
+        .map(p => p!.price);
+      if (activePrices.length > 0 && activePrices.every(p => p === 0)) {
+        ticket = { ...TICKET_BADGES['free'], labelKey: 'free' };
+      }
+    }
+  }
+
+  // ── Adjective badge (pick highest priority) ──
+  let adjective: EventBadges['adjective'] = null;
+
+  const isToday =
+    eventDate.getFullYear() === now.getFullYear() &&
+    eventDate.getMonth() === now.getMonth() &&
+    eventDate.getDate() === now.getDate();
+
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const isTomorrow =
+    eventDate.getFullYear() === tomorrow.getFullYear() &&
+    eventDate.getMonth() === tomorrow.getMonth() &&
+    eventDate.getDate() === tomorrow.getDate();
+
+  if (isToday) {
+    adjective = { ...ADJECTIVE_BADGES['today'], labelKey: 'today' };
+  } else if (isTomorrow) {
+    adjective = { ...ADJECTIVE_BADGES['tomorrow'], labelKey: 'tomorrow' };
+  } else if (presaleSoldInOneDay) {
+    adjective = { ...ADJECTIVE_BADGES['hot'], labelKey: 'hot' };
+  } else if (isExclusive) {
+    adjective = { ...ADJECTIVE_BADGES['exclusive'], labelKey: 'exclusive' };
+  }
+
+  return { ticket, adjective };
+}
+
 export function getActivePhase(tier: any): { name: string; price: number } | null {
   if (!tier?.phases || tier.phases.length === 0) {
     return null;

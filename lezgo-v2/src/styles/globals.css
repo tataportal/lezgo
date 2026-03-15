@@ -18,6 +18,7 @@
   /* ══ STATUS ══ */
   --green: #00FF85;
   --pink: #FF3366;
+  --yellow: #FFAA00;
   --blue: #00D4FF;
 
   /* ══ BACKGROUNDS ══ */
@@ -83,31 +84,35 @@
   --pink-30: rgba(255,51,102,0.3);
   --pink-15: rgba(255,51,102,0.15);
 
+  /* ── Yellow opacity scale ── */
+  --yellow-30: rgba(255,170,0,0.3);
+  --yellow-15: rgba(255,170,0,0.15);
+
   /* ── Blue opacity scale ── */
   --blue-30: rgba(0,212,255,0.3);
   --blue-15: rgba(0,212,255,0.15);
 
   /* ══ TYPOGRAPHY (7 styles) ══ */
   /* display: 56px/900 — Hero titles */
-  --fs-display: 56px;
+  --fs-display: 3.5rem;
   --fw-display: 900;
   /* h1: 36px/800 — Page titles */
-  --fs-h1: 36px;
+  --fs-h1: 2.25rem;
   --fw-h1: 800;
   /* h2: 24px/800 — Section headings */
-  --fs-h2: 24px;
+  --fs-h2: 1.5rem;
   --fw-h2: 800;
   /* h3: 20px/700 — Subsections, prices */
-  --fs-h3: 20px;
+  --fs-h3: 1.25rem;
   --fw-h3: 700;
   /* body: 15px/400 — Paragraphs, descriptions */
-  --fs-body: 15px;
+  --fs-body: 0.9375rem;
   --fw-body: 400;
   /* body-bold: 15px/700 — Buttons, nav, CTAs */
-  --fs-body-bold: 15px;
+  --fs-body-bold: 0.9375rem;
   --fw-body-bold: 700;
   /* caption: 11px/700 — Labels, tags, badges, timestamps */
-  --fs-caption: 11px;
+  --fs-caption: 0.6875rem;
   --fw-caption: 700;
 
   /* ── Font weight aliases ── */
@@ -119,40 +124,40 @@
   --fw-black: 900;
 
   /* ── Font size aliases (backward compat) ── */
-  --fs-xs: 11px;
-  --fs-sm: 15px;
-  --fs-base: 15px;
-  --fs-lg: 20px;
-  --fs-xl: 24px;
-  --fs-2xl: 36px;
-  --fs-3xl: 56px;
-  --fs-4xl: 80px;
+  --fs-xs: 0.6875rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 0.9375rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2.25rem;
+  --fs-3xl: 3.5rem;
+  --fs-4xl: 5rem;
 
   /* ── Border radius ── */
   --radius-none: 0;
-  --radius-xs: 3px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-btn: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 14px;
-  --radius-2xl: 16px;
-  --radius-3xl: 20px;
+  --radius-xs: 0.1875rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-btn: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
   --radius-full: 50%;
   --radius-pill: 100px;
 
   /* ── Spacing ── */
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-8: 32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-  --sp-16: 64px;
-  --sp-20: 80px;
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
 
   /* ── Medal / rank colors ── */
   --gold: #FFD700;
@@ -209,12 +214,12 @@ img { display: block; max-width: 100%; }
   font-size: var(--fs-2xl);
   font-weight: var(--fw-black);
   color: var(--acid);
-  letter-spacing: 3px;
+  letter-spacing: 0.1875rem;
 }
 
 .loading-spinner {
-  width: 32px;
-  height: 32px;
+  width: 2rem;
+  height: 2rem;
   border: 2px solid var(--border);
   border-top-color: var(--acid);
   border-radius: 50%;
@@ -231,18 +236,18 @@ img { display: block; max-width: 100%; }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(1.25rem); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Layout ── */
 .lz-main {
-  min-height: calc(100vh - 160px);
-  padding-top: 72px; /* header height */
+  min-height: calc(100vh - 10rem);
+  padding-top: 4.5rem; /* header height */
 }
 
 .page-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: var(--sp-10) var(--sp-6);
 }
@@ -255,15 +260,15 @@ img { display: block; max-width: 100%; }
   right: 0;
   z-index: var(--z-sticky);
   background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(0.75rem);
   border-bottom: 1px solid var(--border);
 }
 
 .lz-header-inner {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0 var(--sp-6);
-  height: 72px;
+  height: 4.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -299,7 +304,7 @@ img { display: block; max-width: 100%; }
 .lz-nav-link.active::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -0.25rem;
   left: 0;
   right: 0;
   height: 2px;
@@ -328,7 +333,7 @@ img { display: block; max-width: 100%; }
   background: transparent;
   color: var(--text-dim);
   border: none;
-  padding: 4px 8px;
+  padding: var(--sp-1) var(--sp-2);
   font-size: var(--fs-caption);
   font-weight: var(--fw-caption);
   font-family: 'Sora', sans-serif;
@@ -389,8 +394,8 @@ img { display: block; max-width: 100%; }
 .lz-avatar-link { display: flex; }
 
 .lz-avatar {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: var(--radius-full);
   border: 2px solid var(--acid-30);
   object-fit: cover;
@@ -410,7 +415,7 @@ img { display: block; max-width: 100%; }
 .lz-mobile-toggle {
   display: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.3125rem;
   background: none;
   border: none;
   padding: var(--sp-2);
@@ -432,7 +437,7 @@ img { display: block; max-width: 100%; }
 }
 
 .lz-footer-inner {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -466,7 +471,7 @@ img { display: block; max-width: 100%; }
   .lz-nav {
     display: none;
     position: fixed;
-    top: 72px;
+    top: 4.5rem;
     left: 0;
     right: 0;
     background: var(--gray-900);
@@ -495,6 +500,11 @@ img { display: block; max-width: 100%; }
     gap: var(--sp-6);
     text-align: center;
   }
+}
+
+/* ── HiDPI / 4K scaling ── */
+@media (min-width: 2560px) {
+  html { font-size: 24px; } /* 150% scale — all rem values grow automatically */
 }
 
 /* ── Accessibility: respect reduced-motion preference ── */

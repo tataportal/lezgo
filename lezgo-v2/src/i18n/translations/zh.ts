@@ -42,6 +42,17 @@ const zh: Translations = {
     notFoundTitle: '页面未找到',
     notFoundDesc: '您查找的页面不存在或已被移动。',
     goHome: '回到首页',
+    badges: {
+      'sold-out': '已售完',
+      'resale-available': '转售可用',
+      'last-tickets': '最后几张',
+      'presale': '预售',
+      'free': '免费',
+      'today': '今天',
+      'tomorrow': '明天',
+      'hot': '🔥 热门',
+      'exclusive': 'LEZGO独家',
+    },
   },
 
   // ── Footer ──

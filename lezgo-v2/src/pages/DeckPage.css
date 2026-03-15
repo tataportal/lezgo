@@ -8,10 +8,10 @@
 .marquee-banner {
   background: var(--acid);
   color: var(--bg);
-  padding: 16px;
+  padding: var(--sp-4);
   overflow: hidden;
-  font-weight: 700;
-  font-size: 20px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-lg);
   white-space: nowrap;
 }
 
@@ -30,40 +30,40 @@
 }
 
 .deck-header {
-  padding: 24px 32px;
+  padding: var(--sp-6) var(--sp-8);
   display: flex;
   justify-content: center;
 }
 
 .toggles {
   display: flex;
-  gap: 32px;
+  gap: var(--sp-8);
 }
 
 .toggle-group {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-2);
   background: var(--bg);
-  padding: 4px;
-  border-radius: 8px;
+  padding: var(--sp-1);
+  border-radius: var(--radius-btn);
   border: 1px solid var(--border);
 }
 
 .toggle-btn {
-  padding: 8px 16px;
+  padding: var(--sp-2) var(--sp-4);
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: var(--fw-semibold);
+  font-size: 0.875rem;
   transition: all 0.3s ease;
 }
 
 .toggle-btn.active {
   background: var(--acid);
   color: var(--bg);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 }
 
 .toggle-btn:hover:not(.active) {
@@ -71,39 +71,39 @@
 }
 
 .hero-section {
-  padding: 64px 32px;
+  padding: var(--sp-16) var(--sp-8);
   text-align: center;
-  max-width: 1000px;
+  max-width: 62.5rem;
   margin: 0 auto;
 }
 
 .hero-section h1 {
-  font-size: 56px;
-  font-weight: 700;
-  margin-bottom: 16px;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--sp-4);
   line-height: 1.2;
 }
 
 .hero-section p {
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: var(--text-muted);
-  margin-bottom: 48px;
+  margin-bottom: var(--sp-12);
 }
 
 .ticket-comparison-deck {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 32px;
-  margin: 32px 0 48px 0;
+  gap: var(--sp-8);
+  margin: var(--sp-8) 0 var(--sp-12) 0;
   flex-wrap: wrap;
 }
 
 .ticket-fake,
 .ticket-real {
-  width: 150px;
-  padding: 24px;
-  border-radius: 12px;
+  width: 9.375rem;
+  padding: var(--sp-6);
+  border-radius: var(--radius-lg);
   position: relative;
 }
 
@@ -119,13 +119,13 @@
 
 .ticket-label-deck {
   position: absolute;
-  top: -12px;
+  top: -0.75rem;
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 13px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
+  padding: 6px 0.8125rem;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   background: var(--pink);
   color: var(--text);
 }
@@ -138,39 +138,39 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .qr-fake,
 .qr-real {
-  font-size: 40px;
+  font-size: 2.5rem;
 }
 
 .price-fake {
   color: var(--pink);
   text-decoration: line-through;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .price-real {
   color: var(--green);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .comparison-vs {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
   color: var(--acid);
 }
 
 .contact-btn {
   display: inline-block;
-  padding: 16px 32px;
+  padding: var(--sp-4) var(--sp-8);
   background: var(--acid);
   color: var(--bg);
   text-decoration: none;
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: var(--radius-btn);
+  font-weight: var(--fw-bold);
   transition: all 0.3s ease;
   border: none;
 }
@@ -181,22 +181,22 @@
 }
 
 .section-deck {
-  padding: 64px 32px;
-  max-width: 1000px;
+  padding: var(--sp-16) var(--sp-8);
+  max-width: 62.5rem;
   margin: 0 auto;
 }
 
 .section-deck h2 {
-  font-size: 40px;
-  margin-bottom: 24px;
-  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: var(--sp-6);
+  font-weight: var(--fw-bold);
 }
 
 .section-deck p {
-  font-size: 18px;
+  font-size: 1.125rem;
   color: var(--text-muted);
   line-height: 1.8;
-  margin-bottom: 32px;
+  margin-bottom: var(--sp-8);
 }
 
 .problem-section {
@@ -210,35 +210,35 @@
 .tech-details,
 .features-tech {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-8);
 }
 
 .stat-card,
 .feature-box {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-8);
   text-align: center;
 }
 
 .stat-number,
 .feature-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  margin-bottom: var(--sp-2);
 }
 
 .stat-number {
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   color: var(--acid);
 }
 
 .stat-label,
 .feature-label {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 .how-works {
@@ -248,13 +248,13 @@
 .flow-container {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: var(--sp-12);
 }
 
 .flow-track h3 {
-  font-size: 20px;
-  margin-bottom: 24px;
-  font-weight: 600;
+  font-size: var(--fs-lg);
+  margin-bottom: var(--sp-6);
+  font-weight: var(--fw-semibold);
 }
 
 .flow-steps {
@@ -262,7 +262,7 @@
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .flow-step {
@@ -273,29 +273,29 @@
 }
 
 .step-icon {
-  width: 50px;
-  height: 50px;
+  width: 3.125rem;
+  height: 3.125rem;
   border-radius: 50%;
   background: var(--acid);
   color: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-3);
 }
 
 .step-title {
-  font-size: 15px;
-  font-weight: 600;
-  width: 80px;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  width: 5rem;
 }
 
 .flow-arrow {
-  font-size: 24px;
+  font-size: var(--fs-xl);
   color: var(--acid);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .business-model {
@@ -304,43 +304,43 @@
 
 .fee-structure {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: var(--sp-8);
 }
 
 .fee-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 32px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-8);
   text-align: center;
 }
 
 .fee-label {
   color: var(--text-muted);
-  margin-bottom: 16px;
-  font-size: 15px;
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-base);
 }
 
 .fee-amount {
-  font-size: 40px;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: var(--fw-bold);
   color: var(--green);
 }
 
 .revenue-projection {
-  margin-top: 32px;
+  margin-top: var(--sp-8);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
   text-align: center;
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 .revenue-projection p {
-  margin: 8px 0;
+  margin: var(--sp-2) 0;
 }
 
 .traction {
@@ -349,52 +349,52 @@
 
 .traction-simple {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 24px;
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-8);
 }
 
 .milestone {
   text-align: center;
-  padding: 32px;
+  padding: var(--sp-8);
   background: var(--bg);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
 }
 
 .milestone-icon {
-  font-size: 40px;
-  margin-bottom: 16px;
+  font-size: 2.5rem;
+  margin-bottom: var(--sp-4);
 }
 
 .milestone-text {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
 }
 
 .traction-tech {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 24px;
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-8);
 }
 
 .metric {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
 }
 
 .metric-label {
   color: var(--text-muted);
-  font-size: 14px;
-  margin-bottom: 12px;
+  font-size: 0.875rem;
+  margin-bottom: var(--sp-3);
 }
 
 .metric-value {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
 }
 
@@ -405,25 +405,25 @@
 .team-card {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: var(--sp-8);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 500px;
-  margin-top: 32px;
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-8);
+  max-width: 31.25rem;
+  margin-top: var(--sp-8);
 }
 
 .team-avatar {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--acid), var(--green));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: var(--fw-bold);
   color: var(--bg);
   flex-shrink: 0;
 }
@@ -433,33 +433,33 @@
 }
 
 .team-name {
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: var(--fw-semibold);
+  margin-bottom: var(--sp-2);
 }
 
 .team-role {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .deck-footer {
-  padding: 48px 32px;
+  padding: var(--sp-12) var(--sp-8);
   text-align: center;
   border-top: 1px solid var(--border);
 }
 
 .deck-footer h3 {
-  font-size: 24px;
-  margin-bottom: 16px;
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-4);
 }
 
 .footer-email {
   display: inline-block;
   color: var(--acid);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 18px;
-  margin-bottom: 16px;
+  font-weight: var(--fw-semibold);
+  font-size: 1.125rem;
+  margin-bottom: var(--sp-4);
   transition: all 0.3s ease;
 }
 
@@ -469,39 +469,39 @@
 
 .footer-text {
   color: var(--text-muted);
-  font-size: 14px;
-  margin-top: 16px;
+  font-size: 0.875rem;
+  margin-top: var(--sp-4);
 }
 
 @media (max-width: 768px) {
   .hero-section h1 {
-    font-size: 32px;
+    font-size: 2rem;
   }
 
   .hero-section p {
-    font-size: 16px;
+    font-size: var(--fs-base);
   }
 
   .section-deck h2 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .toggles {
-    gap: 16px;
+    gap: var(--sp-4);
     flex-wrap: wrap;
   }
 
   .flow-steps {
-    gap: 8px;
+    gap: var(--sp-2);
   }
 
   .flow-arrow {
-    font-size: 16px;
+    font-size: var(--fs-base);
   }
 
   .step-title {
-    font-size: 13px;
-    width: 60px;
+    font-size: 0.8125rem;
+    width: 3.75rem;
   }
 
   .team-card {
@@ -512,36 +512,36 @@
 
 @media (max-width: 480px) {
   .deck-page {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
   }
 
   .hero-section {
-    padding: 48px 16px 32px;
+    padding: var(--sp-12) var(--sp-4) var(--sp-8);
   }
 
   .hero-section h1 {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
 
   .hero-section p {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .section-deck {
-    padding: 32px 0;
+    padding: var(--sp-8) 0;
   }
 
   .section-deck h2 {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 
   .ticket-comparison-deck {
-    gap: 16px;
+    gap: var(--sp-4);
     flex-direction: column;
   }
 
   .ticket-card-deck {
-    padding: 24px 16px;
+    padding: var(--sp-6) var(--sp-4);
   }
 
   .flow-steps {
@@ -555,17 +555,17 @@
 
   .revenue-cards {
     flex-direction: column;
-    gap: 16px;
+    gap: var(--sp-4);
   }
 
   .team-card {
-    padding: 24px 16px;
-    gap: 16px;
+    padding: var(--sp-6) var(--sp-4);
+    gap: var(--sp-4);
   }
 
   .team-avatar {
-    width: 50px;
-    height: 50px;
+    width: 3.125rem;
+    height: 3.125rem;
   }
 
   .deck-cta-btn {

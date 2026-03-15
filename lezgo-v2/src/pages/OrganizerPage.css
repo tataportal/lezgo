@@ -8,35 +8,35 @@
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
-  padding: 0 0 80px 0;
+  padding: 0 0 var(--sp-20) 0;
 }
 
 /* ── Header ── */
 .og-header {
   background: linear-gradient(135deg, var(--acid-06) 0%, rgba(0, 255, 133, 0.02) 100%);
   border-bottom: 1px solid var(--border);
-  padding: 40px 20px 36px;
+  padding: var(--sp-10) var(--sp-5) 2.25rem;
 }
 
 .og-header-top {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--sp-5);
 }
 
 .og-header-top h1 {
-  font-size: 36px;
-  font-weight: 800;
-  margin: 10px 0 6px;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
+  margin: 0.625rem 0 6px;
   color: var(--text);
   letter-spacing: -0.5px;
 }
 
 .og-header-top p {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin: 0;
 }
@@ -45,10 +45,10 @@
   display: inline-block;
   background: var(--acid);
   color: var(--bg);
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 800;
+  padding: 5px var(--sp-3);
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: var(--fw-extrabold);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -57,10 +57,10 @@
   background: var(--green);
   color: var(--bg);
   border: none;
-  padding: 12px 28px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
+  padding: var(--sp-3) 1.75rem;
+  border-radius: var(--radius-btn);
+  font-weight: var(--fw-bold);
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -80,25 +80,25 @@
    Tab Bar
    ══════════════════════════════════════════════════════════════ */
 .og-tabs {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--sp-5);
   display: flex;
-  gap: 4px;
+  gap: var(--sp-1);
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   position: sticky;
-  top: 56px;
+  top: 3.5rem;
   z-index: 10;
 }
 
 .og-tab {
-  padding: 14px 24px;
+  padding: 0.875rem var(--sp-6);
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: 2px solid transparent;
@@ -116,25 +116,25 @@
 
 /* ── Quick Actions ── */
 .og-quick-actions {
-  max-width: 1200px;
-  margin: 24px auto 0;
-  padding: 0 20px;
+  max-width: 75rem;
+  margin: var(--sp-6) auto 0;
+  padding: 0 var(--sp-5);
   display: flex;
-  gap: 12px;
+  gap: var(--sp-3);
   flex-wrap: wrap;
 }
 
 .og-quick-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 0.625rem var(--sp-5);
+  border-radius: var(--radius-btn);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -146,25 +146,25 @@
 }
 
 .og-quick-icon {
-  font-size: 16px;
+  font-size: var(--fs-base);
   line-height: 1;
 }
 
 /* ── Metrics Grid ── */
 .og-metrics {
-  max-width: 1200px;
-  margin: 32px auto 0;
-  padding: 0 20px;
+  max-width: 75rem;
+  margin: var(--sp-8) auto 0;
+  padding: 0 var(--sp-5);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .og-metric {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
   transition: all 0.2s ease;
 }
 
@@ -174,20 +174,20 @@
 }
 
 .og-metric-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  font-weight: 600;
-  margin-bottom: 12px;
+  font-weight: var(--fw-semibold);
+  margin-bottom: var(--sp-3);
 }
 
 .og-metric-value {
-  font-size: 30px;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text);
   letter-spacing: -0.5px;
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
 }
 
 .og-metric-value.acid {
@@ -195,24 +195,24 @@
 }
 
 .og-metric-change {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
   line-height: 1.5;
 }
 
 /* ── Section Container ── */
 .og-section {
-  max-width: 1200px;
-  margin: 40px auto 0;
-  padding: 0 20px;
+  max-width: 75rem;
+  margin: var(--sp-10) auto 0;
+  padding: 0 var(--sp-5);
 }
 
 .og-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
 }
 
 .og-section-header .og-section-title {
@@ -220,24 +220,24 @@
 }
 
 .og-section-title {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 1.375rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text);
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-5);
   letter-spacing: -0.3px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .og-section-badge {
   display: inline-block;
   background: rgba(0, 255, 133, 0.12);
   color: var(--green);
-  padding: 3px 10px;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 800;
+  padding: 3px 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.5625rem;
+  font-weight: var(--fw-extrabold);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -248,15 +248,15 @@
 .og-chart-container {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px 24px 16px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6) var(--sp-6) var(--sp-4);
 }
 
 .og-chart {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
-  height: 200px;
+  gap: var(--sp-1);
+  height: 12.5rem;
 }
 
 .og-bar {
@@ -284,52 +284,52 @@
 .og-chart-labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 .og-chart-label {
   text-align: center;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 /* ══════════════════════════════════════════════════════════════
    Analytics Tab
    ══════════════════════════════════════════════════════════════ */
 .og-analytics {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--sp-5);
 }
 
 .og-analytics-filters {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-top: 24px;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
   flex-wrap: wrap;
 }
 
 .og-time-range {
   display: flex;
-  gap: 4px;
+  gap: var(--sp-1);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: var(--radius-btn);
+  padding: var(--sp-1);
 }
 
 .og-range-btn {
-  padding: 8px 16px;
+  padding: var(--sp-2) var(--sp-4);
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   transition: all 0.2s ease;
 }
 
@@ -346,12 +346,12 @@
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 0.625rem var(--sp-4);
+  border-radius: var(--radius-btn);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-medium);
   cursor: pointer;
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 
 .og-event-filter option {
@@ -364,33 +364,33 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px;
-  gap: 16px;
+  padding: var(--sp-20) var(--sp-5);
+  gap: var(--sp-4);
   color: var(--text-muted);
 }
 
 /* ── Analytics Grid (2 cols) ── */
 .og-analytics-grid {
-  max-width: 1200px;
-  margin: 32px auto 0;
-  padding: 0 20px;
+  max-width: 75rem;
+  margin: var(--sp-8) auto 0;
+  padding: 0 var(--sp-5);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .og-analytics-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
 }
 
 .og-card-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-5);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -399,7 +399,7 @@
 .og-tier-bars {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .og-tier-row {
@@ -415,28 +415,28 @@
 }
 
 .og-tier-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   color: var(--text);
 }
 
 .og-tier-count {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--acid);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .og-tier-bar-bg {
-  height: 8px;
+  height: 0.5rem;
   background: var(--acid-10);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .og-tier-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--green), var(--acid));
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: width 0.4s ease;
 }
 
@@ -444,20 +444,20 @@
 .og-peak-hours {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .og-peak-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .og-peak-time {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   color: var(--text-muted);
-  min-width: 50px;
+  min-width: 3.125rem;
 }
 
 .og-peak-row.top .og-peak-time {
@@ -466,16 +466,16 @@
 
 .og-peak-bar-bg {
   flex: 1;
-  height: 8px;
+  height: 0.5rem;
   background: var(--acid-10);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .og-peak-bar-fill {
   height: 100%;
   background: var(--acid-30);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   transition: width 0.4s ease;
 }
 
@@ -484,18 +484,18 @@
 }
 
 .og-peak-count {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
-  min-width: 30px;
+  min-width: 1.875rem;
   text-align: right;
 }
 
 .og-no-data {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: center;
-  padding: 32px;
+  padding: var(--sp-8);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -504,15 +504,15 @@
 .og-segments {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 24px;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
 }
 
 .og-segment-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
   text-align: center;
   transition: all 0.2s ease;
   position: relative;
@@ -544,36 +544,36 @@
 }
 
 .og-segment-icon {
-  font-size: 28px;
-  margin-bottom: 12px;
+  font-size: 1.75rem;
+  margin-bottom: var(--sp-3);
 }
 
 .og-segment-value {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
 }
 
 .og-segment-label {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 
 .og-segment-desc {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.4;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-3);
 }
 
 .og-segment-pct {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 1.125rem;
+  font-weight: var(--fw-extrabold);
   color: var(--acid-30);
 }
 
@@ -581,24 +581,24 @@
 .og-insights {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-top: 24px;
+  border-radius: var(--radius-lg);
+  margin-top: var(--sp-6);
   overflow: hidden;
 }
 
 .og-insights-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 18px 24px;
+  gap: 0.625rem;
+  padding: 1.125rem var(--sp-6);
   border-bottom: 1px solid var(--border);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   color: var(--text);
 }
 
 .og-insights-icon {
-  font-size: 20px;
+  font-size: var(--fs-lg);
 }
 
 .og-insights-grid {
@@ -608,7 +608,7 @@
 }
 
 .og-insight {
-  padding: 20px 24px;
+  padding: var(--sp-5) var(--sp-6);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   text-align: center;
 }
@@ -618,45 +618,45 @@
 }
 
 .og-insight-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-weight: var(--fw-semibold);
+  margin-bottom: 0.625rem;
 }
 
 .og-insight-value {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
 }
 
 .og-insight-desc {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.4;
 }
 
 /* ── Data Disclaimer ── */
 .og-data-disclaimer {
-  max-width: 1200px;
-  margin: 24px auto 0;
-  padding: 16px 24px;
+  max-width: 75rem;
+  margin: var(--sp-6) auto 0;
+  padding: var(--sp-4) var(--sp-6);
   background: rgba(0, 255, 133, 0.04);
   border: 1px solid rgba(0, 255, 133, 0.12);
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: var(--radius-btn);
+  font-size: var(--fs-caption);
   color: var(--text-muted);
   line-height: 1.5;
 }
 
 .og-generated-at {
-  max-width: 1200px;
-  margin: 16px auto 0;
-  padding: 0 20px;
-  font-size: 11px;
+  max-width: 75rem;
+  margin: var(--sp-4) auto 0;
+  padding: 0 var(--sp-5);
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-align: right;
 }
@@ -665,7 +665,7 @@
    Coupons Tab
    ══════════════════════════════════════════════════════════════ */
 .og-coupons {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   padding: 0;
 }
@@ -674,16 +674,16 @@
 .og-coupon-form {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-6);
 }
 
 .og-form-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
 }
 
 .og-form-field {
@@ -694,8 +694,8 @@
 }
 
 .og-form-field label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -706,10 +706,10 @@
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-btn);
+  font-size: 0.875rem;
+  font-weight: var(--fw-medium);
   transition: border-color 0.2s ease;
 }
 
@@ -725,11 +725,11 @@
 
 .og-form-hint {
   position: absolute;
-  right: 12px;
-  bottom: 10px;
-  font-size: 14px;
+  right: var(--sp-3);
+  bottom: 0.625rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   pointer-events: none;
 }
 
@@ -737,30 +737,30 @@
   background: rgba(255, 51, 102, 0.08);
   border: 1px solid rgba(255, 51, 102, 0.2);
   color: var(--pink);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
+  padding: 0.625rem var(--sp-4);
+  border-radius: var(--radius-btn);
+  font-size: 0.8125rem;
+  margin-bottom: var(--sp-4);
 }
 
 .og-form-success {
   background: rgba(0, 255, 133, 0.08);
   border: 1px solid rgba(0, 255, 133, 0.2);
   color: var(--green);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
+  padding: 0.625rem var(--sp-4);
+  border-radius: var(--radius-btn);
+  font-size: 0.8125rem;
+  margin-bottom: var(--sp-4);
 }
 
 .og-btn-create-coupon {
   background: var(--acid);
   color: var(--bg);
   border: none;
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 14px;
+  padding: var(--sp-3) var(--sp-8);
+  border-radius: var(--radius-btn);
+  font-weight: var(--fw-bold);
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -774,13 +774,13 @@
 .og-coupons-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .og-coupon-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: all 0.2s ease;
 }
@@ -797,23 +797,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: var(--sp-4) var(--sp-5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .og-coupon-code {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
   letter-spacing: 1px;
   font-family: monospace;
 }
 
 .og-coupon-status {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
+  padding: var(--sp-1) 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -829,16 +829,16 @@
 }
 
 .og-coupon-details {
-  padding: 16px 20px;
+  padding: var(--sp-4) var(--sp-5);
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .og-coupon-detail {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
 }
 
 .og-coupon-detail.full {
@@ -846,23 +846,23 @@
 }
 
 .og-coupon-detail-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .og-coupon-detail-value {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .og-coupon-actions {
   display: flex;
-  gap: 8px;
-  padding: 12px 20px 16px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5) var(--sp-4);
 }
 
 .og-act-btn.ghost.danger {
@@ -880,28 +880,28 @@
 .og-empty-state {
   background: var(--bg);
   border: 2px dashed var(--border);
-  border-radius: 12px;
-  padding: 60px 24px;
+  border-radius: var(--radius-lg);
+  padding: 3.75rem var(--sp-6);
   text-align: center;
 }
 
 .og-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 3rem;
+  margin-bottom: var(--sp-4);
   line-height: 1;
 }
 
 .og-empty-title {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
 }
 
 .og-empty-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  max-width: 400px;
+  max-width: 25rem;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -910,14 +910,14 @@
 .og-events {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 /* ── Event Card ── */
 .og-event-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: all 0.2s ease;
 }
@@ -929,7 +929,7 @@
 /* ── Event Image ── */
 .og-event-img {
   width: 100%;
-  height: 140px;
+  height: 8.75rem;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -938,16 +938,16 @@
 
 .og-event-status {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: var(--sp-3);
+  left: var(--sp-3);
   background: var(--dark-85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--green);
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
+  padding: var(--sp-1) 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid rgba(0, 255, 133, 0.2);
@@ -955,26 +955,26 @@
 
 /* ── Event Body ── */
 .og-event-body {
-  padding: 16px 20px;
+  padding: var(--sp-4) var(--sp-5);
 }
 
 .og-event-name {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 1.0625rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
   line-height: 1.3;
 }
 
 .og-event-meta {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
 }
 
 /* ── Progress Bar ── */
 .og-event-progress {
-  margin-top: 4px;
+  margin-top: var(--sp-1);
 }
 
 .og-event-bar {
@@ -999,30 +999,30 @@
 }
 
 .og-progress-pct {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
 }
 
 .og-capacity-label {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 /* ── Event Actions ── */
 .og-event-actions {
   display: flex;
-  gap: 8px;
-  padding: 12px 20px 16px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5) var(--sp-4);
 }
 
 .og-act-btn {
   flex: 1;
-  padding: 9px 14px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 12px;
+  padding: 0.5625rem 0.875rem;
+  border-radius: var(--radius-md);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-caption);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -1059,7 +1059,7 @@
 .og-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .og-table thead {
@@ -1067,17 +1067,17 @@
 }
 
 .og-table th {
-  padding: 10px 12px;
+  padding: 0.625rem var(--sp-3);
   text-align: left;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .og-table td {
-  padding: 10px 12px;
+  padding: 0.625rem var(--sp-3);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: var(--text);
 }
@@ -1092,7 +1092,7 @@
 
 .og-table td:last-child {
   color: var(--acid);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1105,7 +1105,7 @@
   }
 
   .og-header-top h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .og-analytics-grid {
@@ -1135,21 +1135,21 @@
 
 @media (max-width: 640px) {
   .og-header {
-    padding: 28px 16px;
+    padding: 1.75rem var(--sp-4);
   }
 
   .og-header-top {
     flex-direction: column;
-    gap: 16px;
+    gap: var(--sp-4);
   }
 
   .og-header-top h1 {
-    font-size: 24px;
+    font-size: var(--fs-xl);
   }
 
   .og-badge {
-    font-size: 9px;
-    padding: 4px 10px;
+    font-size: 0.5625rem;
+    padding: var(--sp-1) 0.625rem;
   }
 
   .og-btn-new {
@@ -1158,18 +1158,18 @@
   }
 
   .og-tabs {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .og-tab {
-    padding: 12px 16px;
-    font-size: 13px;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: 0.8125rem;
   }
 
   .og-quick-actions {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
     flex-direction: column;
   }
 
@@ -1179,24 +1179,24 @@
 
   .og-metrics {
     grid-template-columns: 1fr !important;
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 var(--sp-4);
+    gap: var(--sp-3);
   }
 
   .og-metric {
-    padding: 20px;
+    padding: var(--sp-5);
   }
 
   .og-metric-value {
-    font-size: 24px;
+    font-size: var(--fs-xl);
   }
 
   .og-section {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
   }
 
   .og-section-title {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .og-section-header {
@@ -1205,48 +1205,48 @@
   }
 
   .og-chart {
-    height: 150px;
+    height: 9.375rem;
   }
 
   .og-chart-container {
-    padding: 16px 12px 12px;
+    padding: var(--sp-4) var(--sp-3) var(--sp-3);
   }
 
   .og-event-img {
-    height: 110px;
+    height: 6.875rem;
   }
 
   .og-event-body {
-    padding: 14px 16px;
+    padding: 0.875rem var(--sp-4);
   }
 
   .og-event-name {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
 
   .og-event-actions {
     flex-direction: column;
-    padding: 8px 16px 14px;
+    padding: var(--sp-2) var(--sp-4) 0.875rem;
     gap: 6px;
   }
 
   .og-act-btn {
-    padding: 10px 14px;
+    padding: 0.625rem 0.875rem;
   }
 
   .og-table th,
   .og-table td {
-    padding: 8px 8px;
-    font-size: 11px;
+    padding: var(--sp-2) var(--sp-2);
+    font-size: var(--fs-xs);
   }
 
   .og-table th {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
 
   /* Analytics responsive */
   .og-analytics {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
   }
 
   .og-analytics-filters {
@@ -1269,7 +1269,7 @@
   }
 
   .og-segment-value {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .og-insights-grid {
@@ -1277,7 +1277,7 @@
   }
 
   .og-insight {
-    padding: 16px;
+    padding: var(--sp-4);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
@@ -1286,11 +1286,11 @@
   }
 
   .og-insight-value {
-    font-size: 20px;
+    font-size: var(--fs-lg);
   }
 
   .og-data-disclaimer {
-    margin: 24px 16px 0;
+    margin: var(--sp-6) var(--sp-4) 0;
   }
 
   /* Coupons responsive */
@@ -1299,7 +1299,7 @@
   }
 
   .og-coupon-form {
-    padding: 20px 16px;
+    padding: var(--sp-5) var(--sp-4);
   }
 
   .og-coupons-list {

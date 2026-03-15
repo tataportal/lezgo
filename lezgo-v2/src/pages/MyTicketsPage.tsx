@@ -168,6 +168,13 @@ export default function MyTicketsPage() {
               <div>{ticket.eventDateLabel || (ticket.eventDate ? fmtDate(ticket.eventDate) : '')} · {ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</div>
               {statusBadge()}
             </div>
+            {ticket.badgeNumber && (
+              <div className="mt-ticket-badge-collectible">
+                <span className="mt-badge-emoji">⚡</span>
+                <span className="mt-badge-label">Early Adopter</span>
+                <span className="mt-badge-number">#{String(ticket.badgeNumber).padStart(3, '0')}</span>
+              </div>
+            )}
           </div>
           {!isPast && (
             <button
@@ -217,6 +224,12 @@ export default function MyTicketsPage() {
               <span className="mt-ticket-detail-label">{t.myTickets.verification}</span>
               <span className="mt-ticket-detail-value" style={{color:'#00FF85'}}>{t.myTickets.verifiedWithLezgo}</span>
             </div>
+            {ticket.badgeNumber && (
+              <div className="mt-ticket-detail-row">
+                <span className="mt-ticket-detail-label">Collectible Badge</span>
+                <span className="mt-ticket-detail-value" style={{color: 'var(--acid)'}}>⚡ Early Adopter #{String(ticket.badgeNumber).padStart(3, '0')} / 100</span>
+              </div>
+            )}
           </div>
         )}
       </div>

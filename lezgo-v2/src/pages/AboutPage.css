@@ -21,12 +21,12 @@
 
 @keyframes float-ticket {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50%      { transform: translateY(-12px) rotate(-3deg); }
+  50%      { transform: translateY(-0.75rem) rotate(-3deg); }
 }
 
 @keyframes float-ticket-real {
   0%, 100% { transform: translateY(0) rotate(2deg); }
-  50%      { transform: translateY(-10px) rotate(2deg); }
+  50%      { transform: translateY(-0.625rem) rotate(2deg); }
 }
 
 @keyframes glow-pulse {
@@ -35,7 +35,7 @@
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(30px); }
+  from { opacity: 0; transform: translateY(1.875rem); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -67,11 +67,11 @@
   overflow: hidden;
   background: var(--acid);
   color: var(--bg);
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: var(--fw-extrabold);
+  font-size: 0.875rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   white-space: nowrap;
   position: relative;
   z-index: 10;
@@ -79,7 +79,7 @@
 
 .marquee-track {
   display: inline-flex;
-  gap: 40px;
+  gap: var(--sp-10);
   animation: marquee-scroll 30s linear infinite;
   will-change: transform;
 }
@@ -87,7 +87,7 @@
 .marquee-item {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   flex-shrink: 0;
 }
 
@@ -100,7 +100,7 @@
 .cf-hero {
   position: relative;
   overflow: hidden;
-  padding: 100px 32px 80px;
+  padding: 6.25rem var(--sp-8) var(--sp-20);
   background: var(--bg);
   min-height: 90vh;
   display: flex;
@@ -117,57 +117,57 @@
 }
 
 .cf-glow-1 {
-  width: 500px;
-  height: 500px;
+  width: 31.25rem;
+  height: 31.25rem;
   background: var(--acid-08);
-  top: -100px;
-  left: -100px;
+  top: -6.25rem;
+  left: -6.25rem;
 }
 
 .cf-glow-2 {
-  width: 400px;
-  height: 400px;
+  width: 25rem;
+  height: 25rem;
   background: rgba(0, 255, 133, 0.06);
-  bottom: -80px;
-  right: -80px;
+  bottom: -5rem;
+  right: -5rem;
   animation-delay: 3s;
 }
 
 .cf-hero-inner {
   position: relative;
   z-index: 2;
-  max-width: 1200px;
+  max-width: 75rem;
   width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 64px;
+  gap: var(--sp-16);
 }
 
 .cf-hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   background: var(--acid-10);
   border: 1px solid var(--acid-25);
   border-radius: 999px;
-  padding: 7px 18px;
-  font-size: 13px;
-  font-weight: 700;
+  padding: 7px 1.125rem;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   letter-spacing: 0.04em;
   color: var(--acid);
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-6);
   animation: fade-in-up 0.6s ease-out both;
 }
 
 .cf-hero h1 {
-  font-size: clamp(40px, 5vw, 72px);
-  font-weight: 900;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: var(--fw-black);
   line-height: 1.05;
   letter-spacing: -0.03em;
-  margin: 0 0 24px;
+  margin: 0 0 var(--sp-6);
   animation: fade-in-up 0.7s ease-out 0.15s both;
 }
 
@@ -213,22 +213,22 @@
 }
 
 .cf-hero-text {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.7;
   color: var(--text-muted);
-  max-width: 520px;
-  margin-bottom: 32px;
+  max-width: 32.5rem;
+  margin-bottom: var(--sp-8);
   animation: fade-in-up 0.7s ease-out 0.3s both;
 }
 
 .cf-hero-text strong {
   color: var(--text);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .cf-btns {
   display: flex;
-  gap: 16px;
+  gap: var(--sp-4);
   flex-wrap: wrap;
   animation: fade-in-up 0.7s ease-out 0.45s both;
 }
@@ -239,13 +239,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 32px;
+  padding: 0.875rem var(--sp-8);
   background: var(--acid);
   color: var(--bg);
   border: none;
   border-radius: 999px;
-  font-weight: 800;
-  font-size: 15px;
+  font-weight: var(--fw-extrabold);
+  font-size: var(--fs-base);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.25s ease;
   letter-spacing: 0.02em;
@@ -264,13 +264,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 32px;
+  padding: 0.875rem var(--sp-8);
   background: transparent;
   color: var(--text);
   border: 2px solid var(--text-dim);
   border-radius: 999px;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   letter-spacing: 0.02em;
@@ -292,16 +292,16 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--sp-6);
   align-items: center;
   animation: fade-in-up 0.8s ease-out 0.5s both;
 }
 
 .cf-ticket {
   position: relative;
-  width: 320px;
-  padding: 29px 26px 22px;
-  border-radius: 16px;
+  width: 20rem;
+  padding: 1.8125rem 1.625rem 1.375rem;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--border);
   background: var(--bg);
   overflow: hidden;
@@ -359,13 +359,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 13px;
+  padding: 5px 0.8125rem;
   border-radius: 999px;
-  font-size: 11px;
-  font-weight: 800;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-extrabold);
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
 }
 
 .badge-fake {
@@ -381,27 +381,27 @@
 }
 
 .cf-ticket-event {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 1.0625rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 
 .cf-ticket-venue-sm {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .cf-ticket-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .cf-ticket-price-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -409,8 +409,8 @@
 }
 
 .cf-ticket-price {
-  font-size: 26px;
-  font-weight: 900;
+  font-size: 1.625rem;
+  font-weight: var(--fw-black);
   color: var(--text);
 }
 
@@ -425,17 +425,17 @@
 .cf-ticket-qr {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding-top: 14px;
+  gap: 0.6875rem;
+  padding-top: 0.875rem;
   border-top: 1px solid var(--border);
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
 .cf-qr-mini {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
   background: repeating-conic-gradient(var(--text-dim) 0% 25%, transparent 0% 50%) 0 0 / 6px 6px;
   flex-shrink: 0;
   display: flex;
@@ -450,9 +450,9 @@
 }
 
 .cf-qr-inner {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-xs);
   background: var(--green);
   box-shadow: 0 0 8px rgba(0, 255, 133, 0.5);
 }
@@ -467,11 +467,11 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  padding: 0 32px;
+  padding: 0 var(--sp-8);
 }
 
 .conocenos-tabs {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
   display: flex;
   gap: 0;
@@ -479,12 +479,12 @@
 
 .conocenos-tab {
   flex: 1;
-  padding: 16px 32px;
+  padding: var(--sp-4) var(--sp-8);
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   cursor: pointer;
   border-bottom: 3px solid transparent;
   transition: color 0.25s ease, border-color 0.25s ease;
@@ -505,7 +505,7 @@
 
 .conocenos-tab-content {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(var(--sp-4));
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -517,40 +517,40 @@
 /* ── Sections ──────────────────────────────────────────────── */
 
 .cf-section {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 80px 32px;
+  padding: var(--sp-20) var(--sp-8);
 }
 
 .cf-section-label {
   display: inline-block;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-extrabold);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--acid);
   background: var(--acid-08);
   border: 1px solid var(--acid-20);
-  padding: 6px 14px;
+  padding: 6px 0.875rem;
   border-radius: 999px;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .cf-section-title {
-  font-size: clamp(29px, 3.5vw, 45px);
-  font-weight: 900;
+  font-size: clamp(1.8125rem, 3.5vw, 2.8125rem);
+  font-weight: var(--fw-black);
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--text);
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .cf-section-text {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.75;
   color: var(--text-muted);
-  max-width: 640px;
-  margin-bottom: 48px;
+  max-width: 40rem;
+  margin-bottom: var(--sp-12);
 }
 
 /* ── Features Grid ─────────────────────────────────────────── */
@@ -558,14 +558,14 @@
 .cf-features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: var(--sp-5);
 }
 
 .cf-feature {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-8);
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   overflow: hidden;
@@ -594,20 +594,20 @@
 }
 
 .cf-feature-icon {
-  font-size: 32px;
-  margin-bottom: 16px;
+  font-size: 2rem;
+  margin-bottom: var(--sp-4);
   display: inline-block;
 }
 
 .cf-feature h3 {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin: 0 0 10px;
+  margin: 0 0 0.625rem;
 }
 
 .cf-feature p {
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.6;
   margin: 0;
@@ -618,21 +618,21 @@
 .cf-compare {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: var(--sp-6);
 }
 
 .cf-compare-card {
-  border-radius: 16px;
-  padding: 40px;
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-10);
   border: 1px solid var(--border);
   position: relative;
   overflow: hidden;
 }
 
 .cf-compare-card h3 {
-  font-size: 21px;
-  font-weight: 800;
-  margin: 0 0 24px;
+  font-size: 1.3125rem;
+  font-weight: var(--fw-extrabold);
+  margin: 0 0 var(--sp-6);
 }
 
 .cf-compare-old {
@@ -659,13 +659,13 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0.875rem;
 }
 
 .cf-compare-list li {
   position: relative;
-  padding-left: 26px;
-  font-size: 15px;
+  padding-left: 1.625rem;
+  font-size: var(--fs-base);
   line-height: 1.55;
   color: var(--gray-100);
 }
@@ -675,8 +675,8 @@
   position: absolute;
   left: 0;
   color: var(--pink);
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: var(--fw-extrabold);
+  font-size: 0.875rem;
 }
 
 .cf-compare-new .cf-compare-list li::before {
@@ -684,28 +684,28 @@
   position: absolute;
   left: 0;
   color: var(--green);
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: var(--fw-extrabold);
+  font-size: 0.875rem;
 }
 
 /* ── FAQ ───────────────────────────────────────────────────── */
 
 .cf-faq-section {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 80px 32px;
+  padding: var(--sp-20) var(--sp-8);
 }
 
 .cf-faq-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .cf-faq-item {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: border-color 0.25s ease;
 }
@@ -716,17 +716,17 @@
 
 .cf-faq-question {
   width: 100%;
-  padding: 21px 24px;
+  padding: 1.3125rem var(--sp-6);
   background: none;
   border: none;
   color: var(--text);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: var(--sp-4);
   text-align: left;
   transition: background 0.2s ease;
 }
@@ -737,18 +737,18 @@
 
 .cf-faq-toggle {
   color: var(--acid);
-  font-weight: 800;
-  font-size: 21px;
+  font-weight: var(--fw-extrabold);
+  font-size: 1.3125rem;
   flex-shrink: 0;
-  width: 24px;
+  width: 1.5rem;
   text-align: center;
   line-height: 1;
 }
 
 .cf-faq-answer {
-  padding: 0 24px 21px 24px;
+  padding: 0 var(--sp-6) 1.3125rem var(--sp-6);
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.7;
   border-top: 1px solid var(--border);
   margin-top: -1px;
@@ -760,14 +760,14 @@
 .cf-phases {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: var(--sp-6);
 }
 
 .cf-phase {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-8);
   position: relative;
   overflow: hidden;
   transition: border-color 0.25s ease;
@@ -789,23 +789,23 @@
 }
 
 .cf-phase-title {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 1.125rem;
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
-  margin-bottom: 19px;
+  margin-bottom: 1.1875rem;
   letter-spacing: 0.01em;
 }
 
 .cf-phase-items {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 .cf-phase-item {
-  font-size: 15px;
+  font-size: var(--fs-base);
   color: var(--gray-100);
-  padding-left: 19px;
+  padding-left: 1.1875rem;
   position: relative;
   line-height: 1.5;
 }
@@ -815,28 +815,28 @@
   position: absolute;
   left: 0;
   color: var(--acid);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 /* ── Footer ────────────────────────────────────────────────── */
 
 .cf-footer {
   text-align: center;
-  padding: 64px 32px;
+  padding: var(--sp-16) var(--sp-8);
   border-top: 1px solid var(--border);
   background: var(--bg);
 }
 
 .cf-footer-logo {
-  font-size: 29px;
-  font-weight: 900;
+  font-size: 1.8125rem;
+  font-weight: var(--fw-black);
   letter-spacing: 0.1em;
   color: var(--acid);
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
 }
 
 .cf-footer-copy {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
@@ -846,7 +846,7 @@
   .cf-hero-inner {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 48px;
+    gap: var(--sp-12);
   }
 
   .cf-hero-text {
@@ -869,20 +869,20 @@
 
 @media (max-width: 768px) {
   .cf-hero {
-    padding: 60px 20px 50px;
+    padding: 3.75rem var(--sp-5) 3.125rem;
     min-height: auto;
   }
 
   .cf-hero h1 {
-    font-size: 32px;
+    font-size: 2rem;
   }
 
   .cf-hero-text {
-    font-size: 16px;
+    font-size: var(--fs-base);
   }
 
   .cf-ticket {
-    width: 280px;
+    width: 17.5rem;
   }
 
   .cf-features {
@@ -898,33 +898,33 @@
   }
 
   .cf-section {
-    padding: 50px 20px;
+    padding: 3.125rem var(--sp-5);
   }
 
   .cf-faq-section {
-    padding: 50px 20px;
+    padding: 3.125rem var(--sp-5);
   }
 
   .cf-section-title {
-    font-size: 26px;
+    font-size: 1.625rem;
   }
 
   .conocenos-tabs-container {
-    padding: 0 16px;
+    padding: 0 var(--sp-4);
   }
 
   .conocenos-tab {
-    padding: 14px 16px;
-    font-size: 14px;
+    padding: 0.875rem var(--sp-4);
+    font-size: 0.875rem;
   }
 
   .marquee {
-    font-size: 12px;
-    padding: 8px 0;
+    font-size: var(--fs-caption);
+    padding: var(--sp-2) 0;
   }
 
   .cf-compare-card {
-    padding: 29px;
+    padding: 1.8125rem;
   }
 
   .cf-btns {
@@ -941,19 +941,19 @@
 
 @media (max-width: 480px) {
   .cf-hero h1 {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
 
   .cf-ticket {
     width: 100%;
-    max-width: 300px;
+    max-width: 18.75rem;
   }
 
   .cf-feature {
-    padding: 24px;
+    padding: var(--sp-6);
   }
 
   .cf-phase {
-    padding: 24px;
+    padding: var(--sp-6);
   }
 }

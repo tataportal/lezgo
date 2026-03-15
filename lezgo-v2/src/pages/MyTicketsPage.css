@@ -5,9 +5,9 @@
 
 /* ---- Root view ---- */
 .mt-view {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--sp-5);
   background-color: var(--bg);
   min-height: 100vh;
   color: var(--text);
@@ -18,18 +18,18 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 1.75rem;
 }
 
 .mt-header-left h1 {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 0 0 4px 0;
+  font-size: 1.75rem;
+  font-weight: var(--fw-extrabold);
+  margin: 0 0 var(--sp-1) 0;
   color: var(--text);
 }
 
 .mt-header-left p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   margin: 0;
 }
@@ -37,18 +37,18 @@
 .mt-header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 /* Notification bell */
 .notif-bell {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -65,32 +65,32 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  min-width: 18px;
-  height: 18px;
+  min-width: 1.125rem;
+  height: 1.125rem;
   background-color: var(--pink);
   color: var(--text);
-  font-size: 10px;
-  font-weight: 700;
-  border-radius: 9px;
+  font-size: 0.625rem;
+  font-weight: var(--fw-bold);
+  border-radius: 0.5625rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 var(--sp-1);
   line-height: 1;
 }
 
 /* Mini avatar */
 .mt-avatar-mini {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   background-color: var(--acid);
   color: var(--bg);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: transform 0.15s ease;
   user-select: none;
@@ -104,25 +104,25 @@
 .mt-filter-tabs {
   display: flex;
   gap: 6px;
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-6);
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
 }
 
 .mt-tab {
-  padding: 12px 20px;
+  padding: var(--sp-3) var(--sp-5);
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   border-bottom: 3px solid transparent;
   transition: all 0.2s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
   font-family: inherit;
 }
 
@@ -139,12 +139,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 22px;
-  height: 22px;
+  min-width: 1.375rem;
+  height: 1.375rem;
   background-color: var(--border);
-  border-radius: 11px;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: 0.6875rem;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   padding: 0 6px;
 }
 
@@ -157,47 +157,47 @@
 .mt-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--sp-3);
   animation: fade-in 0.2s ease-out;
 }
 
 /* ---- Empty state ---- */
 .mt-empty {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem var(--sp-5);
 }
 
 .mt-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 3rem;
+  margin-bottom: var(--sp-4);
 }
 
 .mt-empty-text {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: var(--fw-semibold);
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-2);
 }
 
 .mt-empty-sub {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-6);
 }
 
 .mt-empty-btn {
   display: inline-block;
-  padding: 12px 28px;
+  padding: var(--sp-3) 1.75rem;
   background-color: var(--acid);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
+  border-radius: var(--radius-btn);
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
-  margin-top: 8px;
+  margin-top: var(--sp-2);
 }
 
 .mt-empty-btn:hover {
@@ -210,7 +210,7 @@
 .mt-ticket {
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   transition: all 0.2s ease;
 }
@@ -228,16 +228,16 @@
 .mt-ticket-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
+  gap: 0.875rem;
+  padding: 0.875rem var(--sp-4);
   cursor: pointer;
 }
 
 /* Ticket image */
 .mt-ticket-img {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-btn);
   flex-shrink: 0;
   background-size: cover;
   background-position: center;
@@ -251,10 +251,10 @@
 }
 
 .mt-ticket-event {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   color: var(--text);
-  margin: 0 0 4px 0;
+  margin: 0 0 var(--sp-1) 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -264,8 +264,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: var(--sp-2);
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
@@ -274,9 +274,9 @@
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 22px;
+  font-size: 1.375rem;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: var(--sp-1) 6px;
   transition: color 0.2s ease;
   flex-shrink: 0;
   line-height: 1;
@@ -290,11 +290,11 @@
 .mt-ticket-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  gap: var(--sp-1);
+  padding: 3px 0.625rem;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   white-space: nowrap;
 }
 
@@ -333,12 +333,12 @@
 .mt-ticket-menu-item {
   display: block;
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--sp-3) var(--sp-4);
   background: none;
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
   cursor: pointer;
   font-family: inherit;
@@ -356,7 +356,7 @@
 
 /* ---- Expanded ticket details ---- */
 .mt-ticket-expand {
-  padding: 0 16px 16px;
+  padding: 0 var(--sp-4) var(--sp-4);
   border-top: 1px solid var(--border);
   animation: fade-in 0.2s ease-out;
 }
@@ -365,9 +365,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid rgba(34, 34, 34, 0.5);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .mt-ticket-detail-row:last-child {
@@ -376,33 +376,63 @@
 
 .mt-ticket-detail-label {
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .mt-ticket-detail-value {
   color: var(--text);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   text-align: right;
+}
+
+/* ---- Collectible badge (Early Adopter) ---- */
+.mt-ticket-badge-collectible {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 3px 0.625rem;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  background: linear-gradient(135deg, var(--acid-12), var(--acid-05));
+  border: 1px solid var(--acid-20);
+  color: var(--acid);
+  margin-top: var(--sp-1);
+}
+
+.mt-badge-emoji {
+  font-size: 0.75rem;
+}
+
+.mt-badge-label {
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.mt-badge-number {
+  color: var(--text);
+  font-weight: var(--fw-extrabold);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---- Footer ---- */
 .mt-footer {
-  margin-top: 48px;
-  padding: 24px 0;
+  margin-top: var(--sp-12);
+  padding: var(--sp-6) 0;
   border-top: 1px solid var(--border);
   text-align: center;
 }
 
 .mt-footer-logo {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
   letter-spacing: 2px;
   margin-bottom: 6px;
 }
 
 .mt-footer-copy {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
@@ -418,31 +448,31 @@
   align-items: center;
   justify-content: center;
   z-index: 300;
-  padding: 20px;
+  padding: var(--sp-5);
   animation: fade-in 0.2s ease-out;
 }
 
 .mt-modal {
   background-color: var(--bg);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  padding: 24px;
+  padding: var(--sp-6);
   width: 100%;
-  max-width: 480px;
+  max-width: 30rem;
   position: relative;
   animation: slide-up 0.3s ease-out;
 }
 
 .mt-modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  width: 2rem;
+  height: 2rem;
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -455,26 +485,26 @@
 }
 
 .mt-modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 20px 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  margin: 0 0 var(--sp-5) 0;
   color: var(--text);
 }
 
 .mt-modal-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
 }
 
 .mt-modal-input {
-  padding: 12px 16px;
+  padding: var(--sp-3) var(--sp-4);
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: inherit;
   box-sizing: border-box;
   transition: all 0.2s ease;
@@ -488,12 +518,12 @@
 }
 
 .mt-modal-textarea {
-  padding: 12px 16px;
+  padding: var(--sp-3) var(--sp-4);
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: inherit;
   box-sizing: border-box;
   resize: vertical;
@@ -514,39 +544,39 @@
 
 .mt-modal-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 
 /* ---- Resale modal sections ---- */
 .mt-resale-modal-info {
-  padding: 12px;
+  padding: var(--sp-3);
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 16px;
+  border-radius: var(--radius-btn);
+  margin-bottom: var(--sp-4);
 }
 
 .mt-resale-modal-fees {
-  padding: 12px;
+  padding: var(--sp-3);
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border-radius: var(--radius-btn);
+  margin-bottom: var(--sp-5);
 }
 
 .mt-modal-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  font-size: 14px;
+  padding: var(--sp-2) 0;
+  font-size: 0.875rem;
 }
 
 .mt-modal-row--total {
   border-top: 1px solid var(--border);
-  padding-top: 12px;
-  margin-top: 4px;
-  font-weight: 700;
+  padding-top: var(--sp-3);
+  margin-top: var(--sp-1);
+  font-weight: var(--fw-bold);
 }
 
 .mt-modal-label {
@@ -554,13 +584,13 @@
 }
 
 .mt-modal-value {
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   color: var(--text);
 }
 
 .mt-modal-value--highlight {
   color: var(--acid);
-  font-size: 16px;
+  font-size: var(--fs-base);
 }
 
 /* ================================================
@@ -568,11 +598,11 @@
    ================================================ */
 
 .mt-button {
-  padding: 12px 16px;
+  padding: var(--sp-3) var(--sp-4);
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--radius-btn);
+  font-size: 0.875rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -591,7 +621,7 @@
 .mt-button--primary {
   background-color: var(--acid);
   color: var(--bg);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .mt-button--primary:hover:not(:disabled) {
@@ -617,29 +647,29 @@
 
 @media (max-width: 480px) {
   .mt-view {
-    padding: 16px;
+    padding: var(--sp-4);
   }
 
   .mt-header-left h1 {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 
   .mt-filter-tabs {
-    gap: 4px;
+    gap: var(--sp-1);
   }
 
   .mt-tab {
-    padding: 10px 14px;
-    font-size: 13px;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
   }
 
   .mt-ticket-head {
-    gap: 10px;
+    gap: 0.625rem;
   }
 
   .mt-ticket-img {
-    width: 52px;
-    height: 52px;
+    width: 3.25rem;
+    height: 3.25rem;
   }
 
   .mt-modal {
@@ -647,7 +677,7 @@
   }
 
   .mt-button {
-    padding: 11px 14px;
-    font-size: 13px;
+    padding: 0.6875rem 0.875rem;
+    font-size: 0.8125rem;
   }
 }

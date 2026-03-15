@@ -1,0 +1,43 @@
+/* ═══════════════════════════════════════════
+   EVENT BADGE — Unified badge component
+   Two positions: left (adjective) / right (ticket status)
+   Four variants: red, green, yellow, acid
+   ═══════════════════════════════════════════ */
+
+.ev-badge {
+  position: absolute;
+  top: var(--sp-3);
+  z-index: 2;
+  padding: 3px 0.625rem;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-caption);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+/* ── Positions ── */
+.ev-badge--left  { left: var(--sp-3); }
+.ev-badge--right { right: var(--sp-3); }
+
+/* ── Variants ── */
+.ev-badge--red {
+  background: var(--pink);
+  color: var(--text);
+}
+
+.ev-badge--green {
+  background: var(--green);
+  color: var(--bg);
+}
+
+.ev-badge--yellow {
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+.ev-badge--acid {
+  background: var(--acid);
+  color: var(--bg);
+}

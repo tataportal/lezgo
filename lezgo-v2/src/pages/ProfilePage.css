@@ -6,30 +6,30 @@
 .pf {
   min-height: 100vh;
   background-color: var(--bg);
-  padding: 24px 20px 60px;
+  padding: var(--sp-6) var(--sp-5) 3.75rem;
   color: var(--text);
-  max-width: 720px;
+  max-width: 45rem;
   margin: 0 auto;
 }
 
 /* ── Header card ── */
 .pf-header {
   display: flex;
-  gap: 28px;
+  gap: 1.75rem;
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 28px;
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-8);
+  margin-bottom: 1.75rem;
   align-items: flex-start;
   position: relative;
 }
 
 /* ── Avatar ── */
 .pf-avatar {
-  width: 96px;
-  height: 96px;
-  min-width: 96px;
+  width: 6rem;
+  height: 6rem;
+  min-width: 6rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--acid), var(--acid));
   display: flex;
@@ -48,8 +48,8 @@
 }
 
 .pf-avatar span {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-extrabold);
   color: var(--bg);
   line-height: 1;
 }
@@ -69,47 +69,47 @@
 }
 
 .pf-info h1 {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 1.625rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text);
   margin: 0 0 6px 0;
   line-height: 1.25;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .pf-check {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   border-radius: 50%;
   background-color: var(--green);
   color: var(--bg);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-extrabold);
   flex-shrink: 0;
 }
 
 /* ── Name editing ── */
 .pf-name-edit {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-2);
   align-items: center;
   flex-wrap: wrap;
 }
 
 .pf-name-input {
   flex: 1;
-  min-width: 180px;
-  padding: 10px 14px;
+  min-width: 11.25rem;
+  padding: 0.625rem 0.875rem;
   background-color: var(--bg);
   border: 1px solid var(--acid);
-  border-radius: 8px;
+  border-radius: var(--radius-btn);
   color: var(--text);
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-family: inherit;
   outline: none;
   transition: box-shadow 0.2s ease;
@@ -124,13 +124,13 @@
 }
 
 .pf-name-save {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background-color: var(--acid);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
+  border-radius: var(--radius-btn);
+  font-weight: var(--fw-bold);
+  font-size: 0.8125rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   white-space: nowrap;
@@ -146,13 +146,13 @@
 }
 
 .pf-name-cancel {
-  padding: 10px 18px;
+  padding: 0.625rem 1.125rem;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
+  border-radius: var(--radius-btn);
+  font-weight: var(--fw-bold);
+  font-size: 0.8125rem;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -170,7 +170,7 @@
 
 /* ── Meta line (DNI / member since) ── */
 .pf-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   margin-bottom: 2px;
   line-height: 1.5;
@@ -178,21 +178,21 @@
 
 .pf-meta span {
   color: var(--text);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 /* ── Email ── */
 .pf-email {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  margin: 4px 0;
+  margin: var(--sp-1) 0;
 }
 
 /* ── Stats row ── */
 .pf-stats-row {
   display: flex;
-  gap: 24px;
-  margin-top: 14px;
+  gap: var(--sp-6);
+  margin-top: 0.875rem;
   flex-wrap: wrap;
 }
 
@@ -200,13 +200,13 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
 .pf-stat strong {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-extrabold);
   color: var(--acid);
   line-height: 1.2;
 }
@@ -214,15 +214,15 @@
 /* ── Edit profile button ── */
 .pf-edit-btn {
   position: absolute;
-  top: 28px;
-  right: 28px;
+  top: 1.75rem;
+  right: 1.75rem;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-btn);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -237,24 +237,24 @@
    Section (badges container)
    ═══════════════════════════════ */
 .pf-section {
-  margin-bottom: 32px;
+  margin-bottom: var(--sp-8);
 }
 
 .pf-section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-4);
 }
 
 .pf-section-title {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 1.125rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text);
 }
 
 .pf-section-more {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s ease;
@@ -269,15 +269,15 @@
    ═══════════════════════════════ */
 .pf-badges {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr));
+  gap: 0.875rem;
 }
 
 .pf-badge {
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 14px 16px;
+  border-radius: 0.875rem;
+  padding: var(--sp-5) 0.875rem var(--sp-4);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -304,9 +304,9 @@
 
 /* Badge icon (emoji) */
 .pf-badge-icon {
-  font-size: 36px;
+  font-size: var(--fs-2xl);
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 
 .pf-badge.locked .pf-badge-icon {
@@ -315,27 +315,27 @@
 
 /* Badge name */
 .pf-badge-name {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   color: var(--text);
   line-height: 1.3;
 }
 
 /* Badge description */
 .pf-badge-desc {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.3;
 }
 
 /* Badge tier label */
 .pf-badge-tier {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 0.625rem;
+  font-weight: var(--fw-extrabold);
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  padding: 3px 10px;
-  border-radius: 6px;
+  padding: 3px 0.625rem;
+  border-radius: var(--radius-md);
   margin-top: 2px;
 }
 
@@ -366,7 +366,7 @@
   border-radius: 3px;
   background-color: var(--border);
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: var(--sp-1);
 }
 
 .pf-badge-progress-fill {
@@ -393,8 +393,8 @@
 
 /* Badge count (e.g. 5/30) */
 .pf-badge-count {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -408,25 +408,25 @@
   justify-content: space-between;
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
+  border-radius: 0.875rem;
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: var(--sp-5);
 }
 
 .pf-cta-label {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
   color: var(--text);
 }
 
 .pf-organizer-cta button {
-  padding: 10px 22px;
+  padding: 0.625rem 1.375rem;
   background-color: var(--acid);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 700;
+  border-radius: var(--radius-btn);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -441,16 +441,16 @@
 .pf-logout-btn {
   display: block;
   width: 100%;
-  padding: 14px;
+  padding: 0.875rem;
   background: none;
   border: 1px solid var(--pink);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   color: var(--pink);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 48px;
+  margin-bottom: var(--sp-12);
 }
 
 .pf-logout-btn:hover {
@@ -463,20 +463,20 @@
    ═══════════════════════════════ */
 .pf-footer {
   text-align: center;
-  padding: 24px 0 0;
+  padding: var(--sp-6) 0 0;
   border-top: 1px solid var(--border);
 }
 
 .pf-footer-logo {
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 1.125rem;
+  font-weight: var(--fw-black);
   color: var(--acid);
   letter-spacing: 3px;
   margin-bottom: 6px;
 }
 
 .pf-footer-copy {
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
@@ -485,30 +485,30 @@
    ═══════════════════════════════ */
 @media (max-width: 640px) {
   .pf {
-    padding: 16px 14px 48px;
+    padding: var(--sp-4) 0.875rem var(--sp-12);
   }
 
   .pf-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 20px;
-    padding: 28px 20px;
+    gap: var(--sp-5);
+    padding: 1.75rem var(--sp-5);
   }
 
   .pf-info h1 {
     justify-content: center;
-    font-size: 22px;
+    font-size: 1.375rem;
   }
 
   .pf-avatar {
-    width: 80px;
-    height: 80px;
-    min-width: 80px;
+    width: 5rem;
+    height: 5rem;
+    min-width: 5rem;
   }
 
   .pf-avatar span {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .pf-verified-ring {
@@ -519,7 +519,7 @@
   .pf-edit-btn {
     position: static;
     width: 100%;
-    margin-top: 8px;
+    margin-top: var(--sp-2);
   }
 
   .pf-stats-row {
@@ -527,7 +527,7 @@
   }
 
   .pf-meta {
-    font-size: 12px;
+    font-size: var(--fs-caption);
   }
 
   .pf-name-edit {
@@ -535,25 +535,25 @@
   }
 
   .pf-name-input {
-    min-width: 140px;
+    min-width: 8.75rem;
   }
 
   .pf-badges {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 0.625rem;
   }
 
   .pf-badge {
-    padding: 16px 10px 14px;
+    padding: var(--sp-4) 0.625rem 0.875rem;
   }
 
   .pf-badge-icon {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .pf-organizer-cta {
     flex-direction: column;
-    gap: 14px;
+    gap: 0.875rem;
     text-align: center;
   }
 

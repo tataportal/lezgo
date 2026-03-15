@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { formatDateES, formatDateVeryShort, formatPriceShort, getActivePhase, getEventImage, toDate } from '../lib/helpers';
+import { formatDateES, formatDateVeryShort, formatPriceShort, getActivePhase, getEventBadges, getEventImage, toDate } from '../lib/helpers';
+import { EventBadge } from '../components/events/EventBadge';
 import './HomePage.css';
 
 /** Strip unwanted badge text from event names/subtitles (comes from Firestore data) */
@@ -217,8 +218,7 @@ export default function HomePage() {
             <div className="home-promo__grid">
               {promoEvents.map((event) => {
                 const price = getLowestPrice(event);
-                const isSold = event.status === 'sold-out';
-                const tag = isSold ? t.common.soldOut : (event.genre || 'EVENTO');
+                const badges = getEventBadges(event);
                 // Monolith format: "11 Marzo · venue, location — Desde S/ 0"
                 const dateStr = formatDateVeryShort(toDate(event.date), t.home.monthsFull);
                 const sub = dateStr
@@ -238,8 +238,24 @@ export default function HomePage() {
                       }}
                     />
                     <div className="promo-card__overlay" />
+
+                    {badges.adjective && (
+                      <EventBadge
+                        label={t.common.badges[badges.adjective.labelKey]}
+                        variant={badges.adjective.variant}
+                        position="left"
+                      />
+                    )}
+                    {badges.ticket && (
+                      <EventBadge
+                        label={t.common.badges[badges.ticket.labelKey]}
+                        variant={badges.ticket.variant}
+                        position="right"
+                      />
+                    )}
+
                     <div className="promo-card__body">
-                      <span className="promo-card__tag">{tag}</span>
+                      <span className="promo-card__tag">{event.genre || 'EVENTO'}</span>
                       <h3 className="promo-card__name">
                         {event.name}
                         {cleanText(event.subtitle) ? ` — ${cleanText(event.subtitle)}` : ''}

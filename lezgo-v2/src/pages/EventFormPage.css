@@ -7,9 +7,9 @@
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto;
-  padding: 72px 24px 60px;
+  padding: 4.5rem var(--sp-6) 3.75rem;
 }
 
 /* ── Header ── */
@@ -17,12 +17,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: var(--sp-8);
 }
 
 .ef-header h1 {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: var(--fw-extrabold);
   margin: 0;
   color: var(--text);
 }
@@ -31,10 +31,10 @@
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-muted);
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: var(--sp-2) 1.125rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -49,28 +49,28 @@
 .ef-preview-banner {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
   background: var(--acid-06);
   border: 1px solid var(--acid-dim);
-  border-radius: 8px;
-  padding: 14px 20px;
-  margin-bottom: 32px;
+  border-radius: var(--radius-btn);
+  padding: 0.875rem var(--sp-5);
+  margin-bottom: var(--sp-8);
 }
 
 .ef-preview-banner-icon {
-  font-size: 20px;
+  font-size: var(--fs-lg);
   flex-shrink: 0;
 }
 
 .ef-preview-banner-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-muted);
 }
 
 .ef-preview-banner-text a {
   color: var(--acid);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .ef-preview-banner-text a:hover {
@@ -81,20 +81,20 @@
 .ef-section {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px;
-  margin-bottom: 24px;
+  border-radius: 0.625rem;
+  padding: 1.75rem;
+  margin-bottom: var(--sp-6);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--sp-5);
 }
 
 .ef-section-title {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: var(--fw-bold);
   margin: 0;
   color: var(--text);
-  padding-bottom: 14px;
+  padding-bottom: 0.875rem;
   border-bottom: 2px solid var(--border);
 }
 
@@ -102,20 +102,20 @@
 .ef-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .ef-row-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 /* ── Field ── */
 .ef-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .ef-field.full {
@@ -124,8 +124,8 @@
 
 /* ── Label ── */
 .ef-label {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -136,9 +136,9 @@
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
   font-family: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
@@ -160,9 +160,9 @@
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -171,8 +171,8 @@
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  background-position: right var(--sp-3) center;
+  padding-right: 2rem;
 }
 
 .ef-select:focus {
@@ -191,12 +191,12 @@
   background: var(--bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 12px 14px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: var(--sp-3) 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
   font-family: inherit;
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
   box-sizing: border-box;
@@ -216,7 +216,7 @@
 .ef-artist-row {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 12px;
+  gap: var(--sp-3);
   align-items: center;
 }
 
@@ -225,11 +225,11 @@
   background: transparent;
   border: 1px solid var(--pink);
   color: var(--pink);
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  font-size: 18px;
-  font-weight: 600;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  font-size: 1.125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -250,10 +250,10 @@
   background: transparent;
   border: 1px dashed var(--green);
   color: var(--green);
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -269,24 +269,24 @@
 .ef-tier {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 22px;
+  border-radius: var(--radius-btn);
+  padding: 1.375rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--sp-4);
 }
 
 .ef-tier-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 14px;
+  padding-bottom: 0.875rem;
   border-bottom: 1px solid var(--border);
 }
 
 .ef-tier-num {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -296,16 +296,16 @@
 .ef-phase-labels {
   display: grid;
   grid-template-columns: 1fr 1fr auto auto auto;
-  gap: 12px;
+  gap: var(--sp-3);
   align-items: center;
-  padding: 0 0 8px;
-  margin-bottom: 4px;
+  padding: 0 0 var(--sp-2);
+  margin-bottom: var(--sp-1);
   border-bottom: 1px solid var(--border);
 }
 
 .ef-phase-labels span {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -315,9 +315,9 @@
 .ef-phase-row {
   display: grid;
   grid-template-columns: 1fr 1fr auto auto;
-  gap: 12px;
+  gap: var(--sp-3);
   align-items: center;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid rgba(34, 34, 34, 0.5);
 }
 
@@ -329,13 +329,13 @@
 .ef-toggle-label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 0.625rem;
+  font-size: 0.875rem;
   color: var(--text);
   cursor: pointer;
   user-select: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: var(--sp-2) 0.875rem;
+  border-radius: var(--radius-md);
   background: var(--bg);
   border: 1px solid var(--border);
   transition: all 0.2s ease;
@@ -346,8 +346,8 @@
 }
 
 .ef-toggle-label input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   cursor: pointer;
   accent-color: var(--acid);
   flex-shrink: 0;
@@ -357,18 +357,18 @@
 .ef-margin {
   background: var(--acid-03);
   border: 1px solid var(--acid-10);
-  border-radius: 8px;
-  padding: 18px 20px;
-  margin-top: 8px;
+  border-radius: var(--radius-btn);
+  padding: 1.125rem var(--sp-5);
+  margin-top: var(--sp-2);
 }
 
 .ef-margin-title {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: var(--fw-bold);
   color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
 }
 
 .ef-margin-row {
@@ -376,7 +376,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .ef-margin-row .label {
@@ -385,44 +385,44 @@
 
 .ef-margin-row .value {
   color: var(--text);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .ef-margin-row.total {
   border-top: 1px solid var(--border);
-  margin-top: 8px;
-  padding-top: 12px;
+  margin-top: var(--sp-2);
+  padding-top: var(--sp-3);
 }
 
 .ef-margin-row.total .label {
   color: var(--green);
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .ef-margin-row.total .value {
   color: var(--green);
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
 }
 
 /* ── Actions ── */
 .ef-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 8px;
-  padding-bottom: 40px;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+  padding-bottom: var(--sp-10);
 }
 
 .ef-btn-cancel {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 14px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 0.875rem var(--sp-6);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -439,10 +439,10 @@
   background: var(--green);
   border: none;
   color: var(--bg);
-  padding: 14px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 0.875rem var(--sp-6);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: var(--fw-bold);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -466,32 +466,32 @@
 
 @media (max-width: 768px) {
   .ef-view {
-    padding: 60px 16px 40px;
+    padding: 3.75rem var(--sp-4) 2.5rem;
   }
 
   .ef-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: var(--sp-3);
   }
 
   .ef-header h1 {
-    font-size: 24px;
+    font-size: var(--fs-xl);
   }
 
   .ef-section {
-    padding: 20px;
-    gap: 16px;
+    padding: var(--sp-5);
+    gap: var(--sp-4);
   }
 
   .ef-row {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 0.875rem;
   }
 
   .ef-row-3 {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 0.875rem;
   }
 
   .ef-phase-labels {
@@ -500,55 +500,55 @@
 
   .ef-phase-row {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 0.625rem;
   }
 
   .ef-actions {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: var(--sp-3);
   }
 
   .ef-toggle-label {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 0.8125rem;
+    padding: var(--sp-2) var(--sp-3);
   }
 }
 
 @media (max-width: 480px) {
   .ef-view {
-    padding: 52px 12px 32px;
+    padding: 3.25rem var(--sp-3) 2rem;
   }
 
   .ef-header h1 {
-    font-size: 20px;
+    font-size: var(--fs-lg);
   }
 
   .ef-section {
-    padding: 16px;
-    gap: 14px;
-    border-radius: 8px;
+    padding: var(--sp-4);
+    gap: 0.875rem;
+    border-radius: var(--radius-btn);
   }
 
   .ef-section-title {
-    font-size: 16px;
-    padding-bottom: 10px;
+    font-size: var(--fs-base);
+    padding-bottom: 0.625rem;
   }
 
   .ef-input,
   .ef-select,
   .ef-textarea {
-    padding: 10px 12px;
-    font-size: 14px;
+    padding: 0.625rem var(--sp-3);
+    font-size: 0.875rem;
   }
 
   .ef-add-btn,
   .ef-remove-btn {
-    font-size: 12px;
+    font-size: var(--fs-caption);
   }
 
   .ef-btn-cancel,
   .ef-btn-save {
-    padding: 12px 16px;
-    font-size: 13px;
+    padding: var(--sp-3) var(--sp-4);
+    font-size: 0.8125rem;
   }
 }

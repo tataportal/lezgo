@@ -16,6 +16,14 @@ export interface EventTier {
   includes?: string[];
 }
 
+/** Badge config for events that issue numbered collectible badges (web2 POAPs) */
+export interface EventBadgeConfig {
+  type: string;           // e.g. "early-adopter"
+  label: string;          // e.g. "Early Adopter"
+  totalSupply: number;    // e.g. 100
+  emoji: string;          // e.g. "⚡"
+}
+
 export interface EventMeta {
   crowdSize: string;
   multiStage: boolean;
@@ -55,6 +63,7 @@ export interface Event {
   tags: string[];
   prohibitedItems: string[];
   tiers: EventTier[];
+  badgeConfig?: EventBadgeConfig | null;
   status: EventStatus;
   featured: boolean;
   organizer: string;
@@ -113,6 +122,8 @@ export interface Ticket {
   userDni: string;
   userName: string;
   status: TicketStatus;
+  badgeNumber?: number | null;
+  badgeType?: string | null;
   usedAt: Timestamp | null;
   purchasedAt: Timestamp;
   transferredAt: Timestamp | null;
@@ -216,4 +227,5 @@ export interface PurchaseResponse {
   ticketIds: string[];
   totalPrice: number;
   discountApplied: number;
+  badges?: { ticketId: string; badgeNumber: number; badgeType: string }[];
 }

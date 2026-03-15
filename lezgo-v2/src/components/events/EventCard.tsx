@@ -2,14 +2,21 @@ import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../../i18n';
 import type { Event } from '../../lib/types';
-import { formatDateShort, formatPriceShort, getActivePhase, getEventImage, toDate } from '../../lib/helpers';
+import { formatDateShort, formatPriceShort, getActivePhase, getEventImage, getEventBadges, toDate } from '../../lib/helpers';
+import { EventBadge } from './EventBadge';
 import './EventCard.css';
 
 interface EventCardProps {
   event: Event;
+  /** Pass true when resale listings exist for this event */
+  hasResaleListings?: boolean;
+  /** Pass true when presale sold out in < 24h */
+  presaleSoldInOneDay?: boolean;
+  /** Pass true when event is exclusive to Lezgo */
+  isExclusive?: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, hasResaleListings, presaleSoldInOneDay, isExclusive }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -34,22 +41,26 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const img = getEventImage(event.id, event.image, event.genre);
   const backgroundStyle: React.CSSProperties = { backgroundImage: `url(${img})` };
 
-  // Badge logic — matches monolith: sold-out = hot red, featured = nuevo acid border
-  const getBadge = () => {
-    if (event.status === 'sold-out') return { text: t.common.soldOut, className: 'ev-card__badge--sold-out' };
-    if (event.featured) return { text: t.home?.featured || '★', className: 'ev-card__badge--featured' };
-    return null;
-  };
-
-  const badge = getBadge();
+  const badges = getEventBadges(event, { hasResaleListings, presaleSoldInOneDay, isExclusive });
 
   return (
     <div className="ev-card" onClick={handleClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }} role="link" tabIndex={0} aria-label={event.name}>
       <div className="ev-card__image-wrapper">
         <div className="ev-card__image" style={backgroundStyle} />
 
-        {badge && (
-          <div className={`ev-card__badge ${badge.className}`}>{badge.text}</div>
+        {badges.adjective && (
+          <EventBadge
+            label={t.common.badges[badges.adjective.labelKey]}
+            variant={badges.adjective.variant}
+            position="left"
+          />
+        )}
+        {badges.ticket && (
+          <EventBadge
+            label={t.common.badges[badges.ticket.labelKey]}
+            variant={badges.ticket.variant}
+            position="right"
+          />
         )}
       </div>
 
