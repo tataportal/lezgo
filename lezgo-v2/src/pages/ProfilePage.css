@@ -1,28 +1,99 @@
 /* ═══════════════════════════════════════════
-   ProfilePage.css – dark theme, acid accents
+   ProfilePage.css – cinematic dark theme
    ═══════════════════════════════════════════ */
 
 /* ── Root container ── */
 .pf {
   min-height: 100vh;
   background-color: var(--bg);
-  padding: var(--sp-6) var(--sp-5) 3.75rem;
+  padding: 0 var(--sp-5) 3.75rem;
   color: var(--text);
-  max-width: 45rem;
+  max-width: 52rem;
   margin: 0 auto;
+  position: relative;
+}
+
+/* Dot grid background */
+.pf-bg-grid {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(229, 255, 0, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pf-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Tabs ── */
+.pf-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-6);
+  padding-top: var(--sp-4);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.pf-tab {
+  flex: 1;
+  padding: var(--sp-3) var(--sp-6);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.pf-tab:hover {
+  color: var(--text);
+}
+
+.pf-tab.active {
+  color: var(--acid);
+  border-bottom-color: var(--acid);
 }
 
 /* ── Header card ── */
 .pf-header {
   display: flex;
   gap: 1.75rem;
-  background-color: var(--bg);
+  background: linear-gradient(145deg, rgba(229, 255, 0, 0.03) 0%, var(--bg) 50%);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
   padding: var(--sp-8);
   margin-bottom: 1.75rem;
   align-items: flex-start;
   position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.pf-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--acid), var(--green));
+}
+
+.pf-header:hover {
+  border-color: var(--acid-20);
 }
 
 /* ── Avatar ── */
@@ -31,7 +102,7 @@
   height: 6rem;
   min-width: 6rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--acid), var(--acid));
+  background: linear-gradient(135deg, var(--acid), var(--green));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,7 +252,7 @@
   cursor: not-allowed;
 }
 
-/* ── Meta line (DNI / member since) ── */
+/* ── Meta line ── */
 .pf-meta {
   font-size: 0.8125rem;
   color: var(--text-muted);
@@ -220,7 +291,10 @@
 .pf-stat strong {
   font-size: var(--fs-lg);
   font-weight: var(--fw-extrabold);
-  color: var(--acid);
+  background: linear-gradient(135deg, var(--acid), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: 1.2;
 }
 
@@ -247,10 +321,11 @@
 }
 
 /* ═══════════════════════════════
-   Section (badges container)
+   Section
    ═══════════════════════════════ */
 .pf-section {
   margin-bottom: var(--sp-8);
+  position: relative;
 }
 
 .pf-section-head {
@@ -296,13 +371,31 @@
   align-items: center;
   text-align: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   position: relative;
+  overflow: hidden;
+}
+
+.pf-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--acid), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .pf-badge:hover {
   border-color: var(--acid);
   background-color: var(--acid-03);
+  transform: translateY(-2px);
+}
+
+.pf-badge:hover::before {
+  opacity: 1;
 }
 
 .pf-badge.locked {
@@ -313,9 +406,13 @@
   opacity: 0.65;
   border-color: var(--text-dim);
   background-color: var(--bg);
+  transform: none;
 }
 
-/* Badge icon (emoji) */
+.pf-badge.locked:hover::before {
+  opacity: 0;
+}
+
 .pf-badge-icon {
   font-size: var(--fs-2xl);
   line-height: 1;
@@ -326,7 +423,6 @@
   filter: grayscale(1);
 }
 
-/* Badge name */
 .pf-badge-name {
   font-size: 0.8125rem;
   font-weight: var(--fw-bold);
@@ -334,14 +430,12 @@
   line-height: 1.3;
 }
 
-/* Badge description */
 .pf-badge-desc {
   font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.3;
 }
 
-/* Badge tier label */
 .pf-badge-tier {
   font-size: 0.625rem;
   font-weight: var(--fw-extrabold);
@@ -352,27 +446,11 @@
   margin-top: 2px;
 }
 
-.pf-badge-tier.bronce {
-  color: var(--bronze);
-  background-color: rgba(205, 127, 50, 0.12);
-}
+.pf-badge-tier.bronce { color: var(--bronze); background-color: rgba(205, 127, 50, 0.12); }
+.pf-badge-tier.plata { color: var(--silver); background-color: rgba(192, 192, 192, 0.1); }
+.pf-badge-tier.oro { color: var(--gold); background-color: rgba(255, 215, 0, 0.12); }
+.pf-badge-tier.locked { color: var(--text-muted); background-color: rgba(255, 255, 255, 0.04); }
 
-.pf-badge-tier.plata {
-  color: var(--silver);
-  background-color: rgba(192, 192, 192, 0.1);
-}
-
-.pf-badge-tier.oro {
-  color: var(--gold);
-  background-color: rgba(255, 215, 0, 0.12);
-}
-
-.pf-badge-tier.locked {
-  color: var(--text-muted);
-  background-color: rgba(255, 255, 255, 0.04);
-}
-
-/* Badge progress bar */
 .pf-badge-progress {
   width: 100%;
   height: 5px;
@@ -388,28 +466,245 @@
   transition: width 0.4s ease;
 }
 
-.pf-badge-progress-fill.bronce {
-  background-color: var(--bronze);
-}
+.pf-badge-progress-fill.bronce { background-color: var(--bronze); }
+.pf-badge-progress-fill.plata { background-color: var(--silver); }
+.pf-badge-progress-fill.oro { background-color: var(--gold); }
+.pf-badge-progress-fill.locked { background-color: var(--text-dim); }
 
-.pf-badge-progress-fill.plata {
-  background-color: var(--silver);
-}
-
-.pf-badge-progress-fill.oro {
-  background-color: var(--gold);
-}
-
-.pf-badge-progress-fill.locked {
-  background-color: var(--text-dim);
-}
-
-/* Badge count (e.g. 5/30) */
 .pf-badge-count {
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--text-muted);
   margin-top: 2px;
+}
+
+/* ═══════════════════════════════
+   Ticket Cards
+   ═══════════════════════════════ */
+.pf-tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--sp-4);
+}
+
+.pf-ticket-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: var(--sp-5);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pf-ticket-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--acid), var(--green));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pf-ticket-card:hover {
+  border-color: var(--acid-20);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(229, 255, 0, 0.06);
+}
+
+.pf-ticket-card:hover::before {
+  opacity: 1;
+}
+
+.pf-ticket-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-3);
+}
+
+.pf-ticket-status {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.pf-ticket-status-dot {
+  font-size: 0.75rem;
+}
+
+.pf-ticket-status-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-ticket-status--active { color: var(--green); }
+.pf-ticket-status--used { color: var(--text-muted); }
+.pf-ticket-status--transferred { color: var(--blue, #00D4FF); }
+.pf-ticket-status--resale-listed { color: var(--acid); }
+
+.pf-ticket-badge-num {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-black);
+  color: var(--acid);
+  background: var(--acid-08);
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  letter-spacing: 0.05em;
+}
+
+.pf-ticket-event-name {
+  font-size: 1.0625rem;
+  font-weight: var(--fw-bold);
+  color: var(--text);
+  margin-bottom: var(--sp-1);
+  line-height: 1.3;
+}
+
+.pf-ticket-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  margin-bottom: var(--sp-4);
+}
+
+.pf-ticket-meta span:not(:last-child)::after {
+  content: '·';
+  margin-left: var(--sp-2);
+  color: var(--text-dim);
+}
+
+.pf-ticket-details {
+  display: flex;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+
+.pf-ticket-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pf-ticket-detail-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pf-ticket-detail span:not(.pf-ticket-detail-label) {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.pf-ticket-price-val {
+  background: linear-gradient(135deg, var(--acid), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: var(--fw-extrabold) !important;
+}
+
+/* ── Ticket Actions ── */
+.pf-ticket-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+
+.pf-ticket-action {
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-btn);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.pf-ticket-action--view {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.pf-ticket-action--view:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+}
+
+.pf-ticket-action--resale {
+  background: var(--acid-08);
+  border: 1px solid var(--acid-25);
+  color: var(--acid);
+}
+
+.pf-ticket-action--resale:hover {
+  background: var(--acid);
+  color: var(--bg);
+}
+
+.pf-ticket-action--transfer {
+  background: none;
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  color: var(--blue, #00D4FF);
+}
+
+.pf-ticket-action--transfer:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--blue, #00D4FF);
+}
+
+/* ── Empty State ── */
+.pf-empty {
+  text-align: center;
+  padding: var(--sp-16) var(--sp-6);
+}
+
+.pf-empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--sp-4);
+  opacity: 0.5;
+}
+
+.pf-empty p {
+  color: var(--text-muted);
+  font-size: var(--fs-base);
+  margin-bottom: var(--sp-6);
+}
+
+.pf-empty-btn {
+  display: inline-flex;
+  padding: 0.75rem var(--sp-6);
+  background: var(--acid);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pf-empty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--acid-35);
 }
 
 /* ═══════════════════════════════
@@ -419,11 +714,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--bg);
-  border: 1px solid var(--border);
+  background: linear-gradient(145deg, rgba(229, 255, 0, 0.04) 0%, var(--bg) 60%);
+  border: 1px solid var(--acid-25);
   border-radius: 0.875rem;
   padding: var(--sp-5) var(--sp-6);
   margin-bottom: var(--sp-5);
+  transition: border-color 0.3s ease;
+}
+
+.pf-organizer-cta:hover {
+  border-color: var(--acid);
 }
 
 .pf-cta-label {
@@ -441,11 +741,12 @@
   font-size: 0.8125rem;
   font-weight: var(--fw-bold);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .pf-organizer-cta button:hover {
-  background-color: var(--acid);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px var(--acid-35);
 }
 
 /* ═══════════════════════════════
@@ -456,7 +757,7 @@
   width: 100%;
   padding: 0.875rem;
   background: none;
-  border: 1px solid var(--pink);
+  border: 1px solid rgba(255, 51, 102, 0.3);
   border-radius: 0.625rem;
   color: var(--pink);
   font-size: 0.875rem;
@@ -468,29 +769,7 @@
 
 .pf-logout-btn:hover {
   background-color: rgba(255, 51, 102, 0.08);
-  color: var(--pink);
-}
-
-/* ═══════════════════════════════
-   Footer
-   ═══════════════════════════════ */
-.pf-footer {
-  text-align: center;
-  padding: var(--sp-6) 0 0;
-  border-top: 1px solid var(--border);
-}
-
-.pf-footer-logo {
-  font-size: 1.125rem;
-  font-weight: var(--fw-black);
-  color: var(--acid);
-  letter-spacing: 3px;
-  margin-bottom: 6px;
-}
-
-.pf-footer-copy {
-  font-size: var(--fs-caption);
-  color: var(--text-muted);
+  border-color: var(--pink);
 }
 
 /* ═══════════════════════════════
@@ -498,7 +777,7 @@
    ═══════════════════════════════ */
 @media (max-width: 640px) {
   .pf {
-    padding: var(--sp-4) 0.875rem var(--sp-12);
+    padding: 0 0.875rem var(--sp-12);
   }
 
   .pf-header {
@@ -572,5 +851,18 @@
 
   .pf-organizer-cta button {
     width: 100%;
+  }
+
+  .pf-tickets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-ticket-actions {
+    flex-direction: column;
+  }
+
+  .pf-tab {
+    font-size: 0.875rem;
+    padding: var(--sp-3) var(--sp-3);
   }
 }
