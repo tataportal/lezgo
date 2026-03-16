@@ -140,6 +140,9 @@ export function getEventBadges(
       }
     }
 
+    // Check "demo" — event name starts with [DEMO]
+    const isDemo = /^\[DEMO\]/i.test(event.name || '');
+
     // Check "free" — all active phases are price 0
     if (!ticket) {
       const activePrices = (event.tiers || [])
@@ -147,7 +150,12 @@ export function getEventBadges(
         .filter(Boolean)
         .map(p => p!.price);
       if (activePrices.length > 0 && activePrices.every(p => p === 0)) {
-        ticket = { ...TICKET_BADGES['free'], labelKey: 'free' };
+        // Demo events show "DEMO" badge instead of "GRATIS"
+        if (isDemo) {
+          ticket = { ...TICKET_BADGES['demo'], labelKey: 'demo' };
+        } else {
+          ticket = { ...TICKET_BADGES['free'], labelKey: 'free' };
+        }
       }
     }
   }

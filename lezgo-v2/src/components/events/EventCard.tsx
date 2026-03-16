@@ -6,6 +6,10 @@ import { formatDateShort, formatPriceShort, getActivePhase, getEventImage, getEv
 import { EventBadge } from './EventBadge';
 import './EventCard.css';
 
+/** Strip [DEMO] prefix and badge text from display names */
+const cleanName = (s?: string) =>
+  s ? s.replace(/^\[DEMO\]\s*/i, '').replace(/\s*[—–-]\s*Early Supporter Badge/gi, '').trim() : s;
+
 interface EventCardProps {
   event: Event;
   /** Pass true when resale listings exist for this event */
@@ -67,7 +71,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, hasResaleListings, presale
       <div className="ev-card__content">
         {/* Date first, then name, then venue — matches monolith order */}
         <div className="ev-card__date">{formatDateShort(toDate(event.date), t.home.monthsFull)}</div>
-        <div className="ev-card__title">{event.name}</div>
+        <div className="ev-card__title">{cleanName(event.name)}</div>
         <div className="ev-card__venue">
           {event.venue || ''}
           {event.venue && event.location ? `, ${event.location}` : event.location || ''}
@@ -75,7 +79,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, hasResaleListings, presale
 
         <div className="ev-card__footer">
           <span className="ev-card__price">
-            {lowestPrice !== null ? formatPriceShort(lowestPrice) : '---'}
+            {lowestPrice !== null
+              ? (lowestPrice === 0 ? (t.common.freeEntry || 'Entrada libre') : formatPriceShort(lowestPrice))
+              : '---'}
           </span>
           <span className="ev-card__verified">☺ {t.common.verified}</span>
         </div>

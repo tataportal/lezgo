@@ -46,7 +46,8 @@ export type TicketBadgeKey =
   | 'resale-available'
   | 'last-tickets'
   | 'presale'
-  | 'free';
+  | 'free'
+  | 'demo';
 
 /** Adjective badges — shown top-left of card */
 export type AdjectiveBadgeKey =
@@ -67,7 +68,8 @@ export const TICKET_BADGES: Record<TicketBadgeKey, BadgeDef> = {
   'resale-available': { key: 'resale-available',  variant: 'green',  priority: 2 },
   'last-tickets':     { key: 'last-tickets',      variant: 'yellow', priority: 3 },
   'presale':          { key: 'presale',            variant: 'yellow', priority: 4 },
-  'free':             { key: 'free',               variant: 'yellow', priority: 5 },
+  'free':             { key: 'free',               variant: 'green',  priority: 5 },
+  'demo':             { key: 'demo',               variant: 'green',  priority: 6 },
 } as const;
 
 /** Adjective badge definitions (priority order) */

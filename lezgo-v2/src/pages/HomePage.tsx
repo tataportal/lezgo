@@ -7,9 +7,9 @@ import { formatDateES, formatDateVeryShort, formatPriceShort, getActivePhase, ge
 import { EventBadge } from '../components/events/EventBadge';
 import './HomePage.css';
 
-/** Strip unwanted badge text from event names/subtitles (comes from Firestore data) */
+/** Strip unwanted badge text and [DEMO] prefix from event names/subtitles */
 const cleanText = (s?: string) =>
-  s ? s.replace(/\s*[—–-]\s*Early Supporter Badge/gi, '').trim() || undefined : undefined;
+  s ? s.replace(/\s*[—–-]\s*Early Supporter Badge/gi, '').replace(/^\[DEMO\]\s*/i, '').trim() || undefined : undefined;
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -263,7 +263,7 @@ export default function HomePage() {
                     <div className="promo-card__body">
                       <span className="promo-card__tag">{event.genre || 'EVENTO'}</span>
                       <h3 className="promo-card__name">
-                        {event.name}
+                        {cleanText(event.name)}
                         {cleanText(event.subtitle) ? ` — ${cleanText(event.subtitle)}` : ''}
                       </h3>
                       <p className="promo-card__info">{sub}</p>
@@ -564,7 +564,7 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
                     {cleanText(ev.subtitle) && (
                       <div className="dl-event-subtitle">{cleanText(ev.subtitle)}</div>
                     )}
-                    <div className="dl-event-name">{ev.name}</div>
+                    <div className="dl-event-name">{cleanText(ev.name)}</div>
                     <div className="dl-event-venue">
                       <svg width="16" height="16" className="dl-event-venue-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
