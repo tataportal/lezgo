@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from '../../i18n';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import LanguageToggle from './LanguageToggle';
 
 export default function Header() {
@@ -9,6 +9,9 @@ export default function Header() {
   const { t } = useTranslation();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const handleAvatarError = useCallback(() => setAvatarFailed(true), []);
+  useEffect(() => { setAvatarFailed(false); }, [profile?.photoURL]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -76,8 +79,8 @@ export default function Header() {
                 {t.nav.logout}
               </button>
               <Link to="/perfil" className="lz-avatar-link">
-                {profile?.photoURL ? (
-                  <img src={profile.photoURL} alt="" className="lz-avatar" />
+                {profile?.photoURL && !avatarFailed ? (
+                  <img src={profile.photoURL} alt="" className="lz-avatar" onError={handleAvatarError} />
                 ) : (
                   <div className="lz-avatar lz-avatar-placeholder">
                     {(profile?.displayName || user.email || '?')[0].toUpperCase()}

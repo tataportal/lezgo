@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserTickets } from '../hooks/useTickets';
@@ -6,6 +6,18 @@ import { useTranslation } from '../i18n';
 import { LOCALE_MAP, getInitials } from '../lib/helpers';
 import toast from 'react-hot-toast';
 import './ProfilePage.css';
+
+/** Avatar with fallback: tries image → falls back to initials on acid bg */
+function UserAvatar({ photoURL, displayName }: { photoURL?: string; displayName?: string }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const handleError = useCallback(() => setImgFailed(true), []);
+  useEffect(() => { setImgFailed(false); }, [photoURL]);
+
+  if (photoURL && !imgFailed) {
+    return <img src={photoURL} alt={displayName || ''} loading="lazy" onError={handleError} />;
+  }
+  return <span>{getInitials(displayName)}</span>;
+}
 
 /* ── Badge system ── */
 interface Badge {
@@ -143,9 +155,7 @@ export default function ProfilePage() {
       <div className="pf-header">
         <div className="pf-avatar">
           <div className="pf-verified-ring" />
-          {profile.photoURL
-            ? <img src={profile.photoURL} alt={profile.displayName} loading="lazy" />
-            : <span>{getInitials(profile.displayName)}</span>}
+          <UserAvatar photoURL={profile.photoURL} displayName={profile.displayName} />
         </div>
 
         <div className="pf-info">
@@ -156,7 +166,7 @@ export default function ProfilePage() {
               <button className="pf-name-cancel" onClick={() => { setIsEditing(false); setEditedName(profile.displayName); }} disabled={isSaving}>{t.common.cancel}</button>
             </div>
           ) : (
-            <h1>{profile.displayName || t.profile.user} {profile.dni && <span className="pf-check">✓</span>}</h1>
+            <h1>{profile.displayName || t.profile.user} {profile.dni && <span className="pf-verified-badge">☺ {t.common.verified}</span>}</h1>
           )}
 
           <div className="pf-meta">
@@ -182,7 +192,7 @@ export default function ProfilePage() {
       <div className="pf-section">
         <div className="pf-section-head">
           <div className="pf-section-title">{t.profile.badges}</div>
-          <span className="pf-section-more">{t.profile.viewAllBadges}</span>
+          {/* Ver todos removed — all badges visible inline */}
         </div>
         <div className="pf-badges">
           {badges.map(b => {

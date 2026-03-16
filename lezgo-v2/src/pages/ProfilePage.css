@@ -93,6 +93,19 @@
   flex-shrink: 0;
 }
 
+.pf-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  padding: 0.1875rem var(--sp-2);
+  border: 1px solid var(--acid-muted);
+  color: var(--acid);
+  letter-spacing: 0.3px;
+  vertical-align: middle;
+}
+
 /* ── Name editing ── */
 .pf-name-edit {
   display: flex;
