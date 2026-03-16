@@ -252,7 +252,7 @@ export default function EventsPage() {
                   {t.home.monthsFull[calMonth]}
                 </button>
                 <button className="ef-cal-action" onClick={handleClearDates}>
-                  {t.common?.clear || 'Limpiar'}
+                  {t.common.clear}
                 </button>
               </div>
             </div>

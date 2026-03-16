@@ -55,12 +55,36 @@ export default function DeckPage() {
         </div>
       </section>
 
+      {/* Vision */}
+      <section className="dk-section dk-vision-section">
+        <div className="dk-section-inner dk-vision-inner">
+          {d.visionItems.map((item: string, i: number) => (
+            <div key={i} className="dk-vision-line">
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* The Problem */}
-      <section className="dk-section">
+      <section className="dk-section dk-section--problem">
         <div className="dk-section-inner">
           <div className="dk-label">{d.problemLabel}</div>
           <h2>{d.problemTitle}</h2>
           <p className="dk-section-desc">{mode === 'web2' ? d.problemDescW2 : d.problemDescW3}</p>
+
+          {/* Headlines */}
+          {d.problemHeadlines && (
+            <div className="dk-headlines">
+              {d.problemHeadlines.map((h: { source: string; text: string }, i: number) => (
+                <div key={i} className="dk-headline">
+                  <div className="dk-headline-source">{h.source}</div>
+                  <div className="dk-headline-text">{h.text}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="dk-stats-row">
             <div className="dk-stat">
               <div className="dk-stat-val dk-stat-val--bad">$12B+</div>
@@ -89,19 +113,41 @@ export default function DeckPage() {
           <h2>{mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3}</h2>
           <p className="dk-section-desc">{mode === 'web2' ? d.solutionDescW2 : d.solutionDescW3}</p>
 
+          {/* Solution Pillars */}
+          {d.solutionPillarsOrg && d.solutionPillarsCon && (
+            <div className="dk-pillars-row">
+              <div className="dk-pillar-group dk-pillar-group--org">
+                <h3>{d.forOrganizers}</h3>
+                <div className="dk-pillars">
+                  {d.solutionPillarsOrg.map((p: string, i: number) => (
+                    <div key={i} className="dk-pillar">{p}</div>
+                  ))}
+                </div>
+              </div>
+              <div className="dk-pillar-group dk-pillar-group--con">
+                <h3>{d.forConsumers}</h3>
+                <div className="dk-pillars">
+                  {d.solutionPillarsCon.map((p: string, i: number) => (
+                    <div key={i} className="dk-pillar">{p}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="dk-value-grid">
             <div className="dk-value-col">
-              <h3>{d.forConsumers}</h3>
+              <h3>{d.forOrganizers}</h3>
               <ul className="dk-value-list">
-                {(mode === 'web2' ? d.consumerBenefitsW2 : d.consumerBenefitsW3).map((b: string, i: number) => (
+                {(mode === 'web2' ? d.organizerBenefitsW2 : d.organizerBenefitsW3).map((b: string, i: number) => (
                   <li key={i}>{b}</li>
                 ))}
               </ul>
             </div>
             <div className="dk-value-col">
-              <h3>{d.forOrganizers}</h3>
+              <h3>{d.forConsumers}</h3>
               <ul className="dk-value-list">
-                {(mode === 'web2' ? d.organizerBenefitsW2 : d.organizerBenefitsW3).map((b: string, i: number) => (
+                {(mode === 'web2' ? d.consumerBenefitsW2 : d.consumerBenefitsW3).map((b: string, i: number) => (
                   <li key={i}>{b}</li>
                 ))}
               </ul>
@@ -115,6 +161,11 @@ export default function DeckPage() {
         <div className="dk-section-inner">
           <div className="dk-label">{d.howLabel}</div>
           <h2>{d.howTitle}</h2>
+          {d.howSubtitleW2 && (
+            <p className="dk-section-desc dk-how-subtitle">
+              {mode === 'web2' ? d.howSubtitleW2 : d.howSubtitleW3}
+            </p>
+          )}
 
           {/* Attendee Flow */}
           <div className="dk-flow-block">
@@ -152,11 +203,12 @@ export default function DeckPage() {
           {mode === 'web3' && (
             <div className="dk-tech-stack">
               <h3>{d.techStackTitle}</h3>
+              {d.techStackDesc && <p className="dk-tech-desc">{d.techStackDesc}</p>}
               <div className="dk-tech-grid">
                 {d.techFeatures.map((f: { title: string; desc: string }, i: number) => (
                   <div key={i} className="dk-tech-card">
                     <div className="dk-tech-title">{f.title}</div>
-                    <div className="dk-tech-desc">{f.desc}</div>
+                    <div className="dk-tech-desc-text">{f.desc}</div>
                   </div>
                 ))}
               </div>
@@ -175,13 +227,13 @@ export default function DeckPage() {
           <div className="dk-revenue-grid">
             <div className="dk-rev-card">
               <div className="dk-rev-tag">REV 1 — B2B</div>
-              <div className="dk-rev-pct">{mode === 'web2' ? '5-8%' : '< 15%'}</div>
+              <div className="dk-rev-pct">10%</div>
               <div className="dk-rev-name">{mode === 'web2' ? d.revDirectSale : d.revMinting}</div>
               <p>{mode === 'web2' ? d.revDirectSaleDesc : d.revMintingDesc}</p>
             </div>
             <div className="dk-rev-card">
               <div className="dk-rev-tag">REV 2 — B2C</div>
-              <div className="dk-rev-pct">{'< 10%'}</div>
+              <div className="dk-rev-pct">5%</div>
               <div className="dk-rev-name">{d.revResale}</div>
               <p>{mode === 'web2' ? d.revResaleDescW2 : d.revResaleDescW3}</p>
             </div>
@@ -236,8 +288,30 @@ export default function DeckPage() {
         </div>
       </section>
 
+      {/* Competitors */}
+      {d.competitors && (
+        <section className="dk-section">
+          <div className="dk-section-inner">
+            <div className="dk-label">{d.competitorsLabel}</div>
+            <h2>{d.competitorsTitle}</h2>
+            <p className="dk-section-desc">{d.competitorsDesc}</p>
+            <div className="dk-competitors-grid">
+              {d.competitors.map((c: { name: string; weakness: string }, i: number) => (
+                <div key={i} className="dk-competitor-card">
+                  <div className="dk-competitor-name">{c.name}</div>
+                  <div className="dk-competitor-weakness">{c.weakness}</div>
+                </div>
+              ))}
+            </div>
+            <div className="dk-competitors-edge">
+              {d.competitorsEdge}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Competitive Edge */}
-      <section className="dk-section">
+      <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
           <div className="dk-label">{d.edgeLabel}</div>
           <h2>{d.edgeTitle}</h2>
@@ -251,6 +325,33 @@ export default function DeckPage() {
           </div>
         </div>
       </section>
+
+      {/* Roadmap */}
+      {d.roadmapPhases && (
+        <section className="dk-section">
+          <div className="dk-section-inner">
+            <div className="dk-label">{d.roadmapLabel}</div>
+            <h2>{d.roadmapTitle}</h2>
+            <div className="dk-roadmap">
+              {d.roadmapPhases.map((p: { phase: string; title: string; items: string[] }, i: number) => (
+                <div key={i} className={`dk-roadmap-card ${i === 0 ? 'dk-roadmap-card--active' : ''}`}>
+                  <div className="dk-roadmap-card-header">
+                    <div className="dk-roadmap-dot" />
+                    <div className="dk-roadmap-time">{p.phase}</div>
+                  </div>
+                  {i < d.roadmapPhases.length - 1 && <div className="dk-roadmap-arrow">→</div>}
+                  <div className="dk-roadmap-title">{p.title}</div>
+                  <ul className="dk-roadmap-items">
+                    {p.items.map((item: string, j: number) => (
+                      <li key={j}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Team */}
       <section className="dk-section dk-section--alt">
