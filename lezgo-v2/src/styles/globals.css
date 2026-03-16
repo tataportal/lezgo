@@ -383,7 +383,7 @@ img { display: block; max-width: 100%; }
 /* ── Greeting ── */
 .lz-header-greeting {
   font-size: var(--fs-sm);
-  color: var(--text-muted);
+  color: var(--text);
   white-space: nowrap;
 }
 
