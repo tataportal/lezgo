@@ -164,25 +164,25 @@
 .dk-hero::before {
   content: '';
   position: absolute;
-  top: 4rem;
-  right: 10%;
-  width: 18rem;
-  height: 18rem;
-  background: radial-gradient(circle, var(--blue-15) 0%, transparent 70%);
+  top: 2rem;
+  right: 8%;
+  width: 28rem;
+  height: 28rem;
+  background: radial-gradient(circle, rgba(0, 255, 133, 0.12) 0%, transparent 70%);
   pointer-events: none;
-  filter: blur(40px);
+  filter: blur(60px);
 }
 
 .dk-hero::after {
   content: '';
   position: absolute;
-  bottom: 2rem;
-  left: 8%;
-  width: 14rem;
-  height: 14rem;
-  background: radial-gradient(circle, var(--pink-15) 0%, transparent 70%);
+  bottom: 0;
+  left: 5%;
+  width: 24rem;
+  height: 24rem;
+  background: radial-gradient(circle, var(--acid-12) 0%, transparent 70%);
   pointer-events: none;
-  filter: blur(40px);
+  filter: blur(60px);
 }
 
 .dk-hero-content {
