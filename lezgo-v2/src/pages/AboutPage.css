@@ -110,9 +110,9 @@
 .cf-hero {
   position: relative;
   overflow: hidden;
-  padding: 6.25rem var(--sp-8) var(--sp-20);
+  padding: 4rem var(--sp-8) 4rem;
   background: var(--bg);
-  min-height: 90vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,9 +161,9 @@
   width: 100%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   align-items: center;
-  gap: var(--sp-16);
+  gap: var(--sp-10);
 }
 
 .cf-hero-badge {
@@ -313,15 +313,15 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-6);
+  gap: var(--sp-4);
   align-items: center;
   animation: fade-in-up 0.8s ease-out 0.5s both;
 }
 
 .cf-ticket {
   position: relative;
-  width: 20rem;
-  padding: 1.8125rem 1.625rem 1.375rem;
+  width: 17rem;
+  padding: 1.4rem 1.3rem 1.1rem;
   border-radius: var(--radius-2xl);
   border: 1px solid var(--border);
   background: var(--bg);
@@ -404,7 +404,7 @@
 }
 
 .cf-ticket-event {
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: var(--fw-bold);
   color: var(--text);
   margin-bottom: var(--sp-1);
@@ -432,7 +432,7 @@
 }
 
 .cf-ticket-price {
-  font-size: 1.625rem;
+  font-size: 1.375rem;
   font-weight: var(--fw-black);
   color: var(--text);
 }
