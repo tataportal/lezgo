@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://lezgo.fans/sitemap.xml
