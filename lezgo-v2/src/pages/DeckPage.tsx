@@ -2,262 +2,281 @@ import { useState } from 'react';
 import { useTranslation } from '../i18n';
 import './DeckPage.css';
 
-type Mode = 'simple' | 'tech';
+type Mode = 'web2' | 'web3';
 
 export default function DeckPage() {
   const { t, lang, setLang } = useTranslation();
-  const [mode, setMode] = useState<Mode>('simple');
+  const [mode, setMode] = useState<Mode>('web2');
 
   const d = t.deck;
 
   return (
-    <div className="deck-page">
-      {/* Marquee Banner */}
-      <div className="marquee-banner">
-        <div className="marquee-content">
-          <span>LEZGO • LEZGO • LEZGO • LEZGO • LEZGO • LEZGO • LEZGO • LEZGO • </span>
+    <div className="dk">
+      {/* Marquee */}
+      <div className="dk-marquee">
+        <div className="dk-marquee-track">
+          {Array(3).fill(null).map((_, i) => (
+            <span key={i} className="dk-marquee-segment">
+              LEZGO &middot; BUY &middot; SELL &middot; RESELL &middot; SAFE &middot;&nbsp;
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* Header with Toggles */}
-      <div className="deck-header">
-        <div className="toggles">
-          <div className="toggle-group">
-            <button
-              className={`toggle-btn ${lang === 'es' ? 'active' : ''}`}
-              onClick={() => setLang('es')}
-            >
-              {t.lang.es}
-            </button>
-            <button
-              className={`toggle-btn ${lang === 'en' ? 'active' : ''}`}
-              onClick={() => setLang('en')}
-            >
-              {t.lang.en}
-            </button>
-            <button
-              className={`toggle-btn ${lang === 'zh' ? 'active' : ''}`}
-              onClick={() => setLang('zh')}
-            >
-              {t.lang.zh}
-            </button>
-          </div>
-          <div className="toggle-group">
-            <button
-              className={`toggle-btn ${mode === 'simple' ? 'active' : ''}`}
-              onClick={() => setMode('simple')}
-            >
-              Simple
-            </button>
-            <button
-              className={`toggle-btn ${mode === 'tech' ? 'active' : ''}`}
-              onClick={() => setMode('tech')}
-            >
-              Tech
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <section className="hero-section">
-        <h1>{d.heroTitle}</h1>
-        <p>{d.heroDesc}</p>
-
-        <div className="ticket-comparison-deck">
-          <div className="ticket-fake">
-            <div className="ticket-label-deck">FAKE</div>
-            <div className="ticket-content-deck">
-              <div className="qr-fake">❌</div>
-              <div className="price-fake">S/ 999</div>
+      {/* Sticky Header with Toggles */}
+      <header className="dk-header">
+        <div className="dk-header-inner">
+          <div className="dk-logo">LEZGO</div>
+          <div className="dk-toggles">
+            <div className="dk-toggle-group">
+              <button className={`dk-tog ${lang === 'es' ? 'dk-tog--on' : ''}`} onClick={() => setLang('es')}>ES</button>
+              <button className={`dk-tog ${lang === 'en' ? 'dk-tog--on' : ''}`} onClick={() => setLang('en')}>EN</button>
             </div>
-          </div>
-          <div className="comparison-vs">VS</div>
-          <div className="ticket-real">
-            <div className="ticket-label-deck verified-deck">VERIFIED</div>
-            <div className="ticket-content-deck">
-              <div className="qr-real">✓</div>
-              <div className="price-real">S/ 150</div>
+            <div className="dk-toggle-group dk-toggle-mode">
+              <button className={`dk-tog ${mode === 'web2' ? 'dk-tog--on' : ''}`} onClick={() => setMode('web2')}>Web2</button>
+              <button className={`dk-tog ${mode === 'web3' ? 'dk-tog--on' : ''}`} onClick={() => setMode('web3')}>Web3</button>
             </div>
           </div>
         </div>
+      </header>
 
-        <a href={`mailto:${d.contactEmail}`} className="contact-btn">
-          {d.contactTeam}
-        </a>
+      {/* Hero */}
+      <section className="dk-hero">
+        <div className="dk-hero-glow" />
+        <div className="dk-hero-content">
+          <div className="dk-hero-pill">{d.heroPill}</div>
+          <h1 className="dk-hero-title">
+            {d.heroTitle}
+          </h1>
+          <p className="dk-hero-sub">{mode === 'web2' ? d.heroDescW2 : d.heroDescW3}</p>
+          <a href={`mailto:${d.contactEmail}`} className="dk-cta">
+            {d.contactTeam} →
+          </a>
+        </div>
       </section>
 
-      {/* Problem Section */}
-      <section className="section-deck problem-section">
-        <h2>{d.problem}</h2>
-        <p>{d.problemDesc}</p>
-        {mode === 'tech' && (
-          <div className="tech-details">
-            <div className="stat-card">
-              <div className="stat-number">40%</div>
-              <div className="stat-label">Tickets falsificados</div>
+      {/* The Problem */}
+      <section className="dk-section">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.problemLabel}</div>
+          <h2>{d.problemTitle}</h2>
+          <p className="dk-section-desc">{mode === 'web2' ? d.problemDescW2 : d.problemDescW3}</p>
+          <div className="dk-stats-row">
+            <div className="dk-stat">
+              <div className="dk-stat-val dk-stat-val--bad">$12B+</div>
+              <div className="dk-stat-label">{d.statFraud}</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-number">300%</div>
-              <div className="stat-label">Markup promedio</div>
+            <div className="dk-stat">
+              <div className="dk-stat-val dk-stat-val--bad">300%</div>
+              <div className="dk-stat-label">{d.statMarkup}</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-number">0%</div>
-              <div className="stat-label">Verificación real</div>
+            <div className="dk-stat">
+              <div className="dk-stat-val dk-stat-val--bad">12%</div>
+              <div className="dk-stat-label">{d.statFake}</div>
             </div>
-          </div>
-        )}
-      </section>
-
-      {/* Solution Section */}
-      <section className="section-deck solution-section">
-        <h2>{d.solution}</h2>
-        <p>{d.solutionDesc}</p>
-        {mode === 'tech' && (
-          <div className="features-tech">
-            <div className="feature-box">
-              <div className="feature-icon">🔐</div>
-              <div className="feature-label">Identity Verification</div>
-            </div>
-            <div className="feature-box">
-              <div className="feature-icon">🔍</div>
-              <div className="feature-label">Real-time Scanner</div>
-            </div>
-            <div className="feature-box">
-              <div className="feature-icon">📊</div>
-              <div className="feature-label">Analytics Dashboard</div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* How it Works Section */}
-      <section className="section-deck how-works">
-        <h2>{d.howItWorks}</h2>
-
-        <div className="flow-container">
-          <div className="flow-track">
-            <h3>{d.forAttendees}</h3>
-            <div className="flow-steps">
-              <div className="flow-step">
-                <div className="step-icon">1</div>
-                <div className="step-title">{d.stepBuy}</div>
-              </div>
-              <div className="flow-arrow">→</div>
-              <div className="flow-step">
-                <div className="step-icon">2</div>
-                <div className="step-title">{d.stepVerify}</div>
-              </div>
-              <div className="flow-arrow">→</div>
-              <div className="flow-step">
-                <div className="step-icon">3</div>
-                <div className="step-title">{d.stepResale}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flow-track">
-            <h3>{d.forOrganizers}</h3>
-            <div className="flow-steps">
-              <div className="flow-step">
-                <div className="step-icon">1</div>
-                <div className="step-title">{d.stepCreate}</div>
-              </div>
-              <div className="flow-arrow">→</div>
-              <div className="flow-step">
-                <div className="step-icon">2</div>
-                <div className="step-title">{d.stepDashboard}</div>
-              </div>
-              <div className="flow-arrow">→</div>
-              <div className="flow-step">
-                <div className="step-icon">3</div>
-                <div className="step-title">{d.stepScanner}</div>
-              </div>
+            <div className="dk-stat">
+              <div className="dk-stat-val dk-stat-val--bad">0%</div>
+              <div className="dk-stat-label">{d.statTransparency}</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Business Model Section */}
-      <section className="section-deck business-model">
-        <h2>{d.businessModel}</h2>
-        <div className="fee-structure">
-          <div className="fee-card">
-            <div className="fee-label">{d.directSale}</div>
-            <div className="fee-amount">8.3%</div>
-          </div>
-          <div className="fee-card">
-            <div className="fee-label">{d.resale}</div>
-            <div className="fee-amount">10%</div>
-          </div>
-        </div>
-        {mode === 'tech' && (
-          <div className="revenue-projection">
-            <p>Projected YoY growth: 300%</p>
-            <p>Unit economics: Sustainable at 1M tickets/year</p>
-          </div>
-        )}
-      </section>
+      {/* Solution */}
+      <section className="dk-section dk-section--alt">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.solutionLabel}</div>
+          <h2>{mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3}</h2>
+          <p className="dk-section-desc">{mode === 'web2' ? d.solutionDescW2 : d.solutionDescW3}</p>
 
-      {/* Traction Section */}
-      <section className="section-deck traction">
-        <h2>{d.traction}</h2>
-        {mode === 'simple' ? (
-          <div className="traction-simple">
-            <div className="milestone">
-              <div className="milestone-icon">🎫</div>
-              <div className="milestone-text">1000+ tickets sold</div>
+          <div className="dk-value-grid">
+            <div className="dk-value-col">
+              <h3>{d.forConsumers}</h3>
+              <ul className="dk-value-list">
+                {(mode === 'web2' ? d.consumerBenefitsW2 : d.consumerBenefitsW3).map((b: string, i: number) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
             </div>
-            <div className="milestone">
-              <div className="milestone-icon">🎉</div>
-              <div className="milestone-text">10+ events launched</div>
+            <div className="dk-value-col">
+              <h3>{d.forOrganizers}</h3>
+              <ul className="dk-value-list">
+                {(mode === 'web2' ? d.organizerBenefitsW2 : d.organizerBenefitsW3).map((b: string, i: number) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
             </div>
-            <div className="milestone">
-              <div className="milestone-icon">👥</div>
-              <div className="milestone-text">500+ active users</div>
-            </div>
-          </div>
-        ) : (
-          <div className="traction-tech">
-            <div className="metric">
-              <div className="metric-label">Monthly Active Users</div>
-              <div className="metric-value">500</div>
-            </div>
-            <div className="metric">
-              <div className="metric-label">Total Tickets Verified</div>
-              <div className="metric-value">1000</div>
-            </div>
-            <div className="metric">
-              <div className="metric-label">GMV (S/)</div>
-              <div className="metric-value">150,000</div>
-            </div>
-            <div className="metric">
-              <div className="metric-label">Fraud Rate</div>
-              <div className="metric-value">0%</div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Team Section */}
-      <section className="section-deck team-section">
-        <h2>{d.team}</h2>
-        <div className="team-card">
-          <div className="team-avatar">T</div>
-          <div className="team-info">
-            <div className="team-name">{d.teamLead}</div>
-            <div className="team-role">Building the future of ticketing in Peru</div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="deck-footer">
-        <h3>{d.contact}</h3>
-        <a href={`mailto:${d.contactEmail}`} className="footer-email">
-          {d.contactEmail}
-        </a>
-        <p className="footer-text">LEZGO • Lima, Peru • {new Date().getFullYear()}</p>
+      {/* How It Works */}
+      <section className="dk-section">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.howLabel}</div>
+          <h2>{d.howTitle}</h2>
+
+          {/* Attendee Flow */}
+          <div className="dk-flow-block">
+            <h3>{d.attendeeFlow}</h3>
+            <div className="dk-flow">
+              {(mode === 'web2' ? d.attendeeStepsW2 : d.attendeeStepsW3).map((step: string, i: number) => (
+                <div key={i} className="dk-flow-item">
+                  <div className="dk-flow-num">{String(i + 1).padStart(2, '0')}</div>
+                  <div className="dk-flow-text">{step}</div>
+                  {i < (mode === 'web2' ? d.attendeeStepsW2 : d.attendeeStepsW3).length - 1 && (
+                    <div className="dk-flow-arrow">→</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Organizer Flow */}
+          <div className="dk-flow-block">
+            <h3>{d.organizerFlow}</h3>
+            <div className="dk-flow">
+              {(mode === 'web2' ? d.organizerStepsW2 : d.organizerStepsW3).map((step: string, i: number) => (
+                <div key={i} className="dk-flow-item">
+                  <div className="dk-flow-num">{String(i + 1).padStart(2, '0')}</div>
+                  <div className="dk-flow-text">{step}</div>
+                  {i < (mode === 'web2' ? d.organizerStepsW2 : d.organizerStepsW3).length - 1 && (
+                    <div className="dk-flow-arrow">→</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Web3-only: Tech stack */}
+          {mode === 'web3' && (
+            <div className="dk-tech-stack">
+              <h3>{d.techStackTitle}</h3>
+              <div className="dk-tech-grid">
+                {d.techFeatures.map((f: { title: string; desc: string }, i: number) => (
+                  <div key={i} className="dk-tech-card">
+                    <div className="dk-tech-title">{f.title}</div>
+                    <div className="dk-tech-desc">{f.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Business Model */}
+      <section className="dk-section dk-section--alt">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.bizLabel}</div>
+          <h2>{d.bizTitle}</h2>
+          <p className="dk-section-desc">{mode === 'web2' ? d.bizDescW2 : d.bizDescW3}</p>
+
+          <div className="dk-revenue-grid">
+            <div className="dk-rev-card">
+              <div className="dk-rev-tag">REV 1 — B2B</div>
+              <div className="dk-rev-pct">{mode === 'web2' ? '5-8%' : '< 15%'}</div>
+              <div className="dk-rev-name">{mode === 'web2' ? d.revDirectSale : d.revMinting}</div>
+              <p>{mode === 'web2' ? d.revDirectSaleDesc : d.revMintingDesc}</p>
+            </div>
+            <div className="dk-rev-card">
+              <div className="dk-rev-tag">REV 2 — B2C</div>
+              <div className="dk-rev-pct">{'< 10%'}</div>
+              <div className="dk-rev-name">{d.revResale}</div>
+              <p>{mode === 'web2' ? d.revResaleDescW2 : d.revResaleDescW3}</p>
+            </div>
+            <div className="dk-rev-card">
+              <div className="dk-rev-tag">REV 3 — B2B</div>
+              <div className="dk-rev-pct">TBD</div>
+              <div className="dk-rev-name">{d.revData}</div>
+              <p>{d.revDataDesc}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Market */}
+      <section className="dk-section">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.marketLabel}</div>
+          <h2>{d.marketTitle}</h2>
+          <div className="dk-market-row">
+            <div className="dk-market-card">
+              <div className="dk-market-year">2023</div>
+              <div className="dk-market-val">USD $77.5B</div>
+              <div className="dk-market-label">{d.marketCurrent}</div>
+            </div>
+            <div className="dk-market-arrow">→</div>
+            <div className="dk-market-card dk-market-card--target">
+              <div className="dk-market-year">2028</div>
+              <div className="dk-market-val">USD $97.4B</div>
+              <div className="dk-market-label">CAGR 4.67%</div>
+            </div>
+          </div>
+          <div className="dk-market-sub">
+            <p>{d.marketDesc}</p>
+            {mode === 'web3' && <p>{d.marketDescW3}</p>}
+          </div>
+        </div>
+      </section>
+
+      {/* Traction */}
+      <section className="dk-section dk-section--alt">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.tractionLabel}</div>
+          <h2>{d.tractionTitle}</h2>
+          <div className="dk-traction-grid">
+            {d.tractionItems.map((item: { val: string; label: string }, i: number) => (
+              <div key={i} className="dk-traction-card">
+                <div className="dk-traction-val">{item.val}</div>
+                <div className="dk-traction-label">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Competitive Edge */}
+      <section className="dk-section">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.edgeLabel}</div>
+          <h2>{d.edgeTitle}</h2>
+          <div className="dk-edge-grid">
+            {(mode === 'web2' ? d.edgeItemsW2 : d.edgeItemsW3).map((item: { title: string; desc: string }, i: number) => (
+              <div key={i} className="dk-edge-card">
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="dk-section dk-section--alt">
+        <div className="dk-section-inner">
+          <div className="dk-label">{d.teamLabel}</div>
+          <h2>{d.teamTitle}</h2>
+          <div className="dk-team-card">
+            <div className="dk-team-avatar">T</div>
+            <div>
+              <div className="dk-team-name">{d.teamLead}</div>
+              <div className="dk-team-role">{d.teamRole}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Footer */}
+      <footer className="dk-footer">
+        <div className="dk-footer-inner">
+          <h2>{d.ctaTitle}</h2>
+          <p>{d.ctaDesc}</p>
+          <a href={`mailto:${d.contactEmail}`} className="dk-cta dk-cta--lg">
+            {d.contactEmail}
+          </a>
+          <div className="dk-footer-copy">LEZGO &middot; Lima, Peru &middot; {new Date().getFullYear()}</div>
+        </div>
       </footer>
     </div>
   );

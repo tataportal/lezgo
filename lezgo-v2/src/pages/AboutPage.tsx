@@ -19,11 +19,37 @@ const SmileyIcon = () => (
   </span>
 );
 
+const IdIcon = ({ valid }: { valid: boolean }) => (
+  <span className={`cf-id-icon ${valid ? 'cf-id-valid' : 'cf-id-invalid'}`}>
+    <svg viewBox="0 0 40 28" fill="none">
+      <rect x="1" y="1" width="38" height="26" rx="3" stroke="currentColor" strokeWidth="1.5"/>
+      <rect x="5" y="5" width="10" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
+      <circle cx="10" cy="9" r="2.5" fill="currentColor" opacity="0.5"/>
+      <rect x="19" y="6" width="14" height="2" rx="1" fill="currentColor" opacity="0.4"/>
+      <rect x="19" y="11" width="10" height="2" rx="1" fill="currentColor" opacity="0.3"/>
+      <rect x="5" y="19" width="28" height="2" rx="1" fill="currentColor" opacity="0.25"/>
+      <rect x="5" y="23" width="18" height="1.5" rx="0.75" fill="currentColor" opacity="0.15"/>
+      {valid ? (
+        <circle cx="33" cy="21" r="5" fill="var(--green)" opacity="0.9"/>
+      ) : (
+        <circle cx="33" cy="21" r="5" fill="var(--pink)" opacity="0.9"/>
+      )}
+      {valid ? (
+        <path d="M30.5 21l1.8 1.8 3.2-3.2" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      ) : (
+        <>
+          <path d="M31 19l4 4" stroke="#000" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M35 19l-4 4" stroke="#000" strokeWidth="1.5" strokeLinecap="round"/>
+        </>
+      )}
+    </svg>
+  </span>
+);
 
 export default function AboutPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'asistentes' | 'organizadores'>('asistentes');
+  const [activeTab, setActiveTab] = useState<'asistentes' | 'promotores'>('asistentes');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const marqueeItems = [
@@ -101,14 +127,14 @@ export default function AboutPage() {
 
   const currentFaq = activeTab === 'asistentes' ? asistentesFA : orgFA;
 
-  const switchTab = (tab: 'asistentes' | 'organizadores') => {
+  const switchTab = (tab: 'asistentes' | 'promotores') => {
     setActiveTab(tab);
     setExpandedFaq(null);
   };
 
   return (
     <div>
-      {/* ── Marquee ── */}
+      {/* Marquee */}
       <div className="marquee">
         <div className="marquee-track">
           {marqueeItems.map((item, i) => (
@@ -119,7 +145,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* ── Hero with Fake vs Real Tickets ── */}
+      {/* Hero with Fake vs Real Tickets */}
       <section className="cf-hero" id="conocenos-hero">
         <div className="cf-glow cf-glow-1" />
         <div className="cf-glow cf-glow-2" />
@@ -143,7 +169,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Fake vs Real Tickets */}
+          {/* Fake vs Real Tickets — ID-based, no QR */}
           <div className="cf-tickets">
             <div className="cf-ticket cf-ticket-fake">
               <div className="gline gline-1" />
@@ -161,8 +187,8 @@ export default function AboutPage() {
                   {t.about.realPrice} <span style={{ textDecoration: 'line-through' }}>S/90</span>
                 </div>
               </div>
-              <div className="cf-ticket-qr">
-                <div className="cf-qr-mini" />
+              <div className="cf-ticket-id">
+                <IdIcon valid={false} />
                 <span>{t.about.invalidId}</span>
               </div>
             </div>
@@ -181,8 +207,8 @@ export default function AboutPage() {
                   <span style={{ color: 'var(--acid)', fontWeight: 700 }}>Mario L. ✓</span>
                 </div>
               </div>
-              <div className="cf-ticket-qr">
-                <div className="cf-qr-mini"><div className="cf-qr-inner" /></div>
+              <div className="cf-ticket-id cf-ticket-id--valid">
+                <IdIcon valid={true} />
                 <span>{t.about.idVerified}</span>
               </div>
             </div>
@@ -190,19 +216,19 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Sticky Tabs ── */}
+      {/* Sticky Tabs */}
       <div className="conocenos-tabs-container">
         <div className="conocenos-tabs">
           <button className={`conocenos-tab ${activeTab === 'asistentes' ? 'active' : ''}`} onClick={() => switchTab('asistentes')}>
             {t.about.tabAttendees}
           </button>
-          <button className={`conocenos-tab ${activeTab === 'organizadores' ? 'active' : ''}`} onClick={() => switchTab('organizadores')}>
-            {t.about.tabOrganizers}
+          <button className={`conocenos-tab ${activeTab === 'promotores' ? 'active' : ''}`} onClick={() => switchTab('promotores')}>
+            {t.about.tabPromoters}
           </button>
         </div>
       </div>
 
-      {/* ── Asistentes Content ── */}
+      {/* Asistentes Content */}
       {activeTab === 'asistentes' && (
         <div className="conocenos-tab-content active">
           {/* How it works */}
@@ -212,6 +238,28 @@ export default function AboutPage() {
             <div className="cf-section-text">
               {t.about.howItWorksDesc}
             </div>
+
+            {/* 3-step flow */}
+            <div className="cf-steps">
+              <div className="cf-step">
+                <div className="cf-step-num">01</div>
+                <h3>{t.about.steps.buy}</h3>
+                <p>{t.about.steps.buyDesc}</p>
+              </div>
+              <div className="cf-step-arrow">→</div>
+              <div className="cf-step">
+                <div className="cf-step-num">02</div>
+                <h3>{t.about.steps.showId}</h3>
+                <p>{t.about.steps.showIdDesc}</p>
+              </div>
+              <div className="cf-step-arrow">→</div>
+              <div className="cf-step">
+                <div className="cf-step-num">03</div>
+                <h3>{t.about.steps.enjoy}</h3>
+                <p>{t.about.steps.enjoyDesc}</p>
+              </div>
+            </div>
+
             <div className="cf-features">
               {asistentesFeatures.map((f, i) => (
                 <div key={i} className="cf-feature">
@@ -264,8 +312,8 @@ export default function AboutPage() {
         </div>
       )}
 
-      {/* ── Organizadores Content ── */}
-      {activeTab === 'organizadores' && (
+      {/* Promotores Content */}
+      {activeTab === 'promotores' && (
         <div className="conocenos-tab-content active">
           {/* Phases */}
           <div className="cf-section">
@@ -300,6 +348,29 @@ export default function AboutPage() {
             </div>
           </div>
 
+          {/* Revenue share callout */}
+          <div className="cf-section">
+            <div className="cf-section-label">{t.about.promoterRevenue}</div>
+            <div className="cf-section-title">{t.about.promoterRevenueTitle}</div>
+            <div className="cf-revenue-cards">
+              <div className="cf-revenue-card">
+                <div className="cf-revenue-pct">5%</div>
+                <div className="cf-revenue-label">{t.about.revenueDirectSale}</div>
+                <p>{t.about.revenueDirectSaleDesc}</p>
+              </div>
+              <div className="cf-revenue-card">
+                <div className="cf-revenue-pct">10%</div>
+                <div className="cf-revenue-label">{t.about.revenueResale}</div>
+                <p>{t.about.revenueResaleDesc}</p>
+              </div>
+              <div className="cf-revenue-card cf-revenue-card--highlight">
+                <div className="cf-revenue-pct">100%</div>
+                <div className="cf-revenue-label">{t.about.revenueTransparency}</div>
+                <p>{t.about.revenueTransparencyDesc}</p>
+              </div>
+            </div>
+          </div>
+
           {/* FAQ */}
           <div className="cf-faq-section">
             <div className="cf-section-label">{t.about.faqTitle}</div>
@@ -321,7 +392,7 @@ export default function AboutPage() {
         </div>
       )}
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <div className="cf-footer">
         <div className="cf-footer-logo">LEZGO</div>
         <div className="cf-footer-copy">{t.footer.copy}</div>
