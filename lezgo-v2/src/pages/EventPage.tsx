@@ -36,8 +36,12 @@ export default function EventPage() {
   if (loading || !event) {
     return (
       <div className="ev-detail-loading">
-        <div className="loading-spinner" />
-        <p>{t.event.loadingEvent}</p>
+        <div className="branded-loader">
+          <div className="branded-loader-logo">LEZGO</div>
+          <div className="branded-loader-bars">
+            <span /><span /><span /><span /><span />
+          </div>
+        </div>
       </div>
     );
   }

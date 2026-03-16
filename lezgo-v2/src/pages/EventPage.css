@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--sp-20) var(--sp-6);
-  min-height: 25rem;
+  min-height: 60vh;
   gap: var(--sp-4);
 }
 
