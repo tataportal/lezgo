@@ -28,7 +28,12 @@ function SuspenseWrap({ children }: { children: React.ReactNode }) {
       <Suspense
         fallback={
           <div className="loading-screen">
-            <div className="loading-spinner" />
+            <div className="branded-loader">
+              <div className="branded-loader-logo">LEZGO</div>
+              <div className="branded-loader-bars">
+                <span /><span /><span /><span /><span />
+              </div>
+            </div>
           </div>
         }
       >

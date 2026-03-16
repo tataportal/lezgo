@@ -10,8 +10,12 @@ export default function App() {
   if (loading) {
     return (
       <div className="loading-screen">
-        <div className="loading-logo">LEZGO</div>
-        <div className="loading-spinner" />
+        <div className="branded-loader">
+          <div className="branded-loader-logo">LEZGO</div>
+          <div className="branded-loader-bars">
+            <span /><span /><span /><span /><span />
+          </div>
+        </div>
       </div>
     );
   }
