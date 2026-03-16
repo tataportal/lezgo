@@ -307,16 +307,17 @@
 .ev-tk-includes li {
   font-size: 0.8125rem;
   color: var(--text-muted);
-  padding-left: var(--sp-4);
+  padding-left: var(--sp-5);
   position: relative;
 }
 
 .ev-tk-includes li::before {
-  content: '✓';
+  content: '·';
   position: absolute;
-  left: 0;
-  color: var(--green);
-  font-size: var(--fs-xs);
+  left: var(--sp-2);
+  color: var(--text-dim);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-bold);
 }
 
 /* ── Phase Pricing ── */
