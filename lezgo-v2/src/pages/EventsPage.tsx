@@ -272,7 +272,13 @@ export default function EventsPage() {
 
       {loading && events.length === 0 ? (
         <div className="eventos-loading">
-          <div className="loading-spinner" />
+          <div className="eventos-loader">
+            <div className="loader-logo">LEZGO</div>
+            <div className="loader-bars">
+              <span /><span /><span /><span /><span />
+            </div>
+            <div className="loader-text">Cargando eventos...</div>
+          </div>
         </div>
       ) : filtered.length === 0 ? (
         <div className="eventos-empty">
