@@ -395,8 +395,11 @@ img { display: block; max-width: 100%; }
 .lz-lang-flag-btn {
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
-  padding: var(--sp-1) var(--sp-2);
+  border-radius: 50%;
+  padding: var(--sp-2);
+  width: 2.5rem;
+  height: 2.5rem;
+  justify-content: center;
   cursor: pointer;
   display: flex;
   align-items: center;
