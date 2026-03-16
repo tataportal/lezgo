@@ -882,11 +882,11 @@
 
 .cf-faq-question {
   width: 100%;
-  padding: 1.3125rem var(--sp-6);
+  padding: var(--sp-6) var(--sp-8);
   background: none;
   border: none;
   color: var(--text);
-  font-size: var(--fs-base);
+  font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   display: flex;
@@ -912,12 +912,11 @@
 }
 
 .cf-faq-answer {
-  padding: 0 var(--sp-6) 1.3125rem var(--sp-6);
-  color: var(--text-muted);
-  font-size: var(--fs-base);
-  line-height: 1.7;
-  border-top: 1px solid var(--border);
-  margin-top: -1px;
+  padding: var(--sp-4) var(--sp-8) var(--sp-6) var(--sp-8);
+  color: var(--text-dim);
+  font-size: var(--fs-md);
+  line-height: 1.8;
+  border-top: 1px solid var(--acid-08);
   animation: fade-in-up 0.25s ease-out;
 }
 
