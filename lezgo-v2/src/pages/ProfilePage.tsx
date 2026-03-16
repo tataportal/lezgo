@@ -192,7 +192,7 @@ export default function ProfilePage() {
       <div className="pf-section">
         <div className="pf-section-head">
           <div className="pf-section-title">{t.profile.badges}</div>
-          {/* Ver todos removed — all badges visible inline */}
+          <span className="pf-section-more" onClick={() => navigate('/badges')}>{t.profile.viewAllBadges}</span>
         </div>
         <div className="pf-badges">
           {badges.map(b => {

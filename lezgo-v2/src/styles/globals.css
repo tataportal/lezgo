@@ -265,9 +265,9 @@ img { display: block; max-width: 100%; }
 }
 
 .lz-header-inner {
-  max-width: 75rem;
+  max-width: 100rem;
   margin: 0 auto;
-  padding: 0 var(--sp-6);
+  padding: 0 var(--sp-12);
   height: 4.5rem;
   display: flex;
   align-items: center;
@@ -504,7 +504,7 @@ img { display: block; max-width: 100%; }
 
 /* ── HiDPI / 4K scaling ── */
 @media (min-width: 2560px) {
-  html { font-size: 24px; } /* 150% scale — all rem values grow automatically */
+  html { font-size: 20px; } /* 125% scale — all rem values grow automatically */
 }
 
 /* ── Accessibility: respect reduced-motion preference ── */

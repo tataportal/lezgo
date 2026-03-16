@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
@@ -17,6 +17,49 @@ export default function HomePage() {
   const { events, loading, error } = useEvents();
   const [searchText, setSearchText] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [locOpen, setLocOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const locRef = useRef<HTMLDivElement>(null);
+  const dateRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (locRef.current && !locRef.current.contains(e.target as Node)) setLocOpen(false);
+      if (dateRef.current && !dateRef.current.contains(e.target as Node)) setDateOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  // Extract unique locations from events
+  const locationOptions = useMemo(() => {
+    if (!events) return [];
+    const locs = new Set<string>();
+    events.forEach(e => {
+      if (e.location) locs.add(e.location);
+    });
+    return Array.from(locs).sort();
+  }, [events]);
+
+  // Extract available months from events
+  const monthOptions = useMemo(() => {
+    if (!events) return [];
+    const months = new Map<string, string>();
+    events.forEach(e => {
+      const d = toDate(e.date);
+      if (d instanceof Date && !isNaN(d.getTime())) {
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!months.has(key)) {
+          const label = `${t.home.monthsFull[d.getMonth()]} ${d.getFullYear()}`;
+          months.set(key, label);
+        }
+      }
+    });
+    return Array.from(months.entries()).sort((a, b) => a[0].localeCompare(b[0])).map(([key, label]) => ({ key, label }));
+  }, [events, t.home.monthsFull]);
 
   const MARQUEE_ITEMS = [
     t.home.marquee.verifiedId,
@@ -61,19 +104,37 @@ export default function HomePage() {
     return { featuredEvent: featured, promoEvents: promo, upcomingEvents: upcoming, moreEvents: more, allListEvents: allSorted };
   }, [events]);
 
-  /* Filter events by search text */
+  /* Filter events by search text, location, and month */
+  const hasActiveFilter = searchText.trim() || selectedLocation !== 'all' || selectedMonth !== 'all';
+
   const filteredUpcoming = useMemo(() => {
-    if (!searchText.trim()) return upcomingEvents;
-    const q = searchText.toLowerCase();
     const all = [...(upcomingEvents || []), ...(moreEvents || [])];
-    return all.filter(e =>
-      e.name?.toLowerCase().includes(q) ||
-      e.venue?.toLowerCase().includes(q) ||
-      e.location?.toLowerCase().includes(q) ||
-      e.genre?.toLowerCase().includes(q) ||
-      e.lineup?.some((a: string) => a.toLowerCase().includes(q))
-    );
-  }, [searchText, upcomingEvents, moreEvents]);
+    const source = hasActiveFilter ? all : upcomingEvents;
+    return source.filter(e => {
+      // Location filter
+      if (selectedLocation !== 'all' && e.location !== selectedLocation) return false;
+      // Month filter
+      if (selectedMonth !== 'all') {
+        const d = toDate(e.date);
+        if (d instanceof Date && !isNaN(d.getTime())) {
+          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+          if (key !== selectedMonth) return false;
+        } else return false;
+      }
+      // Text search
+      if (searchText.trim()) {
+        const q = searchText.toLowerCase();
+        return (
+          e.name?.toLowerCase().includes(q) ||
+          e.venue?.toLowerCase().includes(q) ||
+          e.location?.toLowerCase().includes(q) ||
+          e.genre?.toLowerCase().includes(q) ||
+          e.lineup?.some((a: string) => a.toLowerCase().includes(q))
+        );
+      }
+      return true;
+    });
+  }, [searchText, selectedLocation, selectedMonth, upcomingEvents, moreEvents, hasActiveFilter]);
 
   const handleNavigateEvent = (eventSlugOrId: string) => {
     navigate(`/evento/${eventSlugOrId}`);
@@ -186,17 +247,52 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── Search Bar — Ported from monolith ── */}
+      {/* ── Search Bar ── */}
       <div className="search-section">
         <div className="search-bar">
-          <div className="search-field">
+          {/* Location dropdown */}
+          <div className={`search-field${locOpen ? ' search-field--active' : ''}`} ref={locRef} onClick={() => { setLocOpen(!locOpen); setDateOpen(false); }}>
             <div className="search-field-label">{t.home.location}</div>
-            <div className="search-field-value">{t.home.locationDefault}</div>
+            <div className="search-field-value">
+              {selectedLocation === 'all' ? t.home.locationDefault : selectedLocation}
+              <svg className="search-field-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+            {locOpen && (
+              <div className="search-dropdown" onClick={e => e.stopPropagation()}>
+                <div className={`search-dropdown-item${selectedLocation === 'all' ? ' active' : ''}`} onClick={() => { setSelectedLocation('all'); setLocOpen(false); }}>
+                  {t.home.locationDefault}
+                </div>
+                {locationOptions.map(loc => (
+                  <div key={loc} className={`search-dropdown-item${selectedLocation === loc ? ' active' : ''}`} onClick={() => { setSelectedLocation(loc); setLocOpen(false); }}>
+                    {loc}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="search-field">
+
+          {/* Date/month dropdown */}
+          <div className={`search-field${dateOpen ? ' search-field--active' : ''}`} ref={dateRef} onClick={() => { setDateOpen(!dateOpen); setLocOpen(false); }}>
             <div className="search-field-label">{t.home.dates}</div>
-            <div className="search-field-value">{t.home.allDates}</div>
+            <div className="search-field-value">
+              {selectedMonth === 'all' ? t.home.allDates : monthOptions.find(m => m.key === selectedMonth)?.label || t.home.allDates}
+              <svg className="search-field-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
+            </div>
+            {dateOpen && (
+              <div className="search-dropdown" onClick={e => e.stopPropagation()}>
+                <div className={`search-dropdown-item${selectedMonth === 'all' ? ' active' : ''}`} onClick={() => { setSelectedMonth('all'); setDateOpen(false); }}>
+                  {t.home.allDates}
+                </div>
+                {monthOptions.map(m => (
+                  <div key={m.key} className={`search-dropdown-item${selectedMonth === m.key ? ' active' : ''}`} onClick={() => { setSelectedMonth(m.key); setDateOpen(false); }}>
+                    {m.label}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Search text input */}
           <div className="search-field search-field--main">
             <div className="search-field-label">{t.home.search || t.common.search}</div>
             <input
@@ -292,7 +388,7 @@ export default function HomePage() {
         {upcomingEvents.length > 0 && (
           <>
             <div className="section-head" id="upcoming-events">
-              <h2 className="section-title">{searchText.trim() ? t.home.searchResults.replace('{query}', searchText) : t.home.upcoming}</h2>
+              <h2 className="section-title">{hasActiveFilter ? t.home.searchResults.replace('{query}', searchText || (selectedLocation !== 'all' ? selectedLocation : '') || (selectedMonth !== 'all' ? monthOptions.find(m => m.key === selectedMonth)?.label || '' : '')) : t.home.upcoming}</h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="view-toggle" id="ev-view-toggle">
                   <button
@@ -317,14 +413,14 @@ export default function HomePage() {
             {/* Grid view */}
             {viewMode === 'grid' && (
               <>
-                {searchText.trim() && filteredUpcoming.length === 0 ? (
+                {hasActiveFilter && filteredUpcoming.length === 0 ? (
                   <div className="home-empty-search">
                     <span style={{ fontSize: '32px', marginBottom: '12px', display: 'block' }}>🔍</span>
-                    <p>{t.common.noSearchResults} &ldquo;{searchText}&rdquo;</p>
+                    <p>{t.common.noSearchResults} {searchText ? `"${searchText}"` : ''}</p>
                   </div>
                 ) : (
-                  <div className={`events-grid${(searchText.trim() ? filteredUpcoming : upcomingEvents).length < 4 ? ' events-grid--centered' : ''}`}>
-                    {(searchText.trim() ? filteredUpcoming : upcomingEvents).map((event) => (
+                  <div className={`events-grid${(hasActiveFilter ? filteredUpcoming : upcomingEvents).length < 4 ? ' events-grid--centered' : ''}`}>
+                    {(hasActiveFilter ? filteredUpcoming : upcomingEvents).map((event) => (
                       <EventCard key={event.id} event={event} />
                     ))}
                   </div>

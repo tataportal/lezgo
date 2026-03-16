@@ -75,9 +75,6 @@ export default function Header() {
               <Link to="/mis-entradas" className="lz-btn lz-btn-ghost">
                 {t.nav.myTickets}
               </Link>
-              <button onClick={logout} className="lz-btn lz-btn-ghost">
-                {t.nav.logout}
-              </button>
               <Link to="/perfil" className="lz-avatar-link">
                 {profile?.photoURL && !avatarFailed ? (
                   <img src={profile.photoURL} alt="" className="lz-avatar" onError={handleAvatarError} />
