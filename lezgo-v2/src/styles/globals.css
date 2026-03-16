@@ -246,7 +246,7 @@ img { display: block; max-width: 100%; }
   font-size: 3rem;
   font-weight: 900;
   letter-spacing: 0.15em;
-  background: linear-gradient(135deg, #E5FF00, #00FF85, #00D4FF, #E5FF00);
+  background: linear-gradient(135deg, #E5FF00, #00FF85, #E5FF00);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

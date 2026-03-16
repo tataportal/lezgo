@@ -278,7 +278,7 @@
   font-size: 2.5rem;
   font-weight: 900;
   letter-spacing: 0.15em;
-  background: linear-gradient(135deg, var(--acid), var(--green), var(--blue), var(--acid));
+  background: linear-gradient(135deg, var(--acid), var(--green), var(--acid));
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
