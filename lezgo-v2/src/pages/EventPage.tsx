@@ -177,14 +177,23 @@ export default function EventPage() {
               const activePhase = getActivePhase(tier);
               const remaining = Math.max(0, tier.capacity - tier.sold);
               const isTierSold = remaining === 0;
+              // Check if tier is locked behind another tier
+              const prerequisiteTier = tier.unlockAfterTier
+                ? (event.tiers || []).find(t => t.id === tier.unlockAfterTier)
+                : null;
+              const isLocked = prerequisiteTier
+                ? prerequisiteTier.sold < prerequisiteTier.capacity
+                : false;
               const tierClass = `ev-tk-tier-${Math.min(idx + 1, 4)}`;
-              const cardClass = isTierSold
+              const cardClass = isLocked
+                ? 'ev-tk-card ev-tk-card--locked'
+                : isTierSold
                 ? 'ev-tk-card ev-tk-card--sold'
                 : 'ev-tk-card ev-tk-card--avail';
 
               return (
-                <div key={tier.id} className={cardClass} onClick={() => !isTierSold && handleBuyTickets()}>
-                  <div className={`ev-tk-inner ${isTierSold ? 'ev-tk-sold' : tierClass}`}>
+                <div key={tier.id} className={cardClass} onClick={() => !isTierSold && !isLocked && handleBuyTickets()}>
+                  <div className={`ev-tk-inner ${isLocked ? 'ev-tk-locked' : isTierSold ? 'ev-tk-sold' : tierClass}`}>
                     <div className="ev-tk-header">
                       <div className="ev-tk-name">{tier.name}</div>
                     </div>
@@ -225,7 +234,11 @@ export default function EventPage() {
                     )}
 
                     <div className="ev-tk-bottom">
-                      {isTierSold ? (
+                      {isLocked ? (
+                        <div className="ev-tk-locked-label">
+                          🔒 {prerequisiteTier?.name} {t.event.soldOutTag?.toLowerCase() || 'agotado'} → abre
+                        </div>
+                      ) : isTierSold ? (
                         <div className="ev-tk-sold-all">{t.event.soldOutTag}</div>
                       ) : (
                         <button className="ev-tk-buy" onClick={(e) => { e.stopPropagation(); handleBuyTickets(); }}>
@@ -236,6 +249,7 @@ export default function EventPage() {
                   </div>
 
                   {/* Hover overlay */}
+                  {!isLocked && (
                   <div className="ev-tk-overlay">
                     <div className="ev-tk-overlay-icon">{isTierSold ? '🔄' : '🎫'}</div>
                     <div className="ev-tk-overlay-text">
@@ -245,6 +259,7 @@ export default function EventPage() {
                       {isTierSold ? t.event.verifiedFans : `${remaining} ${t.event.available}`}
                     </div>
                   </div>
+                  )}
                 </div>
               );
             })}

@@ -117,6 +117,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const tierQty = quantityMap.get(tier.id);
 
         if (tierQty && tierQty.quantity > 0) {
+          // Check if tier is locked behind another tier
+          if (tier.unlockAfterTier) {
+            const prerequisiteTier = tiers.find((t: { id: string }) => t.id === tier.unlockAfterTier);
+            if (prerequisiteTier && prerequisiteTier.sold < prerequisiteTier.capacity) {
+              throw new Error(
+                `${tier.name} is not yet available. ${prerequisiteTier.name} must sell out first.`
+              );
+            }
+          }
+
           const available = tier.capacity - tier.sold;
           if (tierQty.quantity > available) {
             throw new Error(
@@ -249,7 +259,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               // Badge fields (numbered collectibles)
               ...(badgeConfig ? {
                 badgeNumber: nextBadgeNumber,
-                badgeType: badgeConfig.type,
+                badgeType: tier.badgeType || badgeConfig.type,
               } : {}),
             };
 

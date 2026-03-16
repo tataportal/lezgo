@@ -237,28 +237,61 @@ for (const ev of events) {
   }
 }
 
-// Also add the LEZGO v2 Launch event — Early Adopter badges #001-#100
+// Also add the LEZGO v2 Launch event — 3 sequential tiers with Gold/Silver/Bronze badges
+// Tickets #001-#015 reserved for the company, public starts at #016
+// Tier 1 (Gold):   #016 - #050 (35 public tickets)
+// Tier 2 (Silver): #051 - #100 (50 tickets, unlocks when Tier 1 sells out)
+// Tier 3 (Bronze): #101+       (unlocks when Tier 2 sells out)
 let lezgoEventId = null;
 for (const ev of events) {
   if (ev.name?.toLowerCase().includes('lezgo') && !updates[ev.id]) {
     console.log(`\n  Found LEZGO event: ${ev.id}`);
     lezgoEventId = ev.id;
     updates[ev.id] = {
-      tiers: [{
-        id: 'early-adopter',
-        name: 'Early Adopter',
-        capacity: 100,
-        sold: 0,
-        phases: [
-          { name: 'Launch', price: 0, active: true },
-        ],
-        includes: ['Early Adopter Badge numerado', 'Acceso prioritario', 'Beneficios exclusivos'],
-      }],
-      // Numbered collectible badge config (web2 POAP)
+      // Update date to April 5, 2026
+      date: new Date('2026-04-05T20:00:00-05:00'),
+      dateLabel: 'Domingo, 5 de abril de 2026',
+      tiers: [
+        {
+          id: 'gold',
+          name: 'Gold',
+          capacity: 35,
+          sold: 0,
+          phases: [
+            { name: 'Launch', price: 0, active: true },
+          ],
+          includes: ['Badge Oro numerado', 'Acceso prioritario', 'Beneficios exclusivos', 'Early Adopter perks'],
+          badgeType: 'gold',
+        },
+        {
+          id: 'silver',
+          name: 'Silver',
+          capacity: 50,
+          sold: 0,
+          phases: [
+            { name: 'Launch', price: 0, active: true },
+          ],
+          includes: ['Badge Plata numerado', 'Acceso prioritario', 'Beneficios exclusivos'],
+          unlockAfterTier: 'gold',
+          badgeType: 'silver',
+        },
+        {
+          id: 'bronze',
+          name: 'Bronze',
+          capacity: 100,
+          sold: 0,
+          phases: [
+            { name: 'Launch', price: 0, active: true },
+          ],
+          includes: ['Badge Bronce numerado', 'Acceso general'],
+          unlockAfterTier: 'silver',
+          badgeType: 'bronze',
+        },
+      ],
       badgeConfig: {
         type: 'early-adopter',
         label: 'Early Adopter',
-        totalSupply: 100,
+        totalSupply: 185,  // 15 reserved + 35 gold + 50 silver + 100 bronze = 200 (but public = 185)
         emoji: '⚡',
       },
     };

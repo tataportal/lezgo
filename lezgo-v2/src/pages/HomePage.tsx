@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
@@ -406,7 +406,7 @@ export default function HomePage() {
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="14" height="3" rx="1"/><rect x="1" y="6.5" width="14" height="3" rx="1"/><rect x="1" y="12" width="14" height="3" rx="1"/></svg>
                   </button>
                 </div>
-                <span className="section-more">{t.common.viewAll}</span>
+                <Link to="/eventos" className="section-more">{t.common.viewAll}</Link>
               </div>
             </div>
 
@@ -440,7 +440,7 @@ export default function HomePage() {
           <>
             <div className="section-head">
               <h2 className="section-title">{t.home.moreInLima}</h2>
-              <span className="section-more">{t.common.viewAll}</span>
+              <Link to="/eventos" className="section-more">{t.common.viewAll}</Link>
             </div>
             <div className={`events-grid${moreEvents.length < 4 ? ' events-grid--centered' : ''}`}>
               {moreEvents.map((event) => (

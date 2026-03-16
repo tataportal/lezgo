@@ -268,6 +268,32 @@
 
 .ev-tk-card--avail { /* available state — default card */ }
 
+.ev-tk-card--locked {
+  opacity: 0.4;
+  cursor: default;
+  filter: grayscale(0.5);
+}
+
+.ev-tk-card--locked:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.ev-tk-locked {
+  border-color: rgba(255,255,255,0.08);
+}
+
+.ev-tk-locked-label {
+  width: 100%;
+  padding: var(--sp-3);
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
 .ev-tk-inner {
   display: flex;
   flex-direction: column;

@@ -14,6 +14,10 @@ export interface EventTier {
   sold: number;
   phases: EventPhase[];
   includes?: string[];
+  /** If set, this tier only becomes available when the referenced tier is sold out */
+  unlockAfterTier?: string;
+  /** Badge type awarded with this tier (e.g. 'gold', 'silver', 'bronze') */
+  badgeType?: string;
 }
 
 /** Badge config for events that issue numbered collectible badges (web2 POAPs) */

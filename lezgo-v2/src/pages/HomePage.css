@@ -6,7 +6,6 @@
    MARQUEE — Ported from monolith
    ═══════════════════════════════════════════ */
 .home-marquee {
-  border-top: 2px solid var(--acid);
   border-bottom: 2px solid var(--acid);
   overflow: hidden;
   white-space: nowrap;
@@ -15,7 +14,7 @@
   align-items: center;
   height: var(--sp-12);
   position: sticky;
-  top: var(--sp-16);
+  top: var(--header-h);
   z-index: 199;
 }
 
@@ -672,14 +671,15 @@
   padding: var(--sp-5) var(--sp-4);
   cursor: pointer;
   transition: all 0.2s ease;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   margin: 0.375rem 0;
+  background: rgba(255,255,255,0.02);
 }
 
 .dl-event-row:hover {
-  background: var(--border);
-  border-color: var(--border);
+  background: rgba(255,255,255,0.06);
+  border-color: var(--acid-muted);
 }
 
 .dl-event-img {

@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 // Lazy load all pages for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
 const EventPage = lazy(() => import('./pages/EventPage'));
+const EventsPage = lazy(() => import('./pages/EventsPage'));
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <SuspenseWrap><HomePage /></SuspenseWrap>,
+      },
+      {
+        path: 'eventos',
+        element: <SuspenseWrap><EventsPage /></SuspenseWrap>,
       },
       {
         path: 'evento/:eventId',

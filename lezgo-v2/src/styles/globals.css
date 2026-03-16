@@ -159,6 +159,9 @@
   --sp-16: 4rem;
   --sp-20: 5rem;
 
+  /* ── Layout ── */
+  --header-h: calc(4.5rem + 1px); /* inner height + border-bottom */
+
   /* ── Medal / rank colors ── */
   --gold: #FFD700;
   --silver: #C0C0C0;
@@ -243,7 +246,7 @@ img { display: block; max-width: 100%; }
 /* ── Layout ── */
 .lz-main {
   min-height: calc(100vh - 10rem);
-  padding-top: 4.5rem; /* header height */
+  padding-top: var(--header-h);
 }
 
 .page-container {
@@ -284,6 +287,9 @@ img { display: block; max-width: 100%; }
 .lz-nav {
   display: flex;
   gap: var(--sp-8);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .lz-nav-link {
@@ -294,6 +300,7 @@ img { display: block; max-width: 100%; }
   letter-spacing: 1px;
   transition: color 0.2s;
   position: relative;
+  white-space: nowrap;
 }
 
 .lz-nav-link:hover,
@@ -318,41 +325,109 @@ img { display: block; max-width: 100%; }
   gap: var(--sp-3);
 }
 
-/* ── Language Toggle ── */
-.lz-lang-toggle {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  background: var(--bg);
+/* ── Greeting ── */
+.lz-header-greeting {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ── Language Flag Selector ── */
+.lz-lang-flag {
+  position: relative;
+}
+
+.lz-lang-flag-btn {
+  background: transparent;
   border: 1px solid var(--border);
   border-radius: var(--radius-btn);
-  padding: 2px;
-  margin-right: var(--sp-2);
-}
-.lz-lang-btn {
-  background: transparent;
-  color: var(--text-dim);
-  border: none;
   padding: var(--sp-1) var(--sp-2);
-  font-size: var(--fs-caption);
-  font-weight: var(--fw-caption);
-  font-family: 'Sora', sans-serif;
-  border-radius: calc(var(--radius-btn) - 2px);
   cursor: pointer;
-  transition: all 0.15s ease;
-  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s;
 }
-.lz-lang-btn:hover {
+
+.lz-lang-flag-btn:hover {
+  border-color: var(--acid-muted);
+}
+
+.lz-lang-flag-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* ── Profile Menu ── */
+.lz-profile-menu {
+  position: relative;
+}
+
+.lz-avatar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+/* ── Shared Dropdown ── */
+.lz-dropdown {
+  position: absolute;
+  top: calc(100% + var(--sp-2));
+  right: 0;
+  min-width: 12rem;
+  background: var(--gray-800);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-2) 0;
+  backdrop-filter: blur(12px);
+  z-index: var(--z-dropdown);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.lz-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--gray-100);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.lz-dropdown-item:hover {
+  background: rgba(255,255,255,0.05);
   color: var(--text);
+}
+
+.lz-dropdown-item.active {
+  color: var(--acid);
+}
+
+.lz-dropdown-item--danger {
+  color: var(--red, #ef4444);
+}
+
+.lz-dropdown-item--danger:hover {
+  background: rgba(239,68,68,0.1);
+  color: var(--red, #ef4444);
+}
+
+.lz-dropdown-divider {
+  height: 1px;
   background: var(--border);
+  margin: var(--sp-2) 0;
 }
-.lz-lang-btn--active {
-  background: var(--acid);
-  color: var(--gray-950);
-}
-.lz-lang-btn--active:hover {
-  background: var(--acid);
-  color: var(--gray-950);
+
+.lz-lang-dropdown {
+  min-width: 10rem;
 }
 
 /* ── Buttons ── */
@@ -433,32 +508,78 @@ img { display: block; max-width: 100%; }
 /* ── Footer ── */
 .lz-footer {
   border-top: 1px solid var(--border);
-  padding: var(--sp-10) var(--sp-6);
+  padding: var(--sp-12) var(--sp-6) 0;
 }
 
 .lz-footer-inner {
   max-width: 75rem;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.lz-footer-links {
-  display: flex;
-  gap: var(--sp-6);
-  font-size: var(--fs-sm);
-  color: var(--text-dim);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--sp-12);
+  padding-bottom: var(--sp-10);
 }
 
 .lz-footer-brand {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.lz-footer-tagline {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 20rem;
+}
+
+.lz-footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.lz-footer-col-title {
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: var(--sp-4);
+}
+
+.lz-footer-social-title {
+  margin-top: var(--sp-6);
+}
+
+.lz-footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
 }
 
 .lz-footer-links a:hover { color: var(--acid); }
 
-.lz-footer-copy {
+.lz-footer-socials {
+  display: flex;
+  gap: var(--sp-4);
+}
+
+.lz-footer-socials a {
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.lz-footer-socials a:hover {
+  color: var(--acid);
+}
+
+.lz-footer-bottom {
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--border);
   font-size: var(--fs-caption);
   color: var(--text-dim);
 }
@@ -474,6 +595,7 @@ img { display: block; max-width: 100%; }
     top: 4.5rem;
     left: 0;
     right: 0;
+    transform: none;
     background: var(--gray-900);
     flex-direction: column;
     padding: var(--sp-6);
@@ -485,6 +607,7 @@ img { display: block; max-width: 100%; }
   .lz-nav.lz-nav-open { display: flex; }
   .lz-mobile-toggle { display: flex; }
   .lz-header-actions { display: none; }
+  .lz-header-greeting { display: none; }
 
   .lz-mobile-actions {
     display: flex;
@@ -496,15 +619,22 @@ img { display: block; max-width: 100%; }
   }
 
   .lz-footer-inner {
-    flex-direction: column;
-    gap: var(--sp-6);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8);
+  }
+
+  .lz-footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .lz-footer-bottom {
     text-align: center;
   }
 }
 
 /* ── HiDPI / 4K scaling ── */
 @media (min-width: 2560px) {
-  html { font-size: 20px; } /* 125% scale — all rem values grow automatically */
+  html { font-size: 18.4px; } /* 115% scale — all rem values grow automatically */
 }
 
 /* ── Accessibility: respect reduced-motion preference ── */
