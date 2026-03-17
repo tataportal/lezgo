@@ -174,11 +174,12 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
     return null;
   }
 
+  const totalSelected = Object.values(quantities).reduce((sum, q) => sum + q, 0);
+
   const handleAddQty = (tierId: string) => {
-    const currentQty = quantities[tierId] || 0;
-    if (currentQty < 6) {
-      setQuantities({ ...quantities, [tierId]: currentQty + 1 });
-    }
+    // Limit: 1 ticket per DNI (1 total across all tiers)
+    if (totalSelected >= 1) return;
+    setQuantities({ ...quantities, [tierId]: 1 });
   };
 
   const handleRemoveQty = (tierId: string) => {
@@ -309,7 +310,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                         <button
                           className="pm-qty-btn"
                           onClick={() => handleAddQty(tier.id)}
-                          disabled={currentQty >= 6 || currentQty >= available}
+                          disabled={totalSelected >= 1 || currentQty >= available}
                         >
                           +
                         </button>
