@@ -110,9 +110,9 @@
 .cf-hero {
   position: relative;
   overflow: hidden;
-  padding: 4rem var(--sp-8) 4rem;
+  padding: 6rem var(--sp-8) 5rem;
   background: var(--bg);
-  min-height: 70vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,8 +123,21 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(229, 255, 0, 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(229, 255, 0, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Bottom gradient fade */
+.cf-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12rem;
+  background: linear-gradient(to top, var(--bg), transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -132,25 +145,25 @@
 .cf-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(140px);
   pointer-events: none;
   animation: glow-pulse 6s ease-in-out infinite;
 }
 
 .cf-glow-1 {
-  width: 31.25rem;
-  height: 31.25rem;
-  background: rgba(229, 255, 0, 0.12);
-  top: -6.25rem;
-  left: -6.25rem;
+  width: 40rem;
+  height: 40rem;
+  background: rgba(229, 255, 0, 0.15);
+  top: -10rem;
+  left: -10rem;
 }
 
 .cf-glow-2 {
-  width: 25rem;
-  height: 25rem;
-  background: rgba(0, 255, 133, 0.08);
-  bottom: -5rem;
-  right: -5rem;
+  width: 35rem;
+  height: 35rem;
+  background: rgba(0, 255, 133, 0.12);
+  bottom: -8rem;
+  right: -8rem;
   animation-delay: 3s;
 }
 
@@ -184,10 +197,10 @@
 }
 
 .cf-hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: var(--fw-black);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  line-height: 1;
+  letter-spacing: -0.04em;
   margin: 0 0 var(--sp-6);
   animation: fade-in-up 0.7s ease-out 0.15s both;
 }
@@ -234,9 +247,9 @@
 }
 
 .cf-hero-text {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.7;
-  color: var(--text-muted);
+  color: var(--text-dim);
   max-width: 32.5rem;
   margin-bottom: var(--sp-8);
   animation: fade-in-up 0.7s ease-out 0.3s both;

@@ -1,11 +1,8 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "redirects": [
-    { "source": "/", "has": [{ "type": "host", "value": "deck.lezgo.fans" }], "destination": "https://lezgo.fans/deck", "permanent": true },
-    { "source": "/:path(.*)", "has": [{ "type": "host", "value": "deck.lezgo.fans" }], "destination": "https://lezgo.fans/deck", "permanent": true }
-  ],
   "rewrites": [
+    { "source": "/", "has": [{ "type": "host", "value": "deck.lezgo.fans" }], "destination": "/deck" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

@@ -1,8 +1,9 @@
 import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { toDate } from '../lib/helpers';
+import { toDate, formatDateES, getEventImage } from '../lib/helpers';
 import './EventsPage.css';
 
 function getDaysInMonth(year: number, month: number) {
@@ -24,7 +25,8 @@ function isInRange(day: Date, from: Date | null, to: Date | null) {
 }
 
 export default function EventsPage() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const navigate = useNavigate();
   const { events, loading } = useEvents();
   const [searchText, setSearchText] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
@@ -47,6 +49,11 @@ export default function EventsPage() {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  const featuredEvent = useMemo(() => {
+    if (!events) return null;
+    return events.find(e => e.featured && e.status !== 'sold-out') || null;
+  }, [events]);
 
   const locationOptions = useMemo(() => {
     if (!events) return [];
@@ -178,6 +185,24 @@ export default function EventsPage() {
 
   return (
     <div className="eventos-page">
+      {/* Featured Event Hero */}
+      {featuredEvent && (
+        <section className="ev-hero" onClick={() => navigate(`/evento/${featuredEvent.slug || featuredEvent.id}`)}>
+          <div className="ev-hero-img" style={{ backgroundImage: `url(${getEventImage(featuredEvent.id, featuredEvent.image, featuredEvent.genre)})` }} />
+          <div className="ev-hero-overlay" />
+          <div className="ev-hero-content">
+            <span className="ev-hero-badge">{t.home.featured}</span>
+            <h2 className="ev-hero-title">{featuredEvent.name}</h2>
+            {featuredEvent.subtitle && <p className="ev-hero-subtitle">{featuredEvent.subtitle}</p>}
+            <p className="ev-hero-meta">
+              {formatDateES(toDate(featuredEvent.date), lang)}
+              {featuredEvent.venue ? ` · ${featuredEvent.venue}` : ''}
+              {featuredEvent.location ? `, ${featuredEvent.location}` : ''}
+            </p>
+          </div>
+        </section>
+      )}
+
       <div className="eventos-header">
         <h1 className="eventos-title">{t.organizer.allEvents}</h1>
         <p className="eventos-subtitle">{filtered.length} {filtered.length === 1 ? 'evento' : 'eventos'}</p>
