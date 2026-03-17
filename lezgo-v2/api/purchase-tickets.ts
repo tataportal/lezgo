@@ -49,8 +49,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Run everything in a Firestore transaction
+    // IMPORTANT: Firestore requires ALL reads before ALL writes
     const result = await db.runTransaction(async (transaction) => {
-      // 1. Get event from Firestore (server-side, not from client)
+      // ═══ PHASE 1: ALL READS ═══
+
+      // 1. Get event
       const eventRef = db.collection('events').doc(eventId);
       const eventSnap = await transaction.get(eventRef);
 
@@ -65,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw new Error('Event is not available for purchase');
       }
 
-      // 2. Get user profile for DNI and name (from server, not client)
+      // 2. Get user profile
       const userRef = db.collection('users').doc(user.uid);
       const userSnap = await transaction.get(userRef);
       const userProfile = userSnap.data() || {};
@@ -78,11 +81,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         throw new Error('Identity document required. Please complete your profile.');
       }
 
-      // Layer 5: Identity-based purchase limits — max 4 tickets per DNI per event
-      // B5 FIX: Use a counter document within the transaction to prevent race conditions.
-      // Firestore transactions only support transaction.get() on document references (not queries),
-      // so we maintain an atomic counter at purchaseCounts/{eventId}_{dni}.
-      const MAX_TICKETS_PER_IDENTITY = 4;
+      // 3. Get purchase counter
+      const MAX_TICKETS_PER_IDENTITY = 1;
       const requestedTotal = quantities.reduce(
         (sum: number, q: { quantity: number }) => sum + q.quantity, 0
       );
@@ -100,12 +100,61 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (existingCount + requestedTotal > MAX_TICKETS_PER_IDENTITY) {
         throw new Error(
-          `Maximum ${MAX_TICKETS_PER_IDENTITY} tickets per identity per event. ` +
-          `You already have ${existingCount}.`
+          `Máximo ${MAX_TICKETS_PER_IDENTITY} ticket por documento de identidad. ` +
+          `Ya tienes ${existingCount}.`
         );
       }
 
-      // 3. Validate inventory and calculate price
+      // 4. Get coupon (if applicable)
+      let couponRef = null;
+      let couponData = null;
+      if (couponCode) {
+        couponRef = db.collection('coupons').doc(couponCode);
+        const couponSnap = await transaction.get(couponRef);
+
+        if (!couponSnap.exists) {
+          throw new Error('Coupon not found');
+        }
+
+        couponData = couponSnap.data()!;
+
+        if (!couponData.active) throw new Error('Coupon is not active');
+
+        if ((couponData.usedCount ?? 0) >= (couponData.maxUses ?? 0)) {
+          throw new Error('Coupon usage limit reached');
+        }
+
+        if (couponData.expiresAt?.toDate() < new Date()) {
+          throw new Error('Coupon has expired');
+        }
+
+        if (couponData.eventId && couponData.eventId !== eventId) {
+          throw new Error('Coupon not valid for this event');
+        }
+      }
+
+      // 5. Get badge counter (if applicable)
+      const badgeConfig = eventData.badgeConfig || null;
+      let nextBadgeNumber = 0;
+      let badgeCounterRef = null;
+      let badgeCounterExists = false;
+      if (badgeConfig) {
+        badgeCounterRef = db.collection('badgeCounters').doc(eventId);
+        const badgeCounterSnap = await transaction.get(badgeCounterRef);
+        badgeCounterExists = badgeCounterSnap.exists;
+        nextBadgeNumber = badgeCounterExists
+          ? (badgeCounterSnap.data()!.nextNumber || 1)
+          : 1;
+
+        if (nextBadgeNumber + requestedTotal - 1 > badgeConfig.totalSupply) {
+          throw new Error(
+            `Only ${badgeConfig.totalSupply - nextBadgeNumber + 1} numbered badges remaining`
+          );
+        }
+      }
+
+      // ═══ PHASE 2: VALIDATION & PRICE CALCULATION ═══
+
       let totalPrice = 0;
       let discountApplied = 0;
       const quantityMap = new Map(
@@ -117,7 +166,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const tierQty = quantityMap.get(tier.id);
 
         if (tierQty && tierQty.quantity > 0) {
-          // Check if tier is locked behind another tier
           if (tier.unlockAfterTier) {
             const prerequisiteTier = tiers.find((t: { id: string }) => t.id === tier.unlockAfterTier);
             if (prerequisiteTier && prerequisiteTier.sold < prerequisiteTier.capacity) {
@@ -146,64 +194,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      // 4. Validate coupon server-side
       let couponDiscount = 0;
-      if (couponCode) {
-        const couponRef = db.collection('coupons').doc(couponCode);
-        const couponSnap = await transaction.get(couponRef);
-
-        if (!couponSnap.exists) {
-          throw new Error('Coupon not found');
-        }
-
-        const couponData = couponSnap.data()!;
-
-        if (!couponData.active) throw new Error('Coupon is not active');
-
-        if ((couponData.usedCount ?? 0) >= (couponData.maxUses ?? 0)) {
-          throw new Error('Coupon usage limit reached');
-        }
-
-        if (couponData.expiresAt?.toDate() < new Date()) {
-          throw new Error('Coupon has expired');
-        }
-
-        // Verify coupon is valid for this event
-        if (couponData.eventId && couponData.eventId !== eventId) {
-          throw new Error('Coupon not valid for this event');
-        }
-
+      if (couponData) {
         const discountRate = Math.min(Math.max(couponData.discount ?? 0, 0), 1);
         couponDiscount = totalPrice * discountRate;
         discountApplied = couponDiscount;
+      }
 
+      // ═══ PHASE 3: ALL WRITES ═══
+
+      // Update coupon usage
+      if (couponRef) {
         transaction.update(couponRef, {
           usedCount: FieldValue.increment(1),
         });
       }
 
-      // 5. Update event tiers
+      // Update event tiers
       transaction.update(eventRef, { tiers: updatedTiers });
 
-      // 5b. Badge numbering — if event issues numbered collectible badges
-      const badgeConfig = eventData.badgeConfig || null;
-      let nextBadgeNumber = 0;
-      if (badgeConfig) {
-        const badgeCounterRef = db.collection('badgeCounters').doc(eventId);
-        const badgeCounterSnap = await transaction.get(badgeCounterRef);
-        nextBadgeNumber = badgeCounterSnap.exists
-          ? (badgeCounterSnap.data()!.nextNumber || 1)
-          : 1;
-
-        // Validate we won't exceed total supply
-        if (nextBadgeNumber + requestedTotal - 1 > badgeConfig.totalSupply) {
-          throw new Error(
-            `Only ${badgeConfig.totalSupply - nextBadgeNumber + 1} numbered badges remaining`
-          );
-        }
-
-        // Update counter atomically
-        if (badgeCounterSnap.exists) {
+      // Update badge counter
+      if (badgeConfig && badgeCounterRef) {
+        if (badgeCounterExists) {
           transaction.update(badgeCounterRef, {
             nextNumber: nextBadgeNumber + requestedTotal,
           });
@@ -215,7 +227,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      // 6. Create ticket documents
+      // Create ticket documents
       const ticketIds: string[] = [];
       const badges: { ticketId: string; badgeNumber: number; badgeType: string }[] = [];
 
@@ -256,7 +268,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               transferredFrom: null,
               boughtInResale: false,
               deviceFingerprint, // Layer 4: audit trail
-              // Badge fields (numbered collectibles)
               ...(badgeConfig ? {
                 badgeNumber: nextBadgeNumber,
                 badgeType: tier.badgeType || badgeConfig.type,
@@ -266,7 +277,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             transaction.set(ticketRef, ticketData);
             ticketIds.push(ticketRef.id);
 
-            // Track badge assignment
             if (badgeConfig) {
               badges.push({
                 ticketId: ticketRef.id,
@@ -279,7 +289,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      // B5 FIX: Atomically update the purchase counter within the transaction
+      // Update purchase counter
       if (counterSnap.exists) {
         transaction.update(counterRef, { count: FieldValue.increment(requestedTotal) });
       } else {
