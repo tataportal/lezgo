@@ -25,6 +25,7 @@ const es = {
     search: 'Buscar',
     close: 'Cerrar',
     clear: 'Limpiar',
+    profile: 'Perfil',
     viewAll: 'Ver todos →',
     free: 'GRATIS',
     freeEntry: 'Entrada libre',

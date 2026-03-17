@@ -27,6 +27,7 @@ const en: Translations = {
     search: 'Search',
     close: 'Close',
     clear: 'Clear',
+    profile: 'Profile',
     viewAll: 'View all →',
     free: 'FREE',
     freeEntry: 'Free entry',

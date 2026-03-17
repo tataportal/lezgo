@@ -27,6 +27,7 @@ const zh: Translations = {
     search: '搜索',
     close: '关闭',
     clear: '清除',
+    profile: '个人资料',
     viewAll: '查看全部 →',
     free: '免费',
     freeEntry: '免费入场',
