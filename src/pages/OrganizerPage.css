@@ -13,7 +13,7 @@
 
 /* ── Header ── */
 .og-header {
-  background: linear-gradient(135deg, var(--acid-06) 0%, rgba(0, 255, 133, 0.02) 100%);
+  background: linear-gradient(135deg, var(--acid-06) 0%, var(--green-05) 100%);
   border-bottom: 1px solid var(--border);
   padding: var(--sp-10) var(--sp-5) 2.25rem;
 }
@@ -47,7 +47,7 @@
   color: var(--bg);
   padding: 5px var(--sp-3);
   border-radius: var(--radius-sm);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: var(--fw-extrabold);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -232,11 +232,11 @@
 
 .og-section-badge {
   display: inline-block;
-  background: rgba(0, 255, 133, 0.12);
+  background: var(--green-15);
   color: var(--green);
   padding: 3px 0.625rem;
   border-radius: var(--radius-sm);
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: var(--fw-extrabold);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -289,7 +289,7 @@
 
 .og-chart-label {
   text-align: center;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   color: var(--text-muted);
   font-weight: var(--fw-medium);
 }
@@ -609,7 +609,7 @@
 
 .og-insight {
   padding: var(--sp-5) var(--sp-6);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--alpha-subtle);
   text-align: center;
 }
 
@@ -618,7 +618,7 @@
 }
 
 .og-insight-label {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -644,8 +644,8 @@
   max-width: 75rem;
   margin: var(--sp-6) auto 0;
   padding: var(--sp-4) var(--sp-6);
-  background: rgba(0, 255, 133, 0.04);
-  border: 1px solid rgba(0, 255, 133, 0.12);
+  background: var(--green-05);
+  border: 1px solid var(--green-15);
   border-radius: var(--radius-btn);
   font-size: var(--fs-caption);
   color: var(--text-muted);
@@ -734,7 +734,7 @@
 }
 
 .og-form-error {
-  background: rgba(255, 51, 102, 0.08);
+  background: var(--pink-08);
   border: 1px solid rgba(255, 51, 102, 0.2);
   color: var(--pink);
   padding: 0.625rem var(--sp-4);
@@ -744,7 +744,7 @@
 }
 
 .og-form-success {
-  background: rgba(0, 255, 133, 0.08);
+  background: var(--green-08);
   border: 1px solid rgba(0, 255, 133, 0.2);
   color: var(--green);
   padding: 0.625rem var(--sp-4);
@@ -798,7 +798,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--sp-4) var(--sp-5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--alpha-subtle);
 }
 
 .og-coupon-code {
@@ -812,19 +812,19 @@
 .og-coupon-status {
   padding: var(--sp-1) 0.625rem;
   border-radius: var(--radius-sm);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .og-coupon-status.active {
-  background: rgba(0, 255, 133, 0.12);
+  background: var(--green-15);
   color: var(--green);
 }
 
 .og-coupon-status.inactive {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--alpha-subtle);
   color: var(--text-muted);
 }
 
@@ -846,7 +846,7 @@
 }
 
 .og-coupon-detail-label {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -946,11 +946,11 @@
   color: var(--green);
   padding: var(--sp-1) 0.625rem;
   border-radius: var(--radius-sm);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(0, 255, 133, 0.2);
+  border: 1px solid var(--green-15);
 }
 
 /* ── Event Body ── */
@@ -1073,12 +1073,12 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
 }
 
 .og-table td {
   padding: 0.625rem var(--sp-3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--alpha-subtle);
   color: var(--text);
 }
 
@@ -1121,7 +1121,7 @@
   }
 
   .og-insight {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--alpha-subtle);
   }
 
   .og-insight:nth-child(even) {
@@ -1148,7 +1148,7 @@
   }
 
   .og-badge {
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     padding: var(--sp-1) 0.625rem;
   }
 
@@ -1278,7 +1278,7 @@
 
   .og-insight {
     padding: var(--sp-4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--alpha-subtle);
   }
 
   .og-insight:nth-child(even) {
@@ -1310,4 +1310,22 @@
     flex-direction: column;
     gap: 6px;
   }
+}
+
+/* ---- Utility modifiers ---- */
+.og-btn-new--mt {
+  margin-top: var(--sp-4);
+}
+
+.og-event-tiers-expand {
+  padding: var(--sp-4);
+  border-top: 1px solid var(--border);
+}
+
+.og-metrics--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.og-metrics--4col {
+  grid-template-columns: repeat(4, 1fr);
 }

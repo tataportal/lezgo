@@ -156,7 +156,7 @@
   font-size: 0.8125rem;
   font-weight: var(--fw-medium);
   color: var(--text-muted);
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
   margin-top: var(--sp-4);
 }
 
@@ -214,7 +214,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.625rem;
+  gap: var(--sp-2);
   font-family: inherit;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
@@ -346,7 +346,7 @@
 
 .auth-link-sent-icon {
   font-size: 2.5rem;
-  margin-bottom: 0.625rem;
+  margin-bottom: var(--sp-2);
 }
 
 .auth-link-sent-sub {
@@ -380,7 +380,7 @@
 /* ── Security note ── */
 .auth-security-note {
   margin-top: var(--sp-3);
-  padding: 0.625rem 0.875rem;
+  padding: var(--sp-2) var(--sp-3);
   background-color: var(--acid-05);
   border: 1px solid var(--acid-12);
   border-radius: var(--radius-btn);
@@ -415,7 +415,7 @@
 /* ── Verified badge ── */
 .auth-verified-badge {
   display: inline-block;
-  padding: 6px var(--sp-4);
+  padding: var(--sp-2) var(--sp-4);
   background-color: var(--green-10);
   border: 1px solid var(--green-25);
   border-radius: var(--radius-3xl);
@@ -446,6 +446,20 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 768px) {
+  .auth-card {
+    max-width: 100%;
+  }
+
+  .auth-body {
+    padding: var(--sp-6);
+  }
+
+  .auth-title {
+    font-size: var(--fs-lg);
+  }
+}
+
 @media (max-width: 480px) {
   .auth-view {
     padding: var(--sp-6) var(--sp-4);

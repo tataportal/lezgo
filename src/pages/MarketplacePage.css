@@ -600,13 +600,18 @@
     align-items: flex-start;
   }
 
+  .mp-filters-left {
+    flex-wrap: wrap;
+  }
+
   .mp-listing {
     flex-wrap: wrap;
     gap: var(--sp-3);
   }
 
   .mp-listing-info {
-    min-width: 8.75rem;
+    min-width: 0;
+    flex: 1;
   }
 
   .mp-listing-right {
@@ -650,6 +655,8 @@
 
   .mp-listing-event {
     font-size: 0.875rem;
+    white-space: normal;
+    word-break: break-word;
   }
 
   .mp-listing-price {

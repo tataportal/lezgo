@@ -860,7 +860,7 @@ export default function EventFormPage() {
               </div>
 
               {/* ── Phases ── */}
-              <div style={{ marginTop: '16px' }}>
+              <div className="ef-phases-wrap">
                 <div className="ef-phase-labels">
                   <span>{t.eventForm.phaseName}</span>
                   <span>{t.eventForm.phasePrice}</span>
@@ -886,7 +886,7 @@ export default function EventFormPage() {
                       min="0"
                       step="0.01"
                     />
-                    <label className="ef-toggle-label" style={{ margin: 0, background: 'transparent' }}>
+                    <label className="ef-toggle-label ef-toggle-label--inline">
                       <input
                         type="checkbox"
                         checked={phase.active}
@@ -908,9 +908,8 @@ export default function EventFormPage() {
 
                 <button
                   type="button"
-                  className="ef-add-btn"
                   onClick={() => addPhaseToTier(tier.id)}
-                  style={{ marginTop: '12px' }}
+                  className="ef-add-btn ef-add-btn--mt"
                 >
                   {t.eventForm.addPhase}
                 </button>

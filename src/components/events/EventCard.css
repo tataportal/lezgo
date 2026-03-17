@@ -12,7 +12,7 @@
 .ev-card:hover {
   border-color: var(--acid-glow);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px var(--acid-muted), 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 40px var(--acid-muted), 0 8px 30px var(--dark-40, rgba(0, 0, 0, 0.4));
 }
 
 .ev-card__image-wrapper {
@@ -113,8 +113,21 @@
 }
 
 @media (max-width: 480px) {
-  .ev-card__content { padding: var(--sp-4); }
+  .ev-card__content {
+    padding: var(--sp-4);
+    gap: 0.25rem;
+  }
   .ev-card__title { font-size: 1.125rem; }
+  .ev-card__venue { font-size: var(--fs-caption); }
+  .ev-card__price { font-size: var(--fs-base); }
   .ev-card__price-value { font-size: 1.0625rem; }
   .ev-card__image-wrapper { height: 8.75rem; }
+  .ev-card__footer {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .ev-card__verified {
+    font-size: 0.625rem;
+    padding: 0.125rem var(--sp-1);
+  }
 }

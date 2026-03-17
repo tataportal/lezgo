@@ -86,6 +86,35 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 768px) {
+  .legal-page {
+    padding: var(--sp-16) var(--sp-5) 3rem;
+  }
+
+  .legal-title {
+    font-size: 2rem;
+  }
+
+  .legal-updated {
+    font-size: 0.8125rem;
+    margin-bottom: var(--sp-8);
+  }
+
+  .legal-section {
+    margin-bottom: var(--sp-8);
+  }
+
+  .legal-section h2 {
+    font-size: 1.0625rem;
+  }
+
+  .legal-section p,
+  .legal-list li {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+}
+
 @media (max-width: 640px) {
   .legal-page {
     padding: 3.75rem var(--sp-4) 2.5rem;

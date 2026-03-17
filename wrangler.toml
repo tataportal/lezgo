@@ -1,0 +1,19 @@
+# ── LEZGO — Cloudflare Pages Configuration ──
+#
+# Deploy: npx wrangler pages deploy dist
+# Dev:    npx wrangler pages dev dist --port 8788
+#
+# Environment variables must be set in Cloudflare dashboard:
+#   Settings → Environment variables → Production/Preview
+#   Required: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
+
+name = "lezgoapp"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Non-sensitive variables can go here
+# FIREBASE_PROJECT_ID = "your-project-id"
+
+# Pages-specific settings
+# pages_build_output_dir = "dist"

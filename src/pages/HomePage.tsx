@@ -170,7 +170,7 @@ export default function HomePage() {
     return (
       <div className="home-error">
         <p>{t.home.errorLoading}</p>
-        <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}>
+        <button onClick={() => window.location.reload()} className="home-error__btn">
           Reintentar
         </button>
       </div>
@@ -389,7 +389,7 @@ export default function HomePage() {
           <>
             <div className="section-head" id="upcoming-events">
               <h2 className="section-title">{hasActiveFilter ? t.home.searchResults.replace('{query}', searchText || (selectedLocation !== 'all' ? selectedLocation : '') || (selectedMonth !== 'all' ? monthOptions.find(m => m.key === selectedMonth)?.label || '' : '')) : t.home.upcoming}</h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="section-head__actions">
                 <div className="view-toggle" id="ev-view-toggle">
                   <button
                     className={`view-toggle-btn${viewMode === 'grid' ? ' active' : ''}`}
@@ -415,7 +415,7 @@ export default function HomePage() {
               <>
                 {hasActiveFilter && filteredUpcoming.length === 0 ? (
                   <div className="home-empty-search">
-                    <span style={{ fontSize: '32px', marginBottom: '12px', display: 'block' }}>🔍</span>
+                    <span className="home-empty-search__icon">🔍</span>
                     <p>{t.common.noSearchResults} {searchText ? `"${searchText}"` : ''}</p>
                   </div>
                 ) : (

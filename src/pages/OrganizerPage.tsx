@@ -354,7 +354,7 @@ export default function OrganizerPage() {
                 <div className="og-empty-icon">📭</div>
                 <div className="og-empty-title">{t.organizer.noEvents}</div>
                 <div className="og-empty-text">{t.organizer.noEventsDesc}</div>
-                <button className="og-btn-new" onClick={() => navigate('/event-form')} style={{ marginTop: '16px' }}>
+                <button className="og-btn-new og-btn-new--mt" onClick={() => navigate('/event-form')}>
                   {t.organizer.newEvent}
                 </button>
               </div>
@@ -392,7 +392,7 @@ export default function OrganizerPage() {
                         </button>
                       </div>
                       {expandedEventId === event.id && (
-                        <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                        <div className="og-event-tiers-expand">
                           <table className="og-table">
                             <thead>
                               <tr>
@@ -583,7 +583,7 @@ export default function OrganizerPage() {
               {analytics.coupons.totalUsages > 0 && (
                 <div className="og-section">
                   <div className="og-section-title">{t.organizer.couponAnalytics}</div>
-                  <div className="og-metrics" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                  <div className="og-metrics og-metrics--3col">
                     <div className="og-metric">
                       <div className="og-metric-label">{t.organizer.couponUsages}</div>
                       <div className="og-metric-value">{analytics.coupons.totalUsages}</div>
@@ -615,7 +615,7 @@ export default function OrganizerPage() {
                 {analytics.consumerBehavior.segments.total > 0 ? (
                   <>
                     {/* BEHAVIOR METRICS */}
-                    <div className="og-metrics" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+                    <div className="og-metrics og-metrics--4col">
                       <div className="og-metric">
                         <div className="og-metric-label">{t.organizer.uniqueBuyers}</div>
                         <div className="og-metric-value">{analytics.consumerBehavior.segments.total}</div>

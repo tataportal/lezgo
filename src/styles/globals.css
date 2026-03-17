@@ -25,14 +25,15 @@
   --bg: #0A0A0A;
 
   /* ══ BORDERS ══ */
-  --border: #222222;
+  --border: #2A2A2A;
   --border-light: rgba(255,255,255,0.12);
   --border-mid: rgba(255,255,255,0.18);
 
   /* ══ TEXT ══ */
   --text: #FFFFFF;
-  --text-muted: #666666;
-  --text-dim: #333333;
+  --text-secondary: #B0B0B0;
+  --text-muted: #8A8A8A;
+  --text-dim: #5A5A5A;
 
   /* ── Gray scale (internal refs) ── */
   --gray-950: #050505;
@@ -58,10 +59,14 @@
   --alpha-heavy: rgba(255,255,255,0.5);
 
   /* ── Acid opacity scale ── */
+  --acid-35: rgba(229,255,0,0.35);
   --acid-30: rgba(229,255,0,0.3);
+  --acid-25: rgba(229,255,0,0.25);
   --acid-20: rgba(229,255,0,0.2);
+  --acid-15: rgba(229,255,0,0.15);
   --acid-12: rgba(229,255,0,0.12);
   --acid-10: rgba(229,255,0,0.1);
+  --acid-08: rgba(229,255,0,0.08);
   --acid-06: rgba(229,255,0,0.06);
   --acid-05: rgba(229,255,0,0.05);
   --acid-04: rgba(229,255,0,0.04);
@@ -69,6 +74,7 @@
 
   /* ── Dark overlay scale ── */
   --dark-85: rgba(0,0,0,0.85);
+  --dark-70: rgba(0,0,0,0.7);
   --dark-60: rgba(0,0,0,0.6);
   --dark-45: rgba(0,0,0,0.45);
   --dark-40: rgba(0,0,0,0.4);
@@ -82,7 +88,10 @@
 
   /* ── Pink opacity scale ── */
   --pink-30: rgba(255,51,102,0.3);
+  --pink-20: rgba(255,51,102,0.2);
   --pink-15: rgba(255,51,102,0.15);
+  --pink-08: rgba(255,51,102,0.08);
+  --pink-05: rgba(255,51,102,0.05);
 
   /* ── Yellow opacity scale ── */
   --yellow-30: rgba(255,170,0,0.3);
@@ -175,6 +184,43 @@
   --z-modal: 400;
   --z-toast: 500;
   --z-max: 9999;
+
+  /* ── Transitions ── */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 0.15s;
+  --duration-normal: 0.2s;
+  --duration-slow: 0.3s;
+  --duration-image: 0.6s;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease-out;
+  --transition-smooth: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-image: 0.6s ease;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 4px 12px var(--dark-30);
+  --shadow-md: 0 8px 24px var(--dark-40);
+  --shadow-lg: 0 12px 40px var(--dark-45);
+  --shadow-xl: 0 24px 64px var(--dark-60);
+  --shadow-glow-acid: 0 0 20px var(--acid-30), 0 0 40px var(--acid-10);
+  --shadow-glow-green: 0 0 20px var(--green-30), 0 0 40px var(--green-08);
+  --shadow-hover: 0 12px 40px var(--acid-10), 0 8px 25px var(--dark-30);
+
+  /* ── Dark overlay scale (extended) ── */
+  --dark-50: rgba(0,0,0,0.5);
+  --dark-20: rgba(0,0,0,0.2);
+  --dark-10: rgba(0,0,0,0.1);
+
+  /* ── Green opacity scale (extended) ── */
+  --green-04: rgba(0,255,133,0.04);
+  --green-06: rgba(0,255,133,0.06);
+  --green-10: rgba(0,255,133,0.1);
+  --green-20: rgba(0,255,133,0.2);
+
+  /* ── Acid opacity scale (extended) ── */
+  --acid-50: rgba(229,255,0,0.5);
+  --acid-80: rgba(229,255,0,0.8);
+  --acid-40: rgba(229,255,0,0.4);
 }
 
 /* ── Base ── */
@@ -647,6 +693,10 @@ img { display: block; max-width: 100%; }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
+  .lz-header-inner {
+    padding: 0 var(--sp-4);
+  }
+
   .lz-nav {
     display: none;
     position: fixed;

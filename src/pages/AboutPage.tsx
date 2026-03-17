@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import './AboutPage.css';
@@ -45,6 +45,86 @@ const IdIcon = ({ valid }: { valid: boolean }) => (
     </svg>
   </span>
 );
+
+/* ── 3D Rotating Card ────────────────────────────────────── */
+
+interface CardFace {
+  label: string;
+  sub: string;
+  emoji: string;
+  type: 'doc' | 'ticket';
+}
+
+const cardFaces: CardFace[] = [
+  { label: 'DNI', sub: 'Documento Nacional de Identidad', emoji: '🪪', type: 'doc' },
+  { label: 'EVENT TICKET', sub: 'LEZGO Launch Party', emoji: '🎟️', type: 'ticket' },
+  { label: 'CARNET DE EXTRANJERÍA', sub: 'Permiso de Residencia', emoji: '🛂', type: 'doc' },
+  { label: 'CONFERENCE PASS', sub: 'Tech Summit 2026', emoji: '🎫', type: 'ticket' },
+  { label: 'PASAPORTE', sub: 'República del Perú', emoji: '📘', type: 'doc' },
+  { label: 'CLUB MEMBERSHIP', sub: 'VIP Access Card', emoji: '💳', type: 'ticket' },
+];
+
+const CardContent = ({ face }: { face: CardFace }) => (
+  <div className={`h3d-content h3d-content--${face.type}`}>
+    <div className="h3d-top">
+      <span className="h3d-emoji">{face.emoji}</span>
+      <span className="h3d-brand">LEZGO</span>
+    </div>
+    <div className="h3d-label">{face.label}</div>
+    <div className="h3d-sub">{face.sub}</div>
+    <div className="h3d-lines">
+      <div className="h3d-line" style={{ width: '75%' }} />
+      <div className="h3d-line" style={{ width: '55%' }} />
+      <div className="h3d-line" style={{ width: '40%' }} />
+    </div>
+    <div className="h3d-bottom">
+      <div className="h3d-chip" />
+      <span className="h3d-verified">✓ VERIFIED</span>
+    </div>
+  </div>
+);
+
+const HeroCard3D = () => {
+  const [frontIdx, setFrontIdx] = useState(0);
+  const [backIdx, setBackIdx] = useState(1);
+  const [rotation, setRotation] = useState(0);
+
+  const flip = useCallback(() => {
+    setRotation(prev => {
+      const next = prev + 180;
+      const newStep = Math.round(next / 180);
+      // After flip animation completes, update the hidden face with next content
+      setTimeout(() => {
+        if (newStep % 2 === 0) {
+          setBackIdx((newStep + 1) % cardFaces.length);
+        } else {
+          setFrontIdx((newStep + 1) % cardFaces.length);
+        }
+      }, 900);
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(flip, 2800);
+    return () => clearInterval(timer);
+  }, [flip]);
+
+  return (
+    <div className="h3d-scene">
+      <div className="h3d-card" style={{ transform: `rotateY(${rotation}deg)` }}>
+        <div className="h3d-face h3d-front">
+          <CardContent face={cardFaces[frontIdx]} />
+        </div>
+        <div className="h3d-face h3d-back">
+          <CardContent face={cardFaces[backIdx]} />
+        </div>
+      </div>
+      {/* Reflection */}
+      <div className="h3d-reflection" style={{ transform: `rotateY(${rotation}deg)` }} />
+    </div>
+  );
+};
 
 export default function AboutPage() {
   const navigate = useNavigate();
@@ -145,74 +225,72 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Hero with Fake vs Real Tickets */}
+      {/* Hero — Brutalist Avant-Garde */}
       <section className="cf-hero" id="conocenos-hero">
-        <div className="cf-glow cf-glow-1" />
-        <div className="cf-glow cf-glow-2" />
+        {/* Animated noise grain */}
+        <div className="cf-hero-noise" />
 
-        <div className="cf-hero-inner">
-          <div>
-            <div className="cf-hero-badge"><SmileyIcon /> {t.about.welcome}</div>
-            <h1>
-              <span className="outline">{t.about.buyTickets}</span>
-              <span className="acid-text" style={{ position: 'relative', display: 'inline-block' }}>
-                <span className="cf-glitch-layer cf-glitch-pink" aria-hidden="true">{t.about.tickets}</span>
-                <span className="cf-glitch-layer cf-glitch-cyan" aria-hidden="true">{t.about.tickets}</span>
-                <span style={{ animation: 'conocenos-glitch 3s infinite' }}>{t.about.tickets}</span>
-              </span>
-              <span className="white-text">{t.about.noFear}</span>
-            </h1>
-            <p className="cf-hero-text"><strong>{t.about.heroDesc}</strong></p>
-            <div className="cf-btns">
-              <button className="conocenos-pill" onClick={() => navigate('/reventa')}>{t.about.searchResale}</button>
-              <button className="conocenos-pill-outline" onClick={() => navigate('/inicio')}>{t.about.viewEvents}</button>
+        {/* Giant rotating text ring */}
+        <div className="cf-hero-ring">
+          <svg viewBox="0 0 500 500" className="cf-hero-ring-svg">
+            <defs>
+              <path id="circlePath" d="M250,250 m-200,0 a200,200 0 1,1 400,0 a200,200 0 1,1 -400,0" />
+            </defs>
+            <text>
+              <textPath href="#circlePath" className="cf-ring-text">
+                COMPRA SEGURA • SIN ESTAFAS • ID VERIFICADO • REVENTA OFICIAL • COMPRA SEGURA • SIN ESTAFAS • ID VERIFICADO • REVENTA OFICIAL •
+              </textPath>
+            </text>
+          </svg>
+        </div>
+
+        <div className="cf-hero-content">
+          <div className="cf-hero-eyebrow">
+            <span className="cf-hero-eyebrow-line" />
+            <span>{t.about.welcome}</span>
+            <span className="cf-hero-eyebrow-line" />
+          </div>
+
+          <h1 className="cf-hero-title">
+            <span className="cf-hero-title-outline">{t.about.buyTickets}</span>
+            <span className="cf-hero-title-accent">
+              <span className="cf-hero-title-accent-bg" />
+              {t.about.tickets}
+            </span>
+            <span className="cf-hero-title-white">{t.about.noFear}</span>
+          </h1>
+
+          <p className="cf-hero-subtitle">{t.about.heroDesc}</p>
+
+          <HeroCard3D />
+
+          <div className="cf-hero-stats">
+            <div className="cf-hero-stat">
+              <span className="cf-hero-stat-num">0%</span>
+              <span className="cf-hero-stat-label">ESTAFAS</span>
+            </div>
+            <div className="cf-hero-stat-divider" />
+            <div className="cf-hero-stat">
+              <span className="cf-hero-stat-num">100%</span>
+              <span className="cf-hero-stat-label">VERIFICADO</span>
+            </div>
+            <div className="cf-hero-stat-divider" />
+            <div className="cf-hero-stat">
+              <span className="cf-hero-stat-num">1:1</span>
+              <span className="cf-hero-stat-label">TICKET = DNI</span>
             </div>
           </div>
 
-          {/* Fake vs Real Tickets — ID-based, no QR */}
-          <div className="cf-tickets">
-            <div className="cf-ticket cf-ticket-fake">
-              <div className="gline gline-1" />
-              <div className="gline gline-2" />
-              <div className="gline gline-3" />
-              <div className="cf-ticket-badge badge-fake">FALSO</div>
-              <div className="cf-ticket-event">Bad Bunny — World Tour</div>
-              <div className="cf-ticket-venue-sm">Estadio Nacional · 15 Mar 2026</div>
-              <div className="cf-ticket-row">
-                <div>
-                  <div className="cf-ticket-price-label">{t.about.scammerPrice}</div>
-                  <div className="cf-ticket-price">S/450</div>
-                </div>
-                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.4)', textAlign: 'right' as const }}>
-                  {t.about.realPrice} <span style={{ textDecoration: 'line-through' }}>S/90</span>
-                </div>
-              </div>
-              <div className="cf-ticket-id">
-                <IdIcon valid={false} />
-                <span>{t.about.invalidId}</span>
-              </div>
-            </div>
-
-            <div className="cf-ticket cf-ticket-real">
-              <div className="cf-ticket-badge badge-verified"><SmileyIcon /> {t.about.verifiedBadge}</div>
-              <div className="cf-ticket-event">Bad Bunny — World Tour</div>
-              <div className="cf-ticket-venue-sm">Estadio Nacional · 15 Mar 2026</div>
-              <div className="cf-ticket-row">
-                <div>
-                  <div className="cf-ticket-price-label">{t.about.fairPrice}</div>
-                  <div className="cf-ticket-price">S/90</div>
-                </div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'right' as const }}>
-                  {t.about.linkedTo}<br />
-                  <span style={{ color: 'var(--acid)', fontWeight: 700 }}>Mario L. ✓</span>
-                </div>
-              </div>
-              <div className="cf-ticket-id cf-ticket-id--valid">
-                <IdIcon valid={true} />
-                <span>{t.about.idVerified}</span>
-              </div>
-            </div>
+          <div className="cf-btns">
+            <button className="conocenos-pill" onClick={() => navigate('/eventos')}>{t.about.viewEvents}</button>
+            <button className="conocenos-pill-outline" onClick={() => navigate('/reventa')}>{t.about.searchResale}</button>
           </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="cf-hero-scroll">
+          <div className="cf-hero-scroll-line" />
+          <span>SCROLL</span>
         </div>
       </section>
 

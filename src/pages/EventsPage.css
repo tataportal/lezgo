@@ -51,7 +51,7 @@
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.25rem 0.75rem;
+  padding: var(--sp-1) var(--sp-3);
   border-radius: var(--radius-sm);
   margin-bottom: var(--sp-3);
 }
@@ -148,7 +148,7 @@
 }
 
 .ef-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--acid-05);
 }
 
 .ef-dropdown-item.active {
@@ -229,11 +229,11 @@
 .ef-cal-empty { cursor: default; }
 
 .ef-cal-cell:not(.ef-cal-empty):hover {
-  background: rgba(255,255,255,0.08);
+  background: var(--acid-08);
 }
 
 .ef-cal-dow-active {
-  background: rgba(229,255,0,0.12);
+  background: var(--acid-12);
   color: var(--text);
 }
 
@@ -250,7 +250,7 @@
 }
 
 .ef-cal-in-range {
-  background: rgba(229,255,0,0.1) !important;
+  background: var(--acid-10) !important;
 }
 
 .ef-cal-start,
@@ -343,7 +343,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--sp-6);
 }
 
 .loader-logo {
@@ -371,13 +371,13 @@
 
 .loader-bars {
   display: flex;
-  gap: 0.35rem;
+  gap: var(--sp-1);
   align-items: end;
   height: 2rem;
 }
 
 .loader-bars span {
-  width: 0.35rem;
+  width: var(--sp-1);
   border-radius: 999px;
   animation: loader-bar 1s ease-in-out infinite;
 }
@@ -443,6 +443,15 @@
   .ef-field {
     min-width: unset;
   }
+  .ev-hero {
+    height: 16rem;
+  }
+  .ev-hero-content {
+    padding: var(--sp-6);
+  }
+  .ev-hero-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
 }
 
 @media (max-width: 480px) {
@@ -452,5 +461,14 @@
   .eventos-grid {
     grid-template-columns: 1fr;
     gap: 0.875rem;
+  }
+  .ev-hero {
+    height: 13rem;
+  }
+  .ev-hero-title {
+    font-size: 1.375rem;
+  }
+  .ev-hero-content {
+    padding: var(--sp-5);
   }
 }

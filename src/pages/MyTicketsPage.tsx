@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserActiveTickets, useUserPastTickets } from '../hooks/useTickets';
@@ -65,6 +65,24 @@ export default function MyTicketsPage() {
   });
 
   const displayName = profile?.displayName || user?.email?.split('@')[0] || (t.myTickets.userFallback || 'Usuario');
+
+  // Notification panel
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const demoNotifications = [
+    { id: '1', icon: '🎟️', title: 'Ticket confirmado', desc: 'Tu entrada para LEZGO v2 Launch fue confirmada.', time: 'Hace 2h', unread: true },
+    { id: '2', icon: '⚡', title: 'Badge desbloqueado', desc: 'Early Supporter — eres uno de los primeros.', time: 'Hace 1d', unread: true },
+    { id: '3', icon: '🎉', title: 'Nuevo evento disponible', desc: 'Un nuevo evento ha sido publicado en tu zona.', time: 'Hace 3d', unread: true },
+  ];
 
   const handleResaleTabClick = async () => {
     if (!user) return;
@@ -144,22 +162,22 @@ export default function MyTicketsPage() {
     const isResale = ticket.status === 'resale-listed';
 
     const statusBadge = () => {
-      if (isActive && ticket.boughtInResale) return <span className="mt-ticket-status-badge mt-ticket-status-resale-purchase"><span style={{fontSize:10}}>●</span> {t.myTickets.boughtInResale}</span>;
-      if (isActive) return <span className="mt-ticket-status-badge mt-ticket-status-active"><span style={{fontSize:10}}>●</span> {t.myTickets.statusActive}</span>;
-      if (isUsed) return <span className="mt-ticket-status-badge mt-ticket-status-used"><span style={{fontSize:10}}>●</span> {t.myTickets.statusUsed}</span>;
-      if (isTransferred) return <span className="mt-ticket-status-badge mt-ticket-status-transferred"><span style={{fontSize:10}}>●</span> {t.myTickets.statusTransferred}</span>;
-      if (isResale) return <span className="mt-ticket-status-badge mt-ticket-status-resale"><span style={{fontSize:10}}>●</span> {t.myTickets.statusResale}</span>;
+      if (isActive && ticket.boughtInResale) return <span className="mt-ticket-status-badge mt-ticket-status-resale-purchase"><span className="mt-status-dot">●</span> {t.myTickets.boughtInResale}</span>;
+      if (isActive) return <span className="mt-ticket-status-badge mt-ticket-status-active"><span className="mt-status-dot">●</span> {t.myTickets.statusActive}</span>;
+      if (isUsed) return <span className="mt-ticket-status-badge mt-ticket-status-used"><span className="mt-status-dot">●</span> {t.myTickets.statusUsed}</span>;
+      if (isTransferred) return <span className="mt-ticket-status-badge mt-ticket-status-transferred"><span className="mt-status-dot">●</span> {t.myTickets.statusTransferred}</span>;
+      if (isResale) return <span className="mt-ticket-status-badge mt-ticket-status-resale"><span className="mt-status-dot">●</span> {t.myTickets.statusResale}</span>;
       return null;
     };
 
     const imgStyle = ticket.image
       ? { backgroundImage: `url(${ticket.image})` }
-      : { background: 'linear-gradient(135deg,#1a1a2e,#16213e)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2em' } as React.CSSProperties;
+      : {} as React.CSSProperties;
 
     return (
       <div key={ticket.id} className={`mt-ticket ${isUsed ? 'used' : ''}`}>
         <div className="mt-ticket-head" onClick={() => setExpandedTicketId(expandedTicketId === ticket.id ? null : ticket.id)}>
-          <div className="mt-ticket-img" style={imgStyle}>
+          <div className={`mt-ticket-img${!ticket.image ? ' mt-ticket-img--placeholder' : ''}`} style={imgStyle}>
             {!ticket.image && '🎧'}
           </div>
           <div className="mt-ticket-info">
@@ -222,12 +240,12 @@ export default function MyTicketsPage() {
             </div>
             <div className="mt-ticket-detail-row">
               <span className="mt-ticket-detail-label">{t.myTickets.verification}</span>
-              <span className="mt-ticket-detail-value" style={{color:'#00FF85'}}>{t.myTickets.verifiedWithLezgo}</span>
+              <span className="mt-ticket-detail-value mt-ticket-detail-value--verified">{t.myTickets.verifiedWithLezgo}</span>
             </div>
             {ticket.badgeNumber && (
               <div className="mt-ticket-detail-row">
                 <span className="mt-ticket-detail-label">Collectible Badge</span>
-                <span className="mt-ticket-detail-value" style={{color: 'var(--acid)'}}>⚡ Early Adopter #{String(ticket.badgeNumber).padStart(3, '0')} / 100</span>
+                <span className="mt-ticket-detail-value mt-ticket-detail-value--badge">⚡ Early Adopter #{String(ticket.badgeNumber).padStart(3, '0')} / 100</span>
               </div>
             )}
           </div>
@@ -245,7 +263,34 @@ export default function MyTicketsPage() {
           <p>{subtitleText}</p>
         </div>
         <div className="mt-header-right">
-          <button className="notif-bell">🔔<span className="notif-badge">3</span></button>
+          <div className="notif-wrapper" ref={notifRef}>
+            <button className="notif-bell" onClick={() => setNotifOpen(!notifOpen)}>
+              🔔<span className="notif-badge">{demoNotifications.length}</span>
+            </button>
+            {notifOpen && (
+              <div className="notif-panel">
+                <div className="notif-panel-header">
+                  <span className="notif-panel-title">Notificaciones</span>
+                  <button className="notif-mark-all" onClick={() => { toast.success('Marcadas como leídas'); setNotifOpen(false); }}>
+                    Marcar todo
+                  </button>
+                </div>
+                <div className="notif-panel-list">
+                  {demoNotifications.map(n => (
+                    <div key={n.id} className={`notif-item ${n.unread ? 'notif-item--unread' : ''}`}>
+                      <span className="notif-item-icon">{n.icon}</span>
+                      <div className="notif-item-content">
+                        <div className="notif-item-title">{n.title}</div>
+                        <div className="notif-item-desc">{n.desc}</div>
+                        <div className="notif-item-time">{n.time}</div>
+                      </div>
+                      {n.unread && <span className="notif-item-dot" />}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           <div className="mt-avatar-mini" onClick={() => navigate('/perfil')}>
             {getInitials(displayName)}
           </div>
@@ -269,7 +314,7 @@ export default function MyTicketsPage() {
       {tab === 'proximas' && (
         <div className="mt-panel">
           {activeLoading ? (
-            <div className="mt-empty"><p style={{color:'#555'}}>{t.myTickets.loadingTickets}</p></div>
+            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
           ) : activeTickets.length === 0 ? (
             <div className="mt-empty">
               <div className="mt-empty-icon">🎫</div>
@@ -287,7 +332,7 @@ export default function MyTicketsPage() {
       {tab === 'pasadas' && (
         <div className="mt-panel">
           {pastLoading ? (
-            <div className="mt-empty"><p style={{color:'#555'}}>{t.myTickets.loadingTickets}</p></div>
+            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
           ) : pastTickets.length === 0 ? (
             <div className="mt-empty">
               <div className="mt-empty-icon">📊</div>
@@ -304,7 +349,7 @@ export default function MyTicketsPage() {
       {tab === 'reventas' && (
         <div className="mt-panel">
           {resaleLoading ? (
-            <div className="mt-empty"><p style={{color:'#555'}}>{t.myTickets.loadingTickets}</p></div>
+            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
           ) : resaleListings.length === 0 ? (
             <div className="mt-empty">
               <div className="mt-empty-icon">💸</div>
@@ -315,12 +360,12 @@ export default function MyTicketsPage() {
             resaleListings.map(resale => (
               <div key={resale.id} className="mt-ticket">
                 <div className="mt-ticket-head">
-                  <div className="mt-ticket-img" style={{ background: 'linear-gradient(135deg,#1a1a2e,#16213e)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.2em' }}>🎧</div>
+                  <div className="mt-ticket-img mt-ticket-img--placeholder">🎧</div>
                   <div className="mt-ticket-info">
                     <div className="mt-ticket-event">{resale.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
                     <div className="mt-ticket-meta">
                       <div>{resale.ticketTier || (t.myTickets.ticketFallback || 'Entrada')} · {fmtPrice(resale.askingPrice)}</div>
-                      <span className="mt-ticket-status-badge mt-ticket-status-resale"><span style={{fontSize:10}}>●</span> {t.myTickets.statusResale}</span>
+                      <span className="mt-ticket-status-badge mt-ticket-status-resale"><span className="mt-status-dot">●</span> {t.myTickets.statusResale}</span>
                     </div>
                   </div>
                 </div>

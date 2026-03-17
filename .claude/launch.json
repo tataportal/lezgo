@@ -4,7 +4,7 @@
     {
       "name": "lezgo-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "lezgo-v2"],
+      "runtimeArgs": ["run", "dev"],
       "port": 5173
     }
   ]

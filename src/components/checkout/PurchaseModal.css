@@ -19,7 +19,7 @@
   max-height: 90vh;
   overflow-y: auto;
   padding: var(--sp-10);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 60px var(--dark-50, rgba(0, 0, 0, 0.5));
   position: relative;
   animation: slide-up 0.3s ease-out;
 }
@@ -78,6 +78,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .pm-content--centered {
@@ -244,7 +246,7 @@
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right var(--sp-3) center;
   padding-right: 2.25rem;
@@ -389,7 +391,7 @@
   font-weight: var(--fw-bold);
   margin-bottom: var(--sp-4);
   animation: pm-check-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 0 40px rgba(0, 255, 133, 0.3), 0 0 80px rgba(229, 255, 0, 0.1);
+  box-shadow: 0 0 40px var(--green-30), 0 0 80px var(--acid-10);
   position: relative;
   z-index: 1;
 }
@@ -405,7 +407,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-4);
   padding: var(--sp-5);
-  background: linear-gradient(135deg, rgba(229, 255, 0, 0.04), rgba(0, 255, 133, 0.04));
+  background: linear-gradient(135deg, var(--acid-04), var(--green-04, rgba(0, 255, 133, 0.04)));
   border: 1px solid var(--acid-08);
   border-radius: var(--radius-lg);
   margin: var(--sp-4) 0;
@@ -531,6 +533,14 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .pm-modal {
+    max-width: 100%;
+    margin: 0 var(--sp-3);
+    padding: var(--sp-8);
+  }
+}
+
 @media (max-width: 480px) {
   .pm-modal {
     max-width: 100%;
@@ -567,7 +577,7 @@
   text-align: center;
   padding: var(--sp-8) var(--sp-6);
   margin: var(--sp-4) 0;
-  background: linear-gradient(135deg, rgba(229, 255, 0, 0.06), rgba(0, 255, 133, 0.06));
+  background: linear-gradient(135deg, var(--acid-06), var(--green-06, rgba(0, 255, 133, 0.06)));
   border: 1px solid var(--acid-20);
   border-radius: var(--radius-lg);
   animation: badge-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
@@ -640,6 +650,23 @@
 }
 
 @keyframes badge-glow {
-  0%, 100% { filter: brightness(1) drop-shadow(0 0 12px rgba(229, 255, 0, 0.5)); }
-  50% { filter: brightness(1.4) drop-shadow(0 0 20px rgba(229, 255, 0, 0.8)); }
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 12px var(--acid-50, rgba(229, 255, 0, 0.5))); }
+  50% { filter: brightness(1.4) drop-shadow(0 0 20px var(--acid-80, rgba(229, 255, 0, 0.8))); }
+}
+
+/* ---- Auth flow helpers ---- */
+.pm-or-divider {
+  text-align: center;
+  color: var(--text-dim);
+  margin: var(--sp-3) 0;
+}
+
+.pm-input--mb {
+  margin-bottom: var(--sp-2);
+}
+
+.pm-magic-link-sent {
+  text-align: center;
+  padding: var(--sp-6) 0;
+  color: var(--text-muted);
 }

@@ -18,7 +18,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  margin-bottom: var(--sp-6);
 }
 
 .mt-header-left h1 {
@@ -79,6 +79,125 @@
   line-height: 1;
 }
 
+/* Notification wrapper */
+.notif-wrapper {
+  position: relative;
+}
+
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 20rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  overflow: hidden;
+  animation: fade-in-up 0.2s ease-out;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notif-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.notif-panel-title {
+  font-size: 0.8125rem;
+  font-weight: var(--fw-extrabold);
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.notif-mark-all {
+  background: none;
+  border: none;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--acid);
+  cursor: pointer;
+  padding: 0;
+}
+
+.notif-mark-all:hover {
+  text-decoration: underline;
+}
+
+.notif-panel-list {
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.notif-item {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.notif-item--unread {
+  background: var(--acid-03);
+}
+
+.notif-item-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notif-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-item-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.notif-item-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.notif-item-time {
+  font-size: 0.625rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.notif-item-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acid);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
 /* Mini avatar */
 .mt-avatar-mini {
   width: 2.25rem;
@@ -103,7 +222,7 @@
 /* ---- Filter tabs ---- */
 .mt-filter-tabs {
   display: flex;
-  gap: 6px;
+  gap: var(--sp-2);
   margin-bottom: var(--sp-6);
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
@@ -145,7 +264,7 @@
   border-radius: 0.6875rem;
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  padding: 0 6px;
+  padding: 0 var(--sp-2);
 }
 
 .mt-tab.active .mt-tab-count {
@@ -228,8 +347,8 @@
 .mt-ticket-head {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem var(--sp-4);
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
   cursor: pointer;
 }
 
@@ -309,7 +428,7 @@
 }
 
 .mt-ticket-status-used {
-  background-color: rgba(153, 153, 153, 0.2);
+  background-color: var(--dark-45);
   color: var(--text-muted);
 }
 
@@ -366,7 +485,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.625rem 0;
-  border-bottom: 1px solid rgba(34, 34, 34, 0.5);
+  border-bottom: 1px solid var(--dark-45);
   font-size: 0.8125rem;
 }
 
@@ -428,7 +547,7 @@
   font-weight: var(--fw-extrabold);
   color: var(--acid);
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
 }
 
 .mt-footer-copy {
@@ -645,6 +764,29 @@
    Responsive
    ================================================ */
 
+@media (max-width: 768px) {
+  .mt-view {
+    padding: var(--sp-4);
+  }
+
+  .mt-header {
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .mt-modal {
+    max-width: 100%;
+  }
+
+  .mt-modal-actions {
+    flex-direction: column;
+  }
+
+  .notif-panel {
+    width: 16rem;
+  }
+}
+
 @media (max-width: 480px) {
   .mt-view {
     padding: var(--sp-4);
@@ -680,4 +822,28 @@
     padding: 0.6875rem 0.875rem;
     font-size: 0.8125rem;
   }
+}
+
+/* ---- Status dot ---- */
+.mt-status-dot {
+  font-size: var(--fs-caption);
+}
+
+/* ---- Placeholder ticket image ---- */
+.mt-ticket-img--placeholder {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+}
+
+/* ---- Verified value ---- */
+.mt-ticket-detail-value--verified {
+  color: var(--green);
+}
+
+/* ---- Badge value ---- */
+.mt-ticket-detail-value--badge {
+  color: var(--acid);
 }

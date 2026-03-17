@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name lezgoapp",
+    "deploy:preview": "npm run build && npx wrangler pages deploy dist --project-name lezgoapp --branch preview",
+    "cf:dev": "npx wrangler pages dev dist --port 8788"
   },
   "dependencies": {
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
     "firebase": "^12.10.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -24,7 +25,8 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vercel/node": "^5.6.15",
+    "@cloudflare/workers-types": "^4.20241224.0",
+    "wrangler": "^3.99.0",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",

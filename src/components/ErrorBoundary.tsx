@@ -46,14 +46,14 @@ export class ErrorBoundary extends Component<Props, State> {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '2rem',
-          color: '#fff',
+          padding: 'var(--sp-8)',
+          color: 'var(--text)',
           textAlign: 'center',
         }}>
-          <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#E5FF00' }}>
+          <h1 style={{ fontSize: 'var(--fs-h1)', marginBottom: 'var(--sp-4)', color: 'var(--acid)' }}>
             {texts.title}
           </h1>
-          <p style={{ color: '#999', marginBottom: '2rem', maxWidth: '400px' }}>
+          <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--sp-8)', maxWidth: '400px' }}>
             {texts.desc}
           </p>
           <button
@@ -62,11 +62,11 @@ export class ErrorBoundary extends Component<Props, State> {
               window.location.reload();
             }}
             style={{
-              background: '#E5FF00',
-              color: '#0A0A0A',
+              background: 'var(--acid)',
+              color: 'var(--bg)',
               border: 'none',
-              padding: '12px 32px',
-              borderRadius: '8px',
+              padding: 'var(--sp-3) var(--sp-8)',
+              borderRadius: 'var(--radius-md)',
               fontWeight: 700,
               fontSize: '1rem',
               cursor: 'pointer',

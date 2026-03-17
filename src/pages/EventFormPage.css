@@ -242,7 +242,7 @@
 }
 
 .ef-remove-btn:hover {
-  background: rgba(255,51,102,0.12);
+  background: var(--pink-15);
 }
 
 /* ── Add Button ── */
@@ -318,7 +318,7 @@
   gap: var(--sp-3);
   align-items: center;
   padding: 0.625rem 0;
-  border-bottom: 1px solid rgba(34, 34, 34, 0.5);
+  border-bottom: 1px solid var(--dark-45);
 }
 
 .ef-phase-row:last-of-type {
@@ -329,7 +329,7 @@
 .ef-toggle-label {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--sp-2);
   font-size: 0.875rem;
   color: var(--text);
   cursor: pointer;
@@ -375,7 +375,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  padding: var(--sp-2) 0;
   font-size: 0.8125rem;
 }
 
@@ -551,4 +551,18 @@
     padding: var(--sp-3) var(--sp-4);
     font-size: 0.8125rem;
   }
+}
+
+/* ---- Phase wrapper ---- */
+.ef-phases-wrap {
+  margin-top: var(--sp-4);
+}
+
+.ef-add-btn--mt {
+  margin-top: var(--sp-3);
+}
+
+.ef-toggle-label--inline {
+  margin: 0;
+  background: transparent;
 }

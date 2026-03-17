@@ -1,0 +1,16 @@
+# ── Cloudflare Pages Headers ──
+# Equivalent to vercel.json headers configuration
+
+# Immutable cache for hashed assets
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Security headers for all pages
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-DNS-Prefetch-Control: on
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://www.gstatic.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com; frame-src https://accounts.google.com https://*.firebaseapp.com https://www.youtube.com; object-src 'none'; base-uri 'self'

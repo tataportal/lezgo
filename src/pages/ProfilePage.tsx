@@ -8,7 +8,7 @@ import type { Ticket } from '../lib/types';
 import toast from 'react-hot-toast';
 import './ProfilePage.css';
 
-/** Avatar with fallback: tries image → falls back to initials on acid bg */
+/** Avatar with fallback */
 function UserAvatar({ photoURL, displayName }: { photoURL?: string; displayName?: string }) {
   const [imgFailed, setImgFailed] = useState(false);
   const handleError = useCallback(() => setImgFailed(true), []);
@@ -24,8 +24,6 @@ function UserAvatar({ photoURL, displayName }: { photoURL?: string; displayName?
 interface Badge {
   id: string;
   emoji: string;
-  name: string;
-  description: string;
   tier: 'none' | 'bronze' | 'silver' | 'gold';
   progress: number;
   maxProgress: number;
@@ -41,12 +39,16 @@ interface BadgeCalc {
   presaleTickets: number;
   vipTickets: number;
   uniqueDistricts: number;
-  isEarlyAdopter: boolean;
+  hasAccount: boolean;
+  isVerified: boolean;
+  isEarlySupporterr: boolean;
 }
 
 const BADGE_KEY_MAP: Record<string, string> = {
+  'registered': 'registered',
+  'verified': 'verified',
+  'early-supporter': 'earlySupporterr',
   'party-animal': 'fiestero',
-  'early-adopter': 'earlyAdopter',
   'bass-monster': 'bassMonster',
   'presale-hunter': 'preventaHunter',
   'lima-explorer': 'limaExplorer',
@@ -56,28 +58,37 @@ const BADGE_KEY_MAP: Record<string, string> = {
 };
 
 const BADGES: Badge[] = [
-  { id:'party-animal', emoji:'🎧', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  // New: account creation badge
+  { id:'registered', emoji:'🎫', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.hasAccount ? 'gold' : 'none',
+    calculateProgress: d => ({ current: d.hasAccount ? 1 : 0, max: 1 }) },
+  // New: verified DNI badge
+  { id:'verified', emoji:'✅', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.isVerified ? 'gold' : 'none',
+    calculateProgress: d => ({ current: d.isVerified ? 1 : 0, max: 1 }) },
+  // Renamed: early supporter (has badge number)
+  { id:'early-supporter', emoji:'⚡', tier:'none', progress:0, maxProgress:0,
+    calculateTier: d => d.isEarlySupporterr ? 'gold' : 'none',
+    calculateProgress: d => ({ current: d.isEarlySupporterr ? 1 : 0, max: 1 }) },
+  { id:'party-animal', emoji:'🎧', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.totalTickets>=30?'gold':d.totalTickets>=15?'silver':d.totalTickets>=5?'bronze':'none',
     calculateProgress: d => d.totalTickets>=30?{current:30,max:30}:d.totalTickets>=15?{current:d.totalTickets,max:30}:{current:d.totalTickets,max:5}},
-  { id:'early-adopter', emoji:'⚡', name:'', description:'', tier:'none', progress:0, maxProgress:0,
-    calculateTier: d => d.isEarlyAdopter?'gold':'none',
-    calculateProgress: d => ({current:d.isEarlyAdopter?1:0,max:1})},
-  { id:'bass-monster', emoji:'🔊', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'bass-monster', emoji:'🔊', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.technoTickets>=30?'gold':d.technoTickets>=15?'silver':d.technoTickets>=5?'bronze':'none',
     calculateProgress: d => d.technoTickets>=30?{current:30,max:30}:d.technoTickets>=15?{current:d.technoTickets,max:30}:{current:d.technoTickets,max:5}},
-  { id:'presale-hunter', emoji:'🎯', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'presale-hunter', emoji:'🎯', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.presaleTickets>=30?'gold':d.presaleTickets>=15?'silver':d.presaleTickets>=5?'bronze':'none',
     calculateProgress: d => d.presaleTickets>=30?{current:30,max:30}:d.presaleTickets>=15?{current:d.presaleTickets,max:30}:{current:d.presaleTickets,max:5}},
-  { id:'lima-explorer', emoji:'🧭', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'lima-explorer', emoji:'🧭', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.uniqueDistricts>=10?'gold':d.uniqueDistricts>=6?'silver':d.uniqueDistricts>=3?'bronze':'none',
     calculateProgress: d => d.uniqueDistricts>=10?{current:10,max:10}:d.uniqueDistricts>=6?{current:d.uniqueDistricts,max:10}:{current:d.uniqueDistricts,max:3}},
-  { id:'resale-pro', emoji:'🤝', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'resale-pro', emoji:'🤝', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.completedResales>=25?'gold':d.completedResales>=10?'silver':d.completedResales>=3?'bronze':'none',
     calculateProgress: d => d.completedResales>=25?{current:25,max:25}:d.completedResales>=10?{current:d.completedResales,max:25}:{current:d.completedResales,max:3}},
-  { id:'vip-status', emoji:'💎', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'vip-status', emoji:'💎', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.vipTickets>=25?'gold':d.vipTickets>=10?'silver':d.vipTickets>=3?'bronze':'none',
     calculateProgress: d => d.vipTickets>=25?{current:25,max:25}:d.vipTickets>=10?{current:d.vipTickets,max:25}:{current:d.vipTickets,max:3}},
-  { id:'big-spender', emoji:'💰', name:'', description:'', tier:'none', progress:0, maxProgress:0,
+  { id:'big-spender', emoji:'💰', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.totalSpent>=5000?'gold':d.totalSpent>=2000?'silver':d.totalSpent>=500?'bronze':'none',
     calculateProgress: d => {const s=Math.floor(d.totalSpent);return s>=5000?{current:5000,max:5000}:s>=2000?{current:s,max:5000}:{current:s,max:500}}},
 ];
@@ -118,22 +129,25 @@ export default function ProfilePage() {
   const { user, profile, loading, logout, updateProfile, isPromoter } = useAuth();
   const { tickets } = useUserTickets(user?.uid || '');
   const { t, lang } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'profile' | 'tickets'>('profile');
-  const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(profile?.displayName || '');
   const [isSaving, setIsSaving] = useState(false);
   const [badges, setBadges] = useState<Badge[]>(BADGES);
+  const [showAllBadges, setShowAllBadges] = useState(false);
+  const [badgeSort, setBadgeSort] = useState<'default' | 'rarity'>('default');
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     const data: BadgeCalc = {
       totalTickets: tickets.length,
-      totalSpent: tickets.reduce((s, t) => s + (t.price || 0), 0),
-      completedResales: tickets.filter(t => t.status === 'transferred').length,
-      technoTickets: tickets.filter(t => t.ticketType === 'techno').length,
-      presaleTickets: tickets.filter(t => t.couponCode === 'PRESALE').length,
-      vipTickets: tickets.filter(t => t.ticketName?.includes('VIP')).length,
-      uniqueDistricts: new Set(tickets.map(t => t.eventLocation).filter(Boolean)).size,
-      isEarlyAdopter: false,
+      totalSpent: tickets.reduce((s, tk) => s + (tk.price || 0), 0),
+      completedResales: tickets.filter(tk => tk.status === 'transferred').length,
+      technoTickets: tickets.filter(tk => tk.ticketType === 'techno').length,
+      presaleTickets: tickets.filter(tk => tk.couponCode === 'PRESALE').length,
+      vipTickets: tickets.filter(tk => tk.ticketName?.includes('VIP')).length,
+      uniqueDistricts: new Set(tickets.map(tk => tk.eventLocation).filter(Boolean)).size,
+      hasAccount: true,
+      isVerified: !!profile?.dni,
+      isEarlySupporterr: tickets.some(tk => tk.badgeNumber != null),
     };
     setBadges(BADGES.map(b => ({
       ...b,
@@ -141,7 +155,7 @@ export default function ProfilePage() {
       progress: b.calculateProgress(data).current,
       maxProgress: b.calculateProgress(data).max,
     })));
-  }, [tickets]);
+  }, [tickets, profile?.dni]);
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
@@ -157,10 +171,16 @@ export default function ProfilePage() {
     try {
       setIsSaving(true);
       await updateProfile({ displayName: editedName });
-      setIsEditing(false);
       toast.success(t.profile.nameUpdated);
     } catch { toast.error(t.profile.errorUpdateName); }
     finally { setIsSaving(false); }
+  };
+
+  const handleTagChange = async (badgeId: string) => {
+    try {
+      await updateProfile({ selectedTag: badgeId });
+      toast.success(t.profile.tagUpdated);
+    } catch { toast.error(t.profile.errorUpdateTag); }
   };
 
   if (loading) return (
@@ -173,12 +193,40 @@ export default function ProfilePage() {
   );
   if (!user || !profile) return null;
 
-  const totalSpent = tickets.reduce((s, t) => s + (t.price || 0), 0);
-  const completedResales = tickets.filter(t => t.status === 'transferred').length;
-  const activeTickets = tickets.filter(t => t.status === 'active');
-  const pastTickets = tickets.filter(t => t.status === 'used' || t.status === 'transferred');
-  const listedTickets = tickets.filter(t => t.status === 'resale-listed');
+  const totalSpent = tickets.reduce((s, tk) => s + (tk.price || 0), 0);
+  const completedResales = tickets.filter(tk => tk.status === 'transferred').length;
+  const activeTickets = tickets.filter(tk => tk.status === 'active');
+  const pastTickets = tickets.filter(tk => tk.status === 'used' || tk.status === 'transferred');
+  const listedTickets = tickets.filter(tk => tk.status === 'resale-listed');
   const locale = LOCALE_MAP[lang] || LOCALE_MAP.es;
+
+  // Tag logic
+  const unlockedBadges = badges.filter(b => b.tier !== 'none');
+  const selectedTagId = profile.selectedTag || unlockedBadges[0]?.id || '';
+  const selectedBadge = unlockedBadges.find(b => b.id === selectedTagId) || unlockedBadges[0];
+  const badgeTicket = tickets.find(tk => tk.badgeNumber);
+  const badgeNum = badgeTicket ? `#${String(badgeTicket.badgeNumber).padStart(3, '0')}` : '';
+
+  // Badge display: show 3 by default, all when expanded with sorting
+  const sortedBadges = (() => {
+    if (!showAllBadges) return badges.slice(0, 3);
+    const sorted = [...badges];
+    if (badgeSort === 'rarity') {
+      // Unlocked first, then by tier rarity (gold > silver > bronze > none)
+      const tierOrder: Record<string, number> = { gold: 0, silver: 1, bronze: 2, none: 3 };
+      sorted.sort((a, b) => (tierOrder[a.tier] ?? 3) - (tierOrder[b.tier] ?? 3));
+    }
+    // default = original order (date obtained / definition order)
+    return sorted;
+  })();
+  const visibleBadges = sortedBadges;
+
+  const getTagLabel = (b: Badge) => {
+    const key = BADGE_KEY_MAP[b.id] as keyof typeof t.profile.badgeNames;
+    const name = t.profile.badgeNames[key] || b.id;
+    if (b.id === 'early-supporter' && badgeNum) return `${name} ${badgeNum}`;
+    return name;
+  };
 
   const renderTicketCard = (ticket: Ticket) => (
     <div key={ticket.id} className="pf-ticket-card">
@@ -200,7 +248,7 @@ export default function ProfilePage() {
       <div className="pf-ticket-event-name">{ticket.eventName}</div>
       <div className="pf-ticket-meta">
         <span>{ticket.eventVenue}</span>
-        <span>{formatTicketDate(ticket.eventDate, locale)}</span>
+        <span>{ticket.eventDateLabel || formatTicketDate(ticket.eventDate, locale) || ''}</span>
       </div>
 
       <div className="pf-ticket-details">
@@ -211,7 +259,7 @@ export default function ProfilePage() {
         <div className="pf-ticket-detail">
           <span className="pf-ticket-detail-label">{t.myTickets.priceLabel}</span>
           <span className="pf-ticket-price-val">
-            {ticket.price === 0 ? 'GRATIS' : `S/${ticket.price}`}
+            {ticket.price === 0 ? t.common.free : `S/${ticket.price}`}
           </span>
         </div>
       </div>
@@ -242,147 +290,239 @@ export default function ProfilePage() {
 
   return (
     <div className="pf">
-      {/* Dot grid background */}
       <div className="pf-bg-grid" />
 
-      {/* Tabs */}
-      <div className="pf-tabs">
-        <button className={`pf-tab ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
-          {t.common.profile}
-        </button>
-        <button className={`pf-tab ${activeTab === 'tickets' ? 'active' : ''}`} onClick={() => setActiveTab('tickets')}>
-          {t.myTickets.title} ({tickets.length})
-        </button>
+      {/* ── Header Card ── */}
+      <div className="pf-header">
+        <div className="pf-header-top">
+          <div className="pf-avatar">
+            <div className="pf-verified-ring" />
+            <UserAvatar photoURL={profile.photoURL} displayName={profile.displayName} />
+          </div>
+
+          <div className="pf-header-info">
+            <div className="pf-name-row">
+              <h1>{profile.displayName || t.profile.user}</h1>
+              {profile.dni && <span className="pf-verified-badge">&#9786; {t.common.verified}</span>}
+            </div>
+
+            {selectedBadge && (
+              <div className="pf-tag-display">
+                <span className="pf-tag-emoji">{selectedBadge.emoji}</span>
+                <span className="pf-tag-label">{getTagLabel(selectedBadge)}</span>
+              </div>
+            )}
+
+            <div className="pf-member-since">
+              {t.profile.memberSince} <span>{formatMemberDate(profile.createdAt, locale)}</span>
+            </div>
+          </div>
+
+          <button className="pf-edit-btn" onClick={() => setShowSettings(!showSettings)}>
+            {showSettings ? t.profile.settingsClose : t.profile.editProfile}
+          </button>
+        </div>
       </div>
 
-      {/* ── Profile Tab ── */}
-      {activeTab === 'profile' && (
-        <div className="pf-content">
-          {/* Header Card */}
-          <div className="pf-header">
-            <div className="pf-avatar">
-              <div className="pf-verified-ring" />
-              <UserAvatar photoURL={profile.photoURL} displayName={profile.displayName} />
+      {/* ── Settings Panel (toggleable) ── */}
+      {showSettings && (
+        <div className="pf-settings">
+          {/* Account */}
+          <div className="pf-settings-group">
+            <div className="pf-settings-group-title">{t.profile.settingsAccount}</div>
+
+            <div className="pf-settings-field">
+              <label>{t.profile.settingsFullName}</label>
+              <div className="pf-settings-value pf-settings-locked">
+                {profile.displayName || '—'}
+              </div>
             </div>
 
-            <div className="pf-info">
-              {isEditing ? (
-                <div className="pf-name-edit">
-                  <input className="pf-name-input" value={editedName} onChange={e => setEditedName(e.target.value)} disabled={isSaving} autoFocus />
-                  <button className="pf-name-save" onClick={handleSaveName} disabled={isSaving}>{t.common.save}</button>
-                  <button className="pf-name-cancel" onClick={() => { setIsEditing(false); setEditedName(profile.displayName); }} disabled={isSaving}>{t.common.cancel}</button>
-                </div>
+            <div className="pf-settings-field">
+              <label>{t.profile.settingsAlias}</label>
+              <div className="pf-settings-input-row">
+                <input
+                  className="pf-settings-input"
+                  value={editedName}
+                  onChange={e => setEditedName(e.target.value)}
+                  disabled={isSaving}
+                  placeholder={t.profile.settingsAliasPlaceholder}
+                />
+                <button className="pf-settings-save" onClick={handleSaveName} disabled={isSaving || editedName === profile.displayName}>
+                  {t.profile.settingsSaveAlias}
+                </button>
+              </div>
+            </div>
+
+            <div className="pf-settings-field">
+              <label>{t.profile.settingsEmail}</label>
+              <div className="pf-settings-value">{profile.email}</div>
+            </div>
+
+            <div className="pf-settings-field">
+              <label>{t.profile.settingsIdDoc}</label>
+              <div className="pf-settings-value">
+                {profile.dni ? (
+                  <>{profile.dniType?.toUpperCase() || 'DNI'}: {profile.dni}</>
+                ) : (
+                  <span className="pf-settings-empty">{t.profile.settingsNotVerified}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="pf-settings-field">
+              <label>{t.profile.settingsProfileTag}</label>
+              {unlockedBadges.length > 0 ? (
+                <select
+                  className="pf-settings-select"
+                  value={selectedTagId}
+                  onChange={e => handleTagChange(e.target.value)}
+                >
+                  {unlockedBadges.map(b => {
+                    const k = BADGE_KEY_MAP[b.id] as keyof typeof t.profile.badgeNames;
+                    return <option key={b.id} value={b.id}>{b.emoji} {t.profile.badgeNames[k] || b.id}</option>;
+                  })}
+                </select>
               ) : (
-                <h1>{profile.displayName || t.profile.user} {profile.dni && <span className="pf-verified-badge">☺ {t.common.verified}</span>}</h1>
+                <div className="pf-settings-value pf-settings-empty">{t.profile.settingsNoBadges}</div>
               )}
-
-              <div className="pf-meta">
-                {profile.dni && <>{t.profile.identityVerified} <span>DNI</span> · </>}
-                {t.profile.memberSince} <span>{formatMemberDate(profile.createdAt, locale)}</span>
-              </div>
-
-              <div className="pf-email">{profile.email}</div>
-
-              <div className="pf-stats-row">
-                <div className="pf-stat"><strong>{tickets.length}</strong> {t.profile.events}</div>
-                <div className="pf-stat"><strong>S/{totalSpent.toLocaleString(locale)}</strong> {t.profile.spent}</div>
-                <div className="pf-stat"><strong>{completedResales}</strong> {t.profile.resales}</div>
-              </div>
-            </div>
-
-            {!isEditing && (
-              <button className="pf-edit-btn" onClick={() => setIsEditing(true)}>{t.profile.editProfile}</button>
-            )}
-          </div>
-
-          {/* Badges */}
-          <div className="pf-section">
-            <div className="pf-section-head">
-              <div className="pf-section-title">{t.profile.badges}</div>
-              <span className="pf-section-more" onClick={() => navigate('/badges')}>{t.profile.viewAllBadges}</span>
-            </div>
-            <div className="pf-badges">
-              {badges.map(b => {
-                const key = BADGE_KEY_MAP[b.id] as keyof typeof t.profile.badgeNames;
-                return (
-                <div key={b.id} className={`pf-badge ${b.tier === 'none' ? 'locked' : ''}`}>
-                  <div className="pf-badge-icon">{b.emoji}</div>
-                  <div className="pf-badge-name">{t.profile.badgeNames[key] || b.id}</div>
-                  <div className="pf-badge-desc">{t.profile.badgeDescs[key] || ''}</div>
-                  <div className={`pf-badge-tier ${tierClass(b.tier)}`}>{tierLabelHelper(b.tier, t.profile)}</div>
-                  <div className="pf-badge-progress">
-                    <div
-                      className={`pf-badge-progress-fill ${tierClass(b.tier)}`}
-                      style={{ width: `${b.maxProgress > 0 ? (b.progress / b.maxProgress) * 100 : 0}%` }}
-                    />
-                  </div>
-                  <div className="pf-badge-count">{b.progress}/{b.maxProgress}</div>
-                </div>
-              ); })}
             </div>
           </div>
 
-          {/* Organizer CTA */}
-          {isPromoter && (
-            <div className="pf-organizer-cta">
-              <div className="pf-cta-label">{t.profile.organizerMode}</div>
-              <button onClick={() => navigate('/organizer')}>{t.profile.dashboardBtn}</button>
+          {/* Notifications */}
+          <div className="pf-settings-group">
+            <div className="pf-settings-group-title">{t.profile.settingsNotifications}</div>
+            <div className="pf-settings-toggle-row">
+              <span>{t.profile.settingsNotifEvents}</span>
+              <input type="checkbox" className="pf-toggle" defaultChecked />
             </div>
-          )}
+            <div className="pf-settings-toggle-row">
+              <span>{t.profile.settingsNotifReminders}</span>
+              <input type="checkbox" className="pf-toggle" defaultChecked />
+            </div>
+          </div>
 
-          {/* Logout */}
-          <button className="pf-logout-btn" onClick={handleLogout}>{t.profile.logoutBtn}</button>
+          {/* Privacy */}
+          <div className="pf-settings-group">
+            <div className="pf-settings-group-title">{t.profile.settingsPrivacy}</div>
+            <div className="pf-settings-toggle-row">
+              <span>{t.profile.settingsProfileVisible}</span>
+              <input type="checkbox" className="pf-toggle" defaultChecked />
+            </div>
+            <div className="pf-settings-toggle-row">
+              <span>{t.profile.settingsShowBadges}</span>
+              <input type="checkbox" className="pf-toggle" defaultChecked />
+            </div>
+            <div className="pf-settings-toggle-row">
+              <span>{t.profile.settingsShowHistory}</span>
+              <input type="checkbox" className="pf-toggle" />
+            </div>
+          </div>
+
+          <div className="pf-settings-actions">
+            <button className="pf-settings-action-save" onClick={() => { handleSaveName(); setShowSettings(false); }} disabled={isSaving}>
+              {t.profile.settingsSave}
+            </button>
+            <button className="pf-settings-action-exit" onClick={() => { setEditedName(profile.displayName || ''); setShowSettings(false); }}>
+              {t.profile.settingsDiscard}
+            </button>
+          </div>
         </div>
       )}
 
-      {/* ── Tickets Tab ── */}
-      {activeTab === 'tickets' && (
-        <div className="pf-content">
-          {/* Active Tickets */}
-          {activeTickets.length > 0 && (
-            <div className="pf-section">
-              <div className="pf-section-head">
-                <div className="pf-section-title">{t.myTickets.tabUpcoming} ({activeTickets.length})</div>
-              </div>
-              <div className="pf-tickets-grid">
-                {activeTickets.map(renderTicketCard)}
-              </div>
-            </div>
-          )}
-
-          {/* Listed in Resale */}
-          {listedTickets.length > 0 && (
-            <div className="pf-section">
-              <div className="pf-section-head">
-                <div className="pf-section-title">{t.myTickets.tabResale} ({listedTickets.length})</div>
-              </div>
-              <div className="pf-tickets-grid">
-                {listedTickets.map(renderTicketCard)}
-              </div>
-            </div>
-          )}
-
-          {/* Past Tickets */}
-          {pastTickets.length > 0 && (
-            <div className="pf-section">
-              <div className="pf-section-head">
-                <div className="pf-section-title">{t.myTickets.tabPast} ({pastTickets.length})</div>
-              </div>
-              <div className="pf-tickets-grid">
-                {pastTickets.map(renderTicketCard)}
-              </div>
-            </div>
-          )}
-
-          {/* Empty state */}
-          {tickets.length === 0 && (
-            <div className="pf-empty">
-              <div className="pf-empty-icon">🎟️</div>
-              <p>{t.myTickets.noTickets}</p>
-              <button className="pf-empty-btn" onClick={() => navigate('/inicio')}>{t.myTickets.exploreBtn}</button>
-            </div>
-          )}
+      {/* ── Badges ── */}
+      <div className="pf-section">
+        <div className="pf-section-head">
+          <div className="pf-section-title">{t.profile.badges}</div>
+          <span className="pf-section-more" onClick={() => { setShowAllBadges(!showAllBadges); setBadgeSort('default'); }}>
+            {showAllBadges ? t.profile.badgeLess : t.profile.viewAllBadges}
+          </span>
         </div>
+        {showAllBadges && (
+          <div className="pf-badge-filters">
+            <button
+              className={`pf-badge-filter ${badgeSort === 'default' ? 'active' : ''}`}
+              onClick={() => setBadgeSort('default')}
+            >
+              {t.profile.badgeFilterRecent}
+            </button>
+            <button
+              className={`pf-badge-filter ${badgeSort === 'rarity' ? 'active' : ''}`}
+              onClick={() => setBadgeSort('rarity')}
+            >
+              {t.profile.badgeFilterRarity}
+            </button>
+          </div>
+        )}
+        <div className="pf-badges">
+          {visibleBadges.map(b => {
+            const key = BADGE_KEY_MAP[b.id] as keyof typeof t.profile.badgeNames;
+            const isOneTime = ['registered', 'verified', 'early-supporter'].includes(b.id);
+            const isEarlySupporter = b.id === 'early-supporter';
+            const earlyNum = isEarlySupporter && badgeTicket ? ` #${badgeTicket.badgeNumber}` : '';
+            const isSelected = selectedTagId === b.id;
+            const badgeName = (t.profile.badgeNames[key] || b.id) + earlyNum;
+            return (
+              <div
+                key={b.id}
+                className={`pf-badge ${b.tier === 'none' ? 'locked' : ''} ${isSelected ? 'pf-badge--selected' : ''}`}
+                onClick={b.tier !== 'none' ? () => handleTagChange(b.id) : undefined}
+              >
+                <div className="pf-badge-icon">{b.emoji}</div>
+                <div className="pf-badge-name">{badgeName}</div>
+                <div className="pf-badge-desc">{t.profile.badgeDescs[key] || ''}</div>
+                {!isOneTime && (
+                  <>
+                    {b.tier !== 'none' && (
+                      <div className={`pf-badge-tier ${tierClass(b.tier)}`}>{tierLabelHelper(b.tier, t.profile)}</div>
+                    )}
+                    <div className="pf-badge-progress">
+                      <div
+                        className={`pf-badge-progress-fill ${tierClass(b.tier)}`}
+                        style={{ width: `${b.maxProgress > 0 ? (b.progress / b.maxProgress) * 100 : 0}%` }}
+                      />
+                    </div>
+                    <div className="pf-badge-count">{b.progress}/{b.maxProgress}</div>
+                  </>
+                )}
+                {/* 1-time badges: no progress bar, no label — unlocked state is visible by color */}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Mis Entradas ── */}
+      {tickets.length > 0 && (
+        <div className="pf-section">
+          <div className="pf-section-head">
+            <div className="pf-section-title">{t.myTickets.title} ({tickets.length})</div>
+          </div>
+          <div className="pf-tickets-grid">
+            {tickets.map(renderTicketCard)}
+          </div>
+        </div>
+      )}
+
+      {tickets.length === 0 && (
+        <div className="pf-empty">
+          <div className="pf-empty-icon">🎟️</div>
+          <p>{t.myTickets.noTickets}</p>
+          <button className="pf-empty-btn" onClick={() => navigate('/inicio')}>{t.myTickets.exploreBtn}</button>
+        </div>
+      )}
+
+      {/* Organizer CTA */}
+      {isPromoter && (
+        <div className="pf-organizer-cta">
+          <div className="pf-cta-label">{t.profile.organizerMode}</div>
+          <button onClick={() => navigate('/organizer')}>{t.profile.dashboardBtn}</button>
+        </div>
+      )}
+
+      {/* Logout (when settings not open) */}
+      {!showSettings && (
+        <button className="pf-logout-btn" onClick={handleLogout}>{t.profile.logoutBtn}</button>
       )}
     </div>
   );

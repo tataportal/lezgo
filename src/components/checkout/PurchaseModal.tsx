@@ -138,14 +138,13 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 >
                   {t.purchase.googleBtn}
                 </button>
-                <div style={{ textAlign: 'center', color: '#666', margin: '12px 0' }}>{t.purchase.or}</div>
+                <div className="pm-or-divider">{t.purchase.or}</div>
                 <input
                   type="email"
                   placeholder={t.purchase.emailPlaceholder}
                   value={magicEmail}
                   onChange={(e) => setMagicEmail(e.target.value)}
-                  className="pm-input"
-                  style={{ marginBottom: '8px' }}
+                  className="pm-input pm-input--mb"
                 />
                 <button
                   className="pm-button pm-button--magic"
@@ -156,7 +155,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 </button>
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '24px 0', color: '#999' }}>
+              <div className="pm-magic-link-sent">
                 <p>{t.purchase.checkEmail}</p>
               </div>
             )}

@@ -17,8 +17,10 @@ export interface UserProfile {
   displayName: string;
   photoURL: string;
   dni: string;
+  dniType?: string;
   role: 'fan' | 'promoter' | 'admin';
   createdAt: unknown;
+  selectedTag?: string;
 }
 
 interface AuthContextType {
@@ -133,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     // Whitelist: only allow safe fields to be updated from the client
-    const ALLOWED_FIELDS: (keyof UserProfile)[] = ['displayName', 'dni', 'photoURL'];
+    const ALLOWED_FIELDS: (keyof UserProfile)[] = ['displayName', 'dni', 'photoURL', 'selectedTag'];
     const sanitized: Partial<UserProfile> = {};
     for (const key of ALLOWED_FIELDS) {
       if (key in data) {

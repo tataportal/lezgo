@@ -7,16 +7,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './i18n';
 import { router } from './router';
 import './styles/globals.css';
+import './styles/components.css';
+import './styles/utilities.css';
 
-// Lazy-load analytics to avoid CSP/crash issues
-const loadAnalytics = async () => {
-  try {
-    const { inject } = await import('@vercel/analytics');
-    inject();
-    const { injectSpeedInsights } = await import('@vercel/speed-insights');
-    injectSpeedInsights();
-  } catch { /* silently fail if blocked by CSP */ }
-};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -31,5 +24,3 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 );
-
-loadAnalytics();

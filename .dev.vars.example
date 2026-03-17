@@ -1,0 +1,10 @@
+# ── Cloudflare Pages local development secrets ──
+# Copy this to .dev.vars and fill in values
+# These are used by `wrangler pages dev` for local API testing
+
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+
+# Optional
+RECAPTCHA_SECRET_KEY=
