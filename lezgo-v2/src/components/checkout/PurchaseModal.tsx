@@ -560,10 +560,23 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
             <div className="pm-dot completed"></div>
           </div>
 
-          <div className="pm-content pm-content--centered">
+          <div className="pm-content pm-content--centered pm-success-wrap">
             <div className="pm-success-icon">✓</div>
             <h2 className="pm-title">{isFree ? t.purchase.reserveConfirmTitle : t.purchase.confirmTitle}</h2>
             <p className="pm-subtitle">{isFree ? t.purchase.reserveConfirmDesc : t.purchase.confirmDesc}</p>
+
+            {earnedBadges.length > 0 && (
+              <div className="pm-badge-reveal">
+                <div className="pm-badge-reveal__icon">⚡</div>
+                <div className="pm-badge-reveal__title">Early Adopter Badge</div>
+                <div className="pm-badge-reveal__number">
+                  #{String(earnedBadges[0].badgeNumber).padStart(3, '0')} / {event.badgeConfig?.totalSupply || 100}
+                </div>
+                <div className="pm-badge-reveal__desc">
+                  Tu medalla numerada de colección
+                </div>
+              </div>
+            )}
 
             <div className="pm-confirmation-details">
               <div className="pm-detail">
@@ -587,19 +600,6 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 </span>
               </div>
             </div>
-
-            {earnedBadges.length > 0 && (
-              <div className="pm-badge-reveal">
-                <div className="pm-badge-reveal__icon">⚡</div>
-                <div className="pm-badge-reveal__title">Early Adopter Badge</div>
-                <div className="pm-badge-reveal__number">
-                  #{String(earnedBadges[0].badgeNumber).padStart(3, '0')} / 100
-                </div>
-                <div className="pm-badge-reveal__desc">
-                  Tu medalla numerada de colección
-                </div>
-              </div>
-            )}
 
             <div className="pm-actions">
               <button
