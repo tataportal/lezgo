@@ -6,6 +6,12 @@
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  animation: ev-fade-in 0.5s ease-out;
+}
+
+@keyframes ev-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ── Error & Loading States ── */
@@ -16,7 +22,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--sp-20) var(--sp-6);
-  min-height: 60vh;
+  min-height: 100vh;
   gap: var(--sp-4);
 }
 

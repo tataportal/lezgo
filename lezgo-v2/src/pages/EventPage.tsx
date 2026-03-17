@@ -33,7 +33,9 @@ export default function EventPage() {
     );
   }
 
-  if (loading || !event) {
+  const isReady = !loading && !!event;
+
+  if (!isReady) {
     return (
       <div className="ev-detail-loading">
         <div className="branded-loader">
