@@ -286,7 +286,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                     <div className="pm-tier-info">
                       <h3 className="pm-tier-name">{tier.name}</h3>
                       {isLocked ? (
-                        <p className="pm-tier-locked-msg">🔒 {t.purchase.tierLocked || `Se abre cuando ${tier.unlockAfterTier?.toUpperCase()} se agote`}</p>
+                        <p className="pm-tier-locked-msg">🔒 Se abre cuando {tier.unlockAfterTier?.toUpperCase()} se agote</p>
                       ) : (
                         <>
                           <p className="pm-tier-price">{formatPrice(activePhase?.price || 0)}</p>
