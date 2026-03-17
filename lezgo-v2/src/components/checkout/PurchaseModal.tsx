@@ -273,16 +273,30 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 const available = tier.capacity - tier.sold;
                 const currentQty = quantities[tier.id] || 0;
 
+                // Check if this tier is locked (previous tier hasn't sold out)
+                const isLocked = tier.unlockAfterTier
+                  ? (() => {
+                      const prerequisite = (event.tiers || []).find((t: { id: string }) => t.id === tier.unlockAfterTier);
+                      return prerequisite ? prerequisite.sold < prerequisite.capacity : false;
+                    })()
+                  : false;
+
                 return (
-                  <div key={tier.id} className="pm-tier-card">
+                  <div key={tier.id} className={`pm-tier-card${isLocked ? ' pm-tier-card--locked' : ''}`}>
                     <div className="pm-tier-info">
                       <h3 className="pm-tier-name">{tier.name}</h3>
-                      <p className="pm-tier-price">{formatPrice(activePhase?.price || 0)}</p>
-                      <p className="pm-tier-available">
-                        {available > 0 ? `${available} ${t.purchase.available}` : t.purchase.soldOutLabel}
-                      </p>
+                      {isLocked ? (
+                        <p className="pm-tier-locked-msg">🔒 {t.purchase.tierLocked || `Se abre cuando ${tier.unlockAfterTier?.toUpperCase()} se agote`}</p>
+                      ) : (
+                        <>
+                          <p className="pm-tier-price">{formatPrice(activePhase?.price || 0)}</p>
+                          <p className="pm-tier-available">
+                            {available > 0 ? `${available} ${t.purchase.available}` : t.purchase.soldOutLabel}
+                          </p>
+                        </>
+                      )}
                     </div>
-                    {available > 0 && (
+                    {!isLocked && available > 0 && (
                       <div className="pm-qty-selector">
                         <button
                           className="pm-qty-btn"

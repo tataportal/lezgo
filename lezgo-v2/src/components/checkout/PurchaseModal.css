@@ -128,6 +128,23 @@
   background-color: var(--acid-03);
 }
 
+.pm-tier-card--locked {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(0.3);
+}
+
+.pm-tier-card--locked:hover {
+  border-color: var(--border);
+  background-color: var(--bg);
+}
+
+.pm-tier-locked-msg {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-1);
+}
+
 .pm-tier-info {
   flex: 1;
 }
