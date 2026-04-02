@@ -1,4 +1,4 @@
-// Firebase initialization with env vars from Vercel
+// Firebase initialization with client env vars provided at build time
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore/lite';

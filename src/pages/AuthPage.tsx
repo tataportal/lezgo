@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../i18n';
 import { sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../lib/constants';
+import { Button, Card, Field, Icon, Input, SectionHeading, Stack, TabButton, Tabs } from '../components/ui';
 import toast from 'react-hot-toast';
 import './AuthPage.css';
 
@@ -21,11 +22,13 @@ const GoogleIcon = () => (
 export default function AuthPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { user, loading, loginWithGoogle, sendMagicLink, updateProfile } = useAuth();
+  const { user, loading, loginWithGoogle, loginWithPassword, sendMagicLink, updateProfile } = useAuth();
+  const isLocalDev = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
   const [tab, setTab] = useState<AuthTab>('login');
   const [regStep, setRegStep] = useState(1); // 1=account, 2=dni+success
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [idType, setIdType] = useState<IdType>('dni');
   const [dni, setDni] = useState('');
@@ -52,12 +55,12 @@ export default function AuthPage() {
     return (
       <div className="auth-view">
         <div className="auth-logo">{t.auth.logo}</div>
-        <div className="auth-card">
+        <Card className="auth-card auth-card--loading" raised glow>
           <div className="auth-body" style={{ textAlign: 'center', padding: '60px 32px' }}>
             <div className="auth-spinner" />
             <div className="auth-loading-text">{t.common.loading}</div>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -98,6 +101,23 @@ export default function AuthPage() {
     }
   };
 
+  const handlePasswordLogin = async () => {
+    if (!email || !password) {
+      toast.error('Enter the test email and password.');
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await loginWithPassword(email, password);
+      toast.success('Dev login successful.');
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      toast.error(error.message || 'Could not sign in with password.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleFinishRegister = async () => {
     if (!name.trim()) {
       toast.error(t.auth.errorName);
@@ -127,6 +147,7 @@ export default function AuthPage() {
     setTab(t);
     setRegStep(1);
     setEmail('');
+    setPassword('');
     setName('');
     setDni('');
     setLinkSent(false);
@@ -149,22 +170,24 @@ export default function AuthPage() {
     <div className="auth-view">
       <div className="auth-logo" onClick={() => navigate('/inicio')}>{t.auth.logo}</div>
 
-      <div className="auth-card">
+      <Card className="auth-card" raised glow padded={false}>
         {/* ── Tabs ── */}
-        <div className="auth-tabs">
-          <button
-            className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
+        <Tabs className="auth-tabs">
+          <TabButton
+            className="auth-tab"
+            active={tab === 'login'}
             onClick={() => switchTab('login')}
           >
             {t.auth.loginTab}
-          </button>
-          <button
-            className={`auth-tab ${tab === 'register' ? 'active' : ''}`}
+          </TabButton>
+          <TabButton
+            className="auth-tab"
+            active={tab === 'register'}
             onClick={() => switchTab('register')}
           >
             {t.auth.registerTab}
-          </button>
-        </div>
+          </TabButton>
+        </Tabs>
 
         <div className="auth-body">
           {/* ════════════════════════════════════════
@@ -172,29 +195,52 @@ export default function AuthPage() {
              ════════════════════════════════════════ */}
           {tab === 'login' && (
             <>
-              <div className="auth-title">{t.auth.welcomeBack}</div>
-              <div className="auth-sub">{t.auth.loginDesc}</div>
+              <SectionHeading title={t.auth.welcomeBack} body={t.auth.loginDesc} />
 
-              <button className="auth-btn-google" onClick={handleGoogleLogin} disabled={isLoading}>
+              <Button className="auth-btn-google" variant="secondary" onClick={handleGoogleLogin} disabled={isLoading}>
                 <GoogleIcon />
                 {t.auth.googleBtn}
-              </button>
+              </Button>
 
               <div className="auth-divider"><span>{t.auth.orEmail}</span></div>
 
-              <label className="auth-label">{t.auth.emailLabel}</label>
-              <input
-                className="auth-input"
-                type="email"
-                placeholder={t.auth.emailPlaceholder}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
-                disabled={isLoading}
-              />
-              <button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
+              <Field label={t.auth.emailLabel}>
+                <Input
+                  className="auth-input"
+                  type="email"
+                  placeholder={t.auth.emailPlaceholder}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
+                  disabled={isLoading}
+                />
+              </Field>
+              <Button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
                 {t.auth.sendMagicLink}
-              </button>
+              </Button>
+
+              {isLocalDev && (
+                <Stack className="auth-dev-panel">
+                  <div className="auth-dev-title">Local testing access</div>
+                  <div className="auth-dev-sub">
+                    Use email + password only for localhost promoter testing.
+                  </div>
+                  <Field label="Password">
+                    <Input
+                      className="auth-input"
+                      type="password"
+                      placeholder="Enter test password"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handlePasswordLogin()}
+                      disabled={isLoading}
+                    />
+                  </Field>
+                  <Button className="auth-btn-dev" variant="secondary" onClick={handlePasswordLogin} disabled={isLoading}>
+                    Sign in with password
+                  </Button>
+                </Stack>
+              )}
 
               {linkSent && (
                 <div className="auth-link-sent">
@@ -222,29 +268,29 @@ export default function AuthPage() {
               {/* ── Step 1: Create account ── */}
               {regStep === 1 && !showSuccess && (
                 <div className="auth-step active">
-                  <div className="auth-title">{t.auth.createAccount}</div>
-                  <div className="auth-sub">{t.auth.createDesc}</div>
+                  <SectionHeading title={t.auth.createAccount} body={t.auth.createDesc} />
 
-                  <button className="auth-btn-google" onClick={handleGoogleLogin} disabled={isLoading}>
+                  <Button className="auth-btn-google" variant="secondary" onClick={handleGoogleLogin} disabled={isLoading}>
                     <GoogleIcon />
                     {t.auth.googleBtn}
-                  </button>
+                  </Button>
 
                   <div className="auth-divider"><span>{t.auth.orEmail}</span></div>
 
-                  <label className="auth-label">{t.auth.emailLabel}</label>
-                  <input
-                    className="auth-input"
-                    type="email"
-                    placeholder={t.auth.emailPlaceholder}
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
-                    disabled={isLoading}
-                  />
-                  <button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
+                  <Field label={t.auth.emailLabel}>
+                    <Input
+                      className="auth-input"
+                      type="email"
+                      placeholder={t.auth.emailPlaceholder}
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
+                      disabled={isLoading}
+                    />
+                  </Field>
+                  <Button className="auth-btn-magic" onClick={handleMagicLink} disabled={isLoading}>
                     {t.auth.sendMagicLink}
-                  </button>
+                  </Button>
 
                   {linkSent && (
                     <div className="auth-link-sent">
@@ -265,21 +311,21 @@ export default function AuthPage() {
               {/* ── Step 2: DNI + Name ── */}
               {regStep === 2 && !showSuccess && (
                 <div className="auth-step active">
-                  <div className="auth-title">{t.auth.verifyTitle}</div>
-                  <div className="auth-sub">{t.auth.verifyDesc}</div>
+                  <SectionHeading title={t.auth.verifyTitle} body={t.auth.verifyDesc} />
 
-                  <label className="auth-label">{t.auth.fullName}</label>
-                  <input
-                    className="auth-input"
-                    type="text"
-                    placeholder={t.auth.fullNamePlaceholder}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                  />
+                  <Field label={t.auth.fullName}>
+                    <Input
+                      className="auth-input"
+                      type="text"
+                      placeholder={t.auth.fullNamePlaceholder}
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                    />
+                  </Field>
 
-                  <label className="auth-label">{t.auth.docType}</label>
+                  <Field label={t.auth.docType}>
                   <select
-                    className="auth-input auth-select"
+                    className="auth-input auth-select ds-v3-input"
                     value={idType}
                     onChange={e => { setIdType(e.target.value as IdType); setDni(''); }}
                   >
@@ -287,46 +333,43 @@ export default function AuthPage() {
                     <option value="ce">{t.auth.carnet}</option>
                     <option value="pasaporte">{t.auth.passport}</option>
                   </select>
+                  </Field>
 
-                  <label className="auth-label">
-                    {idType === 'dni' ? t.auth.dniNumber : idType === 'ce' ? t.auth.carnetNumber : t.auth.passportNumber}
-                  </label>
-                  <input
-                    className="auth-input"
-                    type="text"
-                    placeholder={idType === 'dni' ? t.auth.dniPlaceholder : idType === 'ce' ? t.auth.carnetPlaceholder : t.auth.passportPlaceholder}
-                    maxLength={ID_CONFIG[idType].maxLength}
-                    value={dni}
-                    onChange={e => setDni(sanitizeIdInput(e.target.value, idType))}
-                  />
+                  <Field label={idType === 'dni' ? t.auth.dniNumber : idType === 'ce' ? t.auth.carnetNumber : t.auth.passportNumber}>
+                    <Input
+                      className="auth-input"
+                      type="text"
+                      placeholder={idType === 'dni' ? t.auth.dniPlaceholder : idType === 'ce' ? t.auth.carnetPlaceholder : t.auth.passportPlaceholder}
+                      maxLength={ID_CONFIG[idType].maxLength}
+                      value={dni}
+                      onChange={e => setDni(sanitizeIdInput(e.target.value, idType))}
+                    />
+                  </Field>
 
                   <div className="auth-security-note">
-                    {t.auth.dniSafe}
+                    <Icon name="lock" size={14} /> {t.auth.dniSafe}
                   </div>
 
-                  <button className="auth-btn" style={{ marginTop: 16 }} onClick={handleFinishRegister} disabled={isLoading}>
+                  <Button className="auth-btn auth-btn--spaced" onClick={handleFinishRegister} disabled={isLoading}>
                     {isLoading ? t.common.loading : t.auth.createAccount}
-                  </button>
-                  <button className="auth-btn-ghost" onClick={() => setRegStep(1)}>
+                  </Button>
+                  <Button className="auth-btn-ghost" variant="secondary" onClick={() => setRegStep(1)}>
                     {t.auth.goBack}
-                  </button>
+                  </Button>
                 </div>
               )}
 
               {/* ── Success state ── */}
               {showSuccess && (
                 <div className="auth-step active">
-                  <div className="auth-success-icon">{t.auth.successIcon}</div>
-                  <div className="auth-success-title">{t.auth.successTitle}</div>
-                  <div className="auth-success-sub">
-                    {t.auth.successDesc}
-                  </div>
+                  <div className="auth-success-icon"><Icon name="confetti" size={30} /></div>
+                  <SectionHeading title={t.auth.successTitle} body={t.auth.successDesc} />
                   <div style={{ textAlign: 'center', marginBottom: 20 }}>
-                    <div className="auth-verified-badge">{t.auth.successBadge}</div>
+                    <div className="auth-verified-badge"><Icon name="id" size={14} /> {t.auth.successBadge}</div>
                   </div>
-                  <button className="auth-btn" onClick={() => navigate('/inicio')}>
+                  <Button className="auth-btn" onClick={() => navigate('/inicio')}>
                     {t.auth.exploreEvents}
-                  </button>
+                  </Button>
                 </div>
               )}
             </>
@@ -335,11 +378,11 @@ export default function AuthPage() {
           {/* ── Legal ── */}
           <div className="auth-legal">
             {t.auth.termsPrefix}{' '}
-            <a href="/conocenos" target="_blank">{t.auth.termsLink}</a> {t.auth.andText}{' '}
-            <a href="/conocenos" target="_blank">{t.auth.privacyLink}</a> {t.auth.termsSuffix}
+            <a href="/terminos" target="_blank" rel="noreferrer">{t.auth.termsLink}</a> {t.auth.andText}{' '}
+            <a href="/privacidad" target="_blank" rel="noreferrer">{t.auth.privacyLink}</a> {t.auth.termsSuffix}
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

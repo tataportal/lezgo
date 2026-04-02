@@ -12,6 +12,9 @@
   margin: 0 auto;
   color: var(--text);
   min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.015), transparent 16%),
+    var(--bg);
 }
 
 /* ── Header / Top ── */
@@ -30,18 +33,19 @@
 
 .mp-label {
   font-size: var(--fs-caption);
-  color: var(--text-muted);
-  letter-spacing: 2px;
+  color: var(--acid);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-bold);
 }
 
 .mp-title {
-  font-size: 3rem;
-  font-weight: var(--fw-bold);
+  font-size: clamp(2.8rem, 5.3vw, 4.8rem);
+  font-weight: var(--fw-extrabold);
   color: var(--text);
   margin: 0;
-  line-height: 1.1;
+  line-height: 0.92;
+  letter-spacing: -0.06em;
 }
 
 .text-acid {
@@ -50,8 +54,8 @@
 
 .mp-text {
   font-size: var(--fs-base);
-  color: var(--text-muted);
-  line-height: 1.6;
+  color: var(--text-secondary);
+  line-height: 1.75;
   margin: 0;
 }
 
@@ -59,11 +63,14 @@
 .mp-search-bar {
   display: flex;
   align-items: stretch;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0)),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-surface);
   overflow: visible;
   position: relative;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.24);
 }
 
 .mp-search-field {
@@ -79,7 +86,7 @@
 }
 
 .mp-search-field:hover {
-  background: var(--alpha-minimal);
+  background: color-mix(in srgb, var(--bg) 94%, #121212);
 }
 
 .mp-search-field-main {
@@ -119,8 +126,8 @@
 
 .search-btn {
   padding: 0.875rem 1.75rem;
-  background: var(--acid);
-  color: var(--bg);
+  background: linear-gradient(180deg, #f0ff63 0%, var(--acid) 100%);
+  color: var(--gray-950);
   border: none;
   font-size: 0.875rem;
   font-weight: var(--fw-bold);
@@ -128,7 +135,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background 0.2s ease;
-  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
   white-space: nowrap;
 }
 
@@ -142,14 +149,14 @@
   top: calc(100% + 4px);
   left: 0;
   min-width: 13.75rem;
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: var(--radius-surface);
   padding: 6px 0;
   z-index: 100;
   max-height: 17.5rem;
   overflow-y: auto;
-  box-shadow: 0 12px 32px var(--dark-60);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.24);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
@@ -218,7 +225,7 @@
   padding: var(--sp-2) 1.125rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: var(--radius-3xl);
+  border-radius: var(--radius-surface);
   color: var(--text-muted);
   font-size: 0.8125rem;
   font-weight: var(--fw-semibold);
@@ -235,8 +242,8 @@
 }
 
 .mp-filter.active {
-  background: var(--acid);
-  color: var(--bg);
+  background: linear-gradient(180deg, rgba(229,255,0,0.12), rgba(229,255,0,0.05));
+  color: var(--acid);
   border-color: var(--acid);
 }
 
@@ -244,7 +251,7 @@
   padding: var(--sp-2) 0.875rem;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   color: var(--text-muted);
   font-size: var(--fs-caption);
   font-weight: var(--fw-semibold);
@@ -488,7 +495,7 @@
   padding: var(--sp-5) var(--sp-6);
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: var(--radius-surface);
   font-size: 0.8125rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -582,7 +589,7 @@
 
   .mp-search-bar {
     flex-direction: column;
-    border-radius: 0.625rem;
+    border-radius: var(--radius-surface);
   }
 
   .mp-search-field {

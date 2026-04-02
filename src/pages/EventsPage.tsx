@@ -27,7 +27,7 @@ function isInRange(day: Date, from: Date | null, to: Date | null) {
 export default function EventsPage() {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
-  const { events, loading } = useEvents();
+  const { events, loading } = useEvents({ status: 'published' });
   const [searchText, setSearchText] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const [dateFrom, setDateFrom] = useState<Date | null>(null);
@@ -205,7 +205,7 @@ export default function EventsPage() {
 
       <div className="eventos-header">
         <h1 className="eventos-title">{t.organizer.allEvents}</h1>
-        <p className="eventos-subtitle">{filtered.length} {filtered.length === 1 ? 'evento' : 'eventos'}</p>
+        <p className="eventos-subtitle">{filtered.length} {filtered.length === 1 ? t.common.eventSingular : t.common.eventPlural}</p>
       </div>
 
       <div className="eventos-filters">
@@ -302,7 +302,7 @@ export default function EventsPage() {
             <div className="loader-bars">
               <span /><span /><span /><span /><span />
             </div>
-            <div className="loader-text">Cargando eventos...</div>
+            <div className="loader-text">{t.home.loadingEvents}</div>
           </div>
         </div>
       ) : filtered.length === 0 ? (

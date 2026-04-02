@@ -17,6 +17,14 @@ import type {
 
 const TICKETS_COLLECTION = 'tickets';
 
+async function requestPurchaseToken(eventId: string): Promise<string> {
+  const result = await apiFetch<{ purchaseToken: string }>('request-purchase-token', {
+    method: 'POST',
+    body: { eventId },
+  });
+  return result.purchaseToken;
+}
+
 /**
  * Get all tickets for a specific user.
  * Falls back to in-memory sort if composite index is missing.
@@ -143,7 +151,10 @@ export async function purchaseTickets(
   }
 ): Promise<PurchaseResponse> {
   // Layer 2: Get reCAPTCHA token (null if not configured)
-  const recaptchaToken = await getRecaptchaToken('purchase');
+  const [recaptchaToken, purchaseToken] = await Promise.all([
+    getRecaptchaToken('purchase'),
+    requestPurchaseToken(input.eventId),
+  ]);
 
   return apiFetch<PurchaseResponse>('purchase-tickets', {
     method: 'POST',
@@ -152,6 +163,7 @@ export async function purchaseTickets(
       quantities: input.quantities,
       couponCode: input.couponCode,
       recaptchaToken,
+      purchaseToken,
     },
   });
 }

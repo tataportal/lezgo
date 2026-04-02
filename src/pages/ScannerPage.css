@@ -5,7 +5,9 @@
 
 /* ---- Root Container ---- */
 .sc {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.015), transparent 16%),
+    var(--bg);
   color: var(--text);
   min-height: 100vh;
   padding: var(--sp-12) var(--sp-8) 4rem;
@@ -23,10 +25,11 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  background: var(--acid);
-  color: var(--bg);
+  background: var(--acid-05);
+  color: var(--acid);
   padding: 6px var(--sp-4);
-  border-radius: var(--radius-3xl);
+  border: 1px solid var(--acid-20);
+  border-radius: var(--radius-surface);
   font-weight: var(--fw-bold);
   font-size: var(--fs-caption);
   letter-spacing: 0.05em;
@@ -40,11 +43,11 @@
 }
 
 .sc-header h1 {
-  font-size: 2.75rem;
+  font-size: clamp(2.7rem, 5vw, 4.25rem);
   font-weight: var(--fw-extrabold);
-  line-height: 1.15;
+  line-height: 0.94;
   margin: 0 0 var(--sp-3);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.05em;
 }
 
 .sc-header h1 span {
@@ -53,7 +56,7 @@
 
 .sc-header p {
   color: var(--text-muted);
-  font-size: 1.0625rem;
+  font-size: 1rem;
   max-width: 33.75rem;
   margin: 0 auto;
   line-height: 1.6;
@@ -61,11 +64,15 @@
 
 /* ---- Scanner Tool Panel ---- */
 .sc-tool {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    linear-gradient(135deg, rgba(229,255,0,0.03), rgba(255,255,255,0) 34%),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-surface);
   padding: var(--sp-8);
   margin-bottom: var(--sp-10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .sc-tool-label {
@@ -80,9 +87,9 @@
 select.sc-tool {
   width: 100%;
   padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   color: var(--text);
   font-size: 1rem;
   appearance: none;
@@ -106,9 +113,9 @@ select.sc-tool:focus {
 select.select {
   width: 100%;
   padding: var(--sp-3) var(--sp-4);
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   color: var(--text);
   font-size: 1rem;
   appearance: none;
@@ -128,9 +135,9 @@ select.select {
 
 /* ---- Check-in Counter ---- */
 .sc-counter {
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-surface);
   padding: var(--sp-5) var(--sp-6);
   margin-top: var(--sp-6);
   margin-bottom: var(--sp-6);
@@ -160,23 +167,23 @@ select.select {
   width: 100%;
   height: 6px;
   background: var(--border);
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   overflow: hidden;
 }
 
 .sc-counter-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--green), var(--acid));
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   transition: width 0.4s ease;
 }
 
 /* ---- ID Type Select ---- */
 .sc-id-type-select {
   padding: 0.8125rem var(--sp-4);
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--text-dim);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   color: var(--text);
   font-size: 0.875rem;
   font-family: inherit;
@@ -201,9 +208,9 @@ select.select {
 .sc-dni-input {
   flex: 1;
   padding: 0.8125rem var(--sp-4);
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   color: var(--text);
   font-size: 1rem;
   font-variant-numeric: tabular-nums;
@@ -228,10 +235,10 @@ select.select {
 
 .sc-dni-btn {
   padding: 0.8125rem 1.75rem;
-  background: var(--acid);
-  color: var(--bg);
+  background: linear-gradient(180deg, #f0ff63 0%, var(--acid) 100%);
+  color: var(--gray-950);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-btn);
   font-weight: var(--fw-bold);
   font-size: 1rem;
   cursor: pointer;

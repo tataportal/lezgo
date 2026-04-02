@@ -67,6 +67,7 @@ export interface Event {
   tags: string[];
   prohibitedItems: string[];
   tiers: EventTier[];
+  maxTicketsPerBuyer?: number;
   badgeConfig?: EventBadgeConfig | null;
   status: EventStatus;
   featured: boolean;
@@ -82,6 +83,8 @@ export interface CreateEventInput {
   subtitle: string;
   date: Timestamp;
   dateLabel: string;
+  timeStart?: string;
+  timeEnd?: string;
   venue: string;
   location: string;
   address: string;
@@ -94,6 +97,7 @@ export interface CreateEventInput {
   tags: string[];
   prohibitedItems: string[];
   tiers: EventTier[];
+  maxTicketsPerBuyer?: number;
   status: EventStatus;
   featured: boolean;
   slug: string;
@@ -121,6 +125,11 @@ export interface Ticket {
   price: number;
   couponCode: string;
   couponDiscount: number;
+  buyerFee?: number;
+  organizerFee?: number;
+  platformRevenue?: number;
+  netToOrganizer?: number;
+  feeTier?: string;
   userId: string;
   userEmail: string;
   userDni: string;
@@ -198,14 +207,20 @@ export interface Coupon {
   code: string;
   discount: number;
   active: boolean;
-  expiresAt: Timestamp;
+  expiresAt: Timestamp | string | null;
   maxUses: number;
   usedCount: number;
+  eventId?: string | null;
+  tierId?: string | null;
+  maxUsesPerBuyer?: number | null;
+  description?: string;
 }
 
 export interface CouponValidationResult {
   valid: boolean;
   discount?: number;
+  tierId?: string | null;
+  maxUsesPerBuyer?: number | null;
   error?: string;
 }
 
@@ -231,5 +246,9 @@ export interface PurchaseResponse {
   ticketIds: string[];
   totalPrice: number;
   discountApplied: number;
+  buyerFee?: number;
+  organizerFees?: number;
+  platformRevenue?: number;
+  netToOrganizer?: number;
   badges?: { ticketId: string; badgeNumber: number; badgeType: string }[];
 }

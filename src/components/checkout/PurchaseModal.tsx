@@ -1,16 +1,17 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { validateCoupon } from '../../services/couponService';
+import { validateEventCoupon } from '../../services/couponService';
 import { purchaseTickets } from '../../services/ticketService';
 import { useTranslation } from '../../i18n';
 import { formatPrice, toDate, getActivePhase, LOCALE_MAP } from '../../lib/helpers';
-import { FEES, sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../../lib/constants';
+import { calculateBuyerFeeForTickets, sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../../lib/constants';
 import type { Event } from '../../lib/types';
+import { Icon } from '../ui';
 import toast from 'react-hot-toast';
 import './PurchaseModal.css';
 
-type PurchaseStep = 0 | 1 | 2 | 3 | 4;
+type PurchaseStep = 'login' | 'checkout' | 'success';
 
 interface PurchaseModalProps {
   event: Event | null;
@@ -23,7 +24,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   const { t, lang } = useTranslation();
   const locale = LOCALE_MAP[lang] || 'es-PE';
   const navigate = useNavigate();
-  const [step, setStep] = useState<PurchaseStep>(0);
+  const [step, setStep] = useState<PurchaseStep>('login');
   const [quantities, setQuantities] = useState<{ [tierId: string]: number }>({});
   const [name, setName] = useState('');
   const [idType, setIdType] = useState<IdType>('dni');
@@ -32,6 +33,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponTierId, setCouponTierId] = useState<string | null>(null);
   const [couponApplied, setCouponApplied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [earnedBadges, setEarnedBadges] = useState<{ badgeNumber: number; badgeType: string }[]>([]);
@@ -39,18 +41,36 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   // Reset all state when modal opens
   useEffect(() => {
     if (open) {
-      setStep(0);
+      setStep(user ? 'checkout' : 'login');
       setQuantities({});
-      setName('');
+      setName(profile?.displayName || '');
       setIdType('dni');
-      setDni('');
+      setDni(profile?.dni || '');
       setMagicEmail('');
       setMagicLinkSent(false);
       setCouponCode('');
       setCouponDiscount(0);
+      setCouponTierId(null);
       setCouponApplied(false);
       setEarnedBadges([]);
       setLoading(false);
+    }
+  }, [open]);
+
+  // When user logs in during the flow, move to checkout
+  useEffect(() => {
+    if (user && step === 'login') {
+      setStep('checkout');
+      setName(profile?.displayName || '');
+      setDni(profile?.dni || '');
+    }
+  }, [user]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
     }
   }, [open]);
 
@@ -65,12 +85,8 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
     }
   }, [open, onClose]);
 
-  // Initialize step based on user auth
-  const getInitialStep = (): PurchaseStep => {
-    if (!user) return 0;
-    if (!profile?.dni) return 2;
-    return 1;
-  };
+  // Whether user needs to fill DNI
+  const needsDni = !profile?.dni;
 
   // Calculate totals
   const subtotal = useMemo(() => {
@@ -83,14 +99,136 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
   }, [event, quantities]);
 
   const discount = useMemo(() => {
-    return subtotal * couponDiscount;
-  }, [subtotal, couponDiscount]);
+    if (!event || couponDiscount <= 0) return 0;
+    return (event.tiers || []).reduce((sum, tier) => {
+      const qty = quantities[tier.id] || 0;
+      if (!qty) return sum;
+      if (couponTierId && couponTierId !== tier.id) return sum;
+      const activePhase = getActivePhase(tier);
+      const tierSubtotal = (activePhase?.price || 0) * qty;
+      return sum + tierSubtotal * couponDiscount;
+    }, 0);
+  }, [event, quantities, couponDiscount, couponTierId]);
 
-  const fees = subtotal > 0 && discount < subtotal ? (subtotal - discount) * FEES.DIRECT_TOTAL : 0;
-  const total = subtotal - discount + fees;
+  const discountedTicketPrices = useMemo(() => {
+    if (!event) return [] as number[];
 
-  // Step 0: Login
-  if (step === 0 && open && !user) {
+    const prices: number[] = [];
+    for (const tier of event.tiers || []) {
+      const qty = quantities[tier.id] || 0;
+      if (!qty) continue;
+
+      const activePhase = getActivePhase(tier);
+      const basePrice = activePhase?.price || 0;
+      const isCouponEligible = couponApplied && (!couponTierId || couponTierId === tier.id);
+      const discountedPrice = Math.max(basePrice - (isCouponEligible ? basePrice * couponDiscount : 0), 0);
+
+      for (let i = 0; i < qty; i++) {
+        prices.push(discountedPrice);
+      }
+    }
+
+    return prices;
+  }, [event, quantities, couponApplied, couponDiscount, couponTierId]);
+
+  const feeBase = Math.max(subtotal - discount, 0);
+  const buyerFee = calculateBuyerFeeForTickets(discountedTicketPrices);
+  const total = feeBase + buyerFee;
+  const totalSelected = Object.values(quantities).reduce((sum, q) => sum + q, 0);
+  const isFree = subtotal === 0;
+  const maxTicketsPerBuyer = Math.max(Number(event?.maxTicketsPerBuyer ?? 1), 1);
+
+  const handleAddQty = (tierId: string) => {
+    if (totalSelected >= maxTicketsPerBuyer) return;
+    setQuantities({ ...quantities, [tierId]: 1 });
+  };
+
+  const handleRemoveQty = (tierId: string) => {
+    const currentQty = quantities[tierId] || 0;
+    if (currentQty > 0) {
+      setQuantities({ ...quantities, [tierId]: currentQty - 1 });
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim() || !event) {
+      toast.error(t.purchase.couponLabel);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const selectedTierIds = (event.tiers || [])
+        .filter((tier) => (quantities[tier.id] || 0) > 0)
+        .map((tier) => tier.id);
+      const result = await validateEventCoupon(couponCode, event.id, selectedTierIds);
+      if (result.valid && result.discount) {
+        setCouponDiscount(result.discount);
+        setCouponTierId(result.tierId || null);
+        setCouponApplied(true);
+        toast.success(t.purchase.couponApplied);
+      } else {
+        toast.error(result.error || t.purchase.couponInvalid);
+      }
+    } catch (error) {
+      toast.error(t.purchase.couponError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const canPurchase = useMemo(() => {
+    if (totalSelected === 0) return false;
+    if (needsDni && (!name.trim() || !isValidId(dni, idType))) return false;
+    return true;
+  }, [totalSelected, needsDni, name, dni, idType]);
+
+  const handlePurchase = async () => {
+    if (!canPurchase || !event) return;
+
+    // Save DNI if needed
+    if (needsDni) {
+      try {
+        await updateProfile({ displayName: name.trim(), dni: dni.trim(), dniType: idType });
+      } catch (error) {
+        const msg = error instanceof Error ? error.message : t.purchase.errorGeneric || 'Error en la compra';
+        toast.error(msg);
+        return;
+      }
+    }
+
+    setLoading(true);
+    try {
+      const purchaseInput = {
+        eventId: event.id,
+        quantities: (event.tiers || [])
+          .filter((tier) => (quantities[tier.id] || 0) > 0)
+          .map((tier) => ({
+            tierId: tier.id,
+            tierName: tier.name,
+            quantity: quantities[tier.id],
+          })),
+        couponCode: couponApplied ? couponCode : undefined,
+      };
+
+      const result = await purchaseTickets(purchaseInput);
+      if (result.badges && result.badges.length > 0) {
+        setEarnedBadges(result.badges.map((b: any) => ({ badgeNumber: b.badgeNumber, badgeType: b.badgeType })));
+      }
+      setStep('success');
+      toast.success(isFree ? t.purchase.reserveSuccess : t.purchase.purchaseSuccess);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : (t.purchase.errorGeneric || 'Error en la compra');
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!open) return null;
+
+  // ── Login Step ──
+  if (step === 'login' && !user) {
     const handleGoogleLogin = async () => {
       try {
         setLoading(true);
@@ -123,9 +261,15 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
     return (
       <div className="pm-overlay" onClick={onClose}>
-        <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="pm-modal pm-modal--login" onClick={(e) => e.stopPropagation()}>
           <button className="pm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
-          <div className="pm-content">
+
+          <div className="pm-login-header">
+            <div className="pm-login-logo">LEZGO</div>
+            <div className="pm-login-icon"><Icon name="ticket" size={28} /></div>
+          </div>
+
+          <div className="pm-content pm-content--centered">
             <h2 className="pm-title">{t.purchase.loginTitle}</h2>
             <p className="pm-subtitle">{t.purchase.loginDesc}</p>
 
@@ -136,14 +280,27 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                   onClick={handleGoogleLogin}
                   disabled={loading}
                 >
+                  <svg width="18" height="18" viewBox="0 0 24 24" style={{marginRight: '8px'}}>
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
                   {t.purchase.googleBtn}
                 </button>
-                <div className="pm-or-divider">{t.purchase.or}</div>
+
+                <div className="pm-or-divider">
+                  <span className="pm-or-line"></span>
+                  <span className="pm-or-text">{t.purchase.or}</span>
+                  <span className="pm-or-line"></span>
+                </div>
+
                 <input
                   type="email"
                   placeholder={t.purchase.emailPlaceholder}
                   value={magicEmail}
                   onChange={(e) => setMagicEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
                   className="pm-input pm-input--mb"
                 />
                 <button
@@ -151,129 +308,51 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                   onClick={handleMagicLink}
                   disabled={loading || !magicEmail.trim()}
                 >
-                  {t.purchase.sendMagicLink}
+                  {loading ? t.common.processing : t.purchase.sendMagicLink}
                 </button>
               </div>
             ) : (
               <div className="pm-magic-link-sent">
-                <p>{t.purchase.checkEmail}</p>
+                <div className="pm-magic-link-icon"><Icon name="user-check" size={28} /></div>
+                <h3 className="pm-magic-link-title">{t.purchase.checkEmail}</h3>
+                <p className="pm-magic-link-desc">{magicEmail}</p>
+                <button
+                  className="pm-button pm-button--secondary"
+                  onClick={() => setMagicLinkSent(false)}
+                  style={{marginTop: 'var(--sp-4)'}}
+                >
+                  {t.common.back}
+                </button>
               </div>
             )}
+
+            <p className="pm-login-footer">{t.purchase.secureLogin || 'Tu información está protegida'}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!open || !event || !user) return null;
+  if (!event || !user) return null;
 
-  // Initialize step properly
-  if (step === 0 && user) {
-    setStep(getInitialStep());
-    return null;
-  }
-
-  const totalSelected = Object.values(quantities).reduce((sum, q) => sum + q, 0);
-
-  const handleAddQty = (tierId: string) => {
-    // Limit: 1 ticket per DNI (1 total across all tiers)
-    if (totalSelected >= 1) return;
-    setQuantities({ ...quantities, [tierId]: 1 });
-  };
-
-  const handleRemoveQty = (tierId: string) => {
-    const currentQty = quantities[tierId] || 0;
-    if (currentQty > 0) {
-      setQuantities({ ...quantities, [tierId]: currentQty - 1 });
-    }
-  };
-
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      toast.error(t.purchase.couponLabel);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await validateCoupon(couponCode);
-      if (result.valid && result.discount) {
-        setCouponDiscount(result.discount);
-        setCouponApplied(true);
-        toast.success(t.purchase.couponApplied);
-      } else {
-        toast.error(result.error || t.purchase.couponInvalid);
-      }
-    } catch (error) {
-      toast.error(t.purchase.couponError);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePurchase = async () => {
-    if (step !== 3) return;
-
-    const totalQty = Object.values(quantities).reduce((a, b) => a + b, 0);
-    if (totalQty === 0) {
-      toast.error(t.purchase.errorNoTickets || 'Selecciona al menos una entrada');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Only send minimal data — server reads event, user profile, and prices from Firestore
-      const purchaseInput = {
-        eventId: event.id,
-        quantities: (event.tiers || [])
-          .filter((tier) => (quantities[tier.id] || 0) > 0)
-          .map((tier) => ({
-            tierId: tier.id,
-            tierName: tier.name,
-            quantity: quantities[tier.id],
-          })),
-        couponCode: couponApplied ? couponCode : undefined,
-      };
-
-      const result = await purchaseTickets(purchaseInput);
-      if (result.badges && result.badges.length > 0) {
-        setEarnedBadges(result.badges.map((b: any) => ({ badgeNumber: b.badgeNumber, badgeType: b.badgeType })));
-      }
-      setStep(4);
-      toast.success(subtotal === 0 ? t.purchase.reserveSuccess : t.purchase.purchaseSuccess);
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : (t.purchase.errorGeneric || 'Error en la compra');
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Step 1: Ticket Selection
-  if (step === 1) {
-    const totalQty = Object.values(quantities).reduce((a, b) => a + b, 0);
+  // ── Checkout Step (single view: tickets + identity + summary) ──
+  if (step === 'checkout') {
     return (
       <div className="pm-overlay" onClick={onClose}>
-        <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="pm-modal pm-modal--large" onClick={(e) => e.stopPropagation()}>
           <button className="pm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
-          <div className="pm-progress">
-            <div className="pm-dot active"></div>
-            <div className="pm-dot"></div>
-            <div className="pm-dot"></div>
-            <div className="pm-dot"></div>
-          </div>
 
           <div className="pm-content">
             <h2 className="pm-title">{t.purchase.selectTickets}</h2>
             <p className="pm-subtitle">{event.name}</p>
 
+            {/* ── Ticket Selection ── */}
             <div className="pm-tiers">
               {(event.tiers || []).map((tier) => {
                 const activePhase = getActivePhase(tier);
                 const available = tier.capacity - tier.sold;
                 const currentQty = quantities[tier.id] || 0;
 
-                // Check if this tier is locked (previous tier hasn't sold out)
                 const isLocked = tier.unlockAfterTier
                   ? (() => {
                       const prerequisite = (event.tiers || []).find((t: { id: string }) => t.id === tier.unlockAfterTier);
@@ -282,11 +361,11 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                   : false;
 
                 return (
-                  <div key={tier.id} className={`pm-tier-card${isLocked ? ' pm-tier-card--locked' : ''}`}>
+                  <div key={tier.id} className={`pm-tier-card${isLocked ? ' pm-tier-card--locked' : ''}${currentQty > 0 ? ' pm-tier-card--selected' : ''}`}>
                     <div className="pm-tier-info">
                       <h3 className="pm-tier-name">{tier.name}</h3>
                       {isLocked ? (
-                        <p className="pm-tier-locked-msg">🔒 Se abre cuando {tier.unlockAfterTier?.toUpperCase()} se agote</p>
+                        <p className="pm-tier-locked-msg"><Icon name="lock" size={14} /> {t.purchase.unlocksWhen || 'Se abre cuando'} {tier.unlockAfterTier?.toUpperCase()} {t.purchase.sellsOut || 'se agote'}</p>
                       ) : (
                         <>
                           <p className="pm-tier-price">{formatPrice(activePhase?.price || 0)}</p>
@@ -309,7 +388,7 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                         <button
                           className="pm-qty-btn"
                           onClick={() => handleAddQty(tier.id)}
-                          disabled={totalSelected >= 1 || currentQty >= available}
+                          disabled={totalSelected >= maxTicketsPerBuyer || currentQty >= available}
                         >
                           +
                         </button>
@@ -319,125 +398,51 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
                 );
               })}
             </div>
+            <p className="pm-ticket-limit-note">
+              {t.purchase.ticketLimitLabel}: {maxTicketsPerBuyer} {maxTicketsPerBuyer === 1 ? t.purchase.entrySingular : t.purchase.entryPlural}
+            </p>
 
-            <div className="pm-actions">
-              <button
-                className="pm-button pm-button--secondary"
-                onClick={() => setStep(0)}
-              >
-                {t.common.back}
-              </button>
-              <button
-                className="pm-button pm-button--primary"
-                onClick={() => setStep(2)}
-                disabled={totalQty === 0}
-              >
-                {t.common.continue}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+            {/* ── Identity Section (only if no DNI on file) ── */}
+            {needsDni && totalSelected > 0 && (
+              <div className="pm-section">
+                <h3 className="pm-section-title">{t.purchase.verifyTitle}</h3>
+                <p className="pm-section-desc">{t.purchase.verifyDesc}</p>
+                <div className="pm-form">
+                  <input
+                    type="text"
+                    placeholder={t.purchase.fullNamePlaceholder}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="pm-input"
+                  />
+                  <select
+                    value={idType}
+                    onChange={(e) => { setIdType(e.target.value as IdType); setDni(''); }}
+                    className="pm-input pm-select"
+                  >
+                    <option value="dni">{t.purchase.dniLabel}</option>
+                    <option value="ce">{t.purchase.carnetLabel}</option>
+                    <option value="pasaporte">{t.purchase.passportLabel}</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder={
+                      idType === 'dni' ? t.purchase.dniPlaceholder :
+                      idType === 'ce' ? t.purchase.carnetPlaceholder :
+                      t.purchase.passportPlaceholder
+                    }
+                    value={dni}
+                    onChange={(e) => setDni(sanitizeIdInput(e.target.value, idType))}
+                    maxLength={ID_CONFIG[idType].maxLength}
+                    className="pm-input"
+                  />
+                </div>
+              </div>
+            )}
 
-  // Step 2: DNI Verification
-  if (step === 2) {
-    return (
-      <div className="pm-overlay" onClick={onClose}>
-        <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="pm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
-          <div className="pm-progress">
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot active"></div>
-            <div className="pm-dot"></div>
-            <div className="pm-dot"></div>
-          </div>
-
-          <div className="pm-content">
-            <h2 className="pm-title">{t.purchase.verifyTitle}</h2>
-            <p className="pm-subtitle">{t.purchase.verifyDesc}</p>
-
-            <div className="pm-form">
-              <input
-                type="text"
-                placeholder={t.purchase.fullNamePlaceholder}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="pm-input"
-              />
-              <select
-                value={idType}
-                onChange={(e) => { setIdType(e.target.value as IdType); setDni(''); }}
-                className="pm-input pm-select"
-              >
-                <option value="dni">{t.purchase.dniLabel}</option>
-                <option value="ce">{t.purchase.carnetLabel}</option>
-                <option value="pasaporte">{t.purchase.passportLabel}</option>
-              </select>
-              <input
-                type="text"
-                placeholder={
-                  idType === 'dni' ? t.purchase.dniPlaceholder :
-                  idType === 'ce' ? t.purchase.carnetPlaceholder :
-                  t.purchase.passportPlaceholder
-                }
-                value={dni}
-                onChange={(e) => setDni(sanitizeIdInput(e.target.value, idType))}
-                maxLength={ID_CONFIG[idType].maxLength}
-                className="pm-input"
-              />
-            </div>
-
-            <div className="pm-actions">
-              <button
-                className="pm-button pm-button--secondary"
-                onClick={() => setStep(1)}
-              >
-                {t.common.back}
-              </button>
-              <button
-                className="pm-button pm-button--primary"
-                onClick={async () => {
-                  // Save DNI to user profile so the server can read it during purchase
-                  try {
-                    await updateProfile({ displayName: name.trim(), dni: dni.trim() });
-                  } catch {
-                    // Profile update failed but don't block — server will validate
-                  }
-                  setStep(3);
-                }}
-                disabled={!name.trim() || !isValidId(dni, idType)}
-              >
-                {t.common.continue}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Step 3: Coupon & Summary
-  if (step === 3) {
-    const isFree = subtotal === 0;
-    return (
-      <div className="pm-overlay" onClick={onClose}>
-        <div className="pm-modal pm-modal--large" onClick={(e) => e.stopPropagation()}>
-          <button className="pm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
-          <div className="pm-progress">
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot active"></div>
-            <div className="pm-dot"></div>
-          </div>
-
-          <div className="pm-content">
-            <h2 className="pm-title">{isFree ? t.purchase.summaryTitle : t.purchase.couponTitle}</h2>
-
-            {/* Only show coupon section when tickets have a price */}
-            {!isFree && (
-              <div className="pm-coupon-section">
+            {/* ── Coupon Section (only when tickets have a price and are selected) ── */}
+            {!isFree && totalSelected > 0 && (
+              <div className="pm-section">
                 <h3 className="pm-section-title">{t.purchase.couponLabel}</h3>
                 <div className="pm-coupon-input-group">
                   <input
@@ -473,70 +478,64 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
               </div>
             )}
 
-            <div className="pm-summary">
-              <h3 className="pm-section-title">{t.purchase.orderSummary}</h3>
+            {/* ── Summary (shows when tickets are selected) ── */}
+            {totalSelected > 0 && (
+              <div className="pm-summary">
+                <h3 className="pm-section-title">{t.purchase.orderSummary}</h3>
 
-              {/* Show selected tickets */}
-              {(event.tiers || []).filter((tier) => (quantities[tier.id] || 0) > 0).map((tier) => {
-                const qty = quantities[tier.id] || 0;
-                const activePhase = getActivePhase(tier);
-                return (
-                  <div key={tier.id} className="pm-summary-row">
-                    <span>{tier.name} x{qty}</span>
-                    <span>{formatPrice((activePhase?.price || 0) * qty)}</span>
-                  </div>
-                );
-              })}
-
-              {!isFree && (
-                <>
-                  <div className="pm-summary-row">
-                    <span>{t.purchase.subtotal}</span>
-                    <span>{formatPrice(subtotal)}</span>
-                  </div>
-                  {discount > 0 && (
-                    <div className="pm-summary-row pm-summary-row--discount">
-                      <span>{t.purchase.discount} ({(couponDiscount * 100).toFixed(0)}%)</span>
-                      <span>-{formatPrice(discount)}</span>
+                {(event.tiers || []).filter((tier) => (quantities[tier.id] || 0) > 0).map((tier) => {
+                  const qty = quantities[tier.id] || 0;
+                  const activePhase = getActivePhase(tier);
+                  return (
+                    <div key={tier.id} className="pm-summary-row">
+                      <span>{tier.name} x{qty}</span>
+                      <span>{formatPrice((activePhase?.price || 0) * qty)}</span>
                     </div>
-                  )}
-                  {discount < subtotal && (
-                    <>
-                      <div className="pm-summary-row pm-summary-row--fees">
-                        <span>{t.purchase.feePlatform}</span>
-                        <span>{formatPrice((subtotal - discount) * FEES.DIRECT_PLATFORM)}</span>
-                      </div>
-                      <div className="pm-summary-row pm-summary-row--fees">
-                        <span>{t.purchase.feeVerification}</span>
-                        <span>{formatPrice((subtotal - discount) * FEES.DIRECT_VERIFY)}</span>
-                      </div>
-                      <div className="pm-summary-row pm-summary-row--fees">
-                        <span>{t.purchase.feeProcessing}</span>
-                        <span>{formatPrice((subtotal - discount) * FEES.DIRECT_PROCESSING)}</span>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-              <div className="pm-summary-row pm-summary-row--total">
-                <span>{t.purchase.total}</span>
-                <span>{isFree ? t.common.free : formatPrice(total)}</span>
-              </div>
-            </div>
+                  );
+                })}
 
+                {!isFree && (
+                  <>
+                    <div className="pm-summary-row">
+                      <span>{t.purchase.subtotal}</span>
+                      <span>{formatPrice(subtotal)}</span>
+                    </div>
+                    {discount > 0 && (
+                      <div className="pm-summary-row pm-summary-row--discount">
+                        <span>{t.purchase.discount} ({(couponDiscount * 100).toFixed(0)}%)</span>
+                        <span>-{formatPrice(discount)}</span>
+                      </div>
+                    )}
+                    {buyerFee > 0 && (
+                      <div className="pm-summary-row pm-summary-row--fees">
+                        <span>{t.purchase.buyerFee}</span>
+                        <span>{formatPrice(buyerFee)}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+                <div className="pm-summary-row pm-summary-row--total">
+                  <span>{t.purchase.total}</span>
+                  <span>{isFree ? t.common.free : formatPrice(total)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* ── Action Button ── */}
             <div className="pm-actions">
               <button
-                className="pm-button pm-button--secondary"
-                onClick={() => setStep(2)}
-              >
-                {t.common.back}
-              </button>
-              <button
-                className="pm-button pm-button--primary"
+                className="pm-button pm-button--primary pm-button--full"
                 onClick={handlePurchase}
-                disabled={loading}
+                disabled={loading || !canPurchase}
               >
-                {loading ? t.common.processing : (isFree ? t.purchase.reserveTickets : t.purchase.buyTickets)}
+                {loading
+                  ? t.common.processing
+                  : totalSelected === 0
+                    ? t.purchase.selectTickets
+                    : isFree
+                      ? t.purchase.reserveTickets
+                      : t.purchase.buyTickets
+                }
               </button>
             </div>
           </div>
@@ -545,19 +544,12 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
     );
   }
 
-  // Step 4: Confirmation
-  if (step === 4) {
-    const isFree = total === 0;
+  // ── Success Step ──
+  if (step === 'success') {
     return (
       <div className="pm-overlay" onClick={onClose}>
         <div className="pm-modal" onClick={(e) => e.stopPropagation()}>
           <button className="pm-close" onClick={onClose} aria-label={t.common.close}>✕</button>
-          <div className="pm-progress">
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot completed"></div>
-            <div className="pm-dot completed"></div>
-          </div>
 
           <div className="pm-content pm-content--centered pm-success-wrap">
             <div className="pm-success-icon">✓</div>
@@ -566,13 +558,13 @@ export function PurchaseModal({ event, open, onClose }: PurchaseModalProps) {
 
             {earnedBadges.length > 0 && (
               <div className="pm-badge-reveal">
-                <div className="pm-badge-reveal__icon">⚡</div>
-                <div className="pm-badge-reveal__title">Early Adopter Badge</div>
+                <div className="pm-badge-reveal__icon"><Icon name="spark" size={26} /></div>
+                <div className="pm-badge-reveal__title">{t.purchase.earlyAdopterBadge}</div>
                 <div className="pm-badge-reveal__number">
                   #{String(earnedBadges[0].badgeNumber).padStart(3, '0')} / {event.badgeConfig?.totalSupply || 100}
                 </div>
                 <div className="pm-badge-reveal__desc">
-                  Tu medalla numerada de colección
+                  {t.purchase.numberedCollectibleMedal}
                 </div>
               </div>
             )}

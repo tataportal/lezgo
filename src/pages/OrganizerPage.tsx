@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getEventsByOrganizer } from '../services/eventService';
+import { getEventsByOrganizer, createEvent, updateEventStatus } from '../services/eventService';
 import { useTranslation } from '../i18n';
 import { apiFetch } from '../lib/api';
 import type { Event } from '../lib/types';
 import { formatPrice, toDate, getActivePhase, LOCALE_MAP } from '../lib/helpers';
-import { FEES } from '../lib/constants';
+import { Icon } from '../components/ui';
 import toast from 'react-hot-toast';
 import './OrganizerPage.css';
 
@@ -22,6 +22,10 @@ interface AnalyticsData {
   overview: {
     totalTickets: number;
     totalRevenue: number;
+    totalBuyerFees: number;
+    totalOrganizerFees: number;
+    totalPlatformRevenue: number;
+    totalNetToOrganizer: number;
     totalEvents: number;
     totalCapacity: number;
     fillRate: number;
@@ -39,6 +43,7 @@ interface AnalyticsData {
   tierBreakdown: { count: number; revenue: number; tierName: string }[];
   eventBreakdown: { count: number; revenue: number; eventName: string }[];
   coupons: { totalUsages: number; totalSavings: number; conversionLift: number };
+  guestlist?: { totalGuests: number; checkedIn: number; pending: number };
   consumerBehavior: {
     segments: { singleEvent: number; multiEvent: number; highSpender: number; groupBuyer: number; total: number };
     medianSpend: number;
@@ -55,15 +60,30 @@ interface CouponData {
   code: string;
   discount: number;
   maxUses: number;
+  maxUsesPerBuyer?: number | null;
   usedCount: number;
   active: boolean;
   eventId: string | null;
+  tierId?: string | null;
   description: string;
   createdAt: string | null;
   expiresAt: string | null;
 }
 
-type TabId = 'dashboard' | 'analytics' | 'coupons';
+interface GuestlistEntry {
+  id: string;
+  eventId: string;
+  eventName: string;
+  name: string;
+  email: string;
+  dni: string;
+  notes: string;
+  status: string;
+  createdAt: string | null;
+  checkedInAt: string | null;
+}
+
+type TabId = 'dashboard' | 'analytics' | 'coupons' | 'guestlist';
 
 export default function OrganizerPage() {
   const navigate = useNavigate();
@@ -79,6 +99,7 @@ export default function OrganizerPage() {
 
   // Analytics state
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [dashboardSummary, setDashboardSummary] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | 'all'>('30d');
   const [selectedEventFilter, setSelectedEventFilter] = useState<string>('');
@@ -91,39 +112,52 @@ export default function OrganizerPage() {
     code: '',
     discount: '',
     maxUses: '',
+    maxUsesPerBuyer: '',
     expiresAt: '',
     eventId: '',
+    tierId: '',
     description: '',
   });
   const [couponError, setCouponError] = useState('');
   const [couponSuccess, setCouponSuccess] = useState('');
+  const [guestlist, setGuestlist] = useState<GuestlistEntry[]>([]);
+  const [guestlistLoading, setGuestlistLoading] = useState(false);
+  const [guestlistError, setGuestlistError] = useState('');
+  const [guestForm, setGuestForm] = useState({
+    eventId: '',
+    name: '',
+    email: '',
+    dni: '',
+    notes: '',
+  });
 
   // Load events
+  const loadEvents = useCallback(async () => {
+    if (!user) return;
+    try {
+      const userEvents = await getEventsByOrganizer(user.uid);
+      const stats = userEvents.map((event) => {
+        const tiers = event.tiers || [];
+        const ticketsSold = tiers.reduce((sum, tier) => sum + (tier.sold || 0), 0);
+        const revenue = tiers.reduce((sum, tier) => {
+          const phase = getActivePhase(tier);
+          return sum + (tier.sold || 0) * (phase?.price || 0);
+        }, 0);
+        const capacity = tiers.reduce((sum, tier) => sum + tier.capacity, 0);
+        return { event, ticketsSold, revenue, capacity };
+      });
+      setEvents(stats);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      toast.error(t.organizer.errorGeneric || 'Error');
+    } finally {
+      setLoading(false);
+    }
+  }, [user, t.organizer.errorGeneric]);
+
   useEffect(() => {
-    const loadEvents = async () => {
-      if (!user) return;
-      try {
-        const userEvents = await getEventsByOrganizer(user.uid);
-        const stats = userEvents.map((event) => {
-          const tiers = event.tiers || [];
-          const ticketsSold = tiers.reduce((sum, tier) => sum + (tier.sold || 0), 0);
-          const revenue = tiers.reduce((sum, tier) => {
-            const phase = getActivePhase(tier);
-            return sum + (tier.sold || 0) * (phase?.price || 0);
-          }, 0);
-          const capacity = tiers.reduce((sum, tier) => sum + tier.capacity, 0);
-          return { event, ticketsSold, revenue, capacity };
-        });
-        setEvents(stats);
-      } catch (error) {
-        console.error('Error loading events:', error);
-        toast.error(t.organizer.errorGeneric || 'Error');
-      } finally {
-        setLoading(false);
-      }
-    };
     loadEvents();
-  }, [user]);
+  }, [loadEvents]);
 
   // Load analytics
   const loadAnalytics = useCallback(async () => {
@@ -144,6 +178,22 @@ export default function OrganizerPage() {
       setAnalyticsLoading(false);
     }
   }, [user, timeRange, selectedEventFilter]);
+
+  const loadDashboardSummary = useCallback(async () => {
+    if (!user) return;
+    try {
+      const data = await apiFetch<AnalyticsData>('organizer-analytics', {
+        body: { timeRange: 'all' },
+      });
+      setDashboardSummary(data);
+    } catch (error) {
+      console.error('Error loading dashboard summary:', error);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadDashboardSummary();
+  }, [loadDashboardSummary]);
 
   useEffect(() => {
     if (activeTab === 'analytics') {
@@ -174,6 +224,35 @@ export default function OrganizerPage() {
     }
   }, [activeTab, loadCoupons]);
 
+  const loadGuestlist = useCallback(async () => {
+    if (!user) return;
+    setGuestlistLoading(true);
+    setGuestlistError('');
+    try {
+      const data = await apiFetch<{ guests: GuestlistEntry[] }>('manage-guestlist', {
+        body: { action: 'list', eventId: guestForm.eventId || undefined },
+      });
+      setGuestlist(data.guests);
+    } catch (error) {
+      console.error('Error loading guestlist:', error);
+      const message = error instanceof Error ? error.message : 'No se pudo cargar la guestlist';
+      if (message.includes('Local API unavailable')) {
+        setGuestlistError('Guestlist no está disponible en Vite-only local mode. Corre npm run cf:dev para habilitar Functions.');
+      } else {
+        setGuestlistError('No se pudo cargar la guestlist.');
+        toast.error('No se pudo cargar la guestlist');
+      }
+    } finally {
+      setGuestlistLoading(false);
+    }
+  }, [user, guestForm.eventId]);
+
+  useEffect(() => {
+    if (activeTab === 'guestlist') {
+      loadGuestlist();
+    }
+  }, [activeTab, loadGuestlist]);
+
   // Coupon actions
   const handleCreateCoupon = async () => {
     setCouponError('');
@@ -197,13 +276,15 @@ export default function OrganizerPage() {
           code: couponForm.code,
           discount: discountNum,
           maxUses: parseInt(couponForm.maxUses),
+          maxUsesPerBuyer: couponForm.maxUsesPerBuyer ? parseInt(couponForm.maxUsesPerBuyer) : undefined,
           expiresAt: couponForm.expiresAt || undefined,
           eventId: couponForm.eventId || undefined,
+          tierId: couponForm.tierId || undefined,
           description: couponForm.description,
         },
       });
       setCouponSuccess(t.organizer.couponCreated);
-      setCouponForm({ code: '', discount: '', maxUses: '', expiresAt: '', eventId: '', description: '' });
+      setCouponForm({ code: '', discount: '', maxUses: '', maxUsesPerBuyer: '', expiresAt: '', eventId: '', tierId: '', description: '' });
       setShowCouponForm(false);
       loadCoupons();
     } catch (error: any) {
@@ -236,13 +317,186 @@ export default function OrganizerPage() {
     }
   };
 
+  const handleCreateGuest = async () => {
+    if (!guestForm.eventId || !guestForm.name || !guestForm.email) {
+      toast.error('Completa evento, nombre y email');
+      return;
+    }
+    try {
+      await apiFetch('manage-guestlist', {
+        body: {
+          action: 'create',
+          eventId: guestForm.eventId,
+          name: guestForm.name,
+          email: guestForm.email,
+          dni: guestForm.dni,
+          notes: guestForm.notes,
+        },
+      });
+      toast.success('Invitado agregado a guestlist');
+      setGuestForm({ eventId: guestForm.eventId, name: '', email: '', dni: '', notes: '' });
+      loadGuestlist();
+    } catch (error) {
+      console.error('Error creating guest:', error);
+      toast.error('No se pudo agregar a guestlist');
+    }
+  };
+
+  const handleDeleteGuest = async (guestId: string) => {
+    try {
+      await apiFetch('manage-guestlist', {
+        body: { action: 'delete', guestId },
+      });
+      toast.success('Invitado eliminado');
+      loadGuestlist();
+    } catch (error) {
+      console.error('Error deleting guest:', error);
+      toast.error('No se pudo eliminar');
+    }
+  };
+
+  const handleCheckinGuest = async (guestId: string) => {
+    try {
+      await apiFetch('manage-guestlist', {
+        body: { action: 'checkin', guestId },
+      });
+      toast.success('Guest marcado como ingresado');
+      loadGuestlist();
+    } catch (error) {
+      console.error('Error checking in guest:', error);
+      toast.error('No se pudo marcar ingreso');
+    }
+  };
+
   // Dashboard calculations
   const totalRevenue = events.reduce((sum, e) => sum + e.revenue, 0);
   const totalTicketsSold = events.reduce((sum, e) => sum + e.ticketsSold, 0);
   const totalEvents = events.length;
   const totalCapacity = events.reduce((sum, e) => sum + e.capacity, 0);
-  const fee = totalRevenue * FEES.DIRECT_TOTAL;
-  const netRevenue = totalRevenue - fee;
+  const fee = dashboardSummary?.overview.totalPlatformRevenue ?? 0;
+  const netRevenue = dashboardSummary?.overview.totalNetToOrganizer ?? totalRevenue;
+  const exactGrossRevenue = dashboardSummary?.overview.totalRevenue ?? totalRevenue;
+
+  const selectedCouponEvent = useMemo(
+    () => events.find((entry) => entry.event.id === couponForm.eventId)?.event ?? null,
+    [couponForm.eventId, events]
+  );
+
+  const downloadCsv = (filename: string, rows: Array<Record<string, string | number | null>>) => {
+    if (rows.length === 0) {
+      toast.error('No hay datos para exportar');
+      return;
+    }
+
+    const headers = Object.keys(rows[0]);
+    const csv = [
+      headers.join(','),
+      ...rows.map((row) =>
+        headers
+          .map((header) => {
+            const value = row[header] ?? '';
+            const normalized = String(value).replace(/"/g, '""');
+            return `"${normalized}"`;
+          })
+          .join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportAttendees = async (event?: Event) => {
+    try {
+      const eventIds = event ? [event.id] : events.map((entry) => entry.event.id);
+      const exports = await Promise.all(
+        eventIds.map((id) => apiFetch<{ eventName: string; attendees: Array<Record<string, any>> }>(`export-attendees?eventId=${id}`, { method: 'GET' }))
+      );
+
+      const rows = exports.flatMap((exported) =>
+        exported.attendees.map((attendee) => ({
+          eventName: attendee.eventName || exported.eventName || '',
+          userName: attendee.userName || '',
+          userEmail: attendee.userEmail || '',
+          userDni: attendee.userDni || '',
+          ticketName: attendee.ticketName || '',
+          status: attendee.status || '',
+          price: attendee.price || 0,
+          couponCode: attendee.couponCode || '',
+          purchasedAt: attendee.purchasedAt || '',
+          usedAt: attendee.usedAt || '',
+        }))
+      );
+
+      const safeName = event ? (event.slug || event.name || 'evento') : 'todos-los-eventos';
+      downloadCsv(`lezgo-attendees-${safeName}.csv`, rows);
+      toast.success(event ? 'Asistentes exportados' : 'Base de asistentes exportada');
+    } catch (error) {
+      console.error('Error exporting attendees:', error);
+      toast.error('No se pudo exportar asistentes');
+    }
+  };
+
+  const handleToggleEventVisibility = async (event: Event) => {
+    const nextStatus = event.status === 'published' ? 'draft' : 'published';
+    try {
+      await updateEventStatus(event.id, nextStatus);
+      toast.success(nextStatus === 'published' ? 'Evento publicado' : 'Evento ocultado');
+      await Promise.all([loadEvents(), loadDashboardSummary()]);
+    } catch (error) {
+      console.error('Error updating event status:', error);
+      toast.error('No se pudo actualizar el estado del evento');
+    }
+  };
+
+  const handleDuplicateEvent = async (event: Event) => {
+    try {
+      const baseName = `${event.name} Copy`;
+      await createEvent(
+        {
+          name: baseName,
+          subtitle: event.subtitle || '',
+          date: event.date,
+          dateLabel: event.dateLabel || '',
+          timeStart: event.timeStart || '',
+          timeEnd: event.timeEnd || '',
+          venue: event.venue || '',
+          location: event.location || '',
+          address: event.address || '',
+          image: event.image || '',
+          heroVideo: event.heroVideo || '',
+          description: event.description || '',
+          descriptionLong: event.descriptionLong || '',
+          genre: event.genre || '',
+          lineup: Array.isArray(event.lineup) ? event.lineup : [],
+          tags: Array.isArray(event.tags) ? event.tags : [],
+          prohibitedItems: Array.isArray(event.prohibitedItems) ? event.prohibitedItems : [],
+          tiers: (event.tiers || []).map((tier) => ({
+            ...tier,
+            sold: 0,
+          })),
+          status: 'draft',
+          featured: false,
+          slug: `${event.slug || event.id}-copy-${Date.now()}`,
+          visibleSections: event.visibleSections,
+          meta: event.meta,
+        },
+        user!.uid
+      );
+      toast.success('Evento duplicado en borrador');
+      await loadEvents();
+    } catch (error) {
+      console.error('Error duplicating event:', error);
+      toast.error('No se pudo duplicar el evento');
+    }
+  };
 
   const getStatusBadgeText = (status: string) => {
     switch (status) {
@@ -284,19 +538,25 @@ export default function OrganizerPage() {
           className={`og-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('dashboard')}
         >
-          📊 {t.organizer.tabDashboard}
+          <Icon name="analytics" size={15} /> {t.organizer.tabDashboard}
         </button>
         <button
           className={`og-tab ${activeTab === 'analytics' ? 'active' : ''}`}
           onClick={() => setActiveTab('analytics')}
         >
-          📈 {t.organizer.tabAnalytics}
+          <Icon name="analytics" size={15} /> {t.organizer.tabAnalytics}
         </button>
         <button
           className={`og-tab ${activeTab === 'coupons' ? 'active' : ''}`}
           onClick={() => setActiveTab('coupons')}
         >
-          🏷️ {t.organizer.tabCoupons}
+          <Icon name="coupon" size={15} /> {t.organizer.tabCoupons}
+        </button>
+        <button
+          className={`og-tab ${activeTab === 'guestlist' ? 'active' : ''}`}
+          onClick={() => setActiveTab('guestlist')}
+        >
+          <Icon name="user-check" size={15} /> Guestlist
         </button>
       </div>
 
@@ -308,15 +568,19 @@ export default function OrganizerPage() {
           {/* QUICK ACTIONS */}
           <div className="og-quick-actions">
             <button className="og-quick-btn" onClick={() => navigate('/event-form')}>
-              <span className="og-quick-icon">✏️</span>
+              <span className="og-quick-icon"><Icon name="pencil" size={16} /></span>
               {t.organizer.createEvent}
             </button>
             <button className="og-quick-btn" onClick={() => navigate('/scanner')}>
-              <span className="og-quick-icon">📱</span>
+              <span className="og-quick-icon"><Icon name="scanner" size={16} /></span>
               {t.organizer.openScanner}
             </button>
+            <button className="og-quick-btn" onClick={() => handleExportAttendees()}>
+              <span className="og-quick-icon"><Icon name="download" size={16} /></span>
+              {t.organizer.exportAll}
+            </button>
             <button className="og-quick-btn" onClick={() => setActiveTab('analytics')}>
-              <span className="og-quick-icon">📈</span>
+              <span className="og-quick-icon"><Icon name="analytics" size={16} /></span>
               {t.organizer.tabAnalytics}
             </button>
           </div>
@@ -330,7 +594,7 @@ export default function OrganizerPage() {
             </div>
             <div className="og-metric">
               <div className="og-metric-label">{t.organizer.grossRevenue}</div>
-              <div className="og-metric-value acid">{formatPrice(totalRevenue)}</div>
+              <div className="og-metric-value acid">{formatPrice(exactGrossRevenue)}</div>
               <div className="og-metric-change">{t.organizer.grossDesc}</div>
             </div>
             <div className="og-metric">
@@ -351,7 +615,7 @@ export default function OrganizerPage() {
 
             {events.length === 0 ? (
               <div className="og-empty-state">
-                <div className="og-empty-icon">📭</div>
+                <div className="og-empty-icon"><Icon name="ticket" size={26} /></div>
                 <div className="og-empty-title">{t.organizer.noEvents}</div>
                 <div className="og-empty-text">{t.organizer.noEventsDesc}</div>
                 <button className="og-btn-new og-btn-new--mt" onClick={() => navigate('/event-form')}>
@@ -387,6 +651,15 @@ export default function OrganizerPage() {
                       <div className="og-event-actions">
                         <button className="og-act-btn primary" onClick={() => navigate(`/event-form?id=${event.id}`)}>{t.common.edit}</button>
                         <button className="og-act-btn ghost" onClick={() => navigate(`/evento/${event.slug || event.id}`)}>{t.common.view}</button>
+                        <button className="og-act-btn ghost" onClick={() => handleToggleEventVisibility(event)}>
+                          {event.status === 'published' ? 'Ocultar' : 'Publicar'}
+                        </button>
+                        <button className="og-act-btn ghost" onClick={() => handleDuplicateEvent(event)}>
+                          Duplicar
+                        </button>
+                        <button className="og-act-btn ghost" onClick={() => handleExportAttendees(event)}>
+                          Exportar asistentes
+                        </button>
                         <button className="og-act-btn ghost" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id)}>
                           {expandedEventId === event.id ? '↑' : '↓'} {t.organizer.tiers || 'Tiers'}
                         </button>
@@ -484,11 +757,18 @@ export default function OrganizerPage() {
                   <div className="og-metric-change">{analytics.overview.totalTickets}/{analytics.overview.totalCapacity} {t.organizer.capacityLabel}</div>
                 </div>
                 <div className="og-metric">
-                  <div className="og-metric-label">{t.organizer.checkInRateLabel}</div>
-                  <div className="og-metric-value">{analytics.overview.checkInRate}%</div>
-                  <div className="og-metric-change">{analytics.overview.usedTickets} {t.organizer.checkedIn}</div>
-                </div>
+              <div className="og-metric-label">{t.organizer.checkInRateLabel}</div>
+              <div className="og-metric-value">{analytics.overview.checkInRate}%</div>
+              <div className="og-metric-change">{analytics.overview.usedTickets} {t.organizer.checkedIn}</div>
+            </div>
+            {analytics.guestlist ? (
+              <div className="og-metric">
+                <div className="og-metric-label">Guestlist</div>
+                <div className="og-metric-value">{analytics.guestlist.totalGuests}</div>
+                <div className="og-metric-change">{analytics.guestlist.checkedIn} ingresados · {analytics.guestlist.pending} pendientes</div>
               </div>
+            ) : null}
+          </div>
 
               {/* SALES TIMELINE */}
               <div className="og-section">
@@ -521,7 +801,7 @@ export default function OrganizerPage() {
                   </div>
                 ) : (
                   <div className="og-empty-state">
-                    <div className="og-empty-icon">📊</div>
+                    <div className="og-empty-icon"><Icon name="analytics" size={26} /></div>
                     <div className="og-empty-title">{t.organizer.noSalesData}</div>
                   </div>
                 )}
@@ -641,7 +921,7 @@ export default function OrganizerPage() {
                     {/* SEGMENT VISUALIZATION */}
                     <div className="og-segments">
                       <div className="og-segment-card">
-                        <div className="og-segment-icon">👤</div>
+                        <div className="og-segment-icon"><Icon name="user-check" size={18} /></div>
                         <div className="og-segment-value">{analytics.consumerBehavior.segments.singleEvent}</div>
                         <div className="og-segment-label">{t.organizer.segSingleEvent}</div>
                         <div className="og-segment-desc">{t.organizer.segSingleEventDesc}</div>
@@ -652,7 +932,7 @@ export default function OrganizerPage() {
                         </div>
                       </div>
                       <div className="og-segment-card highlight">
-                        <div className="og-segment-icon">🔄</div>
+                        <div className="og-segment-icon"><Icon name="transfer" size={18} /></div>
                         <div className="og-segment-value">{analytics.consumerBehavior.segments.multiEvent}</div>
                         <div className="og-segment-label">{t.organizer.segMultiEvent}</div>
                         <div className="og-segment-desc">{t.organizer.segMultiEventDesc}</div>
@@ -663,7 +943,7 @@ export default function OrganizerPage() {
                         </div>
                       </div>
                       <div className="og-segment-card">
-                        <div className="og-segment-icon">💎</div>
+                        <div className="og-segment-icon"><Icon name="diamond" size={18} /></div>
                         <div className="og-segment-value">{analytics.consumerBehavior.segments.highSpender}</div>
                         <div className="og-segment-label">{t.organizer.segHighSpender}</div>
                         <div className="og-segment-desc">{t.organizer.segHighSpenderDesc}</div>
@@ -674,7 +954,7 @@ export default function OrganizerPage() {
                         </div>
                       </div>
                       <div className="og-segment-card">
-                        <div className="og-segment-icon">👥</div>
+                        <div className="og-segment-icon"><Icon name="users" size={18} /></div>
                         <div className="og-segment-value">{analytics.consumerBehavior.segments.groupBuyer}</div>
                         <div className="og-segment-label">{t.organizer.segGroupBuyer}</div>
                         <div className="og-segment-desc">{t.organizer.segGroupBuyerDesc}</div>
@@ -689,7 +969,7 @@ export default function OrganizerPage() {
                     {/* INSIGHTS PANEL */}
                     <div className="og-insights">
                       <div className="og-insights-header">
-                        <span className="og-insights-icon">🧠</span>
+                        <span className="og-insights-icon"><Icon name="spark" size={16} /></span>
                         <span>{t.organizer.insightsTitle}</span>
                       </div>
                       <div className="og-insights-grid">
@@ -711,7 +991,7 @@ export default function OrganizerPage() {
                         <div className="og-insight">
                           <div className="og-insight-label">{t.organizer.insightLoyalty}</div>
                           <div className="og-insight-value">
-                            {analytics.consumerBehavior.repeatRate > 20 ? '🟢' : analytics.consumerBehavior.repeatRate > 5 ? '🟡' : '🔴'}
+                            {analytics.consumerBehavior.repeatRate > 20 ? 'HIGH' : analytics.consumerBehavior.repeatRate > 5 ? 'MID' : 'LOW'}
                           </div>
                           <div className="og-insight-desc">
                             {analytics.consumerBehavior.repeatRate > 20
@@ -726,12 +1006,12 @@ export default function OrganizerPage() {
 
                     {/* DATA DISCLAIMER */}
                     <div className="og-data-disclaimer">
-                      🔒 {t.organizer.dataDisclaimer}
+                      <Icon name="lock" size={14} /> {t.organizer.dataDisclaimer}
                     </div>
                   </>
                 ) : (
                   <div className="og-empty-state">
-                    <div className="og-empty-icon">👥</div>
+                    <div className="og-empty-icon"><Icon name="users" size={26} /></div>
                     <div className="og-empty-title">{t.organizer.noBehaviorData}</div>
                     <div className="og-empty-text">{t.organizer.noBehaviorDataDesc}</div>
                   </div>
@@ -797,6 +1077,16 @@ export default function OrganizerPage() {
                       onChange={(e) => setCouponForm({ ...couponForm, maxUses: e.target.value })}
                     />
                   </div>
+                  <div className="og-form-field">
+                    <label>Máx. por comprador</label>
+                    <input
+                      type="number"
+                      placeholder="1"
+                      min="1"
+                      value={couponForm.maxUsesPerBuyer}
+                      onChange={(e) => setCouponForm({ ...couponForm, maxUsesPerBuyer: e.target.value })}
+                    />
+                  </div>
                 </div>
                 <div className="og-form-row">
                   <div className="og-form-field">
@@ -811,11 +1101,24 @@ export default function OrganizerPage() {
                     <label>{t.organizer.couponEvent}</label>
                     <select
                       value={couponForm.eventId}
-                      onChange={(e) => setCouponForm({ ...couponForm, eventId: e.target.value })}
+                      onChange={(e) => setCouponForm({ ...couponForm, eventId: e.target.value, tierId: '' })}
                     >
                       <option value="">{t.organizer.allEvents}</option>
                       {events.map((s) => (
                         <option key={s.event.id} value={s.event.id}>{s.event.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="og-form-field">
+                    <label>Tier</label>
+                    <select
+                      value={couponForm.tierId}
+                      onChange={(e) => setCouponForm({ ...couponForm, tierId: e.target.value })}
+                      disabled={!selectedCouponEvent}
+                    >
+                      <option value="">Todos los tiers</option>
+                      {(selectedCouponEvent?.tiers || []).map((tier) => (
+                        <option key={tier.id} value={tier.id}>{tier.name}</option>
                       ))}
                     </select>
                   </div>
@@ -846,7 +1149,7 @@ export default function OrganizerPage() {
               </div>
             ) : coupons.length === 0 ? (
               <div className="og-empty-state">
-                <div className="og-empty-icon">🏷️</div>
+                <div className="og-empty-icon"><Icon name="coupon" size={26} /></div>
                 <div className="og-empty-title">{t.organizer.noCoupons}</div>
                 <div className="og-empty-text">{t.organizer.noCouponsDesc}</div>
               </div>
@@ -877,6 +1180,22 @@ export default function OrganizerPage() {
                           </span>
                         </div>
                       )}
+                      {coupon.maxUsesPerBuyer ? (
+                        <div className="og-coupon-detail">
+                          <span className="og-coupon-detail-label">Máx. por comprador</span>
+                          <span className="og-coupon-detail-value">{coupon.maxUsesPerBuyer}</span>
+                        </div>
+                      ) : null}
+                      {coupon.tierId ? (
+                        <div className="og-coupon-detail">
+                          <span className="og-coupon-detail-label">Tier</span>
+                          <span className="og-coupon-detail-value">
+                            {events
+                              .flatMap((entry) => entry.event.tiers || [])
+                              .find((tier) => tier.id === coupon.tierId)?.name || coupon.tierId}
+                          </span>
+                        </div>
+                      ) : null}
                       {coupon.description && (
                         <div className="og-coupon-detail full">
                           <span className="og-coupon-detail-label">{t.organizer.couponDescription}</span>
@@ -896,6 +1215,137 @@ export default function OrganizerPage() {
                         onClick={() => handleDeleteCoupon(coupon.code)}
                       >
                         {t.organizer.deleteCoupon}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'guestlist' && (
+        <div className="og-coupons">
+          <div className="og-section">
+            <div className="og-section-header">
+              <div className="og-section-title">Guestlist</div>
+            </div>
+
+            <div className="og-coupon-form">
+              <div className="og-form-row">
+                <div className="og-form-field">
+                  <label>Evento</label>
+                  <select
+                    value={guestForm.eventId}
+                    onChange={(e) => setGuestForm({ ...guestForm, eventId: e.target.value })}
+                  >
+                    <option value="">Selecciona un evento</option>
+                    {events.map((s) => (
+                      <option key={s.event.id} value={s.event.id}>{s.event.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="og-form-field">
+                  <label>Nombre</label>
+                  <input
+                    type="text"
+                    value={guestForm.name}
+                    onChange={(e) => setGuestForm({ ...guestForm, name: e.target.value })}
+                    placeholder="Nombre completo"
+                  />
+                </div>
+                <div className="og-form-field">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={guestForm.email}
+                    onChange={(e) => setGuestForm({ ...guestForm, email: e.target.value })}
+                    placeholder="guest@email.com"
+                  />
+                </div>
+              </div>
+              <div className="og-form-row">
+                <div className="og-form-field">
+                  <label>DNI</label>
+                  <input
+                    type="text"
+                    value={guestForm.dni}
+                    onChange={(e) => setGuestForm({ ...guestForm, dni: e.target.value })}
+                    placeholder="Opcional"
+                  />
+                </div>
+                <div className="og-form-field">
+                  <label>Notas</label>
+                  <input
+                    type="text"
+                    value={guestForm.notes}
+                    onChange={(e) => setGuestForm({ ...guestForm, notes: e.target.value })}
+                    placeholder="Invitado prensa, partner, etc."
+                  />
+                </div>
+              </div>
+              <button className="og-btn-create-coupon" onClick={handleCreateGuest}>
+                Agregar a guestlist
+              </button>
+            </div>
+
+            {guestlistError ? (
+              <div className="og-inline-error">
+                {guestlistError}
+              </div>
+            ) : null}
+
+            {guestlistLoading ? (
+              <div className="og-analytics-loading">
+                <div className="loading-spinner" />
+              </div>
+            ) : guestlist.length === 0 ? (
+              <div className="og-empty-state">
+                <div className="og-empty-icon"><Icon name="user-check" size={26} /></div>
+                <div className="og-empty-title">Sin invitados</div>
+                <div className="og-empty-text">Agrega los primeros nombres para puerta o invitados especiales.</div>
+              </div>
+            ) : (
+              <div className="og-coupons-list">
+                {guestlist.map((guest) => (
+                  <div key={guest.id} className={`og-coupon-card ${guest.status === 'checked-in' ? 'inactive' : ''}`}>
+                    <div className="og-coupon-header">
+                      <div className="og-coupon-code">{guest.name}</div>
+                      <div className={`og-coupon-status ${guest.status === 'checked-in' ? 'inactive' : 'active'}`}>
+                        {guest.status === 'checked-in' ? 'Ingresó' : 'Activo'}
+                      </div>
+                    </div>
+                    <div className="og-coupon-details">
+                      <div className="og-coupon-detail">
+                        <span className="og-coupon-detail-label">Evento</span>
+                        <span className="og-coupon-detail-value">{guest.eventName}</span>
+                      </div>
+                      <div className="og-coupon-detail">
+                        <span className="og-coupon-detail-label">Email</span>
+                        <span className="og-coupon-detail-value">{guest.email}</span>
+                      </div>
+                      {guest.dni ? (
+                        <div className="og-coupon-detail">
+                          <span className="og-coupon-detail-label">DNI</span>
+                          <span className="og-coupon-detail-value">{guest.dni}</span>
+                        </div>
+                      ) : null}
+                      {guest.notes ? (
+                        <div className="og-coupon-detail full">
+                          <span className="og-coupon-detail-label">Notas</span>
+                          <span className="og-coupon-detail-value">{guest.notes}</span>
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="og-coupon-actions">
+                      {guest.status !== 'checked-in' ? (
+                        <button className="og-act-btn primary" onClick={() => handleCheckinGuest(guest.id)}>
+                          Marcar ingreso
+                        </button>
+                      ) : null}
+                      <button className="og-act-btn ghost danger" onClick={() => handleDeleteGuest(guest.id)}>
+                        Eliminar
                       </button>
                     </div>
                   </div>

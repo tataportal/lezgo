@@ -11,7 +11,10 @@
 }
 
 .rcm-modal {
-  background-color: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    linear-gradient(135deg, rgba(229,255,0,0.028), rgba(255,255,255,0) 34%),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border-radius: var(--radius-2xl);
   border: 1px solid var(--border);
   width: 100%;
@@ -19,7 +22,7 @@
   max-height: 90vh;
   overflow-y: auto;
   padding: var(--sp-10);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
   position: relative;
   animation: slide-up 0.3s ease-out;
 }
@@ -47,7 +50,7 @@
 
 .rcm-close:hover {
   color: var(--text);
-  transform: rotate(90deg);
+  transform: none;
 }
 
 .rcm-progress {
@@ -86,10 +89,12 @@
 }
 
 .rcm-title {
-  font-size: var(--fs-xl);
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
   font-weight: var(--fw-bold);
   color: var(--text);
   margin: 0;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
 }
 
 .rcm-subtitle {
@@ -115,9 +120,9 @@
 
 .rcm-message {
   padding: var(--sp-4);
-  background-color: var(--bg);
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
+  border-radius: var(--radius-surface);
   text-align: center;
 }
 
@@ -131,9 +136,11 @@
 .rcm-listing-card {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0)),
+    color-mix(in srgb, var(--bg) 95%, #0f0f0f);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-surface);
   overflow: hidden;
 }
 
@@ -264,9 +271,9 @@
 
 .rcm-input {
   padding: var(--sp-3) var(--sp-4);
-  background-color: var(--bg);
+  background-color: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
-  border-radius: var(--radius-btn);
+  border-radius: var(--radius-surface);
   color: var(--text);
   font-size: 0.875rem;
   font-family: inherit;
@@ -307,9 +314,9 @@
   flex-direction: column;
   gap: var(--sp-4);
   padding: var(--sp-4);
-  background-color: var(--bg);
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-surface);
 }
 
 .rcm-summary-section {

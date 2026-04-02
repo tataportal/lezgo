@@ -27,17 +27,31 @@ export async function apiFetch<T = unknown>(
     getDeviceFingerprint().catch(() => 'unknown'),
   ]);
 
-  const res = await fetch(`${API_BASE}/${path}`, {
-    method: options.method || 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-      'X-Device-Fingerprint': fingerprint,
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}/${path}`, {
+      method: options.method || 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+        'X-Device-Fingerprint': fingerprint,
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    });
+  } catch (error) {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      throw new Error('Local API unavailable. Run npm run cf:dev to enable Cloudflare Functions in localhost.');
+    }
+    throw error;
+  }
 
   if (!res.ok) {
+    if (
+      res.status === 404 &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ) {
+      throw new Error('Local API unavailable. Run npm run cf:dev to enable Cloudflare Functions in localhost.');
+    }
     let errorMessage = `API error: ${res.status}`;
     try {
       const data = await res.json();

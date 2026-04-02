@@ -47,6 +47,14 @@ export default function ResaleCheckoutModal({
     }
   }, [open]);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [open]);
+
   // Escape key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -60,10 +68,12 @@ export default function ResaleCheckoutModal({
 
   if (!open || !resale) return null;
 
+  // Whether user needs DNI verification
+  const needsDni = !profile?.dni;
+
   // Determine initial step based on auth state
   const getInitialStep = (): ResaleCheckoutStep => {
     if (!user) return 0;
-    if (!profile?.dni) return 2;
     return 1;
   };
 
@@ -236,7 +246,7 @@ export default function ResaleCheckoutModal({
               </button>
               <button
                 className="rcm-button rcm-button--primary"
-                onClick={() => setStep(2)}
+                onClick={() => setStep(needsDni ? 2 : 3)}
               >
                 {t.common.next}
               </button>
@@ -309,11 +319,12 @@ export default function ResaleCheckoutModal({
                 className="rcm-button rcm-button--primary"
                 onClick={async () => {
                   try {
-                    await updateProfile({ displayName: name.trim(), dni: dni.trim() });
-                  } catch {
-                    // Continue even if profile update fails
+                    await updateProfile({ displayName: name.trim(), dni: dni.trim(), dniType: idType });
+                    setStep(3);
+                  } catch (error) {
+                    const msg = error instanceof Error ? error.message : t.resaleCheckout.errorPurchase;
+                    toast.error(msg);
                   }
-                  setStep(3);
                 }}
                 disabled={!isFormValid}
               >

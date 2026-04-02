@@ -7,17 +7,27 @@ type Mode = 'web2' | 'web3';
 export default function DeckPage() {
   const { t, lang, setLang } = useTranslation();
   const [mode, setMode] = useState<Mode>('web2');
+  const marqueeItems = ['LEZGO', 'Identity-based ticketing', 'Buy safer', 'Resell safer', 'No QR', 'Door trust'];
 
   const d = t.deck;
+  const attendeeSteps = (mode === 'web2' ? d.attendeeProcessW2 : d.attendeeProcessW3).slice(0, 4);
+  const organizerSteps = (mode === 'web2' ? d.organizerProcessW2 : d.organizerProcessW3).slice(0, 4);
+  const organizerBenefits = (mode === 'web2' ? d.organizerBenefitsW2 : d.organizerBenefitsW3).slice(0, 3);
+  const consumerBenefits = (mode === 'web2' ? d.consumerBenefitsW2 : d.consumerBenefitsW3).slice(0, 3);
+  const organizerPillars = d.solutionPillarsOrg?.slice(0, 2) ?? [];
+  const consumerPillars = d.solutionPillarsCon?.slice(0, 2) ?? [];
+  const problemCases = d.problemCases ?? [];
+  const tractionItems = d.tractionItems.slice(0, 2);
+  const competitors = d.competitors?.slice(0, 2) ?? [];
 
   return (
     <div className="dk">
       {/* Marquee */}
       <div className="dk-marquee">
         <div className="dk-marquee-track">
-          {Array(3).fill(null).map((_, i) => (
-            <span key={i} className="dk-marquee-segment">
-              LEZGO &middot; BUY &middot; SELL &middot; RESELL &middot; SAFE &middot;&nbsp;
+          {[...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span key={`${item}-${i}`} className="dk-marquee-item">
+              {item}
             </span>
           ))}
         </div>
@@ -31,6 +41,7 @@ export default function DeckPage() {
             <div className="dk-toggle-group">
               <button className={`dk-tog ${lang === 'es' ? 'dk-tog--on' : ''}`} onClick={() => setLang('es')}>ES</button>
               <button className={`dk-tog ${lang === 'en' ? 'dk-tog--on' : ''}`} onClick={() => setLang('en')}>EN</button>
+              <button className={`dk-tog ${lang === 'zh' ? 'dk-tog--on' : ''}`} onClick={() => setLang('zh')}>中文</button>
             </div>
             <div className="dk-toggle-group dk-toggle-mode">
               <button className={`dk-tog ${mode === 'web2' ? 'dk-tog--on' : ''}`} onClick={() => setMode('web2')}>Web2</button>
@@ -58,28 +69,38 @@ export default function DeckPage() {
       {/* Vision */}
       <section className="dk-section dk-vision-section">
         <div className="dk-section-inner dk-vision-inner">
-          {d.visionItems.map((item: string, i: number) => (
-            <div key={i} className="dk-vision-line">
-              <span>{item}</span>
+          <div className="dk-vision-copy">
+            <div className="dk-agnostic-callout">
+              <div className="dk-label">{d.agnosticLabel}</div>
+              <h2>{d.agnosticTitle}</h2>
+              <p className="dk-section-desc">{d.agnosticDesc}</p>
             </div>
-          ))}
+          </div>
+          <div className="dk-vision-lines">
+            {d.visionItems.map((item: string, i: number) => (
+              <div key={i} className="dk-vision-line">
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* The Problem */}
       <section className="dk-section dk-section--problem">
         <div className="dk-section-inner">
-          <div className="dk-label">{d.problemLabel}</div>
-          <h2>{d.problemTitle}</h2>
-          <p className="dk-section-desc">{mode === 'web2' ? d.problemDescW2 : d.problemDescW3}</p>
+          <div className="dk-problem-copy">
+            <div className="dk-label">{d.problemLabel}</div>
+            <h2>{d.problemTitle}</h2>
+          </div>
 
-          {/* Headlines */}
-          {d.problemHeadlines && (
-            <div className="dk-headlines">
-              {d.problemHeadlines.map((h: { source: string; text: string }, i: number) => (
-                <div key={i} className="dk-headline">
-                  <div className="dk-headline-source">{h.source}</div>
-                  <div className="dk-headline-text">{h.text}</div>
+          {problemCases.length > 0 && (
+            <div className="dk-cases-grid">
+              {problemCases.map((item: { source: string; title: string; detail: string }, i: number) => (
+                <div key={i} className="dk-case-card">
+                  <div className="dk-case-source">{item.source}</div>
+                  <div className="dk-case-title">{item.title}</div>
+                  <div className="dk-case-detail">{item.detail}</div>
                 </div>
               ))}
             </div>
@@ -109,17 +130,19 @@ export default function DeckPage() {
       {/* Solution */}
       <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
-          <div className="dk-label">{d.solutionLabel}</div>
-          <h2>{mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3}</h2>
-          <p className="dk-section-desc">{mode === 'web2' ? d.solutionDescW2 : d.solutionDescW3}</p>
+          <div className="dk-solution-copy">
+            <div className="dk-label">{d.solutionLabel}</div>
+            <h2>{mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3}</h2>
+            <p className="dk-section-desc">{mode === 'web2' ? d.solutionDescW2 : d.solutionDescW3}</p>
+          </div>
 
           {/* Solution Pillars */}
-          {d.solutionPillarsOrg && d.solutionPillarsCon && (
+          {organizerPillars.length > 0 && consumerPillars.length > 0 && (
             <div className="dk-pillars-row">
               <div className="dk-pillar-group dk-pillar-group--org">
                 <h3>{d.forOrganizers}</h3>
                 <div className="dk-pillars">
-                  {d.solutionPillarsOrg.map((p: string, i: number) => (
+                  {organizerPillars.map((p: string, i: number) => (
                     <div key={i} className="dk-pillar">{p}</div>
                   ))}
                 </div>
@@ -127,7 +150,7 @@ export default function DeckPage() {
               <div className="dk-pillar-group dk-pillar-group--con">
                 <h3>{d.forConsumers}</h3>
                 <div className="dk-pillars">
-                  {d.solutionPillarsCon.map((p: string, i: number) => (
+                  {consumerPillars.map((p: string, i: number) => (
                     <div key={i} className="dk-pillar">{p}</div>
                   ))}
                 </div>
@@ -139,7 +162,7 @@ export default function DeckPage() {
             <div className="dk-value-col">
               <h3>{d.forOrganizers}</h3>
               <ul className="dk-value-list">
-                {(mode === 'web2' ? d.organizerBenefitsW2 : d.organizerBenefitsW3).map((b: string, i: number) => (
+                {organizerBenefits.map((b: string, i: number) => (
                   <li key={i}>{b}</li>
                 ))}
               </ul>
@@ -147,7 +170,7 @@ export default function DeckPage() {
             <div className="dk-value-col">
               <h3>{d.forConsumers}</h3>
               <ul className="dk-value-list">
-                {(mode === 'web2' ? d.consumerBenefitsW2 : d.consumerBenefitsW3).map((b: string, i: number) => (
+                {consumerBenefits.map((b: string, i: number) => (
                   <li key={i}>{b}</li>
                 ))}
               </ul>
@@ -171,13 +194,13 @@ export default function DeckPage() {
           <div className="dk-flow-block">
             <h3>{d.attendeeFlow}</h3>
             <div className="dk-flow">
-              {(mode === 'web2' ? d.attendeeStepsW2 : d.attendeeStepsW3).map((step: string, i: number) => (
+              {attendeeSteps.map((step: { title: string; benefit: string }, i: number) => (
                 <div key={i} className="dk-flow-item">
                   <div className="dk-flow-num">{String(i + 1).padStart(2, '0')}</div>
-                  <div className="dk-flow-text">{step}</div>
-                  {i < (mode === 'web2' ? d.attendeeStepsW2 : d.attendeeStepsW3).length - 1 && (
-                    <div className="dk-flow-arrow">→</div>
-                  )}
+                  <div className="dk-flow-copy">
+                    <div className="dk-flow-text">{step.title}</div>
+                    <div className="dk-flow-benefit">{step.benefit}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -187,13 +210,13 @@ export default function DeckPage() {
           <div className="dk-flow-block">
             <h3>{d.organizerFlow}</h3>
             <div className="dk-flow">
-              {(mode === 'web2' ? d.organizerStepsW2 : d.organizerStepsW3).map((step: string, i: number) => (
+              {organizerSteps.map((step: { title: string; benefit: string }, i: number) => (
                 <div key={i} className="dk-flow-item">
                   <div className="dk-flow-num">{String(i + 1).padStart(2, '0')}</div>
-                  <div className="dk-flow-text">{step}</div>
-                  {i < (mode === 'web2' ? d.organizerStepsW2 : d.organizerStepsW3).length - 1 && (
-                    <div className="dk-flow-arrow">→</div>
-                  )}
+                  <div className="dk-flow-copy">
+                    <div className="dk-flow-text">{step.title}</div>
+                    <div className="dk-flow-benefit">{step.benefit}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -226,20 +249,20 @@ export default function DeckPage() {
 
           <div className="dk-revenue-grid">
             <div className="dk-rev-card">
-              <div className="dk-rev-tag">REV 1 — B2B</div>
-              <div className="dk-rev-pct">10%</div>
+              <div className="dk-rev-tag">{d.rev1Tag}</div>
+              <div className="dk-rev-pct">{d.rev1Pct}</div>
               <div className="dk-rev-name">{mode === 'web2' ? d.revDirectSale : d.revMinting}</div>
               <p>{mode === 'web2' ? d.revDirectSaleDesc : d.revMintingDesc}</p>
             </div>
             <div className="dk-rev-card">
-              <div className="dk-rev-tag">REV 2 — B2C</div>
-              <div className="dk-rev-pct">5%</div>
+              <div className="dk-rev-tag">{d.rev2Tag}</div>
+              <div className="dk-rev-pct">{d.rev2Pct}</div>
               <div className="dk-rev-name">{d.revResale}</div>
               <p>{mode === 'web2' ? d.revResaleDescW2 : d.revResaleDescW3}</p>
             </div>
             <div className="dk-rev-card">
-              <div className="dk-rev-tag">REV 3 — B2B</div>
-              <div className="dk-rev-pct">TBD</div>
+              <div className="dk-rev-tag">{d.rev3Tag}</div>
+              <div className="dk-rev-pct">{d.rev3Pct}</div>
               <div className="dk-rev-name">{d.revData}</div>
               <p>{d.revDataDesc}</p>
             </div>
@@ -278,7 +301,7 @@ export default function DeckPage() {
           <div className="dk-label">{d.tractionLabel}</div>
           <h2>{d.tractionTitle}</h2>
           <div className="dk-traction-grid">
-            {d.tractionItems.map((item: { val: string; label: string }, i: number) => (
+            {tractionItems.map((item: { val: string; label: string }, i: number) => (
               <div key={i} className="dk-traction-card">
                 <div className="dk-traction-val">{item.val}</div>
                 <div className="dk-traction-label">{item.label}</div>
@@ -289,14 +312,14 @@ export default function DeckPage() {
       </section>
 
       {/* Competitors */}
-      {d.competitors && (
+      {competitors.length > 0 && (
         <section className="dk-section">
           <div className="dk-section-inner">
             <div className="dk-label">{d.competitorsLabel}</div>
             <h2>{d.competitorsTitle}</h2>
             <p className="dk-section-desc">{d.competitorsDesc}</p>
             <div className="dk-competitors-grid">
-              {d.competitors.map((c: { name: string; weakness: string }, i: number) => (
+              {competitors.map((c: { name: string; weakness: string }, i: number) => (
                 <div key={i} className="dk-competitor-card">
                   <div className="dk-competitor-name">{c.name}</div>
                   <div className="dk-competitor-weakness">{c.weakness}</div>
@@ -357,12 +380,18 @@ export default function DeckPage() {
       <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
           <div className="dk-label">{d.teamLabel}</div>
-          <h2>{d.teamTitle}</h2>
-          <div className="dk-team-card">
-            <div className="dk-team-avatar">T</div>
-            <div>
-              <div className="dk-team-name">{d.teamLead}</div>
-              <div className="dk-team-role">{d.teamRole}</div>
+          <div className="dk-team-layout">
+            <div className="dk-team-copy">
+              <h2>{d.teamTitle}</h2>
+              <p className="dk-section-desc dk-team-desc">{d.teamDesc}</p>
+            </div>
+            <div className="dk-team-card">
+              <div className="dk-team-avatar">T</div>
+              <div className="dk-team-content">
+                <div className="dk-team-eyebrow">{d.teamLead}</div>
+                <div className="dk-team-name">{d.teamFounderName}</div>
+                <div className="dk-team-role">{d.teamRole}</div>
+              </div>
             </div>
           </div>
         </div>

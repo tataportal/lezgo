@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useUserTickets } from '../hooks/useTickets';
 import { useTranslation } from '../i18n';
 import { LOCALE_MAP, getInitials } from '../lib/helpers';
+import { Icon, type IconName } from '../components/ui';
 import type { Ticket } from '../lib/types';
 import toast from 'react-hot-toast';
 import './ProfilePage.css';
@@ -23,7 +24,7 @@ function UserAvatar({ photoURL, displayName }: { photoURL?: string; displayName?
 /* ── Badge system ── */
 interface Badge {
   id: string;
-  emoji: string;
+  icon: IconName;
   tier: 'none' | 'bronze' | 'silver' | 'gold';
   progress: number;
   maxProgress: number;
@@ -59,36 +60,36 @@ const BADGE_KEY_MAP: Record<string, string> = {
 
 const BADGES: Badge[] = [
   // New: account creation badge
-  { id:'registered', emoji:'🎫', tier:'none', progress:0, maxProgress:0,
+  { id:'registered', icon:'ticket', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.hasAccount ? 'gold' : 'none',
     calculateProgress: d => ({ current: d.hasAccount ? 1 : 0, max: 1 }) },
   // New: verified DNI badge
-  { id:'verified', emoji:'✅', tier:'none', progress:0, maxProgress:0,
+  { id:'verified', icon:'check', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.isVerified ? 'gold' : 'none',
     calculateProgress: d => ({ current: d.isVerified ? 1 : 0, max: 1 }) },
   // Renamed: early supporter (has badge number)
-  { id:'early-supporter', emoji:'⚡', tier:'none', progress:0, maxProgress:0,
+  { id:'early-supporter', icon:'spark', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.isEarlySupporterr ? 'gold' : 'none',
     calculateProgress: d => ({ current: d.isEarlySupporterr ? 1 : 0, max: 1 }) },
-  { id:'party-animal', emoji:'🎧', tier:'none', progress:0, maxProgress:0,
+  { id:'party-animal', icon:'headphones', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.totalTickets>=30?'gold':d.totalTickets>=15?'silver':d.totalTickets>=5?'bronze':'none',
     calculateProgress: d => d.totalTickets>=30?{current:30,max:30}:d.totalTickets>=15?{current:d.totalTickets,max:30}:{current:d.totalTickets,max:5}},
-  { id:'bass-monster', emoji:'🔊', tier:'none', progress:0, maxProgress:0,
+  { id:'bass-monster', icon:'speaker', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.technoTickets>=30?'gold':d.technoTickets>=15?'silver':d.technoTickets>=5?'bronze':'none',
     calculateProgress: d => d.technoTickets>=30?{current:30,max:30}:d.technoTickets>=15?{current:d.technoTickets,max:30}:{current:d.technoTickets,max:5}},
-  { id:'presale-hunter', emoji:'🎯', tier:'none', progress:0, maxProgress:0,
+  { id:'presale-hunter', icon:'star', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.presaleTickets>=30?'gold':d.presaleTickets>=15?'silver':d.presaleTickets>=5?'bronze':'none',
     calculateProgress: d => d.presaleTickets>=30?{current:30,max:30}:d.presaleTickets>=15?{current:d.presaleTickets,max:30}:{current:d.presaleTickets,max:5}},
-  { id:'lima-explorer', emoji:'🧭', tier:'none', progress:0, maxProgress:0,
+  { id:'lima-explorer', icon:'map-pin', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.uniqueDistricts>=10?'gold':d.uniqueDistricts>=6?'silver':d.uniqueDistricts>=3?'bronze':'none',
     calculateProgress: d => d.uniqueDistricts>=10?{current:10,max:10}:d.uniqueDistricts>=6?{current:d.uniqueDistricts,max:10}:{current:d.uniqueDistricts,max:3}},
-  { id:'resale-pro', emoji:'🤝', tier:'none', progress:0, maxProgress:0,
+  { id:'resale-pro', icon:'transfer', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.completedResales>=25?'gold':d.completedResales>=10?'silver':d.completedResales>=3?'bronze':'none',
     calculateProgress: d => d.completedResales>=25?{current:25,max:25}:d.completedResales>=10?{current:d.completedResales,max:25}:{current:d.completedResales,max:3}},
-  { id:'vip-status', emoji:'💎', tier:'none', progress:0, maxProgress:0,
+  { id:'vip-status', icon:'diamond', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.vipTickets>=25?'gold':d.vipTickets>=10?'silver':d.vipTickets>=3?'bronze':'none',
     calculateProgress: d => d.vipTickets>=25?{current:25,max:25}:d.vipTickets>=10?{current:d.vipTickets,max:25}:{current:d.vipTickets,max:3}},
-  { id:'big-spender', emoji:'💰', tier:'none', progress:0, maxProgress:0,
+  { id:'big-spender', icon:'money', tier:'none', progress:0, maxProgress:0,
     calculateTier: d => d.totalSpent>=5000?'gold':d.totalSpent>=2000?'silver':d.totalSpent>=500?'bronze':'none',
     calculateProgress: d => {const s=Math.floor(d.totalSpent);return s>=5000?{current:5000,max:5000}:s>=2000?{current:s,max:5000}:{current:s,max:500}}},
 ];
@@ -114,13 +115,13 @@ const formatTicketDate = (date: unknown, locale: string) => {
   } catch { return ''; }
 };
 
-const statusIcon = (status: string) => {
+const statusIcon = (status: string): IconName => {
   switch (status) {
-    case 'active': return '🟢';
-    case 'used': return '✅';
-    case 'transferred': return '🔄';
-    case 'resale-listed': return '💰';
-    default: return '🎟️';
+    case 'active': return 'check';
+    case 'used': return 'check';
+    case 'transferred': return 'transfer';
+    case 'resale-listed': return 'money';
+    default: return 'ticket';
   }
 };
 
@@ -193,11 +194,6 @@ export default function ProfilePage() {
   );
   if (!user || !profile) return null;
 
-  const totalSpent = tickets.reduce((s, tk) => s + (tk.price || 0), 0);
-  const completedResales = tickets.filter(tk => tk.status === 'transferred').length;
-  const activeTickets = tickets.filter(tk => tk.status === 'active');
-  const pastTickets = tickets.filter(tk => tk.status === 'used' || tk.status === 'transferred');
-  const listedTickets = tickets.filter(tk => tk.status === 'resale-listed');
   const locale = LOCALE_MAP[lang] || LOCALE_MAP.es;
 
   // Tag logic
@@ -232,7 +228,7 @@ export default function ProfilePage() {
     <div key={ticket.id} className="pf-ticket-card">
       <div className="pf-ticket-top">
         <div className="pf-ticket-status">
-          <span className="pf-ticket-status-dot">{statusIcon(ticket.status)}</span>
+          <span className="pf-ticket-status-dot"><Icon name={statusIcon(ticket.status)} size={14} /></span>
           <span className={`pf-ticket-status-label pf-ticket-status--${ticket.status}`}>
             {ticket.status === 'active' ? t.myTickets.statusActive :
              ticket.status === 'used' ? t.myTickets.statusUsed :
@@ -303,12 +299,12 @@ export default function ProfilePage() {
           <div className="pf-header-info">
             <div className="pf-name-row">
               <h1>{profile.displayName || t.profile.user}</h1>
-              {profile.dni && <span className="pf-verified-badge">&#9786; {t.common.verified}</span>}
+              {profile.dni && <span className="pf-verified-badge"><Icon name="check" size={14} /> {t.common.verified}</span>}
             </div>
 
             {selectedBadge && (
               <div className="pf-tag-display">
-                <span className="pf-tag-emoji">{selectedBadge.emoji}</span>
+                <span className="pf-tag-emoji"><Icon name={selectedBadge.icon} size={14} /></span>
                 <span className="pf-tag-label">{getTagLabel(selectedBadge)}</span>
               </div>
             )}
@@ -326,7 +322,7 @@ export default function ProfilePage() {
 
       {/* ── Settings Panel (toggleable) ── */}
       {showSettings && (
-        <div className="pf-settings">
+        <div id="settings" className="pf-settings">
           {/* Account */}
           <div className="pf-settings-group">
             <div className="pf-settings-group-title">{t.profile.settingsAccount}</div>
@@ -362,10 +358,16 @@ export default function ProfilePage() {
             <div className="pf-settings-field">
               <label>{t.profile.settingsIdDoc}</label>
               <div className="pf-settings-value">
-                {profile.dni ? (
-                  <>{profile.dniType?.toUpperCase() || 'DNI'}: {profile.dni}</>
+                {profile.kycStatus === 'verified' ? (
+                  <span className="pf-settings-verified">{profile.dniType?.toUpperCase() || 'DNI'}: {profile.dni} ✓</span>
+                ) : profile.dni ? (
+                  <span className="pf-settings-pending">
+                    {profile.dniType?.toUpperCase() || 'DNI'}: {profile.dni}
+                    {' · '}
+                    <a href="https://verificacion.lezgo.fans" className="pf-verify-link">{t.profile.verifyNow || 'Verificar'}</a>
+                  </span>
                 ) : (
-                  <span className="pf-settings-empty">{t.profile.settingsNotVerified}</span>
+                  <a href="https://verificacion.lezgo.fans" className="pf-verify-btn">{t.profile.verifyIdentity || 'Verificar identidad'}</a>
                 )}
               </div>
             </div>
@@ -380,7 +382,7 @@ export default function ProfilePage() {
                 >
                   {unlockedBadges.map(b => {
                     const k = BADGE_KEY_MAP[b.id] as keyof typeof t.profile.badgeNames;
-                    return <option key={b.id} value={b.id}>{b.emoji} {t.profile.badgeNames[k] || b.id}</option>;
+                    return <option key={b.id} value={b.id}>{t.profile.badgeNames[k] || b.id}</option>;
                   })}
                 </select>
               ) : (
@@ -431,7 +433,7 @@ export default function ProfilePage() {
       )}
 
       {/* ── Badges ── */}
-      <div className="pf-section">
+      <div id="badges" className="pf-section">
         <div className="pf-section-head">
           <div className="pf-section-title">{t.profile.badges}</div>
           <span className="pf-section-more" onClick={() => { setShowAllBadges(!showAllBadges); setBadgeSort('default'); }}>
@@ -468,7 +470,7 @@ export default function ProfilePage() {
                 className={`pf-badge ${b.tier === 'none' ? 'locked' : ''} ${isSelected ? 'pf-badge--selected' : ''}`}
                 onClick={b.tier !== 'none' ? () => handleTagChange(b.id) : undefined}
               >
-                <div className="pf-badge-icon">{b.emoji}</div>
+                <div className="pf-badge-icon"><Icon name={b.icon} size={20} /></div>
                 <div className="pf-badge-name">{badgeName}</div>
                 <div className="pf-badge-desc">{t.profile.badgeDescs[key] || ''}</div>
                 {!isOneTime && (
@@ -506,7 +508,7 @@ export default function ProfilePage() {
 
       {tickets.length === 0 && (
         <div className="pf-empty">
-          <div className="pf-empty-icon">🎟️</div>
+          <div className="pf-empty-icon"><Icon name="ticket" size={28} /></div>
           <p>{t.myTickets.noTickets}</p>
           <button className="pf-empty-btn" onClick={() => navigate('/inicio')}>{t.myTickets.exploreBtn}</button>
         </div>

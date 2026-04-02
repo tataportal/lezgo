@@ -1,5 +1,5 @@
 import { verifyPromoter } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { queryDocs } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
 import { json, errorResponse, type Env } from './_lib/types.js';
 
@@ -14,7 +14,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.GENERAL);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const { eventId, timeRange = '30d' } = await context.request.json() as any;
 
     const now = new Date();
@@ -22,12 +22,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (timeRange === '7d') sinceDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     else if (timeRange === '30d') sinceDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const eventsSnap = await db.collection('events')
-      .where('organizer', '==', user.uid)
-      .get();
+    const eventsSnap = await queryDocs(env, 'events', [
+      { field: 'organizer', op: 'EQUAL', value: user.uid },
+    ]);
 
     const eventIds = eventsSnap.docs.map((d) => d.id);
-    const eventMap = new Map(eventsSnap.docs.map((d) => [d.id, d.data()]));
+    const eventMap = new Map(eventsSnap.docs.map((d) => [d.id, d.data()!]));
 
     if (eventIds.length === 0) {
       return json(emptyAnalytics());
@@ -39,17 +39,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return errorResponse('Event not found or not owned by you', 403);
     }
 
-    // Fetch tickets
+    // Fetch tickets — Firestore IN operator supports max 30 values
     const ticketBatches: any[] = [];
     for (let i = 0; i < targetEventIds.length; i += 30) {
       const batch = targetEventIds.slice(i, i + 30);
-      const snap = await db.collection('tickets')
-        .where('eventId', 'in', batch)
-        .get();
+      const snap = await queryDocs(env, 'tickets', [
+        { field: 'eventId', op: 'IN', value: batch },
+      ]);
       ticketBatches.push(...snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     }
 
     const tickets = ticketBatches;
+    const guestlistBatches: any[] = [];
+    for (let i = 0; i < targetEventIds.length; i += 30) {
+      const batch = targetEventIds.slice(i, i + 30);
+      const snap = await queryDocs(env, 'guestlists', [
+        { field: 'eventId', op: 'IN', value: batch },
+      ]);
+      guestlistBatches.push(...snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    }
+    const guestlists = guestlistBatches;
 
     // Analytics calculations
     const salesByDay: Record<string, { count: number; revenue: number }> = {};
@@ -57,23 +66,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const salesByTier: Record<string, { count: number; revenue: number; tierName: string }> = {};
     const salesByEvent: Record<string, { count: number; revenue: number; eventName: string }> = {};
     let totalRevenue = 0;
+    let totalBuyerFees = 0;
+    let totalOrganizerFees = 0;
+    let totalPlatformRevenue = 0;
+    let totalNetToOrganizer = 0;
     let totalTickets = 0;
     let usedTickets = 0;
     let transferredTickets = 0;
     let resaleTickets = 0;
     let couponUsages = 0;
     let couponSavings = 0;
+    let totalGuests = 0;
+    let checkedInGuests = 0;
 
     for (const ticket of tickets) {
-      const purchasedAt = ticket.purchasedAt?.toDate?.() || ticket.purchasedAt;
+      const purchasedAt = ticket.purchasedAt;
       if (!purchasedAt) continue;
 
       const purchaseDate = new Date(purchasedAt);
       if (sinceDate && purchaseDate < sinceDate) continue;
 
       totalTickets++;
-      const price = ticket.originalPrice || 0;
+      const price = ticket.price ?? ticket.originalPrice ?? 0;
       totalRevenue += price;
+      totalBuyerFees += ticket.buyerFee || 0;
+      totalOrganizerFees += ticket.organizerFee || 0;
+      totalPlatformRevenue += ticket.platformRevenue || ((ticket.buyerFee || 0) + (ticket.organizerFee || 0));
+      totalNetToOrganizer += ticket.netToOrganizer || Math.max(price - (ticket.organizerFee || 0), 0);
 
       const dayKey = purchaseDate.toISOString().split('T')[0];
       if (!salesByDay[dayKey]) salesByDay[dayKey] = { count: 0, revenue: 0 };
@@ -103,10 +122,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     }
 
+    for (const guest of guestlists) {
+      totalGuests++;
+      if (guest.status === 'checked-in') checkedInGuests++;
+    }
+
     // Consumer behavior
     const buyerPatterns: Record<string, { ticketCount: number; totalSpent: number; events: Set<string> }> = {};
 
     for (const ticket of tickets) {
+      const purchasedAt = ticket.purchasedAt;
+      if (!purchasedAt) continue;
+
+      const purchaseDate = new Date(purchasedAt);
+      if (sinceDate && purchaseDate < sinceDate) continue;
+
       const anonKey = `buyer_${hashCode(ticket.userId || 'anon')}`;
       if (!buyerPatterns[anonKey]) {
         buyerPatterns[anonKey] = { ticketCount: 0, totalSpent: 0, events: new Set() };
@@ -159,6 +189,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       overview: {
         totalTickets,
         totalRevenue,
+        totalBuyerFees: Math.round(totalBuyerFees * 100) / 100,
+        totalOrganizerFees: Math.round(totalOrganizerFees * 100) / 100,
+        totalPlatformRevenue: Math.round(totalPlatformRevenue * 100) / 100,
+        totalNetToOrganizer: Math.round(totalNetToOrganizer * 100) / 100,
         totalEvents: targetEventIds.length,
         totalCapacity,
         fillRate: Math.round(fillRate * 10) / 10,
@@ -186,6 +220,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           ? Math.round((couponUsages / totalTickets) * 1000) / 10
           : 0,
       },
+      guestlist: {
+        totalGuests,
+        checkedIn: checkedInGuests,
+        pending: Math.max(totalGuests - checkedInGuests, 0),
+      },
       consumerBehavior: {
         segments,
         medianSpend,
@@ -210,6 +249,7 @@ function emptyAnalytics() {
   return {
     overview: {
       totalTickets: 0, totalRevenue: 0, totalEvents: 0, totalCapacity: 0,
+      totalBuyerFees: 0, totalOrganizerFees: 0, totalPlatformRevenue: 0, totalNetToOrganizer: 0,
       fillRate: 0, checkInRate: 0, transferRate: 0, usedTickets: 0,
       transferredTickets: 0, resaleTickets: 0, uniqueBuyers: 0,
       avgTicketsPerBuyer: 0, avgRevPerBuyer: 0,
@@ -219,6 +259,7 @@ function emptyAnalytics() {
     tierBreakdown: [],
     eventBreakdown: [],
     coupons: { totalUsages: 0, totalSavings: 0, conversionLift: 0 },
+    guestlist: { totalGuests: 0, checkedIn: 0, pending: 0 },
     consumerBehavior: {
       segments: { singleEvent: 0, multiEvent: 0, highSpender: 0, groupBuyer: 0, total: 0 },
       medianSpend: 0, avgSpend: 0, repeatRate: 0, groupBuyRate: 0,

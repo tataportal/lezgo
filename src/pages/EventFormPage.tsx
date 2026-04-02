@@ -6,7 +6,8 @@ import { getEventById, createEvent, updateEvent } from '../services/eventService
 import { useTranslation } from '../i18n';
 import type { EventTier, EventPhase, EventMeta, EventVisibleSections } from '../lib/types';
 import { toDate } from '../lib/helpers';
-import { FEES } from '../lib/constants';
+import { calculateBuyerFee, calculateOrganizerFee } from '../lib/constants';
+import { Icon } from '../components/ui';
 import { Timestamp } from 'firebase/firestore/lite';
 import './EventFormPage.css';
 
@@ -28,6 +29,7 @@ interface FormEvent {
   tags: string[];
   prohibitedItems: string[];
   tiers: EventTier[];
+  maxTicketsPerBuyer: number;
   status: 'draft' | 'published' | 'sold-out' | 'past';
   featured: boolean;
   visibleSections: EventVisibleSections;
@@ -72,6 +74,7 @@ export default function EventFormPage() {
     tags: [],
     prohibitedItems: [],
     tiers: [],
+    maxTicketsPerBuyer: 1,
     status: 'draft',
     featured: false,
     visibleSections: {
@@ -114,8 +117,8 @@ export default function EventFormPage() {
         name: event.name ?? '',
         subtitle: event.subtitle ?? '',
         date: dateStr,
-        timeStart: event.dateLabel?.split(' ')[0] ?? '20:00',
-        timeEnd: event.dateLabel?.split(' ')[1] ?? '23:00',
+        timeStart: event.timeStart ?? event.dateLabel?.split(' ')[0] ?? '20:00',
+        timeEnd: event.timeEnd ?? event.dateLabel?.split(' ')[1] ?? '23:00',
         venue: event.venue ?? '',
         location: event.location ?? '',
         address: event.address ?? '',
@@ -128,6 +131,7 @@ export default function EventFormPage() {
         tags: Array.isArray(event.tags) ? event.tags : [],
         prohibitedItems: Array.isArray(event.prohibitedItems) ? event.prohibitedItems : [],
         tiers: Array.isArray(event.tiers) ? event.tiers : [],
+        maxTicketsPerBuyer: Math.max(Number(event.maxTicketsPerBuyer ?? 1), 1),
         status: (event.status as 'draft' | 'published' | 'sold-out' | 'past') ?? 'draft',
         featured: event.featured ?? false,
         visibleSections: event.visibleSections
@@ -355,7 +359,9 @@ export default function EventFormPage() {
         name: formData.name,
         subtitle: formData.subtitle,
         date: timestamp,
-        dateLabel: `${formData.timeStart}`,
+        dateLabel: `${formData.timeStart} ${formData.timeEnd}`.trim(),
+        timeStart: formData.timeStart,
+        timeEnd: formData.timeEnd,
         venue: formData.venue,
         location: formData.location,
         address: formData.address,
@@ -368,6 +374,7 @@ export default function EventFormPage() {
         tags: formData.tags.filter((item) => item.trim()),
         prohibitedItems: formData.prohibitedItems.filter((item) => item.trim()),
         tiers: formData.tiers,
+        maxTicketsPerBuyer: Math.max(Number(formData.maxTicketsPerBuyer || 1), 1),
         status: formData.status,
         featured: formData.featured,
         slug: generateSlug(formData.name),
@@ -410,7 +417,7 @@ export default function EventFormPage() {
       </div>
 
       <div className="ef-preview-banner">
-        <div className="ef-preview-banner-icon">📋</div>
+        <div className="ef-preview-banner-icon"><Icon name="analytics" size={20} /></div>
         <div className="ef-preview-banner-text">
           {t.eventForm.previewBanner} <a href="#preview">{t.eventForm.previewLink}</a>
         </div>
@@ -822,6 +829,29 @@ export default function EventFormPage() {
         <div className="ef-section">
           <h2 className="ef-section-title">{t.eventForm.ticketsSection}</h2>
 
+          <div className="ef-row">
+            <div className="ef-field">
+              <label htmlFor="maxTicketsPerBuyer" className="ef-label">
+                {t.eventForm.maxTicketsPerBuyer}
+              </label>
+              <input
+                type="number"
+                id="maxTicketsPerBuyer"
+                name="maxTicketsPerBuyer"
+                className="ef-input"
+                value={formData.maxTicketsPerBuyer}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    maxTicketsPerBuyer: Math.max(parseInt(e.target.value || '1', 10), 1),
+                  }))
+                }
+                min="1"
+              />
+              <p className="ef-help">{t.eventForm.maxTicketsPerBuyerHelp}</p>
+            </div>
+          </div>
+
           {(formData.tiers ?? []).map((tier, tierIndex) => (
             <div key={tier.id} className="ef-tier">
               <div className="ef-tier-header">
@@ -922,8 +952,11 @@ export default function EventFormPage() {
                   .filter((p) => p.active)
                   .map((phase, idx) => {
                     const revenue = phase.price * tier.capacity;
-                    const fee = revenue * FEES.DIRECT_TOTAL;
-                    const net = revenue - fee;
+                    const organizerFeePerTicket = calculateOrganizerFee(phase.price);
+                    const buyerFeePerTicket = calculateBuyerFee(phase.price);
+                    const organizerFee = organizerFeePerTicket * tier.capacity;
+                    const buyerTotal = phase.price + buyerFeePerTicket;
+                    const net = revenue - organizerFee;
                     return (
                       <div key={idx}>
                         <div className="ef-margin-row">
@@ -931,8 +964,12 @@ export default function EventFormPage() {
                           <span className="value">S/ {revenue.toFixed(2)}</span>
                         </div>
                         <div className="ef-margin-row">
+                          <span className="label">{t.eventForm.buyerPays}</span>
+                          <span className="value">S/ {buyerTotal.toFixed(2)}</span>
+                        </div>
+                        <div className="ef-margin-row">
                           <span className="label">{t.eventForm.commission}</span>
-                          <span className="value">S/ {fee.toFixed(2)}</span>
+                          <span className="value">S/ {organizerFee.toFixed(2)}</span>
                         </div>
                         <div className="ef-margin-row total">
                           <span className="label">{t.eventForm.net}</span>

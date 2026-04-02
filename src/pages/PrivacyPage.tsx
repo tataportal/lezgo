@@ -65,7 +65,7 @@ export default function PrivacyPage() {
           <p>{t.legal.thirdPartyDesc}</p>
           <ul className="legal-list">
             <li>Firebase (Google) — {t.legal.thirdPartyAuth}</li>
-            <li>Vercel — {t.legal.thirdPartyHosting}</li>
+            <li>Cloudflare Pages — {t.legal.thirdPartyHosting}</li>
           </ul>
         </section>
 

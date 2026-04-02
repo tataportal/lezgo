@@ -18,9 +18,25 @@ const ScannerPage = lazy(() => import('./pages/ScannerPage'));
 const EventFormPage = lazy(() => import('./pages/EventFormPage'));
 const PromoterPage = lazy(() => import('./pages/PromoterPage'));
 const DeckPage = lazy(() => import('./pages/DeckPage'));
+const EmailPreviewPage = lazy(() => import('./pages/EmailPreviewPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+const isDeckHost = typeof window !== 'undefined' && window.location.hostname === 'deck.lezgo.fans';
+
+function isLocalPreviewHost(hostname: string) {
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '0.0.0.0' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname)
+  );
+}
+
+const isLocalDeckPreview = typeof window !== 'undefined' && isLocalPreviewHost(window.location.hostname);
 
 function SuspenseWrap({ children }: { children: React.ReactNode }) {
   return (
@@ -50,7 +66,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <SuspenseWrap><HomePage /></SuspenseWrap>,
+        element: <SuspenseWrap>{isDeckHost ? <DeckPage /> : <HomePage />}</SuspenseWrap>,
       },
       {
         path: 'eventos',
@@ -118,7 +134,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'deck',
-        element: <SuspenseWrap><DeckPage /></SuspenseWrap>,
+        element: <SuspenseWrap>{isLocalDeckPreview ? <DeckPage /> : <NotFoundPage />}</SuspenseWrap>,
+      },
+      {
+        path: 'email-previews',
+        element: <SuspenseWrap>{isLocalDeckPreview ? <EmailPreviewPage /> : <NotFoundPage />}</SuspenseWrap>,
       },
       {
         path: 'privacidad',
@@ -131,11 +151,11 @@ export const router = createBrowserRouter([
       {
         // /inicio redirects to homepage (used by AuthPage, AboutPage, MyTicketsPage)
         path: 'inicio',
-        element: <SuspenseWrap><HomePage /></SuspenseWrap>,
+        element: <SuspenseWrap>{isDeckHost ? <DeckPage /> : <HomePage />}</SuspenseWrap>,
       },
       {
         path: '*',
-        element: <SuspenseWrap><NotFoundPage /></SuspenseWrap>,
+        element: <SuspenseWrap>{isDeckHost ? <DeckPage /> : <NotFoundPage />}</SuspenseWrap>,
       },
     ],
   },

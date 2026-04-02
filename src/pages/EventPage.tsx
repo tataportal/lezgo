@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEventById } from '../hooks/useEvents';
 import { formatPrice, getActivePhase, getEventImage, LOCALE_MAP, toDate } from '../lib/helpers';
 import { PurchaseModal } from '../components/checkout/PurchaseModal';
+import { Icon, type IconName } from '../components/ui';
 import { useTranslation } from '../i18n';
 import './EventPage.css';
 
@@ -27,7 +28,7 @@ export default function EventPage() {
       <div className="ev-detail-error">
         <p>{t.common.error}</p>
         <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}>
-          Reintentar
+          {t.common.retry}
         </button>
       </div>
     );
@@ -77,20 +78,20 @@ export default function EventPage() {
   const ageTags = evTags.filter((t) => ['18+', '21+', 'all-ages'].includes(t));
   const settingTags = evTags.filter((t) => ['indoor', 'outdoor', 'open-air', 'mixed'].includes(t));
 
-  const infoChips: { icon: string; text: string }[] = [];
-  if (genreTags.length > 0) infoChips.push({ icon: '🎵', text: genreTags.map(prettify).join(' / ') });
-  if (ageTags.length > 0) infoChips.push({ icon: '🪪', text: ageTags[0] });
-  if (settingTags.length > 0) infoChips.push({ icon: '🏛️', text: prettify(settingTags[0]) });
-  if (meta.alcohol) infoChips.push({ icon: '🍸', text: t.event.barAvailable });
-  if (meta.multiStage) infoChips.push({ icon: '🔊', text: t.event.multiRoom });
-  if (!meta.reentry) infoChips.push({ icon: '🚫', text: t.event.noReentry });
+  const infoChips: { icon: IconName; text: string }[] = [];
+  if (genreTags.length > 0) infoChips.push({ icon: 'music', text: genreTags.map(prettify).join(' / ') });
+  if (ageTags.length > 0) infoChips.push({ icon: 'id', text: ageTags[0] });
+  if (settingTags.length > 0) infoChips.push({ icon: 'building', text: prettify(settingTags[0]) });
+  if (meta.alcohol) infoChips.push({ icon: 'drink', text: t.event.barAvailable });
+  if (meta.multiStage) infoChips.push({ icon: 'speaker', text: t.event.multiRoom });
+  if (!meta.reentry) infoChips.push({ icon: 'no-entry', text: t.event.noReentry });
 
   // Also add from legacy chip fields
-  if (event.genre && infoChips.length === 0) infoChips.push({ icon: '🎵', text: event.genre });
-  if (meta.ageRestriction && ageTags.length === 0) infoChips.push({ icon: '🪪', text: meta.ageRestriction });
-  if (meta.crowdSize) infoChips.push({ icon: '👥', text: `${t.event.capacity} ${meta.crowdSize.toLocaleString()}` });
+  if (event.genre && infoChips.length === 0) infoChips.push({ icon: 'music', text: event.genre });
+  if (meta.ageRestriction && ageTags.length === 0) infoChips.push({ icon: 'id', text: meta.ageRestriction });
+  if (meta.crowdSize) infoChips.push({ icon: 'users', text: `${t.event.capacity} ${meta.crowdSize.toLocaleString()}` });
   if (meta.outdoor !== undefined && settingTags.length === 0)
-    infoChips.push({ icon: '🏛️', text: meta.outdoor ? t.event.outdoorLabel : t.event.indoorLabel });
+    infoChips.push({ icon: 'building', text: meta.outdoor ? t.event.outdoorLabel : t.event.indoorLabel });
 
   const showInfo = vs.tags !== false && infoChips.length > 0;
   const prohibitedItems: string[] = event.prohibitedItems || t.event.defaultProhibited;
@@ -136,7 +137,7 @@ export default function EventPage() {
 
           <div className="ev-hero-meta">
             <div className="ev-hero-meta-item">
-              <div className="icon">📅</div>
+              <div className="icon"><Icon name="calendar" size={16} /></div>
               <div>{dateLabel}</div>
             </div>
             <a
@@ -146,11 +147,11 @@ export default function EventPage() {
               rel="noopener noreferrer"
               style={{ color: 'inherit' }}
             >
-              <div className="icon">📍</div>
+              <div className="icon"><Icon name="map-pin" size={16} /></div>
               <div>{venueLabel}</div>
             </a>
             <div className="ev-hero-meta-item">
-              <div className="icon">🕐</div>
+              <div className="icon"><Icon name="clock" size={16} /></div>
               <div>{timeLabel}</div>
             </div>
           </div>
@@ -165,7 +166,40 @@ export default function EventPage() {
                 {lowestPrice === 0 ? t.event.reserveTickets : t.event.buyTickets}
               </button>
             )}
-            <button className="ev-btn ev-btn-outline">{t.event.addCalendar}</button>
+            <button
+              className="ev-btn ev-btn-outline"
+              onClick={() => {
+                const d = toDate(event.date);
+                const pad = (n: number) => String(n).padStart(2, '0');
+                let dates: string;
+                if (event.timeStart) {
+                  const [sh, sm] = event.timeStart.split(':').map(Number);
+                  const start = new Date(d);
+                  start.setHours(sh, sm, 0, 0);
+                  const end = new Date(start);
+                  if (event.timeEnd) {
+                    const [eh, em] = event.timeEnd.split(':').map(Number);
+                    end.setHours(eh, em, 0, 0);
+                    if (end <= start) end.setDate(end.getDate() + 1);
+                  } else {
+                    end.setHours(end.getHours() + 4);
+                  }
+                  const fmt = (dt: Date) =>
+                    `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+                  dates = `${fmt(start)}/${fmt(end)}`;
+                } else {
+                  const ymd = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+                  const next = new Date(d);
+                  next.setDate(next.getDate() + 1);
+                  const ymd2 = `${next.getFullYear()}${pad(next.getMonth() + 1)}${pad(next.getDate())}`;
+                  dates = `${ymd}/${ymd2}`;
+                }
+                const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${dates}&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent((event.venue || '') + (event.location ? ', ' + event.location : ''))}`;
+                window.open(url, '_blank', 'noopener');
+              }}
+            >
+              {t.event.addCalendar}
+            </button>
           </div>
         </div>
       </section>
@@ -242,7 +276,7 @@ export default function EventPage() {
                     <div className="ev-tk-bottom">
                       {isLocked ? (
                         <div className="ev-tk-locked-label">
-                          🔒 {prerequisiteTier?.name} {t.event.soldOutTag?.toLowerCase() || 'agotado'} → abre
+                          <Icon name="lock" size={15} /> {prerequisiteTier?.name} {t.event.soldOutLower} → abre
                         </div>
                       ) : isTierSold ? (
                         <div className="ev-tk-sold-all">{t.event.soldOutTag}</div>
@@ -257,7 +291,9 @@ export default function EventPage() {
                   {/* Hover overlay */}
                   {!isLocked && (
                   <div className="ev-tk-overlay">
-                    <div className="ev-tk-overlay-icon">{isTierSold ? '🔄' : '🎫'}</div>
+                    <div className="ev-tk-overlay-icon">
+                      <Icon name={isTierSold ? 'transfer' : 'ticket'} size={20} />
+                    </div>
                     <div className="ev-tk-overlay-text">
                       {isTierSold ? t.event.searchResale : ((activePhase?.price || 0) === 0 ? t.event.reserveTickets : t.event.buyTickets)}
                     </div>
@@ -335,7 +371,7 @@ export default function EventPage() {
                 <div className="ev-info-list">
                   {infoChips.map((chip, i) => (
                     <div key={i} className="ev-info-chip">
-                      <span>{chip.icon}</span> {chip.text}
+                      <span><Icon name={chip.icon} size={16} /></span> {chip.text}
                     </div>
                   ))}
                 </div>
@@ -346,7 +382,7 @@ export default function EventPage() {
                 <div className="ev-info-prohibited-items">
                   {prohibitedItems.map((item, i) => (
                     <div key={i} className="ev-info-prohibited-tag">
-                      🚫 {item}
+                      <Icon name="no-entry" size={14} /> {item}
                     </div>
                   ))}
                 </div>
@@ -394,7 +430,7 @@ export default function EventPage() {
               </div>
               <div className="ev-venue-map">
                 <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="ev-venue-map-link">
-                  <div style={{ fontSize: 'var(--fs-3xl)' }}>📍</div>
+                  <div style={{ fontSize: 'var(--fs-3xl)', display: 'grid', placeItems: 'center' }}><Icon name="map-pin" size={28} /></div>
                   <div style={{ color: 'var(--text)', fontSize: 'var(--fs-base)', fontWeight: 700 }}>
                     {t.event.viewOnMaps}
                   </div>
@@ -414,7 +450,7 @@ export default function EventPage() {
       <section className="ev-section">
         <div className="ev-trust-row">
           <div className="ev-trust-item">
-            <div className="ev-trust-icon">✅</div>
+            <div className="ev-trust-icon"><Icon name="check" size={18} /></div>
             <div className="ev-trust-text">
               {t.event.trustLinkedDni.split('\n').map((line: string, idx: number) => (
                 <span key={idx}>
@@ -425,7 +461,7 @@ export default function EventPage() {
             </div>
           </div>
           <div className="ev-trust-item">
-            <div className="ev-trust-icon">🔄</div>
+            <div className="ev-trust-icon"><Icon name="transfer" size={18} /></div>
             <div className="ev-trust-text">
               {t.event.trustSafeResale.split('\n').map((line: string, idx: number) => (
                 <span key={idx}>
@@ -436,7 +472,7 @@ export default function EventPage() {
             </div>
           </div>
           <div className="ev-trust-item">
-            <div className="ev-trust-icon">🪪</div>
+            <div className="ev-trust-icon"><Icon name="id" size={18} /></div>
             <div className="ev-trust-text">
               {t.event.trustGateVerify.split('\n').map((line: string, idx: number) => (
                 <span key={idx}>
@@ -447,7 +483,7 @@ export default function EventPage() {
             </div>
           </div>
           <div className="ev-trust-item">
-            <div className="ev-trust-icon">💬</div>
+            <div className="ev-trust-icon"><Icon name="user-check" size={18} /></div>
             <div className="ev-trust-text">
               {t.event.trustSupport.split('\n').map((line: string, idx: number) => (
                 <span key={idx}>

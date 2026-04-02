@@ -1,5 +1,5 @@
 import { verifyPromoter } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { getDoc, updateDoc } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
 import { json, errorResponse, type Env } from './_lib/types.js';
 
@@ -14,7 +14,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.GENERAL);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const body = await context.request.json() as any;
     const { eventId, ...updates } = body;
 
@@ -22,8 +22,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       return errorResponse('Missing eventId');
     }
 
-    const eventRef = db.collection('events').doc(eventId);
-    const eventSnap = await eventRef.get();
+    const eventSnap = await getDoc(env, 'events', eventId);
 
     if (!eventSnap.exists) {
       return errorResponse('Event not found', 404);
@@ -35,9 +34,9 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
     const ALLOWED_FIELDS = [
       'name', 'subtitle', 'date', 'dateLabel', 'venue', 'location', 'address',
-      'image', 'heroVideo', 'description', 'descriptionLong', 'genre',
+      'image', 'heroVideo', 'description', 'descriptionLong', 'genre', 'featured',
       'lineup', 'tags', 'prohibitedItems', 'tiers', 'status', 'slug',
-      'visibleSections', 'meta', 'timeStart', 'timeEnd',
+      'visibleSections', 'meta', 'timeStart', 'timeEnd', 'maxTicketsPerBuyer',
     ];
 
     const sanitized: Record<string, unknown> = {};
@@ -49,6 +48,10 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
 
     delete sanitized['organizer'];
     delete sanitized['createdAt'];
+
+    if ('maxTicketsPerBuyer' in sanitized) {
+      sanitized['maxTicketsPerBuyer'] = Math.max(Number(sanitized['maxTicketsPerBuyer'] || 1), 1);
+    }
 
     if (sanitized['tiers'] && Array.isArray(sanitized['tiers'])) {
       const existingTiers = eventSnap.data()!.tiers || [];
@@ -67,7 +70,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       return errorResponse('No valid fields to update');
     }
 
-    await eventRef.update(sanitized);
+    await updateDoc(env, 'events', eventId, sanitized);
 
     return json({ success: true });
   } catch (err) {

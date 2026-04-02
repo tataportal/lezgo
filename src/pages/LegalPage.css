@@ -19,7 +19,7 @@
   font-weight: var(--fw-bold);
   letter-spacing: 2px;
   padding: 6px var(--sp-4);
-  border-radius: var(--radius-3xl);
+  border-radius: var(--radius-surface);
   border: 1px solid var(--acid-20);
   margin-bottom: var(--sp-6);
 }

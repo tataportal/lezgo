@@ -7,6 +7,7 @@ export interface Env {
   FIREBASE_CLIENT_EMAIL: string;
   FIREBASE_PRIVATE_KEY: string;
   RECAPTCHA_SECRET_KEY?: string;
+  RESEND_API_KEY?: string;
 }
 
 export interface AuthUser {

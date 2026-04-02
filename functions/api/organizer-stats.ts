@@ -1,5 +1,5 @@
 import { verifyPromoter } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { queryDocs } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
 import { json, errorResponse, type Env } from './_lib/types.js';
 
@@ -13,29 +13,27 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.GENERAL);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
 
-    const eventsSnap = await db
-      .collection('events')
-      .where('organizer', '==', user.uid)
-      .get();
+    const eventsSnap = await queryDocs(env, 'events', [
+      { field: 'organizer', op: 'EQUAL', value: user.uid },
+    ]);
 
     const eventStats = await Promise.all(
       eventsSnap.docs.map(async (eventDoc) => {
         const event = { id: eventDoc.id, ...eventDoc.data() };
 
-        const ticketsSnap = await db
-          .collection('tickets')
-          .where('eventId', '==', eventDoc.id)
-          .where('status', 'in', ['active', 'transferred', 'used'])
-          .get();
+        const ticketsSnap = await queryDocs(env, 'tickets', [
+          { field: 'eventId', op: 'EQUAL', value: eventDoc.id },
+          { field: 'status', op: 'IN', value: ['active', 'transferred', 'used'] },
+        ]);
 
         let ticketsSold = 0;
         let revenue = 0;
 
         ticketsSnap.docs.forEach((ticketDoc) => {
           ticketsSold++;
-          revenue += ticketDoc.data().price || 0;
+          revenue += ticketDoc.data()?.price || 0;
         });
 
         const capacity = ((event as any).tiers || []).reduce(

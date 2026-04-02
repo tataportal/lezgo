@@ -4,6 +4,7 @@ import { getEventsByOrganizer } from '../services/eventService';
 import { apiFetch } from '../lib/api';
 import { sanitizeIdInput, isValidId, ID_CONFIG, type IdType } from '../lib/constants';
 import { useTranslation } from '../i18n';
+import { Icon } from '../components/ui';
 import type { Event } from '../lib/types';
 import './ScannerPage.css';
 
@@ -310,19 +311,19 @@ export default function ScannerPage() {
 
           <div className="sc-stamps-grid">
             <div className="sc-stamp-card">
-              <div className="sc-stamp-icon">🎧</div>
+              <div className="sc-stamp-icon"><Icon name="headphones" size={24} /></div>
               <div className="sc-stamp-level">{t.scanner.levelRaver}</div>
               <div className="sc-stamp-req">3 {t.scanner.stampsToUnlock}</div>
               <p>{t.scanner.raverDesc}</p>
             </div>
             <div className="sc-stamp-card">
-              <div className="sc-stamp-icon">🎤</div>
+              <div className="sc-stamp-icon"><Icon name="microphone" size={24} /></div>
               <div className="sc-stamp-level">{t.scanner.levelHeadliner}</div>
               <div className="sc-stamp-req">10 {t.scanner.stampsToUnlock}</div>
               <p>{t.scanner.headlinerDesc}</p>
             </div>
             <div className="sc-stamp-card">
-              <div className="sc-stamp-icon">👑</div>
+              <div className="sc-stamp-icon"><Icon name="crown" size={24} /></div>
               <div className="sc-stamp-level">{t.scanner.levelLegend}</div>
               <div className="sc-stamp-req">25 {t.scanner.stampsToUnlock}</div>
               <p>{t.scanner.legendDesc}</p>
@@ -341,11 +342,11 @@ export default function ScannerPage() {
             <div className="sc-stat-label">{t.scanner.fraudRate}</div>
           </div>
           <div className="sc-stat">
-            <div className="sc-stat-num">📋</div>
+            <div className="sc-stat-num"><Icon name="id" size={24} /></div>
             <div className="sc-stat-label">{t.scanner.dniOnly}</div>
           </div>
           <div className="sc-stat">
-            <div className="sc-stat-num">⭐</div>
+            <div className="sc-stat-num"><Icon name="star" size={24} /></div>
             <div className="sc-stat-label">{t.scanner.stampPerEvent}</div>
           </div>
         </div>

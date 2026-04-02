@@ -5,10 +5,12 @@
 /* ── Root container ── */
 .pf {
   min-height: 100vh;
-  background-color: var(--bg);
-  padding: var(--sp-6) var(--sp-5) 3.75rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.015), transparent 18%),
+    var(--bg);
+  padding: var(--sp-8) var(--sp-5) 3.75rem;
   color: var(--text);
-  max-width: 40rem;
+  max-width: 46rem;
   margin: 0 auto;
   position: relative;
 }
@@ -30,32 +32,35 @@
 
 /* ── Tabs ── */
 .pf-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1px;
+  border: 1px solid var(--border);
   margin-bottom: var(--sp-6);
   padding-top: var(--sp-4);
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(10, 10, 10, 0.9);
+  background: var(--border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
 }
 
 .pf-tab {
   flex: 1;
   padding: var(--sp-3) var(--sp-6);
-  background: none;
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: none;
-  border-bottom: 3px solid transparent;
   color: var(--text-muted);
   font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease;
+  transition: color 0.25s ease, background-color 0.25s ease;
   text-align: center;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .pf-tab:hover {
@@ -64,19 +69,23 @@
 
 .pf-tab.active {
   color: var(--acid);
-  border-bottom-color: var(--acid);
+  background: linear-gradient(180deg, rgba(229,255,0,0.06), rgba(229,255,0,0.02));
 }
 
 /* ── Header card ── */
 .pf-header {
-  background: linear-gradient(145deg, var(--acid-03) 0%, var(--bg) 50%);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    linear-gradient(135deg, rgba(229,255,0,0.03), rgba(255,255,255,0) 36%),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-surface);
   padding: var(--sp-8);
   margin-bottom: 1.75rem;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .pf-header::before {
@@ -85,12 +94,13 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--acid), var(--green));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--acid-50), transparent);
 }
 
 .pf-header:hover {
   border-color: var(--acid-20);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.24);
 }
 
 .pf-header-top {
@@ -98,26 +108,29 @@
   gap: 1.75rem;
   align-items: flex-start;
   margin-bottom: var(--sp-6);
+  flex-wrap: wrap;
 }
 
 .pf-header-info {
   flex: 1;
-  min-width: 0;
+  min-width: min(18rem, 100%);
 }
 
 .pf-name-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sp-2);
   margin-bottom: 4px;
+  flex-wrap: wrap;
 }
 
 .pf-name-row h1 {
-  font-size: 1.625rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: var(--fw-extrabold);
   color: var(--text);
   margin: 0;
-  line-height: 1.25;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
 }
 
 /* Tag display under name */
@@ -128,7 +141,7 @@
   padding: 3px 0.75rem 3px 0.5rem;
   background: var(--acid-08);
   border: 1px solid var(--acid-25);
-  border-radius: 999px;
+  border-radius: var(--radius-surface);
   margin-bottom: var(--sp-2);
 }
 
@@ -158,7 +171,7 @@
   width: 6rem;
   height: 6rem;
   min-width: 6rem;
-  border-radius: 50%;
+  border-radius: var(--radius-surface);
   background: linear-gradient(135deg, var(--acid), var(--green));
   display: flex;
   align-items: center;
@@ -172,7 +185,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: inherit;
 }
 
 .pf-avatar span {
@@ -212,11 +225,13 @@
   gap: var(--sp-1);
   font-size: var(--fs-caption);
   font-weight: var(--fw-bold);
-  padding: 0.1875rem var(--sp-2);
+  padding: 0.3rem var(--sp-2);
   border: 1px solid var(--acid-muted);
   color: var(--acid);
   letter-spacing: 0.3px;
   vertical-align: middle;
+  flex-shrink: 0;
+  border-radius: var(--radius-surface);
 }
 
 /* ── Name editing ── */
@@ -342,9 +357,7 @@
 
 /* ── Edit profile button ── */
 .pf-edit-btn {
-  position: absolute;
-  top: 1.75rem;
-  right: 1.75rem;
+  position: static;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-muted);
@@ -355,6 +368,9 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: flex-start;
 }
 
 .pf-edit-btn:hover {
@@ -444,6 +460,44 @@
 .pf-settings-empty {
   color: var(--text-muted);
   font-style: italic;
+}
+
+.pf-settings-verified {
+  color: var(--green);
+  font-weight: var(--fw-semibold);
+}
+
+.pf-settings-pending {
+  color: var(--text-muted);
+}
+
+.pf-verify-link {
+  color: var(--acid) !important;
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  font-size: var(--fs-caption);
+}
+
+.pf-verify-link:hover { text-decoration: underline; }
+
+.pf-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--acid-08);
+  color: var(--acid);
+  border: 1px solid var(--acid-20);
+  border-radius: var(--radius-btn);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.pf-verify-btn:hover {
+  background: var(--acid-15);
+  border-color: var(--acid);
 }
 
 .pf-settings-select {
@@ -725,7 +779,7 @@
 .pf-badge {
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 0.875rem;
+  border-radius: var(--radius-surface);
   padding: var(--sp-5) 0.875rem var(--sp-4);
   display: flex;
   flex-direction: column;
@@ -819,7 +873,7 @@
 .pf-badge-progress {
   width: 100%;
   height: 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   background-color: var(--border);
   overflow: hidden;
   margin-top: var(--sp-1);
@@ -827,7 +881,7 @@
 
 .pf-badge-progress-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   transition: width 0.4s ease;
 }
 
@@ -1129,7 +1183,7 @@
   justify-content: space-between;
   background: linear-gradient(145deg, var(--acid-04) 0%, var(--bg) 60%);
   border: 1px solid var(--acid-25);
-  border-radius: 0.875rem;
+  border-radius: var(--radius-surface);
   padding: var(--sp-5) var(--sp-6);
   margin-bottom: var(--sp-5);
   transition: border-color 0.3s ease;
@@ -1194,15 +1248,26 @@
   }
 
   .pf-header {
-    flex-direction: column;
-    align-items: center;
     text-align: center;
-    gap: var(--sp-5);
     padding: 1.75rem var(--sp-5);
   }
 
-  .pf-info h1 {
+  .pf-header-top {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-5);
+  }
+
+  .pf-header-info {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .pf-name-row {
     justify-content: center;
+  }
+
+  .pf-name-row h1 {
     font-size: 1.375rem;
   }
 
@@ -1222,9 +1287,10 @@
   }
 
   .pf-edit-btn {
-    position: static;
     width: 100%;
     margin-top: var(--sp-2);
+    margin-left: 0;
+    align-self: stretch;
   }
 
   .pf-stats-row {

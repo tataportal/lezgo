@@ -6,6 +6,7 @@ import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
+  signInWithEmailAndPassword,
   signOut,
   type User,
 } from 'firebase/auth';
@@ -21,6 +22,9 @@ export interface UserProfile {
   role: 'fan' | 'promoter' | 'admin';
   createdAt: unknown;
   selectedTag?: string;
+  kycStatus?: 'none' | 'pending' | 'verified' | 'rejected';
+  kycVerifiedAt?: unknown;
+  kycMethod?: string;
 }
 
 interface AuthContextType {
@@ -28,6 +32,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
+  loginWithPassword: (email: string, password: string) => Promise<void>;
   sendMagicLink: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
@@ -96,6 +101,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             };
             await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
             setProfile(newProfile);
+            // Send welcome email (fire-and-forget)
+            firebaseUser.getIdToken().then(token =>
+              fetch('/api/send-welcome', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ name: firebaseUser.displayName || '' }),
+              }).catch(() => {})
+            ).catch(() => {});
           }
         } catch (err) {
           console.error('Error loading profile:', err);
@@ -122,6 +135,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithPopup(auth, googleProvider);
   };
 
+  const loginWithPassword = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
+  };
+
   const sendMagicLink = async (email: string) => {
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
     window.localStorage.setItem('lezgoEmailForSignIn', email);
@@ -135,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     // Whitelist: only allow safe fields to be updated from the client
-    const ALLOWED_FIELDS: (keyof UserProfile)[] = ['displayName', 'dni', 'photoURL', 'selectedTag'];
+    const ALLOWED_FIELDS: (keyof UserProfile)[] = ['displayName', 'dni', 'dniType', 'photoURL', 'selectedTag'];
     const sanitized: Partial<UserProfile> = {};
     for (const key of ALLOWED_FIELDS) {
       if (key in data) {
@@ -156,6 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         loading,
         loginWithGoogle,
+        loginWithPassword,
         sendMagicLink,
         logout,
         updateProfile,

@@ -18,3 +18,21 @@ export async function validateCoupon(code: string): Promise<CouponValidationResu
     };
   }
 }
+
+export async function validateEventCoupon(
+  code: string,
+  eventId: string,
+  tierIds?: string[]
+): Promise<CouponValidationResult> {
+  try {
+    return await apiFetch<CouponValidationResult>('validate-coupon', {
+      method: 'POST',
+      body: { code, eventId, tierIds },
+    });
+  } catch (error) {
+    return {
+      valid: false,
+      error: error instanceof Error ? error.message : 'Validation failed',
+    };
+  }
+}

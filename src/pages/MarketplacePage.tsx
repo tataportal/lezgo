@@ -5,6 +5,7 @@ import { getResaleListings } from '../services/resaleService';
 import { LOCALE_MAP, toDate } from '../lib/helpers';
 import type { Resale } from '../lib/types';
 import ResaleCheckoutModal from '../components/checkout/ResaleCheckoutModal';
+import { Icon } from '../components/ui';
 import './MarketplacePage.css';
 
 type OfertaFilter = 'todos' | 'oferta';
@@ -200,7 +201,7 @@ export default function MarketplacePage() {
             </div>
           ) : filteredListings.length === 0 ? (
             <div className="mp-empty">
-              <div className="mp-empty-emoji">🎫</div>
+              <div className="mp-empty-emoji"><Icon name="ticket" size={28} /></div>
               <h3>{t.marketplace.noListings}</h3>
               <p>{t.marketplace.noListingsDesc}</p>
             </div>
@@ -243,7 +244,7 @@ export default function MarketplacePage() {
                         : { background: 'linear-gradient(135deg,#1a1a2e,#16213e)' }
                     }
                   >
-                    {!r.image && '🎧'}
+                    {!r.image && <Icon name="headphones" size={24} />}
                   </div>
 
                   {/* Info */}
@@ -280,7 +281,7 @@ export default function MarketplacePage() {
                         handleListingClick(r);
                       }}
                     >
-                      {t.common.search} →
+                      {t.common.view} →
                     </button>
                   </div>
                 </div>

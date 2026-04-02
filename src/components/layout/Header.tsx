@@ -3,10 +3,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation, type Language } from '../../i18n';
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-const FLAG_LANGS: { code: Language; flag: string; label: string }[] = [
-  { code: 'es', flag: '🇵🇪', label: 'Español' },
-  { code: 'en', flag: '🇺🇸', label: 'English' },
-  { code: 'zh', flag: '🇨🇳', label: '中文' },
+const FLAG_LANGS: { code: Language; flagSrc: string; label: string }[] = [
+  { code: 'es', flagSrc: '/flags/pe.svg', label: 'Español' },
+  { code: 'en', flagSrc: '/flags/us.svg', label: 'English' },
+  { code: 'zh', flagSrc: '/flags/cn.svg', label: '中文' },
 ];
 
 export default function Header() {
@@ -94,17 +94,17 @@ export default function Header() {
               onClick={() => { setLangOpen(!langOpen); setProfileOpen(false); }}
               aria-label="Change language"
             >
-              <span className="lz-lang-flag-emoji">{currentFlag.flag}</span>
+              <img src={currentFlag.flagSrc} alt="" className="lz-lang-flag-icon" aria-hidden="true" />
             </button>
             {langOpen && (
               <div className="lz-dropdown lz-lang-dropdown">
-                {FLAG_LANGS.map(({ code, flag, label }) => (
+                {FLAG_LANGS.map(({ code, flagSrc, label }) => (
                   <button
                     key={code}
                     className={`lz-dropdown-item${lang === code ? ' active' : ''}`}
                     onClick={() => { setLang(code); setLangOpen(false); }}
                   >
-                    <span className="lz-lang-flag-emoji">{flag}</span>
+                    <img src={flagSrc} alt="" className="lz-lang-flag-icon" aria-hidden="true" />
                     {label}
                   </button>
                 ))}
@@ -145,7 +145,7 @@ export default function Header() {
                       {t.profile.badges || 'Badges'}
                     </Link>
                     <Link to="/perfil#settings" className="lz-dropdown-item" onClick={() => setProfileOpen(false)}>
-                      {lang === 'es' ? 'Configuración' : lang === 'zh' ? '设置' : 'Settings'}
+                      {t.nav.settings}
                     </Link>
                     <div className="lz-dropdown-divider" />
                     <button className="lz-dropdown-item lz-dropdown-item--danger" onClick={() => { logout(); setProfileOpen(false); }}>

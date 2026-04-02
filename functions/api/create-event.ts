@@ -1,6 +1,6 @@
 import { verifyPromoter } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
-import { FieldValue } from 'firebase-admin/firestore';
+import { addDoc } from './_lib/firestore-rest.js';
+
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
 import { json, errorResponse, type Env } from './_lib/types.js';
 
@@ -15,14 +15,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.GENERAL);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const eventData = await context.request.json() as any;
 
     if (!eventData.name || !eventData.tiers) {
       return errorResponse('Missing required fields: name, tiers');
     }
 
-    const safeData = {
+    const safeData: Record<string, any> = {
       name: eventData.name,
       subtitle: eventData.subtitle || '',
       date: eventData.date || null,
@@ -44,8 +44,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         ...t,
         sold: 0,
       })),
-      status: 'draft',
-      featured: false,
+      maxTicketsPerBuyer: Math.max(Number(eventData.maxTicketsPerBuyer || 1), 1),
+      status: eventData.status || 'draft',
+      featured: Boolean(eventData.featured),
       slug: eventData.slug || '',
       crowdSize: eventData.crowdSize || '',
       minAge: eventData.minAge || '',
@@ -56,12 +57,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       visibleSections: eventData.visibleSections || {},
       meta: eventData.meta || {},
       organizer: user.uid,
-      createdAt: FieldValue.serverTimestamp(),
+      createdAt: new Date().toISOString(),
     };
 
-    const docRef = await db.collection('events').add(safeData);
+    const docId = await addDoc(env, 'events', safeData);
 
-    return json({ eventId: docRef.id });
+    return json({ eventId: docId });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to create event';
     return errorResponse(message);

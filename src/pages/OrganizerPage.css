@@ -5,7 +5,9 @@
 
 /* ── Main View ── */
 .og-view {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.015), transparent 18%),
+    var(--bg);
   min-height: 100vh;
   color: var(--text);
   padding: 0 0 var(--sp-20) 0;
@@ -13,9 +15,11 @@
 
 /* ── Header ── */
 .og-header {
-  background: linear-gradient(135deg, var(--acid-06) 0%, var(--green-05) 100%);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
+    linear-gradient(135deg, rgba(229,255,0,0.035) 0%, rgba(0,255,133,0.02) 100%);
   border-bottom: 1px solid var(--border);
-  padding: var(--sp-10) var(--sp-5) 2.25rem;
+  padding: var(--sp-12) var(--sp-5) var(--sp-8);
 }
 
 .og-header-top {
@@ -28,25 +32,29 @@
 }
 
 .og-header-top h1 {
-  font-size: var(--fs-2xl);
+  font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: var(--fw-extrabold);
-  margin: 0.625rem 0 6px;
+  margin: 0.75rem 0 0.35rem;
   color: var(--text);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.06em;
+  line-height: 0.94;
 }
 
 .og-header-top p {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
   margin: 0;
+  max-width: 44ch;
+  line-height: 1.65;
 }
 
 .og-badge {
   display: inline-block;
-  background: var(--acid);
-  color: var(--bg);
+  background: var(--acid-05);
+  color: var(--acid);
   padding: 5px var(--sp-3);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--acid-20);
+  border-radius: var(--radius-surface);
   font-size: 0.6875rem;
   font-weight: var(--fw-extrabold);
   letter-spacing: 1px;
@@ -54,9 +62,9 @@
 }
 
 .og-btn-new {
-  background: var(--green);
-  color: var(--bg);
-  border: none;
+  background: linear-gradient(180deg, #f0ff63 0%, var(--acid) 100%);
+  color: var(--gray-950);
+  border: 1px solid transparent;
   padding: var(--sp-3) 1.75rem;
   border-radius: var(--radius-btn);
   font-weight: var(--fw-bold);
@@ -69,7 +77,7 @@
 
 .og-btn-new:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 255, 133, 0.25);
+  box-shadow: 0 10px 24px rgba(229,255,0,0.12);
 }
 
 .og-btn-new:active {
@@ -83,26 +91,30 @@
   max-width: 75rem;
   margin: 0 auto;
   padding: 0 var(--sp-5);
-  display: flex;
-  gap: var(--sp-1);
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 1px;
+  border: 1px solid var(--border);
+  background: var(--border);
   position: sticky;
   top: 3.5rem;
   z-index: 10;
+  overflow: hidden;
 }
 
 .og-tab {
-  padding: 0.875rem var(--sp-6);
-  background: transparent;
+  padding: 0.95rem var(--sp-6);
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: none;
   color: var(--text-muted);
   font-size: 0.875rem;
   font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.2s ease;
-  border-bottom: 2px solid transparent;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .og-tab:hover {
@@ -111,7 +123,7 @@
 
 .og-tab.active {
   color: var(--acid);
-  border-bottom-color: var(--acid);
+  background: linear-gradient(180deg, rgba(229,255,0,0.06), rgba(229,255,0,0.02));
 }
 
 /* ── Quick Actions ── */
@@ -128,7 +140,7 @@
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 96%, #111);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.625rem var(--sp-5);
@@ -161,16 +173,21 @@
 }
 
 .og-metric {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0)),
+    color-mix(in srgb, var(--bg) 95%, #0f0f0f);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-surface);
   padding: var(--sp-6);
   transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .og-metric:hover {
   border-color: var(--acid-30);
-  background: var(--acid-05);
+  background:
+    linear-gradient(180deg, rgba(229,255,0,0.035), rgba(255,255,255,0)),
+    color-mix(in srgb, var(--bg) 95%, #101010);
 }
 
 .og-metric-label {
@@ -183,11 +200,12 @@
 }
 
 .og-metric-value {
-  font-size: 1.875rem;
+  font-size: clamp(1.9rem, 3vw, 2.65rem);
   font-weight: var(--fw-extrabold);
   color: var(--text);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.05em;
   margin-bottom: var(--sp-2);
+  line-height: 0.95;
 }
 
 .og-metric-value.acid {
@@ -220,7 +238,7 @@
 }
 
 .og-section-title {
-  font-size: 1.375rem;
+  font-size: clamp(1.6rem, 2.6vw, 2.25rem);
   font-weight: var(--fw-extrabold);
   color: var(--text);
   margin-bottom: var(--sp-5);
@@ -262,7 +280,7 @@
 .og-bar {
   flex: 1;
   background: var(--acid-12);
-  border-radius: 3px 3px 0 0;
+  border-radius: 0;
   min-height: 4px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -906,6 +924,17 @@
   line-height: 1.6;
 }
 
+.og-inline-error {
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 92, 138, 0.2);
+  background: rgba(255, 51, 102, 0.06);
+  color: var(--text);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
 /* ── Events List ── */
 .og-events {
   display: flex;
@@ -980,14 +1009,14 @@
 .og-event-bar {
   height: 6px;
   background: var(--acid-10);
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   overflow: hidden;
 }
 
 .og-event-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--green) 0%, var(--acid) 100%);
-  border-radius: 3px;
+  border-radius: var(--radius-surface);
   transition: width 0.4s ease;
 }
 

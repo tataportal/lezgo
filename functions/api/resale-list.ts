@@ -1,5 +1,5 @@
 import { verifyAuth } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { runTransaction } from './_lib/firestore-rest.js';
 import { FEES } from './_lib/constants.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
 import { json, errorResponse, type Env } from './_lib/types.js';
@@ -15,16 +15,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.RESALE_LIST);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const { ticketId, askingPrice, image } = await context.request.json() as any;
 
     if (!ticketId || typeof askingPrice !== 'number' || isNaN(askingPrice) || askingPrice <= 0) {
       return errorResponse('Missing ticketId or invalid askingPrice');
     }
 
-    const result = await db.runTransaction(async (transaction) => {
-      const ticketRef = db.collection('tickets').doc(ticketId);
-      const ticketSnap = await transaction.get(ticketRef);
+    const result = await runTransaction(env, async (tx) => {
+      const ticketSnap = await tx.get('tickets', ticketId);
 
       if (!ticketSnap.exists) throw new Error('Ticket not found');
 
@@ -42,8 +41,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const fee = askingPrice * FEES.RESALE_SELLER;
       const netToSeller = askingPrice - fee;
 
-      const resaleRef = db.collection('resale').doc();
-      const resaleData = {
+      const resaleDocId = tx.generateId();
+      const resaleData: Record<string, any> = {
         ticketId,
         eventId: ticket.eventId || '',
         eventName: ticket.eventName || '',
@@ -60,14 +59,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         status: 'listed',
         fee,
         netToSeller,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
         buyerId: null,
       };
 
-      transaction.set(resaleRef, resaleData);
-      transaction.update(ticketRef, { status: 'resale-listed' });
+      tx.set('resale', resaleDocId, resaleData);
+      tx.update('tickets', ticketId, { status: 'resale-listed' });
 
-      return { resaleId: resaleRef.id, fee, netToSeller };
+      return { resaleId: resaleDocId, fee, netToSeller };
     });
 
     return json(result);

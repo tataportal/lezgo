@@ -1,7 +1,7 @@
 import { verifyAuth } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { runTransaction } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
-import { FieldValue } from 'firebase-admin/firestore';
+
 import { json, errorResponse, type Env } from './_lib/types.js';
 
 /**
@@ -15,16 +15,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.RESALE_PURCHASE);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const { resaleId } = await context.request.json() as any;
 
     if (!resaleId) {
       return errorResponse('Missing resaleId');
     }
 
-    await db.runTransaction(async (transaction) => {
-      const resaleRef = db.collection('resale').doc(resaleId);
-      const resaleSnap = await transaction.get(resaleRef);
+    await runTransaction(env, async (tx) => {
+      const resaleSnap = await tx.get('resale', resaleId);
 
       if (!resaleSnap.exists) throw new Error('Resale listing not found');
 
@@ -33,30 +32,32 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       if (resale.status !== 'listed') throw new Error('This ticket is no longer available');
       if (resale.sellerId === user.uid) throw new Error('Cannot buy your own listing');
 
-      const ticketRef = db.collection('tickets').doc(resale.ticketId);
-      const ticketSnap = await transaction.get(ticketRef);
+      const ticketSnap = await tx.get('tickets', resale.ticketId);
 
       if (!ticketSnap.exists) throw new Error('Ticket not found');
 
-      const buyerRef = db.collection('users').doc(user.uid);
-      const buyerSnap = await transaction.get(buyerRef);
+      const buyerSnap = await tx.get('users', user.uid);
       const buyerProfile = buyerSnap.data() || {};
 
-      transaction.update(resaleRef, {
+      if (!buyerProfile.dni) {
+        throw new Error('Identity document required. Please complete your profile.');
+      }
+
+      tx.update('resale', resaleId, {
         status: 'sold',
         buyerId: user.uid,
       });
 
-      transaction.update(ticketRef, {
+      tx.update('tickets', resale.ticketId, {
         status: 'active',
         userId: user.uid,
         userEmail: user.email,
         userName: buyerProfile.displayName || '',
         userDni: buyerProfile.dni || '',
         boughtInResale: true,
-        purchasedAt: FieldValue.serverTimestamp(),
+        purchasedAt: new Date().toISOString(),
         transferredFrom: resale.sellerId,
-        transferredAt: FieldValue.serverTimestamp(),
+        transferredAt: new Date().toISOString(),
       });
     });
 

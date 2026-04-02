@@ -1,7 +1,7 @@
 import { verifyAuth } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { queryDocs, runTransaction } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
-import { FieldValue } from 'firebase-admin/firestore';
+
 import { json, errorResponse, type Env } from './_lib/types.js';
 
 /**
@@ -15,7 +15,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.TRANSFER);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const { ticketId, recipientEmail } = await context.request.json() as any;
 
     if (!ticketId || !recipientEmail) {
@@ -28,26 +28,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // Look up recipient by email (query, cannot be done inside transaction)
-    const recipientSnap = await db
-      .collection('users')
-      .where('email', '==', recipientEmail)
-      .limit(1)
-      .get();
+    const recipientSnap = await queryDocs(env, 'users', [
+      { field: 'email', op: 'EQUAL', value: recipientEmail },
+    ], 1);
 
     if (recipientSnap.empty) {
       return errorResponse('Recipient not found. They must have a Lezgo account.', 404);
     }
 
     const recipient = recipientSnap.docs[0];
-    const recipientData = recipient.data();
+    const recipientData = recipient.data()!;
 
     if (recipient.id === user.uid) {
       return errorResponse('Cannot transfer ticket to yourself');
     }
 
-    await db.runTransaction(async (transaction) => {
-      const ticketRef = db.collection('tickets').doc(ticketId);
-      const ticketSnap = await transaction.get(ticketRef);
+    if (!recipientData.dni) {
+      return errorResponse('Recipient must complete identity verification before receiving tickets');
+    }
+
+    await runTransaction(env, async (tx) => {
+      const ticketSnap = await tx.get('tickets', ticketId);
 
       if (!ticketSnap.exists) throw new Error('Ticket not found');
 
@@ -56,13 +57,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       if (ticket.userId !== user.uid) throw new Error('You do not own this ticket');
       if (ticket.status !== 'active') throw new Error('Only active tickets can be transferred');
 
-      transaction.update(ticketRef, {
+      tx.update('tickets', ticketId, {
         status: 'active',
         userId: recipient.id,
         userEmail: recipientEmail,
         userName: recipientData.displayName || '',
         userDni: recipientData.dni || '',
-        transferredAt: FieldValue.serverTimestamp(),
+        transferredAt: new Date().toISOString(),
         transferredFrom: user.uid,
       });
     });

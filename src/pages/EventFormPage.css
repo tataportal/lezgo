@@ -4,10 +4,12 @@
 
 /* ── Page Wrapper ── */
 .ef-view {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.015), transparent 16%),
+    var(--bg);
   min-height: 100vh;
   color: var(--text);
-  max-width: 60rem;
+  max-width: 64rem;
   margin: 0 auto;
   padding: 4.5rem var(--sp-6) 3.75rem;
 }
@@ -21,10 +23,12 @@
 }
 
 .ef-header h1 {
-  font-size: 2rem;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
   font-weight: var(--fw-extrabold);
   margin: 0;
   color: var(--text);
+  letter-spacing: -0.06em;
+  line-height: 0.94;
 }
 
 .ef-back {
@@ -32,7 +36,7 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
   padding: var(--sp-2) 1.125rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-btn);
   font-size: 0.8125rem;
   font-weight: var(--fw-semibold);
   cursor: pointer;
@@ -50,7 +54,9 @@
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  background: var(--acid-06);
+  background:
+    linear-gradient(180deg, rgba(229,255,0,0.045), rgba(229,255,0,0.015)),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--acid-dim);
   border-radius: var(--radius-btn);
   padding: 0.875rem var(--sp-5);
@@ -79,23 +85,29 @@
 
 /* ── Sections ── */
 .ef-section {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0)),
+    linear-gradient(135deg, rgba(229,255,0,0.03), rgba(255,255,255,0) 34%),
+    color-mix(in srgb, var(--bg) 95%, #101010);
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: var(--radius-surface);
   padding: 1.75rem;
   margin-bottom: var(--sp-6);
   display: flex;
   flex-direction: column;
   gap: var(--sp-5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .ef-section-title {
-  font-size: 1.125rem;
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
   font-weight: var(--fw-bold);
   margin: 0;
   color: var(--text);
   padding-bottom: 0.875rem;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
 }
 
 /* ── Row Layouts ── */
@@ -128,16 +140,23 @@
   font-weight: var(--fw-bold);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.12em;
+}
+
+.ef-help {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
 }
 
 /* ── Input ── */
 .ef-input {
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.625rem 0.875rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   font-size: 0.875rem;
   font-family: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -157,11 +176,11 @@
 
 /* ── Select ── */
 .ef-select {
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 0.625rem 0.875rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   font-size: 0.875rem;
   font-family: inherit;
   cursor: pointer;
@@ -188,11 +207,11 @@
 
 /* ── Textarea ── */
 .ef-textarea {
-  background: var(--bg);
+  background: rgba(255,255,255,0.015);
   border: 1px solid var(--border);
   color: var(--text);
   padding: var(--sp-3) 0.875rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-surface);
   font-size: 0.875rem;
   font-family: inherit;
   resize: vertical;
@@ -227,7 +246,7 @@
   color: var(--pink);
   width: 2rem;
   height: 2rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-btn);
   font-size: 1.125rem;
   font-weight: var(--fw-semibold);
   cursor: pointer;

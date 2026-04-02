@@ -1,7 +1,7 @@
 import { verifyPromoter } from './_lib/auth.js';
-import { getAdminDb } from './_lib/firebase-admin.js';
+import { getDoc, queryDocs, runTransaction } from './_lib/firestore-rest.js';
 import { rateLimit, RATE_LIMITS } from './_lib/rate-limit.js';
-import { FieldValue } from 'firebase-admin/firestore';
+
 import { json, errorResponse, type Env } from './_lib/types.js';
 
 /**
@@ -15,7 +15,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const rateLimited = rateLimit(user.uid, RATE_LIMITS.SCANNER);
     if (rateLimited) return rateLimited;
 
-    const db = getAdminDb(context.env);
+    const env = context.env;
     const { eventId, dni } = await context.request.json() as any;
 
     if (!eventId || !dni) {
@@ -23,7 +23,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // Verify organizer owns this event
-    const eventSnap = await db.collection('events').doc(eventId).get();
+    const eventSnap = await getDoc(env, 'events', eventId);
     if (!eventSnap.exists) {
       return errorResponse('Event not found', 404);
     }
@@ -34,11 +34,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // Find ticket by DNI for this event
-    const ticketsQuery = await db
-      .collection('tickets')
-      .where('eventId', '==', eventId)
-      .where('userDni', '==', dni)
-      .get();
+    const ticketsQuery = await queryDocs(env, 'tickets', [
+      { field: 'eventId', op: 'EQUAL', value: eventId },
+      { field: 'userDni', op: 'EQUAL', value: dni },
+    ]);
 
     if (ticketsQuery.empty) {
       return json({ status: 'denied', message: 'No ticket found for this DNI' });
@@ -46,15 +45,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const matchingDoc = ticketsQuery.docs.find((doc) => {
       const data = doc.data();
-      return data.status === 'active' || data.status === 'used';
+      return data && (data.status === 'active' || data.status === 'used');
     });
 
     if (!matchingDoc) {
       return json({ status: 'denied', message: 'No active ticket found for this DNI' });
     }
 
-    const result = await db.runTransaction(async (transaction) => {
-      const ticketSnap = await transaction.get(matchingDoc.ref);
+    const matchingDocId = matchingDoc.id;
+
+    const result = await runTransaction(env, async (tx) => {
+      const ticketSnap = await tx.get('tickets', matchingDocId);
 
       if (!ticketSnap.exists) throw new Error('Ticket not found');
 
@@ -79,9 +80,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         };
       }
 
-      transaction.update(matchingDoc.ref, {
+      tx.update('tickets', matchingDocId, {
         status: 'used',
-        usedAt: FieldValue.serverTimestamp(),
+        usedAt: new Date().toISOString(),
       });
 
       return {

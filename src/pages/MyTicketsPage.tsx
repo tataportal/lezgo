@@ -8,6 +8,7 @@ import { useTranslation } from '../i18n';
 import { getInitials, toDate, LOCALE_MAP } from '../lib/helpers';
 import { FEES } from '../lib/constants';
 import type { Resale } from '../lib/types';
+import { Badge, Button, Card, Icon, SectionHeading, Stat, TabButton, Tabs } from '../components/ui';
 import toast from 'react-hot-toast';
 import './MyTicketsPage.css';
 
@@ -52,7 +53,6 @@ export default function MyTicketsPage() {
 
   const [tab, setTab] = useState<Tab>('proximas');
   const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null);
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [resaleListings, setResaleListings] = useState<Resale[]>([]);
   const [resaleLoading, setResaleLoading] = useState(false);
 
@@ -79,9 +79,9 @@ export default function MyTicketsPage() {
   }, []);
 
   const demoNotifications = [
-    { id: '1', icon: '🎟️', title: 'Ticket confirmado', desc: 'Tu entrada para LEZGO v2 Launch fue confirmada.', time: 'Hace 2h', unread: true },
-    { id: '2', icon: '⚡', title: 'Badge desbloqueado', desc: 'Early Supporter — eres uno de los primeros.', time: 'Hace 1d', unread: true },
-    { id: '3', icon: '🎉', title: 'Nuevo evento disponible', desc: 'Un nuevo evento ha sido publicado en tu zona.', time: 'Hace 3d', unread: true },
+    { id: '1', icon: 'ticket' as const, title: 'Ticket confirmado', desc: 'Tu entrada para LEZGO v2 Launch fue confirmada.', time: 'Hace 2h', unread: true },
+    { id: '2', icon: 'spark' as const, title: 'Badge desbloqueado', desc: 'Early Supporter — eres uno de los primeros.', time: 'Hace 1d', unread: true },
+    { id: '3', icon: 'confetti' as const, title: 'Nuevo evento disponible', desc: 'Un nuevo evento ha sido publicado en tu zona.', time: 'Hace 3d', unread: true },
   ];
 
   const handleResaleTabClick = async () => {
@@ -96,12 +96,10 @@ export default function MyTicketsPage() {
   };
 
   const openTransferModal = (ticketId: string) => {
-    setMenuOpenId(null);
     setTransferModal({ open: true, ticketId, recipientEmail: '', message: '', loading: false });
   };
 
   const openResaleModal = (ticketId: string, originalPrice: number) => {
-    setMenuOpenId(null);
     setResaleModal({
       open: true, ticketId, originalPrice,
       askingPrice: Math.round(originalPrice * 1.4 * 100) / 100, loading: false,
@@ -142,11 +140,11 @@ export default function MyTicketsPage() {
   if (!user) {
     return (
       <div className="mt-view">
-        <div className="mt-empty">
-          <div className="mt-empty-icon">🎫</div>
+        <Card className="mt-empty mt-empty-card" raised glow>
+          <div className="mt-empty-icon"><Icon name="ticket" size={28} /></div>
           <div className="mt-empty-text">{t.myTickets.loginRequired}</div>
-          <button className="mt-empty-btn" onClick={() => navigate('/auth')}>{t.myTickets.loginBtn}</button>
-        </div>
+          <Button className="mt-empty-btn" onClick={() => navigate('/auth')}>{t.myTickets.loginBtn}</Button>
+        </Card>
       </div>
     );
   }
@@ -155,7 +153,7 @@ export default function MyTicketsPage() {
     ? `${activeTickets.length} ${activeTickets.length !== 1 ? t.myTickets.tickets : t.myTickets.ticket} ${activeTickets.length !== 1 ? t.myTickets.actives : t.myTickets.active} · ${t.myTickets.dniVerified || 'DNI verificado'} ✓`
     : t.myTickets.noTickets;
 
-  const renderTicketCard = (ticket: any, isPast = false) => {
+  const renderTicketCard = (ticket: any) => {
     const isActive = ticket.status === 'active';
     const isUsed = ticket.status === 'used';
     const isTransferred = ticket.status === 'transferred';
@@ -171,83 +169,92 @@ export default function MyTicketsPage() {
     };
 
     const imgStyle = ticket.image
-      ? { backgroundImage: `url(${ticket.image})` }
+      ? { backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.08) 0%, rgba(8,8,8,0.72) 100%), url(${ticket.image})` }
       : {} as React.CSSProperties;
 
     return (
       <div key={ticket.id} className={`mt-ticket ${isUsed ? 'used' : ''}`}>
         <div className="mt-ticket-head" onClick={() => setExpandedTicketId(expandedTicketId === ticket.id ? null : ticket.id)}>
-          <div className={`mt-ticket-img${!ticket.image ? ' mt-ticket-img--placeholder' : ''}`} style={imgStyle}>
-            {!ticket.image && '🎧'}
-          </div>
-          <div className="mt-ticket-info">
-            <div className="mt-ticket-event">{ticket.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
-            <div className="mt-ticket-meta">
-              <div>{ticket.eventDateLabel || (ticket.eventDate ? fmtDate(ticket.eventDate) : '')} · {ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</div>
+          <div className={`mt-ticket-media${!ticket.image ? ' mt-ticket-media--placeholder' : ''}`} style={imgStyle}>
+            <div className="mt-ticket-topline">
               {statusBadge()}
+              {ticket.badgeNumber && (
+                <div className="mt-ticket-serial">#{String(ticket.badgeNumber).padStart(3, '0')}</div>
+              )}
             </div>
-            {ticket.badgeNumber && (
-              <div className="mt-ticket-badge-collectible">
-                <span className="mt-badge-emoji">⚡</span>
-                <span className="mt-badge-label">Early Adopter</span>
-                <span className="mt-badge-number">#{String(ticket.badgeNumber).padStart(3, '0')}</span>
+
+            <div className="mt-ticket-copy">
+              <div className="mt-ticket-kicker">{ticket.eventVenue || 'LEZGO'}</div>
+              <div className="mt-ticket-event">{ticket.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
+              <div className="mt-ticket-meta">
+                <div>{ticket.eventDateLabel || (ticket.eventDate ? fmtDate(ticket.eventDate) : '')}</div>
               </div>
-            )}
+            </div>
+
+            {!ticket.image && <div className="mt-ticket-placeholder-mark">LEZGO</div>}
           </div>
-          {!isPast && (
-            <button
-              className="mt-ticket-dots"
-              onClick={(e) => { e.stopPropagation(); setMenuOpenId(menuOpenId === ticket.id ? null : ticket.id); }}
-            >⋮</button>
-          )}
         </div>
 
-        {/* Menu */}
-        {menuOpenId === ticket.id && (
-          <div className="mt-ticket-menu-popup">
-            {isActive && (
-              <>
-                <button className="mt-ticket-menu-item" onClick={() => openTransferModal(ticket.id)}>{t.myTickets.transferBtn}</button>
-                <button className="mt-ticket-menu-item" onClick={() => openResaleModal(ticket.id, ticket.originalPrice ?? ticket.price ?? 0)}>{t.myTickets.resaleBtn}</button>
-              </>
-            )}
-            <button className="mt-ticket-menu-item" onClick={() => { setMenuOpenId(null); navigate(`/evento/${ticket.eventSlug || ticket.eventId}`); }}>{t.myTickets.viewEventBtn}</button>
-          </div>
-        )}
+        <div className="mt-ticket-collapsed-actions">
+          <button
+            className="mt-ticket-info-toggle"
+            onClick={() => setExpandedTicketId(expandedTicketId === ticket.id ? null : ticket.id)}
+          >
+            {expandedTicketId === ticket.id ? 'Ocultar info' : 'Ver info'}
+          </button>
+        </div>
 
         {/* Expanded detail */}
         {expandedTicketId === ticket.id && (
           <div className="mt-ticket-expand">
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.venueLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.eventVenue || '—'}{ticket.eventLocation ? `, ${ticket.eventLocation}` : ''}</span>
-            </div>
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.scheduleLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.eventTimeStart || '—'} – {ticket.eventTimeEnd || '—'}</span>
-            </div>
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.ticketTypeLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</span>
-            </div>
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.priceLabel}</span>
-              <span className="mt-ticket-detail-value">{ticket.price > 0 ? fmtPrice(ticket.price) : t.common.free}</span>
-            </div>
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.dniLinked}</span>
-              <span className="mt-ticket-detail-value">{ticket.userDni ? maskDni(ticket.userDni) : '—'}</span>
-            </div>
-            <div className="mt-ticket-detail-row">
-              <span className="mt-ticket-detail-label">{t.myTickets.verification}</span>
-              <span className="mt-ticket-detail-value mt-ticket-detail-value--verified">{t.myTickets.verifiedWithLezgo}</span>
+            <div className="mt-ticket-facts">
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.venueLabel}</span>
+                <span className="mt-ticket-fact-value">{ticket.eventVenue || '—'}{ticket.eventLocation ? `, ${ticket.eventLocation}` : ''}</span>
+              </div>
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.scheduleLabel}</span>
+                <span className="mt-ticket-fact-value">{ticket.eventTimeStart || '—'} – {ticket.eventTimeEnd || '—'}</span>
+              </div>
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.ticketTypeLabel}</span>
+                <span className="mt-ticket-fact-value">{ticket.ticketName || (t.myTickets.ticketFallback || 'Entrada')}</span>
+              </div>
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.priceLabel}</span>
+                <span className="mt-ticket-fact-value mt-ticket-fact-value--price">{ticket.price > 0 ? fmtPrice(ticket.price) : t.common.free}</span>
+              </div>
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.dniLinked}</span>
+                <span className="mt-ticket-fact-value">{ticket.userDni ? maskDni(ticket.userDni) : '—'}</span>
+              </div>
+              <div className="mt-ticket-fact">
+                <span className="mt-ticket-fact-label">{t.myTickets.verification}</span>
+                <span className="mt-ticket-fact-value mt-ticket-detail-value--verified">{t.myTickets.verifiedWithLezgo}</span>
+              </div>
             </div>
             {ticket.badgeNumber && (
-              <div className="mt-ticket-detail-row">
-                <span className="mt-ticket-detail-label">Collectible Badge</span>
-                <span className="mt-ticket-detail-value mt-ticket-detail-value--badge">⚡ Early Adopter #{String(ticket.badgeNumber).padStart(3, '0')} / 100</span>
+              <div className="mt-ticket-badge-collectible">
+                <span className="mt-badge-emoji"><Icon name="spark" size={16} /></span>
+                <span className="mt-badge-label">{t.myTickets.earlyAdopter}</span>
+                <span className="mt-badge-number">#{String(ticket.badgeNumber).padStart(3, '0')} / 100</span>
               </div>
             )}
+            <div className="mt-ticket-action-row">
+              <button className="mt-ticket-action mt-ticket-action--ghost" onClick={() => navigate(`/evento/${ticket.eventSlug || ticket.eventId}`)}>
+                {t.myTickets.viewEventBtn}
+              </button>
+              {isActive && (
+                <>
+                  <button className="mt-ticket-action mt-ticket-action--resale" onClick={() => openResaleModal(ticket.id, ticket.originalPrice ?? ticket.price ?? 0)}>
+                    {t.myTickets.resaleBtn}
+                  </button>
+                  <button className="mt-ticket-action mt-ticket-action--transfer" onClick={() => openTransferModal(ticket.id)}>
+                    {t.myTickets.transferBtn}
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -259,26 +266,25 @@ export default function MyTicketsPage() {
       {/* Header */}
       <div className="mt-header">
         <div className="mt-header-left">
-          <h1>{t.myTickets.title}</h1>
-          <p>{subtitleText}</p>
+          <SectionHeading eyebrow="Collection" title={t.myTickets.title} body={subtitleText} />
         </div>
         <div className="mt-header-right">
           <div className="notif-wrapper" ref={notifRef}>
             <button className="notif-bell" onClick={() => setNotifOpen(!notifOpen)}>
-              🔔<span className="notif-badge">{demoNotifications.length}</span>
+              <Icon name="bell" size={16} /><span className="notif-badge">{demoNotifications.length}</span>
             </button>
             {notifOpen && (
               <div className="notif-panel">
                 <div className="notif-panel-header">
-                  <span className="notif-panel-title">Notificaciones</span>
-                  <button className="notif-mark-all" onClick={() => { toast.success('Marcadas como leídas'); setNotifOpen(false); }}>
-                    Marcar todo
+                  <span className="notif-panel-title">{t.myTickets.notifications}</span>
+                  <button className="notif-mark-all" onClick={() => { toast.success(t.myTickets.markedAsRead); setNotifOpen(false); }}>
+                    {t.myTickets.markAll}
                   </button>
                 </div>
                 <div className="notif-panel-list">
                   {demoNotifications.map(n => (
                     <div key={n.id} className={`notif-item ${n.unread ? 'notif-item--unread' : ''}`}>
-                      <span className="notif-item-icon">{n.icon}</span>
+                      <span className="notif-item-icon"><Icon name={n.icon} size={16} /></span>
                       <div className="notif-item-content">
                         <div className="notif-item-title">{n.title}</div>
                         <div className="notif-item-desc">{n.desc}</div>
@@ -298,30 +304,36 @@ export default function MyTicketsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-filter-tabs">
-        <button className={`mt-tab ${tab === 'proximas' ? 'active' : ''}`} onClick={() => setTab('proximas')}>
-          {t.myTickets.tabUpcoming} <span className="mt-tab-count">{activeTickets.length}</span>
-        </button>
-        <button className={`mt-tab ${tab === 'pasadas' ? 'active' : ''}`} onClick={() => setTab('pasadas')}>
-          {t.myTickets.tabPast} <span className="mt-tab-count">{pastTickets.length}</span>
-        </button>
-        <button className={`mt-tab ${tab === 'reventas' ? 'active' : ''}`} onClick={handleResaleTabClick}>
-          {t.myTickets.tabResale} <span className="mt-tab-count">{resaleListings.length}</span>
-        </button>
+      <Tabs className="mt-filter-tabs">
+        <TabButton className="mt-tab" active={tab === 'proximas'} onClick={() => setTab('proximas')}>
+          {t.myTickets.tabUpcoming} <Badge className="mt-tab-count" variant={tab === 'proximas' ? 'accent' : 'muted'}>{activeTickets.length}</Badge>
+        </TabButton>
+        <TabButton className="mt-tab" active={tab === 'pasadas'} onClick={() => setTab('pasadas')}>
+          {t.myTickets.tabPast} <Badge className="mt-tab-count" variant={tab === 'pasadas' ? 'accent' : 'muted'}>{pastTickets.length}</Badge>
+        </TabButton>
+        <TabButton className="mt-tab" active={tab === 'reventas'} onClick={handleResaleTabClick}>
+          {t.myTickets.tabResale} <Badge className="mt-tab-count" variant={tab === 'reventas' ? 'accent' : 'muted'}>{resaleListings.length}</Badge>
+        </TabButton>
+      </Tabs>
+
+      <div className="mt-stats-grid">
+        <Stat label={t.myTickets.tabUpcoming} value={activeTickets.length} caption={t.myTickets.actives} />
+        <Stat label={t.myTickets.tabPast} value={pastTickets.length} caption={t.myTickets.tabPast} />
+        <Stat label={t.myTickets.tabResale} value={resaleListings.length} caption={t.myTickets.statusResale} />
       </div>
 
       {/* Próximas Panel */}
       {tab === 'proximas' && (
         <div className="mt-panel">
           {activeLoading ? (
-            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
+            <Card className="mt-empty mt-empty-card" raised><p className="u-text-dim">{t.myTickets.loadingTickets}</p></Card>
           ) : activeTickets.length === 0 ? (
-            <div className="mt-empty">
-              <div className="mt-empty-icon">🎫</div>
+            <Card className="mt-empty mt-empty-card" raised>
+              <div className="mt-empty-icon"><Icon name="ticket" size={28} /></div>
               <div className="mt-empty-text">{t.myTickets.noUpcoming}</div>
               <div className="mt-empty-sub">{t.myTickets.noUpcomingDesc}</div>
-              <button className="mt-empty-btn" onClick={() => navigate('/inicio')}>{t.myTickets.exploreBtn}</button>
-            </div>
+              <Button className="mt-empty-btn" onClick={() => navigate('/inicio')}>{t.myTickets.exploreBtn}</Button>
+            </Card>
           ) : (
             activeTickets.map(ticket => renderTicketCard(ticket))
           )}
@@ -332,15 +344,15 @@ export default function MyTicketsPage() {
       {tab === 'pasadas' && (
         <div className="mt-panel">
           {pastLoading ? (
-            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
+            <Card className="mt-empty mt-empty-card" raised><p className="u-text-dim">{t.myTickets.loadingTickets}</p></Card>
           ) : pastTickets.length === 0 ? (
-            <div className="mt-empty">
-              <div className="mt-empty-icon">📊</div>
+            <Card className="mt-empty mt-empty-card" raised>
+              <div className="mt-empty-icon"><Icon name="analytics" size={28} /></div>
               <div className="mt-empty-text">{t.myTickets.noPastDesc}</div>
               <div className="mt-empty-sub">{t.myTickets.noPastSubDesc}</div>
-            </div>
+            </Card>
           ) : (
-            pastTickets.map(ticket => renderTicketCard(ticket, true))
+            pastTickets.map(ticket => renderTicketCard(ticket))
           )}
         </div>
       )}
@@ -349,24 +361,29 @@ export default function MyTicketsPage() {
       {tab === 'reventas' && (
         <div className="mt-panel">
           {resaleLoading ? (
-            <div className="mt-empty"><p className="u-text-dim">{t.myTickets.loadingTickets}</p></div>
+            <Card className="mt-empty mt-empty-card" raised><p className="u-text-dim">{t.myTickets.loadingTickets}</p></Card>
           ) : resaleListings.length === 0 ? (
-            <div className="mt-empty">
-              <div className="mt-empty-icon">💸</div>
+            <Card className="mt-empty mt-empty-card" raised>
+              <div className="mt-empty-icon"><Icon name="money" size={28} /></div>
               <div className="mt-empty-text">{t.myTickets.noResaleDesc}</div>
               <div className="mt-empty-sub">{t.myTickets.noResaleSubDesc}</div>
-            </div>
+            </Card>
           ) : (
             resaleListings.map(resale => (
               <div key={resale.id} className="mt-ticket">
                 <div className="mt-ticket-head">
-                  <div className="mt-ticket-img mt-ticket-img--placeholder">🎧</div>
-                  <div className="mt-ticket-info">
-                    <div className="mt-ticket-event">{resale.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
-                    <div className="mt-ticket-meta">
-                      <div>{resale.ticketTier || (t.myTickets.ticketFallback || 'Entrada')} · {fmtPrice(resale.askingPrice)}</div>
+                  <div className="mt-ticket-media mt-ticket-media--placeholder">
+                    <div className="mt-ticket-topline">
                       <span className="mt-ticket-status-badge mt-ticket-status-resale"><span className="mt-status-dot">●</span> {t.myTickets.statusResale}</span>
                     </div>
+                    <div className="mt-ticket-copy">
+                      <div className="mt-ticket-kicker">{resale.eventVenue || 'Marketplace'}</div>
+                      <div className="mt-ticket-event">{resale.eventName || (t.myTickets.eventFallback || 'Evento')}</div>
+                      <div className="mt-ticket-meta">
+                        <div>{fmtPrice(resale.askingPrice)}</div>
+                      </div>
+                    </div>
+                    <div className="mt-ticket-placeholder-mark">LEZGO</div>
                   </div>
                 </div>
               </div>

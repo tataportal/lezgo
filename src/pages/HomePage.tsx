@@ -14,7 +14,7 @@ const cleanText = (s?: string) =>
 export default function HomePage() {
   const navigate = useNavigate();
   const { t, lang } = useTranslation();
-  const { events, loading, error } = useEvents();
+  const { events, loading, error } = useEvents({ status: 'published' });
   const [searchText, setSearchText] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
@@ -373,15 +373,18 @@ export default function HomePage() {
 
         {/* ── ID Banner — Ported from monolith ── */}
         <div className="id-banner">
-          <div className="id-banner__icon">☺</div>
-          <p>
-            {t.home.idBanner.split('\n').map((line, i) => (
-              <span key={i}>
-                {line}
-                {i === 0 && <br />}
-              </span>
-            ))}
-          </p>
+          <div className="id-banner__copy">
+            <div className="id-banner__icon">☺</div>
+            <p>
+              {t.home.idBanner.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i === 0 && <br />}
+                </span>
+              ))}
+            </p>
+          </div>
+          <IdentityMorphShowcase />
         </div>
 
         {/* ── Próximos eventos ── */}
@@ -701,6 +704,88 @@ function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewPro
           </div>
         );
       })}
+    </div>
+  );
+}
+
+const IDENTITY_STAGES = [
+  {
+    kind: 'Verified ID',
+    accent: 'Biometric verified',
+    meta: 'Entry-ready credential',
+    code: 'ID-9274',
+    chip: 'LEZGO',
+  },
+  {
+    kind: 'Event Ticket',
+    accent: 'Door unlock',
+    meta: 'Admit one / priority lane',
+    code: 'TKT-0419',
+    chip: 'SCAN',
+  },
+  {
+    kind: 'Passport',
+    accent: 'Cross-border identity',
+    meta: 'Verified traveler profile',
+    code: 'P-84012',
+    chip: 'WORLD',
+  },
+] as const;
+
+function IdentityMorphShowcase() {
+  return (
+    <div className="id-showcase" aria-hidden="true">
+      <div className="id-showcase__halo id-showcase__halo--left" />
+      <div className="id-showcase__halo id-showcase__halo--right" />
+
+      <div className="id-showcase__stage">
+        <div className="id-showcase__orbit id-showcase__orbit--x" />
+        <div className="id-showcase__orbit id-showcase__orbit--y" />
+
+        <div className="id3d">
+          <div className="id3d__shadow" />
+          <div className="id3d__object">
+            <div className="id3d__side id3d__side--front">
+              {IDENTITY_STAGES.map((stage) => (
+                <article key={stage.kind} className="id3d__state">
+                  <div className="id3d__glow" />
+                  <div className="id3d__noise" />
+                  <div className="id3d__topline">
+                    <span>{stage.accent}</span>
+                    <span>{stage.chip}</span>
+                  </div>
+                  <div className="id3d__brand">LEZGO</div>
+                  <div className="id3d__kind">{stage.kind}</div>
+                  <div className="id3d__meta">{stage.meta}</div>
+                  <div className="id3d__footer">
+                    <span>{stage.code}</span>
+                    <span>ACTIVE</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="id3d__side id3d__side--back">
+              <div className="id3d__back-core">
+                <div className="id3d__back-stamp">Trusted identity</div>
+                <div className="id3d__back-lines" />
+                <div className="id3d__back-band" />
+              </div>
+            </div>
+
+            <div className="id3d__edge id3d__edge--top" />
+            <div className="id3d__edge id3d__edge--bottom" />
+            <div className="id3d__edge id3d__edge--left" />
+            <div className="id3d__edge id3d__edge--right" />
+          </div>
+        </div>
+
+        <div className="id-showcase__legend">
+          <span>Verified ID</span>
+          <span>Event Ticket</span>
+          <span>Passport</span>
+        </div>
+      </div>
     </div>
   );
 }
