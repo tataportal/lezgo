@@ -54,10 +54,16 @@
 }
 
 .ab-marquee-item {
-  font-size: 0.65rem;
+  font-size: 1.1rem;
   font-weight: var(--fw-extrabold);
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+.ab-marquee-item::after {
+  content: ' ·';
+  margin-left: 3rem;
+  opacity: 0.4;
 }
 
 /* ── Hero ─────────────────────────────────────── */

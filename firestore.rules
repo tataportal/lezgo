@@ -45,6 +45,14 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ── PUBLIC STATS ──
+    // Aggregate counters exposed on the public deck page.
+    // Written only via admin SDK / Cloud Functions. Safe to expose read.
+    match /publicStats/{statId} {
+      allow read: if true;
+      allow write: if false; // Only via admin SDK
+    }
+
     // ── PURCHASE COUNTS ──
     // Counter documents for identity-based purchase limits. Admin SDK only.
     match /purchaseCounts/{counterId} {

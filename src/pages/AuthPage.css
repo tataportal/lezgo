@@ -148,9 +148,10 @@
 
 .auth-btn-google {
   margin-bottom: 0;
-  background: var(--color-white);
-  color: var(--color-black);
-  border-color: var(--color-white);
+  background: #ffffff;
+  color: #111111;
+  border-color: #ffffff;
+  gap: 0.5rem;
 }
 
 .auth-btn-google:hover:not(:disabled) {

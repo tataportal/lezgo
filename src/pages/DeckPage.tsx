@@ -1,14 +1,29 @@
 import { useState } from 'react';
 import { useTranslation } from '../i18n';
+import { useLiveTicketCount } from '../hooks/useLiveTicketCount';
 import './DeckPage.css';
 
 type Mode = 'web2' | 'web3';
+
+/** Renders newline characters as <br> so translations can control line breaks */
+function renderLines(text: string) {
+  const parts = text.split('\n');
+  if (parts.length === 1) return <>{text}</>;
+  return (
+    <>
+      {parts.map((line, i) => (
+        <span key={i}>{line}{i < parts.length - 1 && <br />}</span>
+      ))}
+    </>
+  );
+}
 
 export default function DeckPage() {
   const { t, lang, setLang } = useTranslation();
   const [mode, setMode] = useState<Mode>('web2');
   const marqueeItems = ['LEZGO', 'Identity-based ticketing', 'Buy safer', 'Resell safer', 'No QR', 'Door trust'];
 
+  const { ticketCount, resaleCount } = useLiveTicketCount();
   const d = t.deck;
   const attendeeSteps = (mode === 'web2' ? d.attendeeProcessW2 : d.attendeeProcessW3).slice(0, 4);
   const organizerSteps = (mode === 'web2' ? d.organizerProcessW2 : d.organizerProcessW3).slice(0, 4);
@@ -57,31 +72,60 @@ export default function DeckPage() {
         <div className="dk-hero-content">
           <div className="dk-hero-pill">{d.heroPill}</div>
           <h1 className="dk-hero-title">
-            {d.heroTitle}
+            {renderLines(d.heroTitle)}
           </h1>
           <p className="dk-hero-sub">{mode === 'web2' ? d.heroDescW2 : d.heroDescW3}</p>
-          <a href={`mailto:${d.contactEmail}`} className="dk-cta">
-            {d.contactTeam} →
-          </a>
+          <div className="dk-hero-actions">
+            <a href={`mailto:${d.contactEmail}`} className="dk-cta">
+              {d.contactTeam} →
+            </a>
+          </div>
+        </div>
+        <div className="dk-hero-meta">
+          <div className="dk-hero-meta-item">IDENTITY TICKETING</div>
+          <div className="dk-hero-meta-item">LIMA, PERU</div>
+          <div className="dk-hero-meta-item">LEZGO®</div>
+          <div className="dk-hero-meta-item">{new Date().getFullYear()}</div>
         </div>
       </section>
 
       {/* Vision */}
       <section className="dk-section dk-vision-section">
-        <div className="dk-section-inner dk-vision-inner">
-          <div className="dk-vision-copy">
-            <div className="dk-agnostic-callout">
-              <div className="dk-label">{d.agnosticLabel}</div>
-              <h2>{d.agnosticTitle}</h2>
-              <p className="dk-section-desc">{d.agnosticDesc}</p>
+        <div className="dk-section-inner">
+          <div className="dk-vision-top">
+            <div className="dk-label">{d.agnosticLabel}</div>
+            <div className="dk-vision-top-row">
+              <h2 className="dk-vision-headline">{renderLines(d.agnosticTitle)}</h2>
+              <p className="dk-vision-desc">{d.agnosticDesc}</p>
             </div>
           </div>
-          <div className="dk-vision-lines">
-            {d.visionItems.map((item: string, i: number) => (
-              <div key={i} className="dk-vision-line">
-                <span>{item}</span>
-              </div>
-            ))}
+          <div className="dk-vision-cards">
+            {(d.visionCards ?? []).map((card: { title: string; desc: string; stat?: string; statLabel?: string }, i: number) => {
+              const isLiveBadges = i === 1 && ticketCount !== null;
+              const isLiveResale = i === 2 && resaleCount !== null;
+              const isLive = isLiveBadges || isLiveResale;
+              const statVal = isLiveBadges ? ticketCount!.toLocaleString() : isLiveResale ? resaleCount!.toLocaleString() : card.stat;
+              const statLabelLive = isLiveBadges ? (d.badgesLabel ?? 'Badges entregados') : (d.resaleLabel ?? 'Reventas seguras');
+              const showStat = i === 0 ? !!card.stat : isLive;
+              return (
+                <div key={i} className={`dk-vision-card${i === 0 ? ' dk-vision-card--featured' : ''}`}>
+                  <div className="dk-vision-card-num">{String(i + 1).padStart(2, '0')}</div>
+                  <h3 className="dk-vision-card-title">{card.title.split('\n').map((line, j) => <span key={j}>{line}<br /></span>)}</h3>
+                  <p className="dk-vision-card-desc">{card.desc}</p>
+                  {showStat && (
+                    <div className="dk-vision-card-stat">
+                      <div className="dk-vision-card-stat-val">
+                        {isLive && <span className="dk-live-dot" />}
+                        {statVal}
+                      </div>
+                      <div className="dk-vision-card-stat-label">
+                        {isLive ? statLabelLive : card.statLabel}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -91,7 +135,7 @@ export default function DeckPage() {
         <div className="dk-section-inner">
           <div className="dk-problem-copy">
             <div className="dk-label">{d.problemLabel}</div>
-            <h2>{d.problemTitle}</h2>
+            <h2>{renderLines(d.problemTitle)}</h2>
           </div>
 
           {problemCases.length > 0 && (
@@ -132,7 +176,7 @@ export default function DeckPage() {
         <div className="dk-section-inner">
           <div className="dk-solution-copy">
             <div className="dk-label">{d.solutionLabel}</div>
-            <h2>{mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3}</h2>
+            <h2>{renderLines(mode === 'web2' ? d.solutionTitleW2 : d.solutionTitleW3)}</h2>
             <p className="dk-section-desc">{mode === 'web2' ? d.solutionDescW2 : d.solutionDescW3}</p>
           </div>
 
@@ -244,7 +288,7 @@ export default function DeckPage() {
       <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
           <div className="dk-label">{d.bizLabel}</div>
-          <h2>{d.bizTitle}</h2>
+          <h2>{renderLines(d.bizTitle)}</h2>
           <p className="dk-section-desc">{mode === 'web2' ? d.bizDescW2 : d.bizDescW3}</p>
 
           <div className="dk-revenue-grid">
@@ -274,7 +318,7 @@ export default function DeckPage() {
       <section className="dk-section">
         <div className="dk-section-inner">
           <div className="dk-label">{d.marketLabel}</div>
-          <h2>{d.marketTitle}</h2>
+          <h2>{renderLines(d.marketTitle)}</h2>
           <div className="dk-market-row">
             <div className="dk-market-card">
               <div className="dk-market-year">2023</div>
@@ -299,7 +343,7 @@ export default function DeckPage() {
       <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
           <div className="dk-label">{d.tractionLabel}</div>
-          <h2>{d.tractionTitle}</h2>
+          <h2>{renderLines(d.tractionTitle)}</h2>
           <div className="dk-traction-grid">
             {tractionItems.map((item: { val: string; label: string }, i: number) => (
               <div key={i} className="dk-traction-card">
@@ -316,7 +360,7 @@ export default function DeckPage() {
         <section className="dk-section">
           <div className="dk-section-inner">
             <div className="dk-label">{d.competitorsLabel}</div>
-            <h2>{d.competitorsTitle}</h2>
+            <h2>{renderLines(d.competitorsTitle)}</h2>
             <p className="dk-section-desc">{d.competitorsDesc}</p>
             <div className="dk-competitors-grid">
               {competitors.map((c: { name: string; weakness: string }, i: number) => (
@@ -337,7 +381,7 @@ export default function DeckPage() {
       <section className="dk-section dk-section--alt">
         <div className="dk-section-inner">
           <div className="dk-label">{d.edgeLabel}</div>
-          <h2>{d.edgeTitle}</h2>
+          <h2>{renderLines(d.edgeTitle)}</h2>
           <div className="dk-edge-grid">
             {(mode === 'web2' ? d.edgeItemsW2 : d.edgeItemsW3).map((item: { title: string; desc: string }, i: number) => (
               <div key={i} className="dk-edge-card">
@@ -354,7 +398,7 @@ export default function DeckPage() {
         <section className="dk-section">
           <div className="dk-section-inner">
             <div className="dk-label">{d.roadmapLabel}</div>
-            <h2>{d.roadmapTitle}</h2>
+            <h2>{renderLines(d.roadmapTitle)}</h2>
             <div className="dk-roadmap">
               {d.roadmapPhases.map((p: { phase: string; title: string; items: string[] }, i: number) => (
                 <div key={i} className={`dk-roadmap-card ${i === 0 ? 'dk-roadmap-card--active' : ''}`}>
@@ -382,7 +426,7 @@ export default function DeckPage() {
           <div className="dk-label">{d.teamLabel}</div>
           <div className="dk-team-layout">
             <div className="dk-team-copy">
-              <h2>{d.teamTitle}</h2>
+              <h2>{renderLines(d.teamTitle)}</h2>
               <p className="dk-section-desc dk-team-desc">{d.teamDesc}</p>
             </div>
             <div className="dk-team-card">
@@ -400,7 +444,7 @@ export default function DeckPage() {
       {/* CTA Footer */}
       <footer className="dk-footer">
         <div className="dk-footer-inner">
-          <h2>{d.ctaTitle}</h2>
+          <h2>{renderLines(d.ctaTitle)}</h2>
           <p>{d.ctaDesc}</p>
           <a href={`mailto:${d.contactEmail}`} className="dk-cta dk-cta--lg">
             {d.contactEmail}

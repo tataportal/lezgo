@@ -148,12 +148,12 @@ export default function AboutPage() {
         {/* Headline + sub */}
         <div className="ab-hero-text">
           <h1 className="ab-hero-title">
-            <span className="ab-hero-line">{t.about.buyTickets}</span>
-            <span className="ab-hero-line">{t.about.noFear}</span>
+            <span className="ab-hero-line">COMPRA</span>
+            <span className="ab-hero-line">SIN MIEDO</span>
           </h1>
           <p className="ab-hero-sub">
-            Cero estafas. Cero reventas falsas.{' '}
-            <span className="ab-hero-sub--acid">Solo tu ID y listo</span>
+            {t.about.heroSubMain}{' '}
+            <span className="ab-hero-sub--acid">{t.about.heroSubAccent}</span>
           </p>
         </div>
 
@@ -277,7 +277,11 @@ export default function AboutPage() {
           <div className="ab-shell">
             <div className="ab-section-head">
               <p className="ab-kicker">03 — Comisiones</p>
-              <h2 className="ab-section-title">{t.about.promoterRevenueTitle}</h2>
+              <h2 className="ab-section-title">
+                {t.about.promoterRevenueTitle.split('\n').map((line: string, i: number, arr: string[]) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
+              </h2>
             </div>
 
             <div className="ab-revenue-row">

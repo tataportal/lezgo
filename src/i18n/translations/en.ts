@@ -691,6 +691,8 @@ const en: Translations = {
     tickets: 'TICKETS',
     noFear: 'NO FEAR',
     heroDesc: 'Zero scams. Zero fake resale. Just your ID and you\'re in.',
+    heroSubMain: 'Zero scams. Zero fake resale.',
+    heroSubAccent: 'Just your ID and you\'re in',
     searchResale: 'Search Resale →',
     viewEvents: 'View Events →',
     scammerPrice: 'Scammer Price',
@@ -945,8 +947,10 @@ const en: Translations = {
 
   // ── DeckPage (Investor Pitch) ──
   deck: {
-    contactEmail: 'tata@frensonly.club',
+    contactEmail: 'tata@lezgo.fans',
     contactTeam: 'Contact team',
+    badgesLabel: 'Badges delivered',
+    resaleLabel: 'Safe resales',
     heroPill: 'PITCH DECK — INVESTORS',
     heroTitle: 'BUY, SELL AND RESELL TICKETS. SAFELY.',
     heroDescW2: 'LEZGO turns identity into the trust layer for live events: safer buying, safer resale, faster entry, and cleaner economics for organizers.',
@@ -962,9 +966,14 @@ const en: Translations = {
       'Collect meaningful memories',
       'Let\'s celebrate music',
     ],
+    visionCards: [
+      { title: 'Step into events\nwith confidence', desc: 'Your ID is your ticket. No fake QRs, no inflated resales, no surprises at the door.', stat: '0', statLabel: 'Fraud reports' },
+      { title: 'Collect memories\nthat mean something', desc: 'Every ticket stays in your history. Real proof you were there when it mattered.' },
+      { title: 'Let\'s celebrate\nmusic', desc: 'More money to the artist, less to intermediaries. That\'s how the ecosystem grows.' },
+    ],
     // Problem
     problemLabel: '// THE PROBLEM',
-    problemTitle: 'Today’s resale flow breaks trust.',
+    problemTitle: ‘Today\’s resale flow\nbreaks trust.’,
     problemDescW2: 'Fake tickets, scalping, and unsafe peer-to-peer resale make event entry stressful for fans and expensive for organizers. The current system creates friction at the door and leaves the secondary market largely uncontrolled.',
     problemDescW3: 'Most on-chain ticketing still fails to solve the full problem: real identity, simple door entry, and resale that also works for organizers. Without that layer, the ticket format changes, but the trust problem stays.',
     problemCases: [
@@ -990,8 +999,8 @@ const en: Translations = {
     statTransparency: 'Transparency in resale',
     // Solution
     solutionLabel: '// THE SOLUTION',
-    solutionTitleW2: 'Trust for organizers. Security for attendees.',
-    solutionTitleW3: 'The same trust model, expressed through programmable tickets.',
+    solutionTitleW2: 'Trust for organizers.\nSecurity for attendees.',
+    solutionTitleW3: 'The same trust model,\nexpressed through programmable tickets.',
     solutionDescW2: 'LEZGO links each ticket to a real identity document: national ID, foreigner card, or passport. Entry is verified by scanning the document, not a QR. That removes most counterfeit risk and makes resale safer, clearer, and easier to control.',
     solutionDescW3: 'LEZGO represents admission as an NFT ticket linked to a real identity inside a custody wallet. That lets resale rules, revenue sharing, and post-event collectibles be programmed directly into the ticket lifecycle.',
     forConsumers: 'Security for attendees',
@@ -1100,7 +1109,7 @@ const en: Translations = {
     marketDescW3: 'The NFT ticketing segment is emerging as the natural solution to counterfeiting and lack of transparency. Projects like GET Protocol, YellowHeart and Seatlab validate the model globally.',
     // Traction
     tractionLabel: '// TRACTION',
-    tractionTitle: 'What the product already enables.',
+    tractionTitle: 'What the product\nalready enables.',
     tractionItems: [
       { val: 'ID', label: 'Identity-based entry instead of QR-only check-in' },
       { val: 'P2P', label: 'Controlled resale marketplace' },

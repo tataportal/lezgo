@@ -691,6 +691,8 @@ const zh: Translations = {
     tickets: '门票',
     noFear: '无需担心',
     heroDesc: '零诈骗。零虚假转售。只需你的身份证件。',
+    heroSubMain: '零诈骗。零虚假转售。',
+    heroSubAccent: '只需你的身份证件即可入场',
     searchResale: '搜索转售 →',
     viewEvents: '查看活动 →',
     scammerPrice: '诈骗者价格',
@@ -944,8 +946,10 @@ const zh: Translations = {
 
   // ── DeckPage (投资者演示) ──
   deck: {
-    contactEmail: 'tata@frensonly.club',
+    contactEmail: 'tata@lezgo.fans',
     contactTeam: '联系团队',
+    badgesLabel: '已发放徽章',
+    resaleLabel: '安全转售',
     heroPill: '演示文稿 — 投资者',
     heroTitle: '购买、销售和转售门票。安全。',
     heroDescW2: 'LEZGO 将身份变成现场活动的信任层：更安全的购买、更安全的转售、更顺畅的入场，以及更好的组织者收益结构。',
@@ -960,6 +964,11 @@ const zh: Translations = {
       '自信地走进活动',
       '收集有意义的记忆',
       '让我们庆祝音乐',
+    ],
+    visionCards: [
+      { title: '自信地\n走进活动', desc: '您的身份证就是门票。没有假二维码，没有加价转售，入场零意外。', stat: '0', statLabel: '欺诈报告' },
+      { title: '收集有意义\n的记忆', desc: '每张门票都留存在您的历史记录中。真实证明您在重要时刻亲历其中。' },
+      { title: '让我们\n庆祝音乐', desc: '更多的钱流向艺术家，更少的钱流向中间商。这就是生态系统成长的方式。' },
     ],
     // Problem
     problemLabel: '// 问题',
@@ -977,8 +986,8 @@ const zh: Translations = {
     statTransparency: '转售透明度',
     // Solution
     solutionLabel: '// 解决方案',
-    solutionTitleW2: '为组织者提供信任。为参加者提供安全。',
-    solutionTitleW3: '同样的信任模型，用可编程门票来表达。',
+    solutionTitleW2: '为组织者提供信任。\n为参加者提供安全。',
+    solutionTitleW3: '同样的信任模型，\n用可编程门票来表达。',
     solutionDescW2: 'LEZGO将每张门票链接到真实身份证件（身份证、外侨证或护照）。在门口验证证件，而不是 QR 码。这样就能显著降低伪造风险，并让转售更安全、更清晰、更可控。',
     solutionDescW3: 'LEZGO将入场表示为托管钱包中的 NFT 门票，并绑定到真实身份。这样就能把转售规则、收入分成和活动后的可收藏权益直接写进门票生命周期。',
     forConsumers: '为参加者提供安全',

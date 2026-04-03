@@ -147,7 +147,7 @@ export default function ProfilePage() {
       vipTickets: tickets.filter(tk => tk.ticketName?.includes('VIP')).length,
       uniqueDistricts: new Set(tickets.map(tk => tk.eventLocation).filter(Boolean)).size,
       hasAccount: true,
-      isVerified: !!profile?.dni,
+      isVerified: profile?.kycStatus === 'verified',
       isEarlySupporterr: tickets.some(tk => tk.badgeNumber != null),
     };
     setBadges(BADGES.map(b => ({
@@ -299,7 +299,7 @@ export default function ProfilePage() {
           <div className="pf-header-info">
             <div className="pf-name-row">
               <h1>{profile.displayName || t.profile.user}</h1>
-              {profile.dni && <span className="pf-verified-badge"><Icon name="check" size={14} /> {t.common.verified}</span>}
+              {profile.kycStatus === 'verified' && <span className="pf-verified-badge"><Icon name="check" size={14} /> {t.common.verified}</span>}
             </div>
 
             {selectedBadge && (

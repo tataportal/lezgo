@@ -692,6 +692,8 @@ const es = {
     tickets: 'TICKETS',
     noFear: 'SIN MIEDO',
     heroDesc: 'Cero estafas. Cero reventas falsas. Solo tu ID y listo.',
+    heroSubMain: 'Cero estafas. Cero reventas falsas.',
+    heroSubAccent: 'Solo tu ID y listo',
     searchResale: 'Buscar Reventa →',
     viewEvents: 'Ver Eventos →',
     scammerPrice: 'Precio Scammer',
@@ -791,7 +793,7 @@ const es = {
       dedicatedSupportDesc: 'Nuestro equipo está disponible para ayudarte antes, durante y después del evento.',
     },
     promoterRevenue: '// MODELO TRANSPARENTE',
-    promoterRevenueTitle: 'Comisiones claras, sin sorpresas.',
+    promoterRevenueTitle: 'Comisiones claras,\nsin sorpresas.',
     revenueDirectSale: 'Venta directa',
     revenueDirectSaleDesc: 'Comisión por cada entrada vendida a través de la plataforma.',
     revenueResale: 'Reventa',
@@ -946,8 +948,10 @@ const es = {
 
   // ── DeckPage (Investor Pitch) ──
   deck: {
-    contactEmail: 'tata@frensonly.club',
+    contactEmail: 'tata@lezgo.fans',
     contactTeam: 'Contactar equipo',
+    badgesLabel: 'Badges entregados',
+    resaleLabel: 'Reventas seguras',
     heroPill: 'PITCH DECK — INVERSIONISTAS',
     heroTitle: 'COMPRA, VENDE Y REVENDE TICKETS. SEGURO.',
     heroDescW2: 'LEZGO convierte la identidad en la capa de confianza para eventos en vivo: compra más segura, reventa más segura, entrada más fluida y mejores incentivos para organizadores.',
@@ -963,9 +967,14 @@ const es = {
       'Colecciona memorias con significado',
       'Celebremos la música',
     ],
+    visionCards: [
+      { title: 'Entra a eventos\ncon confianza', desc: 'Tu DNI es tu ticket. Sin QR falsos, sin reventas infladas, sin sorpresas en la puerta.', stat: '0', statLabel: 'Fraudes reportados' },
+      { title: 'Colecciona memorias\ncon significado', desc: 'Cada entrada queda en tu historial. Prueba real de que estuviste ahí cuando importaba.' },
+      { title: 'Celebremos\nla música', desc: 'Más plata al artista, menos a los intermediarios. Así crece el ecosistema.' },
+    ],
     // Problem
     problemLabel: '// EL PROBLEMA',
-    problemTitle: 'La reventa actual rompe la confianza.',
+    problemTitle: 'La reventa actual\nrompe la confianza.',
     problemDescW2: 'Tickets falsos, scalping y reventa P2P insegura hacen que entrar a un evento sea estresante para el fan y costoso para el organizador. El sistema actual agrega fricción en puerta y deja el mercado secundario casi sin control.',
     problemDescW3: 'La mayoría del ticketing on-chain sigue sin resolver el problema completo: identidad real, entrada simple en puerta y una reventa útil para el organizador. Sin esa capa, solo cambia el formato del ticket.',
     problemCases: [
@@ -991,8 +1000,8 @@ const es = {
     statTransparency: 'Transparencia en reventa',
     // Solution
     solutionLabel: '// LA SOLUCIÓN',
-    solutionTitleW2: 'Confianza para organizadores. Seguridad para asistentes.',
-    solutionTitleW3: 'La misma confianza, expresada con tickets programables.',
+    solutionTitleW2: 'Confianza para organizadores.\nSeguridad para asistentes.',
+    solutionTitleW3: 'La misma confianza,\nexpresada con tickets programables.',
     solutionDescW2: 'LEZGO vincula cada entrada a un documento real: DNI, CE o pasaporte. En puerta se verifica el documento, no un QR. Eso reduce el riesgo de falsificación y hace la reventa mucho más segura, clara y controlable.',
     solutionDescW3: 'LEZGO representa la entrada como un ticket NFT vinculado a una identidad real dentro de una wallet custodiada. Eso permite programar la reventa, automatizar revenue share y convertir la asistencia en un activo coleccionable.',
     forConsumers: 'Seguridad para el asistente',
@@ -1101,7 +1110,7 @@ const es = {
     marketDescW3: 'El segmento de NFT ticketing emerge como la solución natural a la falsificación y falta de transparencia. Proyectos como GET Protocol, YellowHeart y Seatlab validan el modelo a nivel global.',
     // Traction
     tractionLabel: '// TRACCIÓN',
-    tractionTitle: 'Lo que el producto ya habilita.',
+    tractionTitle: 'Lo que el producto\nya habilita.',
     tractionItems: [
       { val: 'ID', label: 'Ingreso basado en identidad en vez de QR-only' },
       { val: 'P2P', label: 'Marketplace de reventa controlado' },
