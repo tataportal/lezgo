@@ -107,9 +107,52 @@ const en: Translations = {
     days: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
     months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
     monthsFull: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    newsletter: {
+      title: 'Once a week.',
+      desc: 'We\'ll keep you in the loop: what we\'re building, what events are coming, and how the product is evolving.',
+      placeholder: 'youremail@example.com',
+      consent: 'I agree to receive one weekly email from LEZGO. No spam, unsubscribe anytime.',
+      cta: 'Subscribe →',
+      legal: 'Your email is yours. We never share it.',
+      success: 'Done! We\'ll be in touch soon.',
+      error: 'Something went wrong. Try again.',
+      duplicate: 'This email is already registered.',
+    },
     errorLoading: 'Error loading events',
     mute: 'Mute',
     unmute: 'Unmute',
+    editorialH1: 'Buy with confidence. Enter without stress.',
+    editorialSub: 'Every ticket is tied to your identity. No fakes, no screenshots, no drama at the door.',
+    hiw: {
+      title: 'How it works',
+      learnMore: 'Learn more →',
+      step1Title: 'Verify your identity',
+      step1Desc: 'Scan your ID, foreign card, or passport once at verificacion.lezgo.fans.',
+      step2Title: 'Buy your ticket',
+      step2Desc: 'The ticket is linked to your identity. Nobody else can use it or copy it.',
+      step3Title: 'Scan and enter',
+      step3Desc: 'At the door, just show your ID. No screenshots, no transferable QR codes.',
+    },
+    faqTitle: 'Frequently asked questions',
+    faqMore: 'View all →',
+    faqPreview: [
+      {
+        q: "What happens if I buy a ticket and can't go?",
+        a: 'You can resell it on the Lezgo marketplace. Price is capped and the transfer is verified.',
+      },
+      {
+        q: 'Can I buy without a Peruvian ID?',
+        a: 'Yes. We accept national ID, foreign resident card, and passport from any country.',
+      },
+      {
+        q: 'How do I know a resale ticket is real?',
+        a: "All resale tickets go through the Lezgo ownership system. If it's in the marketplace, it's real.",
+      },
+    ],
+    resaleCtaLabel: 'Looking for a resale ticket?',
+    resaleCtaBtn: 'Go to marketplace →',
   },
 
   // ── EventPage ──
@@ -973,7 +1016,7 @@ const en: Translations = {
     ],
     // Problem
     problemLabel: '// THE PROBLEM',
-    problemTitle: ‘Today\’s resale flow\nbreaks trust.’,
+    problemTitle: 'Today\'s resale flow\nbreaks trust.',
     problemDescW2: 'Fake tickets, scalping, and unsafe peer-to-peer resale make event entry stressful for fans and expensive for organizers. The current system creates friction at the door and leaves the secondary market largely uncontrolled.',
     problemDescW3: 'Most on-chain ticketing still fails to solve the full problem: real identity, simple door entry, and resale that also works for organizers. Without that layer, the ticket format changes, but the trust problem stays.',
     problemCases: [

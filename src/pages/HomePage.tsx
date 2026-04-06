@@ -1,65 +1,47 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { formatDateES, formatDateVeryShort, formatPriceShort, getActivePhase, getEventBadges, getEventImage, toDate } from '../lib/helpers';
+import {
+  formatDateES,
+  formatDateVeryShort,
+  formatPriceShort,
+  getActivePhase,
+  getEventBadges,
+  getEventImage,
+  toDate,
+} from '../lib/helpers';
 import { EventBadge } from '../components/events/EventBadge';
 import './HomePage.css';
 
-/** Strip unwanted badge text and [DEMO] prefix from event names/subtitles */
 const cleanText = (s?: string) =>
-  s ? s.replace(/\s*[—–-]\s*Early Supporter Badge/gi, '').replace(/^\[DEMO\]\s*/i, '').trim() || undefined : undefined;
+  s
+    ? s
+        .replace(/\s*[—–-]\s*Early Supporter Badge/gi, '')
+        .replace(/^\[DEMO\]\s*/i, '')
+        .trim() || undefined
+    : undefined;
+
+const VISITED_KEY = 'lezgo_visited';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { t, lang } = useTranslation();
   const { events, loading, error } = useEvents({ status: 'published' });
-  const [searchText, setSearchText] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedLocation, setSelectedLocation] = useState<string>('all');
-  const [locOpen, setLocOpen] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<string>('all');
-  const locRef = useRef<HTMLDivElement>(null);
-  const dateRef = useRef<HTMLDivElement>(null);
+  const [isReturningVisitor, setIsReturningVisitor] = useState(false);
 
-  // Close dropdowns on outside click
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (locRef.current && !locRef.current.contains(e.target as Node)) setLocOpen(false);
-      if (dateRef.current && !dateRef.current.contains(e.target as Node)) setDateOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  // Extract unique locations from events
-  const locationOptions = useMemo(() => {
-    if (!events) return [];
-    const locs = new Set<string>();
-    events.forEach(e => {
-      if (e.location) locs.add(e.location);
-    });
-    return Array.from(locs).sort();
-  }, [events]);
-
-  // Extract available months from events
-  const monthOptions = useMemo(() => {
-    if (!events) return [];
-    const months = new Map<string, string>();
-    events.forEach(e => {
-      const d = toDate(e.date);
-      if (d instanceof Date && !isNaN(d.getTime())) {
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        if (!months.has(key)) {
-          const label = `${t.home.monthsFull[d.getMonth()]} ${d.getFullYear()}`;
-          months.set(key, label);
-        }
+    try {
+      if (localStorage.getItem(VISITED_KEY)) {
+        setIsReturningVisitor(true);
+      } else {
+        localStorage.setItem(VISITED_KEY, '1');
       }
-    });
-    return Array.from(months.entries()).sort((a, b) => a[0].localeCompare(b[0])).map(([key, label]) => ({ key, label }));
-  }, [events, t.home.monthsFull]);
+    } catch {
+      /* localStorage blocked */
+    }
+  }, []);
 
   const MARQUEE_ITEMS = [
     t.home.marquee.verifiedId,
@@ -70,19 +52,17 @@ export default function HomePage() {
     t.home.marquee.scanEnter,
   ];
 
-  const { featuredEvent, promoEvents, upcomingEvents, moreEvents, allListEvents } = useMemo(() => {
+  const { featuredEvent, promoEvents, previewEvents } = useMemo(() => {
     if (!events || events.length === 0) {
-      return { featuredEvent: null, promoEvents: [], upcomingEvents: [], moreEvents: [], allListEvents: [] };
+      return { featuredEvent: null, promoEvents: [], previewEvents: [] };
     }
 
-    // Hero: prioritize LEZGO event, then any featured, then first
     const featured =
       events.find((e) => e.name?.toLowerCase().includes('lezgo')) ||
       events.find((e) => e.featured) ||
       events[0];
     const remaining = events.filter((e) => e.id !== featured.id);
 
-    // Promo: prioritize featured, then sold-out, then by date (top 2)
     const sorted = remaining.slice().sort((a, b) => {
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
@@ -90,55 +70,12 @@ export default function HomePage() {
       if (a.status !== 'sold-out' && b.status === 'sold-out') return 1;
       return a.date < b.date ? -1 : 1;
     });
+
     const promo = sorted.slice(0, 2);
+    const preview = sorted.slice(2, 6);
 
-    // Remaining events: sort by date, split into 4-event sections
-    const rest = remaining.filter((e) => !promo.find((p) => p.id === e.id));
-    const sortedRest = rest.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
-    const upcoming = sortedRest.slice(0, 4);
-    const more = sortedRest.slice(4, 8);
-
-    // All events sorted by date for list view (includes hero)
-    const allSorted = events.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
-
-    return { featuredEvent: featured, promoEvents: promo, upcomingEvents: upcoming, moreEvents: more, allListEvents: allSorted };
+    return { featuredEvent: featured, promoEvents: promo, previewEvents: preview };
   }, [events]);
-
-  /* Filter events by search text, location, and month */
-  const hasActiveFilter = searchText.trim() || selectedLocation !== 'all' || selectedMonth !== 'all';
-
-  const filteredUpcoming = useMemo(() => {
-    const all = [...(upcomingEvents || []), ...(moreEvents || [])];
-    const source = hasActiveFilter ? all : upcomingEvents;
-    return source.filter(e => {
-      // Location filter
-      if (selectedLocation !== 'all' && e.location !== selectedLocation) return false;
-      // Month filter
-      if (selectedMonth !== 'all') {
-        const d = toDate(e.date);
-        if (d instanceof Date && !isNaN(d.getTime())) {
-          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-          if (key !== selectedMonth) return false;
-        } else return false;
-      }
-      // Text search
-      if (searchText.trim()) {
-        const q = searchText.toLowerCase();
-        return (
-          e.name?.toLowerCase().includes(q) ||
-          e.venue?.toLowerCase().includes(q) ||
-          e.location?.toLowerCase().includes(q) ||
-          e.genre?.toLowerCase().includes(q) ||
-          e.lineup?.some((a: string) => a.toLowerCase().includes(q))
-        );
-      }
-      return true;
-    });
-  }, [searchText, selectedLocation, selectedMonth, upcomingEvents, moreEvents, hasActiveFilter]);
-
-  const handleNavigateEvent = (eventSlugOrId: string) => {
-    navigate(`/evento/${eventSlugOrId}`);
-  };
 
   const getLowestPrice = (event: typeof featuredEvent): number | null => {
     if (!event) return null;
@@ -152,18 +89,10 @@ export default function HomePage() {
     return lowest;
   };
 
-  const handleSearch = () => {
-    if (searchText.trim()) {
-      const section = document.getElementById('upcoming-events');
-      if (section) section.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleNavigateEvent = (eventSlugOrId: string) => {
+    navigate(`/evento/${eventSlugOrId}`);
   };
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSearch();
-  };
-
-  // Log error for debugging but don't block render — show events if we have them
   if (error) console.error('[HomePage] Event fetch error:', error);
 
   if (error && events.length === 0) {
@@ -177,19 +106,28 @@ export default function HomePage() {
     );
   }
 
+  const eventsForPreview = [...promoEvents, ...previewEvents].slice(0, 4);
+  const hasEvents = events.length > 0;
+
   return (
     <div className="home-page">
-      {/* ── Marquee — Ported from monolith ── */}
+      {/* ── Marquee ── */}
       <div className="home-marquee">
         <div className="home-marquee__track">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
             <span key={i} className="home-marquee__item">
               <span className="acid-smiley">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <circle cx="8.5" cy="10" r="1.5" fill="currentColor"/>
-                  <circle cx="15.5" cy="10" r="1.5" fill="currentColor"/>
-                  <path d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="8.5" cy="10" r="1.5" fill="currentColor" />
+                  <circle cx="15.5" cy="10" r="1.5" fill="currentColor" />
+                  <path
+                    d="M7.5 15c0 0 2 4 4.5 4s4.5-4 4.5-4"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
                 </svg>
               </span>
               {item}
@@ -198,8 +136,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Hero — Ported from monolith (with YouTube video support) ── */}
-      {featuredEvent && (
+      {/* ── Hero ── */}
+      {featuredEvent ? (
         <section className="home-hero" id="home-hero">
           <HeroVideoWrap
             image={featuredEvent.image}
@@ -209,24 +147,19 @@ export default function HomePage() {
             heroVideoEnd={115}
           />
           <div className="home-hero__overlay" />
-
           <div className="home-hero__content">
             <div className="home-hero__badge">{t.home.featured}</div>
-
             <h1 className="home-hero__title">{cleanText(featuredEvent.name)}</h1>
-
             {(cleanText(featuredEvent.subtitle) || featuredEvent.description) && (
               <div className="home-hero__subtitle">
                 {cleanText(featuredEvent.subtitle) || featuredEvent.description}
               </div>
             )}
-
             <div className="home-hero__meta">
               {formatDateES(toDate(featuredEvent.date), lang)}
               {featuredEvent.venue ? ` · ${featuredEvent.venue}` : ''}
               {featuredEvent.location ? `, ${featuredEvent.location}` : ''}
             </div>
-
             <div className="home-hero__actions">
               <button
                 className="home-hero__cta"
@@ -236,7 +169,10 @@ export default function HomePage() {
               </button>
               <div className="home-hero__sponsor">
                 {featuredEvent.organizer && featuredEvent.organizer !== 'demo-user-001' ? (
-                  <>{t.home.producedBy} <span>{featuredEvent.organizer}</span>{t.home.poweredBy}</>
+                  <>
+                    {t.home.producedBy} <span>{featuredEvent.organizer}</span>
+                    {t.home.poweredBy}
+                  </>
                 ) : (
                   <>{t.home.poweredBy.trim()}</>
                 )}
@@ -245,73 +181,27 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+      ) : (
+        !loading && (
+          <section className="home-editorial-hero">
+            <div className="home-editorial-hero__content">
+              <h1 className="home-editorial-hero__h1">{t.home.editorialH1}</h1>
+              <p className="home-editorial-hero__sub">{t.home.editorialSub}</p>
+              <Link to="/eventos" className="home-editorial-hero__cta">
+                {t.home.viewTickets}
+              </Link>
+            </div>
+          </section>
+        )
       )}
 
-      {/* ── Search Bar ── */}
-      <div className="search-section">
-        <div className="search-bar">
-          {/* Location dropdown */}
-          <div className={`search-field${locOpen ? ' search-field--active' : ''}`} ref={locRef} onClick={() => { setLocOpen(!locOpen); setDateOpen(false); }}>
-            <div className="search-field-label">{t.home.location}</div>
-            <div className="search-field-value">
-              {selectedLocation === 'all' ? t.home.locationDefault : selectedLocation}
-              <svg className="search-field-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
-            </div>
-            {locOpen && (
-              <div className="search-dropdown" onClick={e => e.stopPropagation()}>
-                <div className={`search-dropdown-item${selectedLocation === 'all' ? ' active' : ''}`} onClick={() => { setSelectedLocation('all'); setLocOpen(false); }}>
-                  {t.home.locationDefault}
-                </div>
-                {locationOptions.map(loc => (
-                  <div key={loc} className={`search-dropdown-item${selectedLocation === loc ? ' active' : ''}`} onClick={() => { setSelectedLocation(loc); setLocOpen(false); }}>
-                    {loc}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Date/month dropdown */}
-          <div className={`search-field${dateOpen ? ' search-field--active' : ''}`} ref={dateRef} onClick={() => { setDateOpen(!dateOpen); setLocOpen(false); }}>
-            <div className="search-field-label">{t.home.dates}</div>
-            <div className="search-field-value">
-              {selectedMonth === 'all' ? t.home.allDates : monthOptions.find(m => m.key === selectedMonth)?.label || t.home.allDates}
-              <svg className="search-field-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 4.5L6 7.5L9 4.5"/></svg>
-            </div>
-            {dateOpen && (
-              <div className="search-dropdown" onClick={e => e.stopPropagation()}>
-                <div className={`search-dropdown-item${selectedMonth === 'all' ? ' active' : ''}`} onClick={() => { setSelectedMonth('all'); setDateOpen(false); }}>
-                  {t.home.allDates}
-                </div>
-                {monthOptions.map(m => (
-                  <div key={m.key} className={`search-dropdown-item${selectedMonth === m.key ? ' active' : ''}`} onClick={() => { setSelectedMonth(m.key); setDateOpen(false); }}>
-                    {m.label}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Search text input */}
-          <div className="search-field search-field--main">
-            <div className="search-field-label">{t.home.search || t.common.search}</div>
-            <input
-              className="search-input"
-              type="text"
-              placeholder={t.home.searchPlaceholder}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-            />
-          </div>
-          <button className="search-btn" onClick={handleSearch}>{t.home.search || t.common.search}</button>
-        </div>
-      </div>
-
-      {/* ── Content wrapper — matches monolith .content ── */}
       <div className="home-content">
+        {/* ── Returning visitors: events first ── */}
+        {isReturningVisitor && hasEvents && (
+          <EventsPreviewSection events={eventsForPreview} t={t} />
+        )}
 
-        {/* ── Promo Cards — "No te los pierdas" ── */}
+        {/* ── Promo Cards ── */}
         {promoEvents.length > 0 && (
           <>
             <div className="section-head">
@@ -321,12 +211,12 @@ export default function HomePage() {
               {promoEvents.map((event) => {
                 const price = getLowestPrice(event);
                 const badges = getEventBadges(event);
-                // Monolith format: "11 Marzo · venue, location — Desde S/ 0"
                 const dateStr = formatDateVeryShort(toDate(event.date), t.home.monthsFull);
-                const sub = dateStr
-                  + (event.venue ? ` · ${event.venue}` : '')
-                  + (event.location ? `, ${event.location}` : '')
-                  + (price !== null ? ` — ${formatPriceShort(price)}` : '');
+                const sub =
+                  dateStr +
+                  (event.venue ? ` · ${event.venue}` : '') +
+                  (event.location ? `, ${event.location}` : '') +
+                  (price !== null ? ` — ${formatPriceShort(price)}` : '');
                 return (
                   <div
                     key={event.id}
@@ -340,7 +230,6 @@ export default function HomePage() {
                       }}
                     />
                     <div className="promo-card__overlay" />
-
                     {badges.adjective && (
                       <EventBadge
                         label={t.common.badges[badges.adjective.labelKey]}
@@ -355,7 +244,6 @@ export default function HomePage() {
                         position="right"
                       />
                     )}
-
                     <div className="promo-card__body">
                       <span className="promo-card__tag">{event.genre || 'EVENTO'}</span>
                       <h3 className="promo-card__name">
@@ -371,12 +259,12 @@ export default function HomePage() {
           </>
         )}
 
-        {/* ── ID Banner — Ported from monolith ── */}
+        {/* ── ID Banner ── */}
         <div className="id-banner">
           <div className="id-banner__copy">
             <div className="id-banner__icon">☺</div>
             <p>
-              {t.home.idBanner.split('\n').map((line, i) => (
+              {t.home.idBanner.split('\n').map((line: string, i: number) => (
                 <span key={i}>
                   {line}
                   {i === 0 && <br />}
@@ -386,91 +274,113 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── Próximos eventos ── */}
-        {upcomingEvents.length > 0 && (
-          <>
-            <div className="section-head" id="upcoming-events">
-              <h2 className="section-title">{hasActiveFilter ? t.home.searchResults.replace('{query}', searchText || (selectedLocation !== 'all' ? selectedLocation : '') || (selectedMonth !== 'all' ? monthOptions.find(m => m.key === selectedMonth)?.label || '' : '')) : t.home.upcoming}</h2>
-              <div className="section-head__actions">
-                <div className="view-toggle" id="ev-view-toggle">
-                  <button
-                    className={`view-toggle-btn${viewMode === 'grid' ? ' active' : ''}`}
-                    onClick={() => setViewMode('grid')}
-                    title={t.home.grid}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-                  </button>
-                  <button
-                    className={`view-toggle-btn${viewMode === 'list' ? ' active' : ''}`}
-                    onClick={() => setViewMode('list')}
-                    title={t.home.byDate}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="14" height="3" rx="1"/><rect x="1" y="6.5" width="14" height="3" rx="1"/><rect x="1" y="12" width="14" height="3" rx="1"/></svg>
-                  </button>
-                </div>
-                <Link to="/eventos" className="section-more">{t.common.viewAll}</Link>
-              </div>
-            </div>
+        {/* ── How it works ── */}
+        <HowItWorksSection t={t} />
 
-            {/* Grid view */}
-            {viewMode === 'grid' && (
-              <>
-                {hasActiveFilter && filteredUpcoming.length === 0 ? (
-                  <div className="home-empty-search">
-                    <span className="home-empty-search__icon">🔍</span>
-                    <p>{t.common.noSearchResults} {searchText ? `"${searchText}"` : ''}</p>
-                  </div>
-                ) : (
-                  <div className={`events-grid${(hasActiveFilter ? filteredUpcoming : upcomingEvents).length < 4 ? ' events-grid--centered' : ''}`}>
-                    {(hasActiveFilter ? filteredUpcoming : upcomingEvents).map((event) => (
-                      <EventCard key={event.id} event={event} />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Date list view (RA-style) */}
-            {viewMode === 'list' && (
-              <DateListView events={allListEvents} onNavigate={handleNavigateEvent} getLowestPrice={getLowestPrice} t={t} />
-            )}
-          </>
+        {/* ── Events preview (new visitors) ── */}
+        {!isReturningVisitor && hasEvents && (
+          <EventsPreviewSection events={eventsForPreview} t={t} />
         )}
 
-        {/* ── Más en Lima — only visible in grid view ── */}
-        {viewMode === 'grid' && moreEvents.length > 0 && (
-          <>
-            <div className="section-head">
-              <h2 className="section-title">{t.home.moreInLima}</h2>
-              <Link to="/eventos" className="section-more">{t.common.viewAll}</Link>
-            </div>
-            <div className={`events-grid${moreEvents.length < 4 ? ' events-grid--centered' : ''}`}>
-              {moreEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+        {/* ── FAQ preview ── */}
+        <FAQPreviewSection t={t} />
 
-      {/* Loading State */}
-      {loading && events.length === 0 && (
-        <div className="home-loading">
-          <div className="loading-spinner" />
-          <p>{t.home.loadingEvents}</p>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!loading && events.length === 0 && (
-        <div className="home-empty">
-          <div className="home-content">
-            <h2>{t.home.noEvents}</h2>
-            <p>{t.home.noEventsDesc}</p>
+        {/* ── Resale CTA ── */}
+        <div className="home-resale-cta">
+          <div className="home-resale-cta__inner">
+            <span className="home-resale-cta__label">{t.home.resaleCtaLabel}</span>
+            <Link to="/reventa" className="home-resale-cta__link">
+              {t.home.resaleCtaBtn}
+            </Link>
           </div>
         </div>
-      )}
+
+        {/* ── Loading ── */}
+        {loading && events.length === 0 && (
+          <div className="home-loading">
+            <div className="loading-spinner" />
+            <p>{t.home.loadingEvents}</p>
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   HOW IT WORKS
+   ═══════════════════════════════════════════ */
+function HowItWorksSection({ t }: { t: any }) {
+  const steps = [
+    { num: '01', title: t.home.hiw.step1Title, desc: t.home.hiw.step1Desc },
+    { num: '02', title: t.home.hiw.step2Title, desc: t.home.hiw.step2Desc },
+    { num: '03', title: t.home.hiw.step3Title, desc: t.home.hiw.step3Desc },
+  ];
+  return (
+    <section className="home-hiw">
+      <div className="section-head">
+        <h2 className="section-title">{t.home.hiw.title}</h2>
+        <Link to="/como-funciona" className="section-more">
+          {t.home.hiw.learnMore}
+        </Link>
+      </div>
+      <div className="home-hiw__steps">
+        {steps.map((s) => (
+          <div key={s.num} className="home-hiw__step">
+            <div className="home-hiw__step-num">{s.num}</div>
+            <div className="home-hiw__step-title">{s.title}</div>
+            <div className="home-hiw__step-desc">{s.desc}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   EVENTS PREVIEW
+   ═══════════════════════════════════════════ */
+function EventsPreviewSection({ events, t }: { events: any[]; t: any }) {
+  if (events.length === 0) return null;
+  return (
+    <section className="home-events-preview" id="upcoming-events">
+      <div className="section-head">
+        <h2 className="section-title">{t.home.upcoming}</h2>
+        <Link to="/eventos" className="section-more">
+          {t.common.viewAll}
+        </Link>
+      </div>
+      <div className={`events-grid${events.length < 4 ? ' events-grid--centered' : ''}`}>
+        {events.map((event) => (
+          <EventCard key={event.id} event={event} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   FAQ PREVIEW
+   ═══════════════════════════════════════════ */
+function FAQPreviewSection({ t }: { t: any }) {
+  const faqs: Array<{ q: string; a: string }> = t.home.faqPreview;
+  return (
+    <section className="home-faq-preview">
+      <div className="section-head">
+        <h2 className="section-title">{t.home.faqTitle}</h2>
+        <Link to="/faq" className="section-more">
+          {t.home.faqMore}
+        </Link>
+      </div>
+      <div className="home-faq__list">
+        {faqs.map((item, i) => (
+          <div key={i} className="home-faq__item">
+            <div className="home-faq__q">{item.q}</div>
+            <div className="home-faq__a">{item.a}</div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -478,16 +388,21 @@ export default function HomePage() {
    HERO VIDEO WRAP — Ported from monolith
    Shows image first, lazy-loads YouTube iframe
    ═══════════════════════════════════════════ */
-
 interface HeroVideoWrapProps {
   image?: string;
   genre?: string;
   heroVideo?: string;
-  heroVideoStart?: number; // seconds — start playback here
-  heroVideoEnd?: number; // seconds — loop back to start at this point
+  heroVideoStart?: number;
+  heroVideoEnd?: number;
 }
 
-function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoEnd }: HeroVideoWrapProps) {
+function HeroVideoWrap({
+  image,
+  genre,
+  heroVideo,
+  heroVideoStart = 0,
+  heroVideoEnd,
+}: HeroVideoWrapProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [muted, setMuted] = useState(true);
@@ -497,8 +412,6 @@ function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoE
 
   useEffect(() => {
     if (!heroVideo || !wrapRef.current) return;
-
-    // Lazy-load YouTube iframe after 2s (non-blocking, matches monolith)
     const timer = setTimeout(() => {
       if (!wrapRef.current) return;
       const iframe = document.createElement('iframe');
@@ -506,10 +419,14 @@ function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoE
       const startParam = heroVideoStart ? '&start=' + heroVideoStart : '';
       const endParam = heroVideoEnd ? '&end=' + heroVideoEnd : '';
       iframe.src =
-        'https://www.youtube.com/embed/' + heroVideo +
-        '?autoplay=1&mute=1&loop=1&playlist=' + heroVideo +
+        'https://www.youtube.com/embed/' +
+        heroVideo +
+        '?autoplay=1&mute=1&loop=1&playlist=' +
+        heroVideo +
         '&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1&origin=' +
-        encodeURIComponent(window.location.origin) + startParam + endParam;
+        encodeURIComponent(window.location.origin) +
+        startParam +
+        endParam;
       iframe.allow = 'autoplay; encrypted-media';
       iframe.allowFullscreen = true;
       iframe.style.opacity = '0';
@@ -521,43 +438,38 @@ function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoE
         setVideoReady(true);
       };
     }, 2000);
-
     return () => clearTimeout(timer);
   }, [heroVideo, heroVideoStart, heroVideoEnd]);
 
-  // When heroVideoEnd is set, poll current time and seekTo(0) at the end
-  // YouTube's end param doesn't loop well, so we handle it manually
   useEffect(() => {
     if (!heroVideoEnd || !videoReady || !iframeRef.current) return;
-
     const iframe = iframeRef.current;
     const yt = 'https://www.youtube.com';
-
-    // Listen for YouTube API messages (current time, state changes)
     const onMsg = (e: MessageEvent) => {
       if (e.origin !== yt) return;
       try {
         const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-        // When video state is ENDED (0), seek back to start
         if (data?.event === 'onStateChange' && data?.info === 0) {
           iframe.contentWindow?.postMessage(
-            `{"event":"command","func":"seekTo","args":[${heroVideoStart}, true]}`, yt
+            `{"event":"command","func":"seekTo","args":[${heroVideoStart}, true]}`,
+            yt
           );
           iframe.contentWindow?.postMessage(
-            '{"event":"command","func":"playVideo","args":""}', yt
+            '{"event":"command","func":"playVideo","args":""}',
+            yt
           );
         }
-      } catch { /* ignore non-JSON messages */ }
+      } catch {
+        /* ignore non-JSON */
+      }
     };
     window.addEventListener('message', onMsg);
-
-    // Also poll as a safety net — YouTube's onStateChange can be unreliable
     const poll = setInterval(() => {
       iframe.contentWindow?.postMessage(
-        '{"event":"listening","id":1,"channel":"widget"}', yt
+        '{"event":"listening","id":1,"channel":"widget"}',
+        yt
       );
     }, 2000);
-
     return () => {
       window.removeEventListener('message', onMsg);
       clearInterval(poll);
@@ -584,15 +496,37 @@ function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoE
         }}
       />
       {heroVideo && videoReady && (
-        <button className="hero-mute-btn" onClick={toggleMute} title={muted ? t.home.unmute : t.home.mute}>
+        <button
+          className="hero-mute-btn"
+          onClick={toggleMute}
+          title={muted ? t.home.unmute : t.home.mute}
+        >
           {muted ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <line x1="23" y1="9" x2="17" y2="15" />
               <line x1="17" y1="9" x2="23" y2="15" />
             </svg>
           ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
@@ -603,107 +537,3 @@ function HeroVideoWrap({ image, genre, heroVideo, heroVideoStart = 0, heroVideoE
     </div>
   );
 }
-
-/* ═══════════════════════════════════════════
-   DATE LIST VIEW — RA-style calendar list
-   Ported from monolith renderDateList()
-   ═══════════════════════════════════════════ */
-
-interface DateListViewProps {
-  events: any[];
-  onNavigate: (id: string) => void;
-  getLowestPrice: (event: any) => number | null;
-  t: any;
-}
-
-function DateListView({ events, onNavigate, getLowestPrice, t }: DateListViewProps) {
-  // Group events by date
-  const groups = useMemo(() => {
-    const map: Record<string, any[]> = {};
-    events.forEach((ev) => {
-      const d = toDate(ev.date);
-      const key = d instanceof Date && !isNaN(d.getTime())
-        ? d.toISOString().substring(0, 10)
-        : 'sin-fecha';
-      if (!map[key]) map[key] = [];
-      map[key].push(ev);
-    });
-    return Object.keys(map).sort().map((key) => ({ dateKey: key, events: map[key] }));
-  }, [events]);
-
-  return (
-    <div className="events-datelist active">
-      {groups.map(({ dateKey, events: groupEvents }) => {
-        const d = new Date(dateKey + 'T12:00:00');
-        const dayNum = d.getDate();
-        const weekday = t.home.days[d.getDay()];
-        const month = t.home.months[d.getMonth()];
-
-        return (
-          <div key={dateKey} className="dl-date-group">
-            <div className="dl-date-header">
-              <div className="dl-date-slash" />
-              <div className="dl-date-label">{weekday}, {dayNum} {month}</div>
-            </div>
-            {groupEvents.map((ev) => {
-              const venueLine = (ev.venue || '') + (ev.location ? `, ${ev.location}` : '');
-              const price = getLowestPrice(ev);
-              const isSold = ev.status === 'sold-out';
-
-              return (
-                <div key={ev.id} className="dl-event-row" onClick={() => onNavigate(ev.slug || ev.id)}>
-                  <div
-                    className="dl-event-img"
-                    style={{
-                      backgroundImage: `url(${getEventImage(ev.id, ev.image, ev.genre)})`,
-                    }}
-                  />
-                  <div className="dl-event-info">
-                    {cleanText(ev.subtitle) && (
-                      <div className="dl-event-subtitle">{cleanText(ev.subtitle)}</div>
-                    )}
-                    <div className="dl-event-name">{cleanText(ev.name)}</div>
-                    <div className="dl-event-venue">
-                      <svg width="16" height="16" className="dl-event-venue-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                      </svg>
-                      {venueLine}
-                    </div>
-                    {ev.tags && ev.tags.length > 0 && (
-                      <div className="dl-event-tags">
-                        {ev.tags.slice(0, 3).map((t: string, i: number) => (
-                          <span key={i} className="dl-event-tag">{t}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="dl-event-right">
-                    {isSold ? (
-                      <>
-                        <div className="dl-event-sold">{t.common.soldOut}</div>
-                        <div className="dl-event-sold-link">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-                            <line x1="7" y1="7" x2="7.01" y2="7"/>
-                          </svg>
-                          {t.home.resale}
-                        </div>
-                      </>
-                    ) : price !== null ? (
-                      <>
-                        {price > 0 && <div className="dl-event-price-label">{t.common.from}</div>}
-                        <div className="dl-event-price">{formatPriceShort(price)}</div>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
