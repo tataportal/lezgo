@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { getActivePhase, getEventImage, toDate } from '../lib/helpers';
 import './HomePage.css';
 
 const VISITED_KEY = 'lezgo_visited';
@@ -12,6 +11,7 @@ export default function HomePage() {
   const { t } = useTranslation();
   const { events, loading } = useEvents({ status: 'published' });
   const [isReturningVisitor, setIsReturningVisitor] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     try {
@@ -59,39 +59,163 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── 1. HERO ── */}
-      <section className="home-hero-editorial">
-        <div className="home-hero-editorial__inner">
-          <h1 className="home-hero-editorial__h1">{t.home.editorialH1}</h1>
-          <p className="home-hero-editorial__sub">{t.home.editorialSub}</p>
-          <div className="home-hero-editorial__actions">
-            <Link to="/eventos" className="home-hero-editorial__cta-primary">
+      {/* ═══ 1. HERO ═══ */}
+      <section className="hh-hero">
+        <div className="hh-hero__bg" style={{ backgroundImage: 'url(/hero-bg.jpg)' }} />
+        <div className="hh-hero__overlay" />
+        <div className="hh-hero__grain" />
+
+        <div className="hh-hero__content">
+          <div className="hh-hero__eyebrow">
+            <span className="hh-hero__dot" /> {t.home.heroEyebrow}
+          </div>
+          <h1 className="hh-hero__h1">
+            {t.home.editorialH1.split('. ').map((part, i, arr) => (
+              <span key={i} className={i === 1 ? 'hh-hero__h1-accent' : ''}>
+                {part}{i < arr.length - 1 ? '.' : ''}
+                {i < arr.length - 1 && <br />}
+              </span>
+            ))}
+          </h1>
+          <p className="hh-hero__sub">{t.home.editorialSub}</p>
+          <div className="hh-hero__actions">
+            <Link to="/eventos" className="btn-primary">
               {t.home.heroCta}
             </Link>
-            <Link to="/como-funciona" className="home-hero-editorial__cta-secondary">
+            <Link to="/como-funciona" className="btn-ghost">
               {t.home.hiw.learnMore}
             </Link>
           </div>
+
+          <div className="hh-hero__stats">
+            <div className="hh-hero__stat">
+              <div className="hh-hero__stat-num">100%</div>
+              <div className="hh-hero__stat-label">{t.home.statVerified}</div>
+            </div>
+            <div className="hh-hero__stat">
+              <div className="hh-hero__stat-num">0</div>
+              <div className="hh-hero__stat-label">{t.home.statFakes}</div>
+            </div>
+            <div className="hh-hero__stat">
+              <div className="hh-hero__stat-num">{'<'}24h</div>
+              <div className="hh-hero__stat-label">{t.home.statSupport}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hh-hero__scroll">
+          <span>SCROLL</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1v12m0 0l-5-5m5 5l5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
       </section>
 
       <div className="home-content">
 
-        {/* ── Returning visitor: events first ── */}
+        {/* Returning visitor: events first */}
         {isReturningVisitor && previewEvents.length > 0 && (
           <EventsPreviewSection events={previewEvents} t={t} />
         )}
 
-        {/* ── 2. HOW IT WORKS ── */}
-        <HowItWorksSection t={t} />
+        {/* ═══ 2. HOW IT WORKS ═══ */}
+        <section className="hh-hiw">
+          <div className="hh-section-head">
+            <div className="hh-section-tag">/ 02</div>
+            <h2 className="hh-section-h2">{t.home.hiw.title}</h2>
+            <Link to="/como-funciona" className="hh-section-more">{t.home.hiw.learnMore}</Link>
+          </div>
+          <div className="hh-hiw__steps">
+            {[
+              { num: '01', title: t.home.hiw.step1Title, desc: t.home.hiw.step1Desc, icon: 'id' },
+              { num: '02', title: t.home.hiw.step2Title, desc: t.home.hiw.step2Desc, icon: 'ticket' },
+              { num: '03', title: t.home.hiw.step3Title, desc: t.home.hiw.step3Desc, icon: 'scan' },
+            ].map((s) => (
+              <div key={s.num} className="hh-hiw__step">
+                <div className="hh-hiw__step-num">{s.num}</div>
+                <div className="hh-hiw__step-icon">
+                  {s.icon === 'id' && (
+                    <svg viewBox="0 0 64 64" fill="none">
+                      <rect x="6" y="14" width="52" height="36" rx="3" stroke="currentColor" strokeWidth="2.5"/>
+                      <circle cx="20" cy="30" r="5" stroke="currentColor" strokeWidth="2.5"/>
+                      <path d="M12 44c2-4 6-6 8-6s6 2 8 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                      <line x1="34" y1="26" x2="52" y2="26" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                      <line x1="34" y1="34" x2="48" y2="34" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                      <line x1="34" y1="42" x2="44" y2="42" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                    </svg>
+                  )}
+                  {s.icon === 'ticket' && (
+                    <svg viewBox="0 0 64 64" fill="none">
+                      <path d="M6 22a4 4 0 014-4h44a4 4 0 014 4v6a4 4 0 100 8v6a4 4 0 01-4 4H10a4 4 0 01-4-4v-6a4 4 0 100-8v-6z" stroke="currentColor" strokeWidth="2.5"/>
+                      <line x1="32" y1="18" x2="32" y2="46" stroke="currentColor" strokeWidth="2.5" strokeDasharray="3 3"/>
+                    </svg>
+                  )}
+                  {s.icon === 'scan' && (
+                    <svg viewBox="0 0 64 64" fill="none">
+                      <path d="M10 18V12a2 2 0 012-2h6M54 18V12a2 2 0 00-2-2h-6M10 46v6a2 2 0 002 2h6M54 46v6a2 2 0 01-2 2h-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                      <line x1="6" y1="32" x2="58" y2="32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                      <rect x="20" y="22" width="24" height="20" rx="2" stroke="currentColor" strokeWidth="2.5"/>
+                    </svg>
+                  )}
+                </div>
+                <h3 className="hh-hiw__step-title">{s.title}</h3>
+                <p className="hh-hiw__step-desc">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {/* ── 3. WHY LEZGO ── */}
-        <WhyLezgoSection t={t} />
+        {/* ═══ 3. WHY LEZGO ═══ */}
+        <section className="hh-why">
+          <div className="hh-section-head">
+            <div className="hh-section-tag">/ 03</div>
+            <h2 className="hh-section-h2">{t.home.whyTitle}</h2>
+          </div>
+          <div className="hh-why__grid">
+            {(t.home.why as Array<{ icon: string; title: string; desc: string }>).map((r, i) => (
+              <div key={i} className="hh-why__item">
+                <div className="hh-why__num">0{i + 1}</div>
+                <div className="hh-why__title">{r.title}</div>
+                <div className="hh-why__desc">{r.desc}</div>
+                <div className="hh-why__arrow">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 15L15 5M15 5H7M15 5v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {/* ── 4. FAQ PREVIEW ── */}
-        <FAQPreviewSection t={t} />
+        {/* ═══ 4. FAQ PREVIEW ═══ */}
+        <section className="hh-faq">
+          <div className="hh-section-head">
+            <div className="hh-section-tag">/ 04</div>
+            <h2 className="hh-section-h2">{t.home.faqTitle}</h2>
+            <Link to="/faq" className="hh-section-more">{t.home.faqMore}</Link>
+          </div>
+          <div className="hh-faq__list">
+            {(t.home.faqPreview as Array<{ q: string; a: string }>).map((item, i) => {
+              const open = openFaq === i;
+              return (
+                <button
+                  key={i}
+                  className={`hh-faq__item${open ? ' is-open' : ''}`}
+                  onClick={() => setOpenFaq(open ? null : i)}
+                >
+                  <div className="hh-faq__row">
+                    <span className="hh-faq__num">0{i + 1}</span>
+                    <span className="hh-faq__q">{item.q}</span>
+                    <span className="hh-faq__toggle">{open ? '−' : '+'}</span>
+                  </div>
+                  {open && <div className="hh-faq__a">{item.a}</div>}
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
-        {/* ── 5. UPCOMING EVENTS ── */}
+        {/* ═══ 5. UPCOMING EVENTS ═══ */}
         {!isReturningVisitor && (
           loading && events.length === 0 ? (
             <div className="home-loading">
@@ -103,11 +227,16 @@ export default function HomePage() {
           ) : null
         )}
 
-        {/* ── 6. FINAL CTA ── */}
-        <section className="home-final-cta">
-          <div className="home-final-cta__inner">
-            <p className="home-final-cta__label">{t.home.resaleCtaLabel}</p>
-            <Link to="/reventa" className="home-final-cta__link">{t.home.resaleCtaBtn}</Link>
+        {/* ═══ 6. FINAL CTA ═══ */}
+        <section className="hh-final">
+          <div className="hh-final__bg" />
+          <div className="hh-final__content">
+            <div className="hh-final__eyebrow">{t.home.resaleCtaLabel}</div>
+            <h2 className="hh-final__h2">{t.home.finalCtaH2}</h2>
+            <div className="hh-final__actions">
+              <Link to="/reventa" className="btn-primary">{t.home.resaleCtaBtn}</Link>
+              <Link to="/eventos" className="btn-ghost-dark">{t.home.heroCta}</Link>
+            </div>
           </div>
         </section>
 
@@ -116,81 +245,14 @@ export default function HomePage() {
   );
 }
 
-/* ── HOW IT WORKS ── */
-function HowItWorksSection({ t }: { t: any }) {
-  const steps = [
-    { num: '01', title: t.home.hiw.step1Title, desc: t.home.hiw.step1Desc },
-    { num: '02', title: t.home.hiw.step2Title, desc: t.home.hiw.step2Desc },
-    { num: '03', title: t.home.hiw.step3Title, desc: t.home.hiw.step3Desc },
-  ];
-  return (
-    <section className="home-hiw">
-      <div className="section-head">
-        <h2 className="section-title">{t.home.hiw.title}</h2>
-        <Link to="/como-funciona" className="section-more">{t.home.hiw.learnMore}</Link>
-      </div>
-      <div className="home-hiw__steps">
-        {steps.map((s) => (
-          <div key={s.num} className="home-hiw__step">
-            <div className="home-hiw__step-num">{s.num}</div>
-            <div className="home-hiw__step-title">{s.title}</div>
-            <div className="home-hiw__step-desc">{s.desc}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ── WHY LEZGO ── */
-function WhyLezgoSection({ t }: { t: any }) {
-  const reasons: Array<{ icon: string; title: string; desc: string }> = t.home.why;
-  return (
-    <section className="home-why">
-      <div className="section-head">
-        <h2 className="section-title">{t.home.whyTitle}</h2>
-      </div>
-      <div className="home-why__grid">
-        {reasons.map((r, i) => (
-          <div key={i} className="home-why__item">
-            <div className="home-why__icon">{r.icon}</div>
-            <div className="home-why__title">{r.title}</div>
-            <div className="home-why__desc">{r.desc}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ── FAQ PREVIEW ── */
-function FAQPreviewSection({ t }: { t: any }) {
-  const faqs: Array<{ q: string; a: string }> = t.home.faqPreview;
-  return (
-    <section className="home-faq-preview">
-      <div className="section-head">
-        <h2 className="section-title">{t.home.faqTitle}</h2>
-        <Link to="/faq" className="section-more">{t.home.faqMore}</Link>
-      </div>
-      <div className="home-faq__list">
-        {faqs.map((item, i) => (
-          <div key={i} className="home-faq__item">
-            <div className="home-faq__q">{item.q}</div>
-            <div className="home-faq__a">{item.a}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* ── EVENTS PREVIEW ── */
 function EventsPreviewSection({ events, t }: { events: any[]; t: any }) {
   return (
-    <section className="home-events-preview" id="upcoming-events">
-      <div className="section-head">
-        <h2 className="section-title">{t.home.upcoming}</h2>
-        <Link to="/eventos" className="section-more">{t.common.viewAll}</Link>
+    <section className="hh-events" id="upcoming-events">
+      <div className="hh-section-head">
+        <div className="hh-section-tag">/ 05</div>
+        <h2 className="hh-section-h2">{t.home.upcoming}</h2>
+        <Link to="/eventos" className="hh-section-more">{t.common.viewAll}</Link>
       </div>
       <div className={`events-grid${events.length < 4 ? ' events-grid--centered' : ''}`}>
         {events.map((event) => (

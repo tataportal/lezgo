@@ -126,6 +126,11 @@ const zh: Translations = {
     editorialH1: '放心购买，顺利入场。',
     editorialSub: '每张票都与您的身份绑定。无假票，无截图，无入场烦恼。',
     heroCta: '查看活动 →',
+    heroEyebrow: '身份验证票务',
+    statVerified: '已验证门票',
+    statFakes: '可能的骗局',
+    statSupport: '人工客服',
+    finalCtaH2: '购票。入场。无烦恼。',
     whyTitle: '为什么选择 Lezgo',
     why: [
       { icon: '✓', title: '零假票', desc: '每张票都与真实证件绑定，复制品无法入场。' },

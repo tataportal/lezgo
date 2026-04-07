@@ -125,6 +125,11 @@ const es = {
     editorialH1: 'Compra con confianza. Entra sin drama.',
     editorialSub: 'Cada entrada está vinculada a tu identidad. Sin estafas, sin screenshots, sin drama en la puerta.',
     heroCta: 'Ver eventos →',
+    heroEyebrow: 'TICKETING VERIFICADO CON IDENTIDAD',
+    statVerified: 'Entradas verificadas',
+    statFakes: 'Estafas posibles',
+    statSupport: 'Soporte humano',
+    finalCtaH2: 'Compra. Entra. Sin drama.',
     whyTitle: 'Por qué Lezgo',
     why: [
       { icon: '✓', title: 'Cero entradas falsas', desc: 'Cada entrada está vinculada a un documento de identidad real. Una copia no entra.' },

@@ -126,6 +126,11 @@ const en: Translations = {
     editorialH1: 'Buy with confidence. Enter without stress.',
     editorialSub: 'Every ticket is tied to your identity. No fakes, no screenshots, no drama at the door.',
     heroCta: 'View events →',
+    heroEyebrow: 'IDENTITY-VERIFIED TICKETING',
+    statVerified: 'Verified tickets',
+    statFakes: 'Possible scams',
+    statSupport: 'Human support',
+    finalCtaH2: 'Buy. Enter. No drama.',
     whyTitle: 'Why Lezgo',
     why: [
       { icon: '✓', title: 'Zero fake tickets', desc: 'Every ticket is tied to a real ID. A copy does not get you in.' },
