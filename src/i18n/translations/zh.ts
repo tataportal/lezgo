@@ -131,6 +131,8 @@ const zh: Translations = {
     statFakes: '可能的骗局',
     statSupport: '人工客服',
     finalCtaH2: '购票。入场。无烦恼。',
+    finalCtaLine1: '购票。入场。',
+    finalCtaLine2: '无烦恼。',
     whyTitle: '为什么选择 Lezgo',
     why: [
       { icon: '✓', title: '零假票', desc: '每张票都与真实证件绑定，复制品无法入场。' },

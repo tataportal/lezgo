@@ -130,6 +130,8 @@ const es = {
     statFakes: 'Estafas posibles',
     statSupport: 'Soporte humano',
     finalCtaH2: 'Compra. Entra. Sin drama.',
+    finalCtaLine1: 'Compra. Entra.',
+    finalCtaLine2: 'Sin drama.',
     whyTitle: 'Por qué Lezgo',
     why: [
       { icon: '✓', title: 'Cero entradas falsas', desc: 'Cada entrada está vinculada a un documento de identidad real. Una copia no entra.' },

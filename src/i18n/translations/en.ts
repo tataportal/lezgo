@@ -131,6 +131,8 @@ const en: Translations = {
     statFakes: 'Possible scams',
     statSupport: 'Human support',
     finalCtaH2: 'Buy. Enter. No drama.',
+    finalCtaLine1: 'Buy. Enter.',
+    finalCtaLine2: 'No drama.',
     whyTitle: 'Why Lezgo',
     why: [
       { icon: '✓', title: 'Zero fake tickets', desc: 'Every ticket is tied to a real ID. A copy does not get you in.' },

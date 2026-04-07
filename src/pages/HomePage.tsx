@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
+import { getEventImage } from '../lib/helpers';
 import './HomePage.css';
 
 const VISITED_KEY = 'lezgo_visited';
@@ -61,7 +62,7 @@ export default function HomePage() {
 
       {/* ═══ 1. HERO ═══ */}
       <section className="hh-hero">
-        <div className="hh-hero__bg" style={{ backgroundImage: 'url(/hero-bg.jpg)' }} />
+        <HeroVideoBg videoId="UEzJ-Ckl7co" start={28} end={115} fallbackImg="/hero-bg.jpg" />
         <div className="hh-hero__overlay" />
         <div className="hh-hero__grain" />
 
@@ -232,7 +233,9 @@ export default function HomePage() {
           <div className="hh-final__bg" />
           <div className="hh-final__content">
             <div className="hh-final__eyebrow">{t.home.resaleCtaLabel}</div>
-            <h2 className="hh-final__h2">{t.home.finalCtaH2}</h2>
+            <h2 className="hh-final__h2">
+              {t.home.finalCtaLine1}<br />{t.home.finalCtaLine2}
+            </h2>
             <div className="hh-final__actions">
               <Link to="/reventa" className="btn-primary">{t.home.resaleCtaBtn}</Link>
               <Link to="/eventos" className="btn-ghost-dark">{t.home.heroCta}</Link>
@@ -246,19 +249,68 @@ export default function HomePage() {
 }
 
 /* ── EVENTS PREVIEW ── */
-function EventsPreviewSection({ events, t }: { events: any[]; t: any }) {
+function EventsPreviewSection({ events }: { events: any[]; t: any }) {
   return (
     <section className="hh-events" id="upcoming-events">
-      <div className="hh-section-head">
-        <div className="hh-section-tag">/ 05</div>
-        <h2 className="hh-section-h2">{t.home.upcoming}</h2>
-        <Link to="/eventos" className="hh-section-more">{t.common.viewAll}</Link>
-      </div>
       <div className={`events-grid${events.length < 4 ? ' events-grid--centered' : ''}`}>
         {events.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
       </div>
     </section>
+  );
+}
+
+/* ── HERO VIDEO BG (lazy-loaded YouTube) ── */
+function HeroVideoBg({ videoId, start = 0, end, fallbackImg }: { videoId: string; start?: number; end?: number; fallbackImg: string }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!wrapRef.current) return;
+    const timer = setTimeout(() => {
+      if (!wrapRef.current) return;
+      const iframe = document.createElement('iframe');
+      const startParam = start ? '&start=' + start : '';
+      const endParam = end ? '&end=' + end : '';
+      iframe.src =
+        'https://www.youtube.com/embed/' + videoId +
+        '?autoplay=1&mute=1&loop=1&playlist=' + videoId +
+        '&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1' +
+        startParam + endParam;
+      iframe.allow = 'autoplay; encrypted-media';
+      iframe.style.opacity = '0';
+      iframe.style.transition = 'opacity 1.2s ease';
+      wrapRef.current.appendChild(iframe);
+      iframeRef.current = iframe;
+      iframe.onload = () => { iframe.style.opacity = '1'; setReady(true); };
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [videoId, start, end]);
+
+  useEffect(() => {
+    if (!end || !ready || !iframeRef.current) return;
+    const iframe = iframeRef.current;
+    const yt = 'https://www.youtube.com';
+    const onMsg = (e: MessageEvent) => {
+      if (e.origin !== yt) return;
+      try {
+        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        if (data?.event === 'onStateChange' && data?.info === 0) {
+          iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${start}, true]}`, yt);
+          iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', yt);
+        }
+      } catch {}
+    };
+    window.addEventListener('message', onMsg);
+    const poll = setInterval(() => {
+      iframe.contentWindow?.postMessage('{"event":"listening","id":1,"channel":"widget"}', yt);
+    }, 2000);
+    return () => { window.removeEventListener('message', onMsg); clearInterval(poll); };
+  }, [start, end, ready]);
+
+  return (
+    <div className="hh-hero__bg" ref={wrapRef} style={{ backgroundImage: `url(${fallbackImg})` }} />
   );
 }
