@@ -125,6 +125,14 @@ const en: Translations = {
     unmute: 'Unmute',
     editorialH1: 'Buy with confidence. Enter without stress.',
     editorialSub: 'Every ticket is tied to your identity. No fakes, no screenshots, no drama at the door.',
+    heroCta: 'View events →',
+    whyTitle: 'Why Lezgo',
+    why: [
+      { icon: '✓', title: 'Zero fake tickets', desc: 'Every ticket is tied to a real ID. A copy does not get you in.' },
+      { icon: '↔', title: 'Verified resale', desc: "Can't go? Sell on the marketplace. The ticket re-links to the new owner." },
+      { icon: '☺', title: 'Your ID is your ticket', desc: 'At the door you show your document. No QR, no screenshots, no apps.' },
+      { icon: '⚡', title: 'Priority access', desc: 'Verified fans with history get access before bots and resellers.' },
+    ],
     hiw: {
       title: 'How it works',
       learnMore: 'Learn more →',

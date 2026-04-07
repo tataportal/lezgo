@@ -125,6 +125,14 @@ const zh: Translations = {
     unmute: '取消静音',
     editorialH1: '放心购买，顺利入场。',
     editorialSub: '每张票都与您的身份绑定。无假票，无截图，无入场烦恼。',
+    heroCta: '查看活动 →',
+    whyTitle: '为什么选择 Lezgo',
+    why: [
+      { icon: '✓', title: '零假票', desc: '每张票都与真实证件绑定，复制品无法入场。' },
+      { icon: '↔', title: '验证转售', desc: '无法出席？在市场转售，票自动绑定新主人。' },
+      { icon: '☺', title: '证件即门票', desc: '入场时出示证件即可，无需二维码或截图。' },
+      { icon: '⚡', title: '优先入场', desc: '有历史记录的验证粉丝比机器人和黄牛先获得入场资格。' },
+    ],
     hiw: {
       title: '使用流程',
       learnMore: '了解更多 →',

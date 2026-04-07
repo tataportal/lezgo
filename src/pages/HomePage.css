@@ -1290,51 +1290,71 @@
 }
 
 /* ═══════════════════════════════════════════
-   EDITORIAL HERO — no-event fallback
+   EDITORIAL HERO — main hero
    ═══════════════════════════════════════════ */
-.home-editorial-hero {
-  min-height: 60vh;
+.home-hero-editorial {
+  min-height: 72vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: var(--sp-20) var(--sp-6);
-  text-align: center;
+  padding: var(--sp-20) var(--sp-12);
+  border-bottom: 1px solid var(--border);
 }
 
-.home-editorial-hero__content {
-  max-width: 44rem;
+.home-hero-editorial__inner {
+  max-width: 52rem;
 }
 
-.home-editorial-hero__h1 {
-  font-size: clamp(2.2rem, 5vw, 4rem);
+.home-hero-editorial__h1 {
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
   font-weight: var(--fw-extrabold);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
   color: var(--fg);
-  margin-bottom: var(--sp-5);
+  margin-bottom: var(--sp-6);
 }
 
-.home-editorial-hero__sub {
-  font-size: clamp(1rem, 2vw, 1.2rem);
+.home-hero-editorial__sub {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
   color: var(--fg-muted);
-  line-height: 1.6;
+  line-height: 1.65;
   margin-bottom: var(--sp-8);
+  max-width: 38rem;
 }
 
-.home-editorial-hero__cta {
+.home-hero-editorial__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.home-hero-editorial__cta-primary {
   display: inline-block;
   padding: var(--sp-3) var(--sp-8);
   background: var(--acid);
   color: var(--bg);
   font-weight: var(--fw-extrabold);
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
+  font-size: 0.88rem;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   text-decoration: none;
   transition: opacity 0.15s;
 }
 
-.home-editorial-hero__cta:hover { opacity: 0.85; }
+.home-hero-editorial__cta-primary:hover { opacity: 0.85; }
+
+.home-hero-editorial__cta-secondary {
+  font-size: 0.88rem;
+  color: var(--fg-muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.home-hero-editorial__cta-secondary:hover { color: var(--fg); }
+
+@media (max-width: 640px) {
+  .home-hero-editorial { min-height: 55vh; padding: var(--sp-14) var(--sp-4); }
+}
 
 /* ═══════════════════════════════════════════
    HOW IT WORKS
@@ -1424,6 +1444,91 @@
   font-size: 0.88rem;
   color: var(--fg-muted);
   line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════
+   WHY LEZGO
+   ═══════════════════════════════════════════ */
+.home-why {
+  margin-bottom: var(--sp-16);
+}
+
+.home-why__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-4);
+}
+
+.home-why__item {
+  padding: var(--sp-6) var(--sp-5);
+  border: 1px solid var(--border);
+}
+
+.home-why__icon {
+  font-size: 1.4rem;
+  margin-bottom: var(--sp-3);
+  line-height: 1;
+}
+
+.home-why__title {
+  font-size: 0.9rem;
+  font-weight: var(--fw-bold);
+  color: var(--fg);
+  margin-bottom: var(--sp-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.home-why__desc {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .home-why__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .home-why__grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   FINAL CTA
+   ═══════════════════════════════════════════ */
+.home-final-cta {
+  margin-bottom: var(--sp-20);
+  border-top: 1px solid var(--border);
+  padding-top: var(--sp-10);
+}
+
+.home-final-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.home-final-cta__label {
+  font-size: 0.95rem;
+  color: var(--fg-muted);
+}
+
+.home-final-cta__link {
+  font-size: 0.88rem;
+  font-weight: var(--fw-extrabold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--acid);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-final-cta__link:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .home-final-cta__inner { flex-direction: column; align-items: flex-start; gap: var(--sp-3); }
 }
 
 /* ═══════════════════════════════════════════

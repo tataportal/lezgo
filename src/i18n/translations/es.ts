@@ -124,6 +124,14 @@ const es = {
     unmute: 'Activar sonido',
     editorialH1: 'Compra con confianza. Entra sin drama.',
     editorialSub: 'Cada entrada está vinculada a tu identidad. Sin estafas, sin screenshots, sin drama en la puerta.',
+    heroCta: 'Ver eventos →',
+    whyTitle: 'Por qué Lezgo',
+    why: [
+      { icon: '✓', title: 'Cero entradas falsas', desc: 'Cada entrada está vinculada a un documento de identidad real. Una copia no entra.' },
+      { icon: '↔', title: 'Reventa verificada', desc: 'Si no puedes ir, vendes en el marketplace. La entrada se re-vincula al nuevo dueño.' },
+      { icon: '☺', title: 'Tu ID es tu entrada', desc: 'En la puerta presentas tu documento. Sin QR, sin screenshots, sin apps.' },
+      { icon: '⚡', title: 'Acceso prioritario', desc: 'Los fans verificados con historial obtienen acceso antes que bots y revendedores.' },
+    ],
     hiw: {
       title: 'Cómo funciona',
       learnMore: 'Ver más →',
