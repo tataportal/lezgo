@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Header from '../components/layout/Header';
+import { FhButton } from '../components/ui/FhButton';
 import './FigmaHomePage.css';
 
 const FAQ_ITEMS: { q: string; a: string }[] = [
@@ -17,28 +19,6 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   { q: '¿Lezgo guarda mi historial?', a: 'Sí. Tu perfil puede mostrar tu historial de asistencia y tus accesos.' },
 ];
 
-const LongArrow = ({ color = 'currentColor', length = 48, className = '' }: { color?: string; length?: number; className?: string }) => (
-  <svg
-    className={className}
-    width={length}
-    height="10"
-    viewBox={`0 0 ${length} 10`}
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <line x1="0" y1="5" x2={length - 2} y2="5" stroke={color} strokeWidth="1.5" />
-    <polyline
-      points={`${length - 10},0 ${length - 1},5 ${length - 10},10`}
-      stroke={color}
-      strokeWidth="1.5"
-      fill="none"
-      strokeLinecap="square"
-      strokeLinejoin="miter"
-    />
-  </svg>
-);
-
 const IMG = {
   rect23: '/figma/phone.png',
   lezgo: '/figma/lezgo-logo.svg',
@@ -46,69 +26,14 @@ const IMG = {
   smile: '/figma/smile.svg',
 };
 
-interface FhButtonProps {
-  children: React.ReactNode;
-  variant?: 'acid' | 'outline';
-  className?: string;
-  to?: string;
-  href?: string;
-  onClick?: () => void;
-  arrowLength?: number;
-  arrowColor?: string;
-  type?: 'button' | 'submit' | 'reset';
-  'aria-label'?: string;
-}
-
-function FhButton({
-  children,
-  variant = 'acid',
-  className = '',
-  to,
-  href,
-  onClick,
-  arrowLength = 44,
-  arrowColor,
-  type = 'button',
-  'aria-label': ariaLabel,
-}: FhButtonProps) {
-  const defaultColor = variant === 'outline' ? '#ebff06' : '#000';
-  const color = arrowColor ?? defaultColor;
-  const cls = `fh-btn fh-btn-${variant}${className ? ' ' + className : ''}`;
-
-  if (to) {
-    return (
-      <Link to={to} className={cls} aria-label={ariaLabel} onClick={onClick}>
-        <span>{children}</span>
-        <LongArrow color={color} length={arrowLength} />
-      </Link>
-    );
-  }
-  if (href) {
-    return (
-      <a href={href} className={cls} aria-label={ariaLabel}>
-        <span>{children}</span>
-        <LongArrow color={color} length={arrowLength} />
-      </a>
-    );
-  }
-  return (
-    <button type={type} className={cls} onClick={onClick} aria-label={ariaLabel}>
-      <span>{children}</span>
-      <LongArrow color={color} length={arrowLength} />
-    </button>
-  );
-}
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function FigmaHomePage() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
   const [subscribed, setSubscribed] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -124,24 +49,6 @@ export default function FigmaHomePage() {
     setEmailError(null);
     setSubscribed(true);
   };
-
-  // Close mobile menu on route change (route navigation) or Escape
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
-    };
-    document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = '';
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [menuOpen]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -236,86 +143,7 @@ export default function FigmaHomePage() {
         <link rel="canonical" href="https://lezgo.fans/" />
       </Helmet>
 
-      {/* ====== HEADER ====== */}
-      <header className="fh-header">
-        <div className="fh-header-inner">
-          <Link to="/" className="fh-logo-link" aria-label="Inicio LEZGO">
-            <img className="fh-logo" src={IMG.lezgo} alt="LEZGO" />
-          </Link>
-          <nav className="fh-nav" aria-label="Navegación principal">
-            <Link className="fh-nav-link" to="/eventos">EVENTOS</Link>
-            <Link className="fh-nav-link" to="/reventa">REVENTA</Link>
-            <Link className="fh-nav-link" to="/conocenos">CONÓCENOS</Link>
-          </nav>
-          <div className="fh-header-right">
-            <button type="button" className="fh-flag" aria-label="Cambiar idioma">🇵🇪</button>
-            <FhButton to="/auth" className="fh-login" arrowLength={28}>INICIAR SESIÓN</FhButton>
-            <button
-              type="button"
-              className={`fh-menu-toggle ${menuOpen ? 'fh-menu-open' : ''}`}
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-              aria-expanded={menuOpen}
-              aria-controls="fh-mobile-menu"
-            >
-              <span className="fh-menu-bar" />
-              <span className="fh-menu-bar" />
-              <span className="fh-menu-bar" />
-            </button>
-          </div>
-        </div>
-
-        {/* Marquee ticker under header */}
-        <div className="fh-marquee-bar">
-          <div className="fh-marquee-track">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <span className="fh-marquee-item" key={i} aria-hidden={i > 0}>
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> ACCESO VERIFICADO CON IDENTIDAD
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> SIN REVENTAS FALSAS
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> TU DNI ES TU ENTRADA
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> MARKETPLACE SEGURO
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> ESCANEA Y ENTRA
-                <img src={IMG.smile} alt="" className="fh-marquee-smile" /> SIN DRAMAS
-              </span>
-            ))}
-          </div>
-        </div>
-      </header>
-
-      {/* ====== MOBILE MENU DRAWER ====== */}
-      <div
-        id="fh-mobile-menu"
-        className={`fh-mobile-menu ${menuOpen ? 'fh-mobile-menu-open' : ''}`}
-        aria-hidden={!menuOpen}
-      >
-        <div
-          className="fh-mobile-menu-backdrop"
-          onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
-        />
-        <nav className="fh-mobile-menu-panel" aria-label="Menú móvil">
-          <Link to="/eventos" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
-            EVENTOS
-            <LongArrow color="currentColor" length={28} />
-          </Link>
-          <Link to="/reventa" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
-            REVENTA
-            <LongArrow color="currentColor" length={28} />
-          </Link>
-          <Link to="/conocenos" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
-            CONÓCENOS
-            <LongArrow color="currentColor" length={28} />
-          </Link>
-          <FhButton
-            to="/auth"
-            className="fh-mobile-cta"
-            arrowLength={36}
-            onClick={() => setMenuOpen(false)}
-          >
-            INICIAR SESIÓN
-          </FhButton>
-        </nav>
-      </div>
+      <Header />
 
       {/* ====== HERO ====== */}
       <section className="fh-hero">

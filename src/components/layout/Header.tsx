@@ -1,182 +1,232 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTranslation, type Language } from '../../i18n';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { FhButton, LongArrow } from '../ui/FhButton';
+import './GlobalHeader.css';
 
-const FLAG_LANGS: { code: Language; flagSrc: string; label: string }[] = [
-  { code: 'es', flagSrc: '/flags/pe.svg', label: 'Español' },
-  { code: 'en', flagSrc: '/flags/us.svg', label: 'English' },
-  { code: 'zh', flagSrc: '/flags/cn.svg', label: '中文' },
-];
+const SMILE_SRC = '/figma/smile.svg';
+const LOGO_SRC  = '/figma/lezgo-logo.svg';
 
 export default function Header() {
   const { user, profile, logout } = useAuth();
-  const { t, lang, setLang } = useTranslation();
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [avatarFailed, setAvatarFailed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
+  const [avatarFailed, setAvatarFailed] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const langRef = useRef<HTMLDivElement>(null);
+
+  const displayName = profile?.displayName || user?.email?.split('@')[0] || '';
   const handleAvatarError = useCallback(() => setAvatarFailed(true), []);
   useEffect(() => { setAvatarFailed(false); }, [profile?.photoURL]);
 
-  // Close dropdowns on outside click
+  // Close menu on navigation
+  useEffect(() => {
+    setMenuOpen(false);
+    setProfileOpen(false);
+  }, [location.pathname]);
+
+  // Close profile dropdown on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
-      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+      if (profileRef.current && !profileRef.current.contains(e.target as Node))
+        setProfileOpen(false);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  // Lock scroll + Escape to close mobile menu
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
   const isActive = (path: string) => location.pathname === path;
-  const displayName = profile?.displayName || user?.email?.split('@')[0] || '';
-  const currentFlag = FLAG_LANGS.find(l => l.code === lang)!;
 
   return (
-    <header className="lz-header">
-      <div className="lz-header-inner">
-        <Link to="/" className="lz-logo">LEZGO</Link>
-
-        <nav className={`lz-nav ${mobileOpen ? 'lz-nav-open' : ''}`}>
-          <Link
-            to="/eventos"
-            className={`lz-nav-link ${isActive('/eventos') || isActive('/') ? 'active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            {t.nav.events}
-          </Link>
-          <Link
-            to="/reventa"
-            className={`lz-nav-link ${isActive('/reventa') ? 'active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            {t.nav.resale}
-          </Link>
-          <Link
-            to="/conocenos"
-            className={`lz-nav-link ${isActive('/conocenos') ? 'active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            {t.nav.about}
+    <>
+      {/* ====== HEADER BAR ====== */}
+      <header className="fh-header">
+        <div className="fh-header-inner">
+          {/* Logo */}
+          <Link to="/" className="fh-logo-link" aria-label="Inicio LEZGO">
+            <img className="fh-logo" src={LOGO_SRC} alt="LEZGO" />
           </Link>
 
-          {/* Mobile-only: user actions inside nav */}
-          <div className="lz-mobile-actions">
+          {/* Desktop nav */}
+          <nav className="fh-nav" aria-label="Navegación principal">
+            <Link
+              className={`fh-nav-link${isActive('/eventos') ? ' fh-nav-active' : ''}`}
+              to="/eventos"
+            >EVENTOS</Link>
+            <Link
+              className={`fh-nav-link${isActive('/reventa') ? ' fh-nav-active' : ''}`}
+              to="/reventa"
+            >REVENTA</Link>
+            <Link
+              className={`fh-nav-link${isActive('/conocenos') ? ' fh-nav-active' : ''}`}
+              to="/conocenos"
+            >CONÓCENOS</Link>
+          </nav>
+
+          {/* Right section */}
+          <div className="fh-header-right">
+            <button type="button" className="fh-flag" aria-label="Perú">🇵🇪</button>
+
             {user ? (
-              <>
-                <Link to="/perfil" className="lz-nav-link" onClick={() => setMobileOpen(false)}>
-                  {t.nav.profile || 'Perfil'}
-                </Link>
-                <Link to="/mis-entradas" className="lz-nav-link" onClick={() => setMobileOpen(false)}>
-                  {t.nav.myTickets}
-                </Link>
-                <button onClick={() => { logout(); setMobileOpen(false); }} className="lz-nav-link" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', textAlign: 'left', padding: 0, fontSize: 'inherit' }}>
-                  {t.nav.logout}
-                </button>
-              </>
-            ) : (
-              <Link to="/auth" className="lz-btn lz-btn-primary" style={{ width: '100%', textAlign: 'center' }} onClick={() => setMobileOpen(false)}>
-                {t.nav.login}
-              </Link>
-            )}
-          </div>
-        </nav>
-
-        <div className="lz-header-actions">
-          {/* Language flag selector */}
-          <div className="lz-lang-flag" ref={langRef}>
-            <button
-              className="lz-lang-flag-btn"
-              onClick={() => { setLangOpen(!langOpen); setProfileOpen(false); }}
-              aria-label="Change language"
-            >
-              <img src={currentFlag.flagSrc} alt="" className="lz-lang-flag-icon" aria-hidden="true" />
-            </button>
-            {langOpen && (
-              <div className="lz-dropdown lz-lang-dropdown">
-                {FLAG_LANGS.map(({ code, flagSrc, label }) => (
-                  <button
-                    key={code}
-                    className={`lz-dropdown-item${lang === code ? ' active' : ''}`}
-                    onClick={() => { setLang(code); setLangOpen(false); }}
-                  >
-                    <img src={flagSrc} alt="" className="lz-lang-flag-icon" aria-hidden="true" />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {user ? (
-            <>
-              {/* Greeting */}
-              <span className="lz-header-greeting">
-                {lang === 'es' ? 'Hola' : lang === 'zh' ? '你好' : 'Hi'}, {displayName}
-              </span>
-
-              {/* Profile avatar + dropdown */}
-              <div className="lz-profile-menu" ref={profileRef}>
+              /* ── Logged in: avatar + dropdown ── */
+              <div className="fh-profile-menu" ref={profileRef}>
                 <button
-                  className="lz-avatar-btn"
-                  onClick={() => { setProfileOpen(!profileOpen); setLangOpen(false); }}
+                  type="button"
+                  className="fh-profile-btn"
+                  onClick={() => setProfileOpen(o => !o)}
+                  aria-label="Menú de perfil"
+                  aria-expanded={profileOpen}
+                  aria-haspopup="true"
                 >
                   {profile?.photoURL && !avatarFailed ? (
-                    <img src={profile.photoURL} alt="" className="lz-avatar" onError={handleAvatarError} />
+                    <img
+                      src={profile.photoURL}
+                      alt=""
+                      className="fh-user-avatar"
+                      onError={handleAvatarError}
+                    />
                   ) : (
-                    <div className="lz-avatar lz-avatar-placeholder">
+                    <div className="fh-user-avatar fh-user-avatar-placeholder">
                       {(profile?.displayName || user.email || '?')[0].toUpperCase()}
                     </div>
                   )}
                 </button>
                 {profileOpen && (
-                  <div className="lz-dropdown lz-profile-dropdown">
+                  <div className="lz-dropdown" style={{ right: 0, minWidth: '12rem' }}>
+                    <span
+                      className="lz-dropdown-item"
+                      style={{
+                        fontFamily: "'Big Shoulders Display', sans-serif",
+                        fontWeight: 900,
+                        fontSize: '0.875rem',
+                        color: 'var(--acid)',
+                        cursor: 'default',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      {displayName}
+                    </span>
+                    <div className="lz-dropdown-divider" />
                     <Link to="/perfil" className="lz-dropdown-item" onClick={() => setProfileOpen(false)}>
-                      {t.nav.profile || 'Mi perfil'}
+                      Mi perfil
                     </Link>
                     <Link to="/mis-entradas" className="lz-dropdown-item" onClick={() => setProfileOpen(false)}>
-                      {t.nav.myTickets}
-                    </Link>
-                    <Link to="/perfil#badges" className="lz-dropdown-item" onClick={() => setProfileOpen(false)}>
-                      {t.profile.badges || 'Badges'}
-                    </Link>
-                    <Link to="/perfil#settings" className="lz-dropdown-item" onClick={() => setProfileOpen(false)}>
-                      {t.nav.settings}
+                      Mis entradas
                     </Link>
                     <div className="lz-dropdown-divider" />
-                    <button className="lz-dropdown-item lz-dropdown-item--danger" onClick={() => { logout(); setProfileOpen(false); }}>
-                      {t.nav.logout}
+                    <button
+                      className="lz-dropdown-item lz-dropdown-item--danger"
+                      onClick={() => { logout(); setProfileOpen(false); }}
+                    >
+                      Cerrar sesión
                     </button>
                   </div>
                 )}
               </div>
-            </>
-          ) : (
-            <>
-              <Link to="/auth" className="lz-btn lz-btn-ghost">
-                {t.nav.login}
-              </Link>
-              <Link to="/auth?tab=register" className="lz-btn lz-btn-primary">
-                {t.nav.register}
-              </Link>
-            </>
-          )}
+            ) : (
+              /* ── Logged out: INICIAR SESIÓN ── */
+              <FhButton to="/auth" className="fh-login" arrowLength={28}>
+                INICIAR SESIÓN
+              </FhButton>
+            )}
+
+            {/* Hamburger */}
+            <button
+              type="button"
+              className={`fh-menu-toggle${menuOpen ? ' fh-menu-open' : ''}`}
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={menuOpen}
+              aria-controls="fh-mobile-menu"
+            >
+              <span className="fh-menu-bar" />
+              <span className="fh-menu-bar" />
+              <span className="fh-menu-bar" />
+            </button>
+          </div>
         </div>
 
-        <button
-          className="lz-mobile-toggle"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menu"
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        {/* Marquee ticker */}
+        <div className="fh-marquee-bar">
+          <div className="fh-marquee-track">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span className="fh-marquee-item" key={i} aria-hidden={i > 0}>
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> ACCESO VERIFICADO CON IDENTIDAD
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> SIN REVENTAS FALSAS
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> TU DNI ES TU ENTRADA
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> MARKETPLACE SEGURO
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> ESCANEA Y ENTRA
+                <img src={SMILE_SRC} alt="" className="fh-marquee-smile" /> SIN DRAMAS
+              </span>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* ====== MOBILE MENU DRAWER ====== */}
+      <div
+        id="fh-mobile-menu"
+        className={`fh-mobile-menu${menuOpen ? ' fh-mobile-menu-open' : ''}`}
+        aria-hidden={!menuOpen}
+      >
+        <div
+          className="fh-mobile-menu-backdrop"
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+        <nav className="fh-mobile-menu-panel" aria-label="Menú móvil">
+          <Link to="/eventos" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
+            EVENTOS <LongArrow color="currentColor" length={28} />
+          </Link>
+          <Link to="/reventa" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
+            REVENTA <LongArrow color="currentColor" length={28} />
+          </Link>
+          <Link to="/conocenos" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
+            CONÓCENOS <LongArrow color="currentColor" length={28} />
+          </Link>
+
+          {user ? (
+            <>
+              <div className="fh-mobile-divider" />
+              <Link to="/perfil" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
+                MI PERFIL <LongArrow color="currentColor" length={28} />
+              </Link>
+              <Link to="/mis-entradas" className="fh-mobile-link" onClick={() => setMenuOpen(false)}>
+                MIS ENTRADAS <LongArrow color="currentColor" length={28} />
+              </Link>
+              <FhButton
+                className="fh-mobile-cta"
+                variant="outline"
+                arrowLength={36}
+                onClick={() => { logout(); setMenuOpen(false); }}
+              >
+                CERRAR SESIÓN
+              </FhButton>
+            </>
+          ) : (
+            <FhButton
+              to="/auth"
+              className="fh-mobile-cta"
+              arrowLength={36}
+              onClick={() => setMenuOpen(false)}
+            >
+              INICIAR SESIÓN
+            </FhButton>
+          )}
+        </nav>
       </div>
-    </header>
+    </>
   );
 }

@@ -78,7 +78,6 @@
   top: 0;
   z-index: 250;
   background: var(--bg);
-  border-bottom: 0.125rem solid #000;
 }
 .fh-header-inner {
   max-width: var(--max-w);
@@ -194,7 +193,6 @@
 /* Marquee ticker */
 .fh-marquee-bar {
   background: var(--acid);
-  border-bottom: 0.125rem solid #000;
   overflow: hidden;
   height: 2.75rem;
   display: flex;
