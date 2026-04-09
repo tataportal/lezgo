@@ -3,7 +3,7 @@
    Migrated from monolith index.html
    ═══════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bowlby+One&family=Big+Shoulders+Display:wght@800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ── Reset ── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -229,7 +229,7 @@
 
 /* ── Base ── */
 body {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;

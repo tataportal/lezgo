@@ -36,7 +36,7 @@ export default function App() {
             background: 'var(--gray-800)',
             color: 'var(--text)',
             border: '1px solid var(--border)',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: "'Inter', -apple-system, system-ui, sans-serif",
           },
           success: {
             iconTheme: { primary: 'var(--green)', secondary: 'var(--gray-900)' },

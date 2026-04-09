@@ -102,7 +102,7 @@
   cursor: pointer;
   transition: background 0.18s, color 0.18s;
   border-right: 1px solid rgba(229,255,0,0.45);
-  font-family: 'Sora', sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
   color: var(--acid);
 }
 
