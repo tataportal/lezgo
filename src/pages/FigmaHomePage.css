@@ -523,7 +523,7 @@
 .fh-hero-stats {
   display: flex;
   align-items: center;
-  gap: clamp(1.95rem, 5.2vw, 4.875rem);
+  gap: clamp(1.56rem, 4.16vw, 3.9rem);
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 0.325rem;
@@ -532,22 +532,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.81rem;
+  gap: 0.65rem;
 }
 .fh-stat-num {
   font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
-  font-size: clamp(2.6rem, 4.55vw, 4.39rem);
+  font-size: clamp(2.08rem, 3.64vw, 3.51rem);
   font-weight: 900;
   color: var(--acid);
   line-height: 1;
 }
 .fh-stat-lbl {
-  font-size: clamp(1.06rem, 1.43vw, 1.46rem);
+  font-size: clamp(0.85rem, 1.14vw, 1.17rem);
   color: var(--text);
 }
 .fh-stat-divider {
   width: 0.125rem;
-  height: clamp(2.76rem, 3.9vw, 4.06rem);
+  height: clamp(2.21rem, 3.12vw, 3.25rem);
   background: var(--acid);
 }
 
@@ -1606,22 +1606,22 @@
   .fh-hero-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.81rem;
-    margin-top: 1.625rem;
+    gap: 0.65rem;
+    margin-top: 1.3rem;
     width: 100%;
-    max-width: 28.6rem;
+    max-width: 23rem;
     justify-items: center;
   }
   .fh-stat {
-    gap: 0.49rem;
+    gap: 0.39rem;
     width: 100%;
   }
   .fh-stat-num {
-    font-size: 2.6rem;            /* 42px — +30% */
+    font-size: 2.08rem;
     letter-spacing: -0.01em;
   }
   .fh-stat-lbl {
-    font-size: 0.975rem;          /* 16px — +30% */
+    font-size: 0.78rem;
     line-height: 1.3;
     text-align: center;
     color: var(--text-muted);
@@ -1820,8 +1820,8 @@
   .fh-badge { padding: 0.4375rem 0.875rem; }
   .fh-h1 { font-size: clamp(2.275rem, 10.14vw, 3.09rem); line-height: 0.92; }
   .fh-h1-acid { font-size: clamp(1.95rem, 8.84vw, 2.76rem); line-height: 0.92; margin-top: 0; }
-  .fh-stat-num { font-size: 2.275rem; }
-  .fh-stat-lbl { font-size: 0.975rem; }
+  .fh-stat-num { font-size: 1.82rem; }
+  .fh-stat-lbl { font-size: 0.78rem; }
   .fh-hero-stats { gap: 1.25rem; }
   .fh-mobile-menu-panel { padding: 5.625rem 1.375rem 2rem; }
   .fh-mobile-link { font-size: 1.375rem; padding: 1.125rem 0.25rem; }
