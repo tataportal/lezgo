@@ -232,7 +232,8 @@ body {
   font-family: 'Inter', -apple-system, system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
+  scrollbar-gutter: stable;
   line-height: 1.5;
   font-size: var(--fs-body);
 }
@@ -351,7 +352,8 @@ img { display: block; max-width: 100%; }
 /* ── Layout ── */
 .lz-main {
   min-height: calc(100vh - 10rem);
-  padding-top: var(--header-h);
+  /* El header es sticky (en el flujo), no fixed — sin padding-top */
+  padding-top: 0;
 }
 
 .lz-main--deck {

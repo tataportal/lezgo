@@ -14,9 +14,6 @@
   --fh-max-w:   80rem;
 }
 
-/* ── Con sticky header, lz-main ya no necesita padding-top ── */
-.lz-main { padding-top: 0; }
-
 /* ═══════════════════════════════════════════
    HEADER
    ═══════════════════════════════════════════ */
