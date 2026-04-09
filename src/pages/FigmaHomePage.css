@@ -414,7 +414,7 @@
   background-size: 100% 100%;
   background-position: center;
   z-index: 1;
-  animation: fh-hero-halo-idle 16s ease-in-out infinite;
+  animation: fh-hero-halo-idle 9s ease-in-out infinite;
 }
 .fh-hero-bg-dome {
   /* Figma: 2252 x 1209 full ellipse. Anchored so only
@@ -429,14 +429,34 @@
   background-image: url('/figma/hero-ellipse-dome.svg');
   background-size: 100% 100%;
   z-index: 2;
+  animation: fh-dome-breathe 9s ease-in-out infinite;
 }
+
+/* Glow: drift lateral + respira en escala y opacidad */
 @keyframes fh-hero-halo-idle {
-  0%   { transform: translate(calc(-50% - 10px), -50%) rotate(-169.36deg); }
-  50%  { transform: translate(calc(-50% + 10px), -50%) rotate(-168.6deg); }
-  100% { transform: translate(calc(-50% - 10px), -50%) rotate(-169.36deg); }
+  0% {
+    transform: translate(calc(-50% - 22px), -50%) rotate(-169.36deg) scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(calc(-50% + 22px), -50%) rotate(-167.8deg) scale(1.14);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% - 22px), -50%) rotate(-169.36deg) scale(0.9);
+    opacity: 0.7;
+  }
 }
+
+/* Dome: sube y baja suavemente en sincronía con el glow */
+@keyframes fh-dome-breathe {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-2.5%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .fh-hero-bg-glow { animation: none; }
+  .fh-hero-bg-glow,
+  .fh-hero-bg-dome { animation: none; }
 }
 
 /* Badge with pulsing dot */
