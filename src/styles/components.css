@@ -61,8 +61,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-bold);
+  font-weight: 900;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   border-radius: var(--radius-surface);
@@ -191,8 +192,9 @@
 /* Form label */
 .ds-label {
   display: block;
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-semibold);
+  font-weight: 900;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -322,17 +324,19 @@
   border: 1px solid var(--acid-20);
   border-radius: var(--radius-surface);
   color: var(--acid);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-bold);
+  font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .ds-v3-title {
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: clamp(2rem, 4vw, 4.5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
-  font-weight: var(--fw-black);
+  font-weight: 900;
   color: var(--text);
 }
 
@@ -361,9 +365,9 @@
   padding: 0.8rem 1.15rem;
   border-radius: var(--radius-btn);
   border: 1px solid transparent;
-  font-family: inherit;
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
+  font-weight: 900;
   transition:
     transform var(--transition-fast),
     border-color var(--transition-fast),
@@ -404,8 +408,9 @@
 }
 
 .ds-v3-field-label {
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-bold);
+  font-weight: 900;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -480,8 +485,9 @@
   padding: 0 var(--sp-3);
   border: 1px solid var(--border);
   color: var(--text);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-semibold);
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border-radius: var(--radius-surface);
@@ -520,8 +526,9 @@
   color: var(--text-dim);
   min-height: 3rem;
   padding: 0 var(--sp-4);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
@@ -549,16 +556,18 @@
 
 .ds-v3-stat-label {
   color: var(--text-dim);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-caption);
-  font-weight: var(--fw-semibold);
+  font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .ds-v3-stat-value {
   color: var(--text);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: var(--fw-extrabold);
+  font-weight: 900;
   letter-spacing: -0.05em;
   line-height: 0.95;
 }
@@ -594,8 +603,9 @@
 }
 
 .ds-section-title {
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-h2);
-  font-weight: var(--fw-h2);
+  font-weight: 900;
   color: var(--text);
 }
 
@@ -855,8 +865,9 @@
   gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-4);
   border-radius: var(--radius-surface);
+  font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
+  font-weight: 900;
   color: var(--text-muted);
   background: transparent;
   border: none;

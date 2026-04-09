@@ -26,19 +26,6 @@ export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<'asistentes' | 'promotores'>('asistentes');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
-  const marqueeItems = [
-    t.about.marquee.safePurchase,
-    t.about.marquee.verifiedId,
-    t.about.marquee.noScams,
-    t.about.marquee.verifiedResale,
-    t.about.marquee.totalControl,
-    t.about.marquee.safePurchase,
-    t.about.marquee.verifiedId,
-    t.about.marquee.noScams,
-    t.about.marquee.verifiedResale,
-    t.about.marquee.totalControl,
-  ];
-
   const attendeeAssurances: FeatureItem[] = [
     { icon: 'id', title: t.about.features.presentId, desc: t.about.features.presentIdDesc },
     { icon: 'transfer', title: t.about.features.safeResale, desc: t.about.features.safeResaleDesc },
@@ -113,15 +100,6 @@ export default function AboutPage() {
 
   return (
     <div className="ab-page">
-
-      {/* ── Marquee ─────────────────────────────── */}
-      <div className="ab-marquee" aria-hidden="true">
-        <div className="ab-marquee-track">
-          {marqueeItems.map((item, i) => (
-            <span key={i} className="ab-marquee-item">{item}</span>
-          ))}
-        </div>
-      </div>
 
       {/* ── Hero ─────────────────────────────────── */}
       <section className="ab-hero">
