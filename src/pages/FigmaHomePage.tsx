@@ -117,7 +117,7 @@ export default function FigmaHomePage() {
   }, []);
 
   return (
-    <div className="fh-root" ref={rootRef}>
+    <>
       <Helmet>
         <title>LEZGO — Tu DNI es tu entrada. Sin reventas falsas, sin dramas.</title>
         <meta
@@ -144,6 +144,7 @@ export default function FigmaHomePage() {
       </Helmet>
 
       <Header />
+      <div className="fh-root" ref={rootRef}>
 
       {/* ====== HERO ====== */}
       <section className="fh-hero">
@@ -474,6 +475,7 @@ export default function FigmaHomePage() {
           <span>Hecho en Lima, Perú 🇵🇪</span>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
