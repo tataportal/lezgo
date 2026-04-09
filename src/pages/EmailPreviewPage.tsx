@@ -132,7 +132,7 @@ function buildFirstEventFeedbackEmail(firstName: string): EmailPreview {
   <div style="max-width:620px;margin:0 auto;">
     <p style="font-size:16px; margin:0 0 20px;">Hey ${firstName},</p>
     <p style="font-size:16px; margin:0 0 20px;">Vi que asististe a tu primer evento con LEZGO.</p>
-    <p style="font-size:16px; margin:0 0 20px;">Quería preguntarte algo simple: ¿sentiste que la entrada fue rápida por nuestro lado?</p>
+    <p style="font-size:16px; margin:0 0 20px;">Quería preguntarte algo simple: sentiste que la entrada fue rápida por nuestro lado?</p>
     <p style="font-size:16px; margin:0 0 20px;">Si hubo algo raro, confuso o lento, me sirve muchísimo saberlo.</p>
     <p style="font-size:16px; margin:0;">Tata</p>
   </div>
@@ -142,7 +142,7 @@ function buildFirstEventFeedbackEmail(firstName: string): EmailPreview {
 
 Vi que asististe a tu primer evento con LEZGO.
 
-Quería preguntarte algo simple: ¿sentiste que la entrada fue rápida por nuestro lado?
+Quería preguntarte algo simple: sentiste que la entrada fue rápida por nuestro lado?
 
 Si hubo algo raro, confuso o lento, me sirve muchísimo saberlo.
 
@@ -152,7 +152,7 @@ Tata`;
     id: 'first-event-feedback',
     category: 'brand',
     label: 'First event feedback',
-    subject: '¿Qué tal te fue entrando con LEZGO?',
+    subject: 'Qué tal te fue entrando con LEZGO?',
     html,
     text,
   };

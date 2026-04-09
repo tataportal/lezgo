@@ -6,17 +6,17 @@ import { FhButton } from '../components/ui/FhButton';
 import './FigmaHomePage.css';
 
 const FAQ_ITEMS: { q: string; a: string }[] = [
-  { q: '¿Qué compras en Lezgo?', a: 'Un derecho de ingreso al evento.' },
-  { q: '¿Cómo funciona Lezgo?', a: 'Lezgo asigna tu acceso a tu identidad para validar tu ingreso de forma más clara y segura.' },
-  { q: '¿Lezgo usa códigos QR?', a: 'No. En Lezgo no existen códigos QR. Todo el acceso está vinculado a tu identidad.' },
-  { q: '¿Qué documentos acepta Lezgo?', a: 'DNI, carnet de extranjería o pasaporte.' },
-  { q: '¿Por qué tengo que verificar mi identidad?', a: 'Para asignar tu acceso correctamente y validar tu ingreso en la puerta.' },
-  { q: '¿Qué pasa al llegar al evento?', a: 'Escaneas tu identificación en la entrada y verificamos si tienes un acceso válido asignado.' },
-  { q: '¿Puedo transferir mi acceso en Lezgo?', a: 'Sí. Puedes transferir tu acceso a través de la app.' },
-  { q: '¿Transferir mi acceso tiene costo?', a: 'Sí. La transferencia tiene un pequeño fee.' },
-  { q: '¿Puedo entrar con un screenshot?', a: 'No. El ingreso no depende de screenshots ni de códigos QR.' },
-  { q: '¿Dónde veo mis accesos?', a: 'En tu perfil dentro de la app.' },
-  { q: '¿Lezgo guarda mi historial?', a: 'Sí. Tu perfil puede mostrar tu historial de asistencia y tus accesos.' },
+  { q: 'Qué compras en Lezgo?', a: 'Un derecho de ingreso al evento.' },
+  { q: 'Cómo funciona Lezgo?', a: 'Lezgo asigna tu acceso a tu identidad para validar tu ingreso de forma más clara y segura.' },
+  { q: 'Lezgo usa códigos QR?', a: 'No. En Lezgo no existen códigos QR. Todo el acceso está vinculado a tu identidad.' },
+  { q: 'Qué documentos acepta Lezgo?', a: 'DNI, carnet de extranjería o pasaporte.' },
+  { q: 'Por qué tengo que verificar mi identidad?', a: 'Para asignar tu acceso correctamente y validar tu ingreso en la puerta.' },
+  { q: 'Qué pasa al llegar al evento?', a: 'Escaneas tu identificación en la entrada y verificamos si tienes un acceso válido asignado.' },
+  { q: 'Puedo transferir mi acceso en Lezgo?', a: 'Sí. Puedes transferir tu acceso a través de la app.' },
+  { q: 'Transferir mi acceso tiene costo?', a: 'Sí. La transferencia tiene un pequeño fee.' },
+  { q: 'Puedo entrar con un screenshot?', a: 'No. El ingreso no depende de screenshots ni de códigos QR.' },
+  { q: 'Dónde veo mis accesos?', a: 'En tu perfil dentro de la app.' },
+  { q: 'Lezgo guarda mi historial?', a: 'Sí. Tu perfil puede mostrar tu historial de asistencia y tus accesos.' },
 ];
 
 const IMG = {
@@ -196,7 +196,7 @@ export default function FigmaHomePage() {
       <section className="fh-section fh-how">
         <div className="fh-section-inner">
           <div className="fh-tag fh-reveal">/ 02</div>
-          <h2 className="fh-section-title fh-reveal" data-delay="1">¿CÓMO FUNCIONA?</h2>
+          <h2 className="fh-section-title fh-reveal" data-delay="1">CÓMO FUNCIONA?</h2>
 
           <div className="fh-steps">
             <article className="fh-step fh-reveal" data-delay="1">
@@ -233,7 +233,7 @@ export default function FigmaHomePage() {
       <section className="fh-section fh-why">
         <div className="fh-section-inner">
           <div className="fh-tag fh-reveal">/ 03</div>
-          <h2 className="fh-section-title fh-reveal" data-delay="1">¿POR QUÉ LEZGO?</h2>
+          <h2 className="fh-section-title fh-reveal" data-delay="1">POR QUÉ LEZGO?</h2>
 
           <div className="fh-bento">
             {/* Left column */}
