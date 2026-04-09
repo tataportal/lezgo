@@ -46,6 +46,59 @@ const IMG = {
   smile: '/figma/smile.svg',
 };
 
+interface FhButtonProps {
+  children: React.ReactNode;
+  variant?: 'acid' | 'outline';
+  className?: string;
+  to?: string;
+  href?: string;
+  onClick?: () => void;
+  arrowLength?: number;
+  arrowColor?: string;
+  type?: 'button' | 'submit' | 'reset';
+  'aria-label'?: string;
+}
+
+function FhButton({
+  children,
+  variant = 'acid',
+  className = '',
+  to,
+  href,
+  onClick,
+  arrowLength = 44,
+  arrowColor,
+  type = 'button',
+  'aria-label': ariaLabel,
+}: FhButtonProps) {
+  const defaultColor = variant === 'outline' ? '#ebff06' : '#000';
+  const color = arrowColor ?? defaultColor;
+  const cls = `fh-btn fh-btn-${variant}${className ? ' ' + className : ''}`;
+
+  if (to) {
+    return (
+      <Link to={to} className={cls} aria-label={ariaLabel} onClick={onClick}>
+        <span>{children}</span>
+        <LongArrow color={color} length={arrowLength} />
+      </Link>
+    );
+  }
+  if (href) {
+    return (
+      <a href={href} className={cls} aria-label={ariaLabel}>
+        <span>{children}</span>
+        <LongArrow color={color} length={arrowLength} />
+      </a>
+    );
+  }
+  return (
+    <button type={type} className={cls} onClick={onClick} aria-label={ariaLabel}>
+      <span>{children}</span>
+      <LongArrow color={color} length={arrowLength} />
+    </button>
+  );
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function FigmaHomePage() {
@@ -196,10 +249,7 @@ export default function FigmaHomePage() {
           </nav>
           <div className="fh-header-right">
             <button type="button" className="fh-flag" aria-label="Cambiar idioma">🇵🇪</button>
-            <Link to="/auth" className="fh-btn fh-btn-acid fh-login">
-              <span>INICIAR SESIÓN</span>
-              <LongArrow color="#000" length={28} />
-            </Link>
+            <FhButton to="/auth" className="fh-login" arrowLength={28}>INICIAR SESIÓN</FhButton>
             <button
               type="button"
               className={`fh-menu-toggle ${menuOpen ? 'fh-menu-open' : ''}`}
@@ -256,14 +306,14 @@ export default function FigmaHomePage() {
             CONÓCENOS
             <LongArrow color="currentColor" length={28} />
           </Link>
-          <Link
+          <FhButton
             to="/auth"
-            className="fh-btn fh-btn-acid fh-mobile-cta"
+            className="fh-mobile-cta"
+            arrowLength={36}
             onClick={() => setMenuOpen(false)}
           >
-            <span>INICIAR SESIÓN</span>
-            <LongArrow color="#000" length={36} />
-          </Link>
+            INICIAR SESIÓN
+          </FhButton>
         </nav>
       </div>
 
@@ -308,14 +358,8 @@ export default function FigmaHomePage() {
           </div>
 
           <div className="fh-hero-ctas fh-reveal" data-delay="5">
-            <Link to="/eventos" className="fh-btn fh-btn-acid">
-              <span>VER EVENTOS</span>
-              <LongArrow color="#000" length={44} />
-            </Link>
-            <Link to="/conocenos" className="fh-btn fh-btn-outline">
-              <span>CONOCE MÁS</span>
-              <LongArrow color="#ebff06" length={44} />
-            </Link>
+            <FhButton to="/eventos">VER EVENTOS</FhButton>
+            <FhButton to="/conocenos" variant="outline">CONOCE MÁS</FhButton>
           </div>
         </div>
       </section>
@@ -331,10 +375,7 @@ export default function FigmaHomePage() {
               <p className="fh-step-num">01</p>
               <h3 className="fh-step-title">VERIFICA TU IDENTIDAD</h3>
               <p className="fh-step-body">Escanea tu DNI, carnet de extranjería o pasaporte.</p>
-              <Link to="/auth" className="fh-btn fh-btn-acid fh-step-btn">
-                <span>VERIFICA AQUÍ</span>
-                <LongArrow color="#000" length={44} />
-              </Link>
+              <FhButton to="/auth" className="fh-step-btn">VERIFICA AQUÍ</FhButton>
             </article>
 
             <article className="fh-step fh-reveal" data-delay="2">
@@ -415,10 +456,7 @@ export default function FigmaHomePage() {
                   <div className="fh-transfer-content">
                     <h3>TRANSFIERE TU ACCESO DESDE LA APP</h3>
                     <p>Si no puedes ir, lo mueves de forma clara y ordenada.</p>
-                    <Link to="/reventa" className="fh-btn fh-btn-acid fh-transfer-btn">
-                      <span>IR AL MARKETPLACE</span>
-                      <LongArrow color="#000" length={40} />
-                    </Link>
+                    <FhButton to="/reventa" className="fh-transfer-btn" arrowLength={40}>IR AL MARKETPLACE</FhButton>
                   </div>
                 </div>
               </div>
@@ -500,10 +538,7 @@ export default function FigmaHomePage() {
                     </span>
                   )}
                 </div>
-                <button type="submit" className="fh-btn fh-btn-acid fh-newsletter-btn">
-                  <span>AVÍSAME</span>
-                  <LongArrow color="#000" length={40} />
-                </button>
+                <FhButton type="submit" className="fh-newsletter-btn" arrowLength={40}>AVÍSAME</FhButton>
               </>
             )}
           </form>

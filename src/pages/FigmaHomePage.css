@@ -486,7 +486,7 @@
 /* Hero titles */
 .fh-h1 {
   font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
-  font-size: clamp(3.25rem, 8.84vw, 8.45rem);
+  font-size: 6rem;
   font-weight: 900;
   color: var(--text);
   text-transform: uppercase;
@@ -498,7 +498,7 @@
 .fh-h1-acid {
   display: block;
   font-family: 'Bowlby One', 'Arial Black', sans-serif;
-  font-size: clamp(2.76rem, 7.28vw, 7.15rem);
+  font-size: 6rem;
   font-weight: 400;
   color: var(--acid);
   text-transform: uppercase;
@@ -1521,6 +1521,30 @@
 /* ═══════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
    ═══════════════════════════════════════════ */
+
+/* ── 1440px scale-down ──────────────────────
+   The hero is designed for ~1920px. At 1440px
+   the 6rem h1 feels cramped — pull it back
+   proportionally and tighten the CTAs. */
+@media (min-width: 45.0625rem) and (max-width: 90rem) {
+  .fh-h1      { font-size: 5rem; }
+  .fh-h1-acid { font-size: 5rem; }
+  .fh-hero-inner {
+    max-width: 72rem;
+    gap: clamp(1.1rem, 1.7vw, 1.6rem);
+  }
+  .fh-badge {
+    padding: 0.7rem 1.95rem;
+    gap: 0.975rem;
+  }
+  .fh-hero-ctas .fh-btn {
+    height: 3.9rem;
+    min-width: 14.5rem;
+    padding: 0 1.95rem;
+    border-radius: 1.95rem;
+    font-size: 1.05rem;
+  }
+}
 
 /* Tablet */
 @media (max-width: 64rem) {
