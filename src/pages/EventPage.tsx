@@ -5,6 +5,7 @@ import { formatPrice, getActivePhase, getEventImage, LOCALE_MAP, toDate } from '
 import { PurchaseModal } from '../components/checkout/PurchaseModal';
 import { Icon, type IconName } from '../components/ui';
 import { useTranslation } from '../i18n';
+import { FhButton } from '../components/ui/FhButton';
 import './EventPage.css';
 
 /* ── Helpers ── */
@@ -158,16 +159,16 @@ export default function EventPage() {
 
           <div className="ev-hero-ctas">
             {isSoldOut ? (
-              <button className="ev-btn ev-btn-sold" onClick={() => navigate('/reventa')}>
+              <FhButton variant="outline" onClick={() => navigate('/reventa')}>
                 {t.event.soldOutResale}
-              </button>
+              </FhButton>
             ) : (
-              <button className="ev-btn ev-btn-primary" onClick={handleBuyTickets}>
+              <FhButton onClick={handleBuyTickets}>
                 {lowestPrice === 0 ? t.event.reserveTickets : t.event.buyTickets}
-              </button>
+              </FhButton>
             )}
-            <button
-              className="ev-btn ev-btn-outline"
+            <FhButton
+              variant="outline"
               onClick={() => {
                 const d = toDate(event.date);
                 const pad = (n: number) => String(n).padStart(2, '0');
@@ -199,7 +200,7 @@ export default function EventPage() {
               }}
             >
               {t.event.addCalendar}
-            </button>
+            </FhButton>
           </div>
         </div>
       </section>
@@ -281,9 +282,11 @@ export default function EventPage() {
                       ) : isTierSold ? (
                         <div className="ev-tk-sold-all">{t.event.soldOutTag}</div>
                       ) : (
-                        <button className="ev-tk-buy" onClick={(e) => { e.stopPropagation(); handleBuyTickets(); }}>
-                          {(activePhase?.price || 0) === 0 ? t.event.reserve : t.event.buy}
-                        </button>
+                        <span onClick={e => e.stopPropagation()}>
+                          <FhButton arrowLength={18} onClick={handleBuyTickets}>
+                            {(activePhase?.price || 0) === 0 ? t.event.reserve : t.event.buy}
+                          </FhButton>
+                        </span>
                       )}
                     </div>
                   </div>
@@ -318,9 +321,9 @@ export default function EventPage() {
               </div>
             </div>
             <div className="ev-mp-action">
-              <button className="ev-btn ev-btn-primary" onClick={() => navigate('/reventa')}>
+              <FhButton onClick={() => navigate('/reventa')}>
                 {t.event.resaleBannerBtn}
-              </button>
+              </FhButton>
             </div>
           </div>
         )}
@@ -507,9 +510,9 @@ export default function EventPage() {
                   : `${t.common.from} ${formatPrice(lowestPrice)}`
                 : ''}
             </div>
-            <button className="ev-sticky-cta-btn" onClick={handleBuyTickets}>
+            <FhButton onClick={handleBuyTickets}>
               {lowestPrice === 0 ? t.event.reserveTickets : t.event.buyTickets}
-            </button>
+            </FhButton>
           </div>
         </div>
       )}

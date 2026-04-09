@@ -183,11 +183,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.875rem;
   border: 0;
   cursor: pointer;
   font-family: 'Big Shoulders Display', 'Arial Black', sans-serif;
   font-weight: 900;
+  font-size: 0.9375rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -195,6 +196,9 @@
   overflow: hidden;
   isolation: isolate;
   text-decoration: none;
+  /* Default sizing — overridden by .fh-login, .fh-hero-ctas .fh-btn, etc. */
+  padding: 0.875rem 1.5rem;
+  border-radius: 2rem;
   transition: transform var(--dur-fast) var(--ease),
               box-shadow var(--dur-mid) var(--ease);
 }

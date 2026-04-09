@@ -4,6 +4,7 @@ import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
 import { toDate, formatDateES, getEventImage } from '../lib/helpers';
+import { FhButton } from '../components/ui/FhButton';
 import './EventsPage.css';
 
 export default function EventsPage() {
@@ -183,9 +184,9 @@ export default function EventsPage() {
             />
           </div>
 
-          <button className="search-btn" onClick={handleSearch}>
+          <FhButton onClick={handleSearch} arrowLength={24}>
             {t.home.search || t.common.search}
-          </button>
+          </FhButton>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { LOCALE_MAP, toDate } from '../lib/helpers';
 import type { Resale } from '../lib/types';
 import ResaleCheckoutModal from '../components/checkout/ResaleCheckoutModal';
 import { Icon } from '../components/ui';
+import { FhButton } from '../components/ui/FhButton';
 import './MarketplacePage.css';
 
 type OfertaFilter = 'todos' | 'oferta';
@@ -274,15 +275,11 @@ export default function MarketplacePage() {
                     ) : r.askingPrice === r.originalPrice ? (
                       <span className="mp-listing-tag mp-tag-face">{t.marketplace.originalPrice}</span>
                     ) : null}
-                    <button
-                      className="mp-listing-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleListingClick(r);
-                      }}
-                    >
-                      {t.common.view} →
-                    </button>
+                    <span onClick={e => e.stopPropagation()}>
+                      <FhButton arrowLength={20} onClick={() => handleListingClick(r)}>
+                        {t.common.view}
+                      </FhButton>
+                    </span>
                   </div>
                 </div>
               );
@@ -298,9 +295,9 @@ export default function MarketplacePage() {
         {/* Sell CTA */}
         <div className="mp-sell-cta">
           <p>{t.marketplace.haveTicket}</p>
-          <button className="btn-acid" onClick={() => navigate('/mis-entradas')}>
+          <FhButton onClick={() => navigate('/mis-entradas')}>
             {t.marketplace.sellMyTicket}
-          </button>
+          </FhButton>
         </div>
 
         {/* Footer */}
