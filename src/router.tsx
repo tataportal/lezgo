@@ -5,6 +5,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy load all pages for code splitting
+const FigmaHomePage = lazy(() => import('./pages/FigmaHomePage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const EventPage = lazy(() => import('./pages/EventPage'));
 const EventsPage = lazy(() => import('./pages/EventsPage'));
@@ -60,14 +61,15 @@ function SuspenseWrap({ children }: { children: React.ReactNode }) {
 }
 
 export const router = createBrowserRouter([
+  // Home standalone — tiene su propio header + footer
   {
     path: '/',
+    element: <SuspenseWrap><FigmaHomePage /></SuspenseWrap>,
+  },
+  // App shell para rutas internas
+  {
     element: <App />,
     children: [
-      {
-        index: true,
-        element: <SuspenseWrap>{isDeckHost ? <DeckPage /> : <HomePage />}</SuspenseWrap>,
-      },
       {
         path: 'eventos',
         element: <SuspenseWrap><EventsPage /></SuspenseWrap>,
@@ -147,11 +149,6 @@ export const router = createBrowserRouter([
       {
         path: 'terminos',
         element: <SuspenseWrap><TermsPage /></SuspenseWrap>,
-      },
-      {
-        // /inicio redirects to homepage (used by AuthPage, AboutPage, MyTicketsPage)
-        path: 'inicio',
-        element: <SuspenseWrap>{isDeckHost ? <DeckPage /> : <HomePage />}</SuspenseWrap>,
       },
       {
         path: '*',
