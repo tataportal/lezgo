@@ -429,7 +429,6 @@
   background-image: url('/figma/hero-ellipse-dome.svg');
   background-size: 100% 100%;
   z-index: 2;
-  animation: fh-dome-breathe 9s ease-in-out infinite;
 }
 
 /* Glow: drift lateral + respira en escala y opacidad */
@@ -448,15 +447,8 @@
   }
 }
 
-/* Dome: sube y baja suavemente en sincronía con el glow */
-@keyframes fh-dome-breathe {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(-2.5%); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .fh-hero-bg-glow,
-  .fh-hero-bg-dome { animation: none; }
+  .fh-hero-bg-glow { animation: none; }
 }
 
 /* Badge with pulsing dot */
