@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from '../i18n';
 import { useEvents } from '../hooks/useEvents';
 import { EventCard } from '../components/events/EventCard';
-import { getEventImage } from '../lib/helpers';
 import './HomePage.css';
 
 const VISITED_KEY = 'lezgo_visited';

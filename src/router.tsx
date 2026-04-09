@@ -6,7 +6,6 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Lazy load all pages for code splitting
 const FigmaHomePage = lazy(() => import('./pages/FigmaHomePage'));
-const HomePage = lazy(() => import('./pages/HomePage'));
 const EventPage = lazy(() => import('./pages/EventPage'));
 const EventsPage = lazy(() => import('./pages/EventsPage'));
 const MarketplacePage = lazy(() => import('./pages/MarketplacePage'));
