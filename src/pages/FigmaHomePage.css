@@ -512,12 +512,11 @@
   font-size: clamp(1.22rem, 1.63vw, 1.54rem);
   color: var(--text-muted);
   line-height: 1.5;
-  max-width: 40rem;
+  max-width: 58rem;
   /* Pull the sub closer to the headline so it lives
      right under it, with more breathing room before
      the stats below. */
   margin: calc(-0.75 * clamp(1rem, 1.6vw, 1.5rem)) auto 0;
-  text-wrap: balance;
 }
 
 /* Hero stats */
