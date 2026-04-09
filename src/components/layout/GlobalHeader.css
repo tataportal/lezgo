@@ -445,4 +445,22 @@
   .fh-header-right { gap: 0.625rem; }
   .fh-flag  { width: 2.375rem; height: 2.375rem; }
   .fh-logo  { width: 4.875rem; height: 2rem; }
+
+  /* Marquee */
+  .fh-marquee-item {
+    font-size: 0.75rem;
+    gap: 0.875rem;
+    padding-right: 0.875rem;
+    letter-spacing: 0.08em;
+  }
+  .fh-marquee-bar  { height: 2.375rem; }
+  .fh-marquee-smile { width: 1.25rem; height: 1.25rem; }
+}
+
+@media (max-width: 25rem) {
+  .fh-header-inner { padding: 0.75rem 1rem; gap: 0.625rem; }
+  .fh-flag  { display: none; }
+  .fh-logo  { width: 4.375rem; }
+  .fh-mobile-menu-panel { padding: 5.625rem 1.375rem 2rem; }
+  .fh-mobile-link { font-size: 1.375rem; padding: 1.125rem 0.25rem; }
 }
